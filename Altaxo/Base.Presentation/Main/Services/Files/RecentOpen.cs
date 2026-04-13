@@ -31,11 +31,11 @@ namespace Altaxo.Main.Services
   public class RecentOpen : RecentOpenBase
   {
     /// <inheritdoc/>
-    public override void AddRecentProject(PathName name)
+    public override void AddRecentProject(PathName fileName)
     {
-      base.AddRecentProject(name);
+      base.AddRecentProject(fileName);
 
-      if (name is FileName fn)
+      if (fileName is FileName fn)
         JumpList.AddToRecentCategory(fn);
     }
   }

@@ -50,9 +50,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProcessSourceTablesScriptData), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ProcessSourceTablesScriptData)obj;
+        var s = (ProcessSourceTablesScriptData)o;
 
         info.CreateArray("Tables", s._tables.Count);
         {

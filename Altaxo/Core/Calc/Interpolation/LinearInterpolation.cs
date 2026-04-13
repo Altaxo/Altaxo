@@ -43,9 +43,9 @@ namespace Altaxo.Calc.Interpolation
     #region IInterpolationFunction Members
 
     /// <inheritdoc/>
-    public double GetYOfX(double xval)
+    public double GetYOfX(double x)
     {
-      int idx = CurveBase.FindInterval(xval, _x);
+      int idx = CurveBase.FindInterval(x, _x);
       if (idx < 0)
         throw new ArgumentOutOfRangeException("xval is smaller than the interpolation x range");
       if (idx + 1 > _x.Count)
@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Interpolation
       if (idx + 1 == _x.Count)
         idx--;
 
-      return Interpolate(xval, _x[idx], _x[idx + 1], _y[idx], _y[idx + 1]);
+      return Interpolate(x, _x[idx], _x[idx + 1], _y[idx], _y[idx + 1]);
     }
 
     #endregion IInterpolationFunction Members

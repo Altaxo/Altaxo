@@ -47,9 +47,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AngularRescaleConditions)obj;
+        var s = (AngularRescaleConditions)o;
 
         info.AddValue("ScaleOrigin", s._scaleOrigin);
       }

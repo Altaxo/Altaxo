@@ -59,10 +59,10 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RandomCircles), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RandomCircles)obj;
-        info.AddBaseValueEmbedded(obj, s.GetType().BaseType!);
+        var s = (RandomCircles)o;
+        info.AddBaseValueEmbedded(o, s.GetType().BaseType!);
 
         info.AddValue("RandomSeed", s._randomSeed);
         info.AddValue("CircleDiameter", s._circleDiameterPt);

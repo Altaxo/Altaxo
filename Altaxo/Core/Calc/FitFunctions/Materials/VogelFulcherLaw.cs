@@ -113,9 +113,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VogelFulcherLaw)obj;
+        var s = (VogelFulcherLaw)o;
         info.AddEnum("IndependentVariableUnit", s.IndependentVariableRepresentation);
         info.AddEnum("DependentVariableTransform", s.DependentVariableRepresentation);
         info.AddEnum("ParamBUnit", s.ParameterBRepresentation);

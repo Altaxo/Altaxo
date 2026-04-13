@@ -77,19 +77,19 @@ namespace Altaxo.Calc.Interpolation
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxiliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         C.Clear();
         D.Clear();

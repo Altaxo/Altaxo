@@ -42,9 +42,9 @@ namespace Altaxo.Scripting
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AbstractScript)obj;
+        var s = (AbstractScript)o;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
@@ -88,7 +88,7 @@ namespace Altaxo.Scripting
         FreeStyle
       };
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serializing this old type is not supported any longer");
       }

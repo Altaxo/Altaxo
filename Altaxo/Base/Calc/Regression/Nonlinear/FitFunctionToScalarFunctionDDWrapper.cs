@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed.");
         /*
@@ -117,9 +117,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitFunctionToScalarFunctionDDWrapper)obj;
+        var s = (FitFunctionToScalarFunctionDDWrapper)o;
 
         info.AddValue("IndependentVariable", s._independentVariable);
         info.AddValueOrNull("IndependentVariableTransformation", s._independentVariableTransformation);

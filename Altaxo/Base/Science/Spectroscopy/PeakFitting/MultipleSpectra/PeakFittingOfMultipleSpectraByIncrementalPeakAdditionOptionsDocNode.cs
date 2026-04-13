@@ -42,9 +42,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode)obj;
+        var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptionsDocNode)o;
         var preprocessingOptions = s.InternalGetSpectralPreprocessingOptions();
         s.InternalSpectralPreprocessingOptions = preprocessingOptions;
         info.AddValue("Options", s._optionsObject);

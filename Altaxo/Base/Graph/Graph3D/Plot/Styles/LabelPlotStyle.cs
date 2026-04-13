@@ -38,7 +38,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Drawing.D3D;
   using Drawing.D3D.Material;
   using Geometry;
-  using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using GraphicsContext;
   using Plot.Data;
@@ -214,9 +213,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SSerialize(obj, info);
+        SSerialize(o, info);
       }
 
       /// <summary>
@@ -401,16 +400,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      if (obj is LabelPlotStyle from)
+      if (from is LabelPlotStyle fromX)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          CopyFrom(from, copyWithDataReferences);
-
+          CopyFrom(fromX, copyWithDataReferences);
           EhSelfChanged(EventArgs.Empty);
           suspendToken.Resume();
         }

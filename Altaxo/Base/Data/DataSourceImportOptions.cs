@@ -107,9 +107,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataSourceImportOptions)obj;
+        var s = (DataSourceImportOptions)o;
 
         info.AddEnum("ImportTriggerSource", s.ImportTriggerSource);
         info.AddValue("ExecuteTableScriptAfterImport", s.ExecuteTableScriptAfterImport);
@@ -155,9 +155,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataSourceImportOptions)obj;
+        var s = (DataSourceImportOptions)o;
 
         info.AddEnum("ImportTriggerSource", s.ImportTriggerSource);
         info.AddValue("ExecuteTableScriptAfterImport", s.ExecuteTableScriptAfterImport);

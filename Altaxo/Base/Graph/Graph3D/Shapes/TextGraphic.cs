@@ -111,9 +111,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TextGraphic)obj;
+        var s = (TextGraphic)o;
 
         info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType!);
         info.AddValue("Text", s._text);
@@ -661,7 +661,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This class is deprecated and no longer supported to serialize");
         // info.SetNodeContent(obj.ToString());

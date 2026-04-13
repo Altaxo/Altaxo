@@ -53,9 +53,9 @@ namespace Altaxo.Worksheet
       protected Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>? _unresolvedColumns;
 
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColumnStyleDictionary)obj;
+        var s = (ColumnStyleDictionary)o;
 
         info.CreateArray("DefaultColumnStyles", s._defaultColumnStyles.Count);
         foreach (var style in s._defaultColumnStyles)

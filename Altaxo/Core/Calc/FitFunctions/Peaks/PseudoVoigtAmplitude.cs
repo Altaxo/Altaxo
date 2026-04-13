@@ -60,9 +60,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PseudoVoigtAmplitude), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PseudoVoigtAmplitude)obj;
+        var s = (PseudoVoigtAmplitude)o;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
@@ -275,32 +275,32 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private static double Xor(double xc, double x) => x; // helper for above comment
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        double arg = (X[0] - P[j + 1]) / P[j + 2];
-        sumTerms += P[j] * ((P[j + 3]) / (1 + arg * arg) + (1 - P[j + 3]) * Math.Exp(-Log2 * arg * arg));
+        double arg = (independent[0] - parameters[j + 1]) / parameters[j + 2];
+        sumTerms += parameters[j] * ((parameters[j + 3]) / (1 + arg * arg) + (1 - parameters[j + 3]) * Math.Exp(-Log2 * arg * arg));
       }
 
       if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
         for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      Y[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int r = 0; r < independent.RowCount; ++r)
       {
@@ -309,54 +309,54 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          double arg = (x - P[j + 1]) / P[j + 2];
-          sumTerms += P[j] * ((P[j + 3]) / (1 + arg * arg) + (1 - P[j + 3]) * Math.Exp(-Log2 * arg * arg));
+          double arg = (x - parameters[j + 1]) / parameters[j + 2];
+          sumTerms += parameters[j] * ((parameters[j + 3]) / (1 + arg * arg) + (1 - parameters[j + 3]) * Math.Exp(-Log2 * arg * arg));
         }
 
         if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
           for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
 
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
         // at first, the peak terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3])
+          if (isFixed is not null && isFixed[j] && isFixed[j + 1] && isFixed[j + 2] && isFixed[j + 3])
           {
             continue;
           }
 
-          var height = P[j];
-          var w = P[j + 2];
-          var arg = (x - P[j + 1]) / w;
-          var nu = P[j + 3];
+          var height = parameters[j];
+          var w = parameters[j + 2];
+          var arg = (x - parameters[j + 1]) / w;
+          var nu = parameters[j + 3];
 
           var expTerm = Math.Exp(-Log2 * arg * arg);
           var lorentzTerm = 1 / (1 + arg * arg);
 
-          DY[r, j + 0] = nu * lorentzTerm + (1 - nu) * expTerm;
-          DY[r, j + 1] = height * (2 * arg / w) * (nu * lorentzTerm * lorentzTerm + (1 - nu) * expTerm * Log2);
-          DY[r, j + 2] = height * (2 * arg * arg / w) * (nu * lorentzTerm * lorentzTerm + (1 - nu) * expTerm * Log2);
-          DY[r, j + 3] = height * (lorentzTerm - expTerm);
+          DF[r, j + 0] = nu * lorentzTerm + (1 - nu) * expTerm;
+          DF[r, j + 1] = height * (2 * arg / w) * (nu * lorentzTerm * lorentzTerm + (1 - nu) * expTerm * Log2);
+          DF[r, j + 2] = height * (2 * arg * arg / w) * (nu * lorentzTerm * lorentzTerm + (1 - nu) * expTerm * Log2);
+          DF[r, j + 3] = height * (lorentzTerm - expTerm);
         }
 
         // then, the baseline
@@ -365,7 +365,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           double xn = 1;
           for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
         }

@@ -443,10 +443,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public void InitializeNumberOfColorShades(int numberOfColorShades)
+    public void InitializeNumberOfColorShades(int numberOfShades)
     {
-      _guiNumberOfShadesSlider.Value = numberOfColorShades;
-      _guiNumberOfShadesUpDown.Value = numberOfColorShades;
+      _guiNumberOfShadesSlider.Value = numberOfShades;
+      _guiNumberOfShadesUpDown.Value = numberOfShades;
     }
 
     /// <inheritdoc/>

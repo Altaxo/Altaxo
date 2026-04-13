@@ -217,8 +217,8 @@ namespace Altaxo.Graph
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-    public abstract void VisitDocumentReferences(DocNodeProxyReporter Report);
+    /// <param name="ReportProxies">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public abstract void VisitDocumentReferences(DocNodeProxyReporter ReportProxies);
 
     /// <summary>
     /// The date/time of creation of this graph.

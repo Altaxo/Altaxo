@@ -116,9 +116,9 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakEnhancementSNIP)obj;
+        var s = (PeakEnhancementSNIP)o;
         info.AddValue("HalfWidth", s.HalfWidth);
         info.AddValue("IsHalfWidthInXUnits", s.IsHalfWidthInXUnits);
         info.AddValue("NumberOfApplications", s.NumberOfApplications);

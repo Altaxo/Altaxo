@@ -43,9 +43,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingBase), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericLabelFormattingBase)obj;
+        var s = (NumericLabelFormattingBase)o;
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
         info.AddValue("DecimalPlaces", s._decimalPlaces);
       }

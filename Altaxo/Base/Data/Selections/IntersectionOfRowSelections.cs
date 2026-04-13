@@ -51,9 +51,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IntersectionOfRowSelections), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IntersectionOfRowSelections)obj;
+        var s = (IntersectionOfRowSelections)o;
 
         info.CreateArray("RowSelections", s._rowSelections.Count);
 
@@ -289,17 +289,17 @@ BreakEnumeration:
     }
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
-      if (rowSel is not IntersectionOfRowSelections other)
+      if (other is not IntersectionOfRowSelections otherX)
         return false;
 
-      if (this._rowSelections.Count != other._rowSelections.Count)
+      if (this._rowSelections.Count != otherX._rowSelections.Count)
         return false;
 
       for (int i = 0; i < this._rowSelections.Count; ++i)
       {
-        if (!this._rowSelections[i].Equals(other._rowSelections[i]))
+        if (!this._rowSelections[i].Equals(otherX._rowSelections[i]))
           return false;
       }
 
@@ -316,12 +316,12 @@ BreakEnumeration:
     /// <exception cref="ArgumentNullException">nameof(original)</exception>
     public static IRowSelection IntersectWithRowRange(IRowSelection original, int startIndex, int endIndexInclusive)
     {
-      if(original is null)
+      if (original is null)
         throw new ArgumentNullException(nameof(original));
 
       var newRange = RangeOfRowIndices.FromStartAndEndInclusive(startIndex, endIndexInclusive);
 
-      if(original is IntersectionOfRowSelections originalSelection)
+      if (original is IntersectionOfRowSelections originalSelection)
       {
         originalSelection._rowSelections.Insert(0, newRange);
         return originalSelection;
@@ -331,6 +331,6 @@ BreakEnumeration:
         return new IntersectionOfRowSelections([newRange, original]);
       }
     }
-      
+
   }
 }

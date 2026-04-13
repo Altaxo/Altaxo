@@ -54,9 +54,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderAHSBGradient), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorProviderAHSBGradient)obj;
+        var s = (ColorProviderAHSBGradient)o;
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
         info.AddValue("Alpha0", s._alpha0);
         info.AddValue("Alpha1", s._alpha1);

@@ -53,9 +53,9 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpikeRemovalByPeakElimination)obj;
+        var s = (SpikeRemovalByPeakElimination)o;
         info.AddValue("MaximalWidth", s.MaximalWidth);
       }
 
@@ -85,9 +85,9 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpikeRemovalByPeakElimination)obj;
+        var s = (SpikeRemovalByPeakElimination)o;
         info.AddValue("MaximalWidth", s.MaximalWidth);
         info.AddValue("EliminateNegativeSpikes", s.EliminateNegativeSpikes);
       }

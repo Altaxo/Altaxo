@@ -81,9 +81,9 @@ namespace Altaxo.Geometry
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Margin2D)obj;
+        var s = (Margin2D)o;
 
         info.AddValue("Left", s.Left);
         info.AddValue("Top", s.Top);

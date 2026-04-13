@@ -245,16 +245,16 @@ namespace Altaxo.Drawing
     }
 
     /// <inheritdoc />
-    public bool IsStructuralEquivalentTo(IEnumerable<T> l1)
+    public bool IsStructuralEquivalentTo(IEnumerable<T> anotherList)
     {
-      if (l1 is null)
+      if (anotherList is null)
         return false;
 
       var l2 = this;
 
       int i = 0;
       int len2 = l2.Count;
-      foreach (var item1 in l1)
+      foreach (var item1 in anotherList)
       {
         if (i >= len2)
           return false;

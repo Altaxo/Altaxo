@@ -44,9 +44,9 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneIDList), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CSPlaneIDList)obj;
+        var s = (CSPlaneIDList)o;
         info.CreateArray("PlaneIDs", s.Count);
         foreach (CSPlaneID plane in s)
           info.AddValue("e", plane);

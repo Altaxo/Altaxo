@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Interpolation
       /// Serialization surrogate for the initial CardinalCubicSplineOptions version.
       /// </summary>
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 

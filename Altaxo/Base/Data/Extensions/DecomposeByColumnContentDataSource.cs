@@ -53,9 +53,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DecomposeByColumnContentDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DecomposeByColumnContentDataSource)obj;
+        var s = (DecomposeByColumnContentDataSource)o;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);

@@ -51,9 +51,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinkedScaleCollection)obj;
+        var s = (LinkedScaleCollection)o;
 
         info.CreateArray("Properties", s._linkedScales.Length);
         for (int i = 0; i < s._linkedScales.Length; ++i)

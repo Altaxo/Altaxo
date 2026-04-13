@@ -73,9 +73,9 @@ namespace Altaxo.Serialization.Bitmaps
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BitmapImportOptions)obj;
+        var s = (BitmapImportOptions)o;
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
         info.AddValue("IncludePixelNumberColumns", s.IncludePixelNumberColumns);

@@ -23,10 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
@@ -168,19 +164,19 @@ namespace Altaxo.Main.Services
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
     }
 
-    public ChooseSaveErrorResult ChooseSaveError(PathName fileOrFolderName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
+    public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       ChooseSaveErrorResult r = ChooseSaveErrorResult.Ignore;
 
 restartlabel:
-      var dlg = new SaveErrorChooseDialog(fileOrFolderName, message, dialogName, exceptionGot, chooseLocationEnabled);
+      var dlg = new SaveErrorChooseDialog(fileName, message, dialogName, exceptionGot, chooseLocationEnabled);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
 
       switch (dlg.DetailedDialogResult)
       {
         case SaveErrorChooseDialog.SaveErrorChooseDialogResult.ChooseLocation:
           {
-            if (fileOrFolderName is FileName fileName)
+            if (fileName is FileName fileNameX)
             {
               // choose location:
               var fdiag = new SaveFileDialog
@@ -190,7 +186,7 @@ restartlabel:
                 CheckFileExists = false,
                 CheckPathExists = true,
                 Title = "Choose alternate file name",
-                FileName = fileOrFolderName
+                FileName = fileName
               };
               if (fdiag.ShowDialog() == true)
               {
@@ -202,7 +198,7 @@ restartlabel:
                 goto restartlabel;
               }
             }
-            else if (fileOrFolderName is DirectoryName folderName)
+            else if (fileName is DirectoryName folderNameX)
             {
               var fdiag = new System.Windows.Forms.FolderBrowserDialog();
               if (System.Windows.Forms.DialogResult.OK == fdiag.ShowDialog())
@@ -217,7 +213,7 @@ restartlabel:
             }
             else
             {
-              throw new NotImplementedException($"Unhandled type of PathName: {fileOrFolderName?.GetType()}");
+              throw new NotImplementedException($"Unhandled type of PathName: {fileName?.GetType()}");
             }
           }
         case SaveErrorChooseDialog.SaveErrorChooseDialogResult.Retry:

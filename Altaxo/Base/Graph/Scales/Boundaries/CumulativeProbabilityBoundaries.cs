@@ -40,9 +40,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CumulativeProbabilityBoundaries)obj;
+        var s = (CumulativeProbabilityBoundaries)o;
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }
 

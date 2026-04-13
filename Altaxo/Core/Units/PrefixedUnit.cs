@@ -50,11 +50,11 @@ namespace Altaxo.Units
       /// Serializes the specified <see cref="PrefixedUnit"/> instance into the provided
       /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
       /// </summary>
-      /// <param name="obj">The object to serialize (expected to be a <see cref="PrefixedUnit"/>).</param>
+      /// <param name="o">The object to serialize (expected to be a <see cref="PrefixedUnit"/>).</param>
       /// <param name="info">The serialization info where values should be written.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PrefixedUnit)obj;
+        var s = (PrefixedUnit)o;
 
         info.AddValue("Prefix", s.Prefix);
         info.AddValue("Unit", s.Unit);

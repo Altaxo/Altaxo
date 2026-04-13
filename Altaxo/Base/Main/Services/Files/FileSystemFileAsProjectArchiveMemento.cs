@@ -78,15 +78,15 @@ namespace Altaxo.Main.Services.Files
     }
 
     /// <inheritdoc/>
-    public IProjectArchiveEntryMemento WithEntryName(string newName)
+    public IProjectArchiveEntryMemento WithEntryName(string newEntryName)
     {
-      if (string.IsNullOrEmpty(newName))
-        throw new ArgumentNullException(nameof(newName));
+      if (string.IsNullOrEmpty(newEntryName))
+        throw new ArgumentNullException(nameof(newEntryName));
 
-      if (_entryName == newName)
+      if (_entryName == newEntryName)
         return this;
 
-      return new FileSystemFileAsProjectArchiveMemento(newName, _archiveManager, _archiveFolderName);
+      return new FileSystemFileAsProjectArchiveMemento(newEntryName, _archiveManager, _archiveFolderName);
     }
 
     /// <inheritdoc/>

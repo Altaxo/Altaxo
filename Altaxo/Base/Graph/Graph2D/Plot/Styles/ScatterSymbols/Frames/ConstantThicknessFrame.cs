@@ -44,9 +44,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       /// <inheritdoc/>

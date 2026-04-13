@@ -266,9 +266,9 @@ namespace Altaxo.Calc.Probability
     #region CdfPdfQuantile
 
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      return CDF(z, alpha, beta);
+      return CDF(x, alpha, beta);
     }
 
     /// <summary>
@@ -289,9 +289,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      return PDF(z, alpha, beta);
+      return PDF(x, alpha, beta);
     }
 
     /// <summary>

@@ -376,7 +376,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       if (Spline is null)
         Initialize();
@@ -388,14 +388,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += GetYOfOneTerm_PropertyIsWidth(X[0], P[j], P[j + 1], P[j + 2]);
+          sumTerms += GetYOfOneTerm_PropertyIsWidth(independent[0], parameters[j], parameters[j + 1], parameters[j + 2]);
         }
       }
       else
       {
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += GetYOfOneTerm_PropertyIsPosition(X[0], P[j], P[j + 1]);
+          sumTerms += GetYOfOneTerm_PropertyIsPosition(independent[0], parameters[j], parameters[j + 1]);
         }
       }
 
@@ -403,18 +403,18 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         int offset = NumberOfParametersPerPeak * NumberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[OrderOfBaselinePolynomial + offset];
+        sumPolynomial = parameters[OrderOfBaselinePolynomial + offset];
         for (int i = OrderOfBaselinePolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      FV[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       if (Spline is null)
         Initialize();
@@ -429,14 +429,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         {
           for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
           {
-            sumTerms += GetYOfOneTerm_PropertyIsWidth(x, P[j], P[j + 1], P[j + 2]);
+            sumTerms += GetYOfOneTerm_PropertyIsWidth(x, parameters[j], parameters[j + 1], parameters[j + 2]);
           }
         }
         else
         {
           for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
           {
-            sumTerms += GetYOfOneTerm_PropertyIsPosition(x, P[j], P[j + 1]);
+            sumTerms += GetYOfOneTerm_PropertyIsPosition(x, parameters[j], parameters[j + 1]);
           }
         }
 
@@ -444,72 +444,72 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         {
           int offset = NumberOfParametersPerPeak * NumberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[OrderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[OrderOfBaselinePolynomial + offset];
           for (int i = OrderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
         // at first, the peak terms
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          var height = P[j];
-          var position = P[j + 1];
+          var height = parameters[j];
+          var position = parameters[j + 1];
 
           if (PropertyIsPeakWidth)
           {
-            if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2])
+            if (isFixed is not null && isFixed[j] && isFixed[j + 1] && isFixed[j + 2])
             {
               continue;
             }
             var arg = x - position;
             if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))  // outside of the x range of the table, so we assume the peak function is zero there
             {
-              DY[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
-              DY[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
-              DY[r, j + 2] = 0; // derivative with respect to width is zero, because the function value is zero
+              DF[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
+              DF[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
+              DF[r, j + 2] = 0; // derivative with respect to width is zero, because the function value is zero
             }
             else
             {
-              var width = P[j + 2];
+              var width = parameters[j + 2];
               var (z, dzdx, dzdy) = Spline.GetValueAndDerivativesOfXY(width, arg);
 
-              DY[r, j + 0] = z; // derivative with respect to height
-              DY[r, j + 1] = -height * dzdy; // derivative w.r.t. position
-              DY[r, j + 2] = height * dzdx; // derivative w.r.t. width
+              DF[r, j + 0] = z; // derivative with respect to height
+              DF[r, j + 1] = -height * dzdy; // derivative w.r.t. position
+              DF[r, j + 2] = height * dzdx; // derivative w.r.t. width
             }
           }
           else // property is position
           {
-            if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1])
+            if (isFixed is not null && isFixed[j] && isFixed[j + 1])
             {
               continue;
             }
             var arg = x - position;
             if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))  // outside of the x range of the table, so we assume the peak function is zero there
             {
-              DY[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
-              DY[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
+              DF[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
+              DF[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
             }
             else
             {
               var (z, dzdx, dzdy) = Spline.GetValueAndDerivativesOfXY(position, arg);
 
-              DY[r, j + 0] = z; // derivative with respect to height
-              DY[r, j + 1] = height * (dzdx - dzdy); // derivative w.r.t. position
+              DF[r, j + 0] = z; // derivative with respect to height
+              DF[r, j + 1] = height * (dzdx - dzdy); // derivative w.r.t. position
             }
           }
         }
@@ -520,7 +520,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           double xn = 1;
           for (int i = 0, j = NumberOfParametersPerPeak * NumberOfTerms; i <= OrderOfBaselinePolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
         }

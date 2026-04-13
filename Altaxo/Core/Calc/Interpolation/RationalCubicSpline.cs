@@ -688,19 +688,19 @@ namespace Altaxo.Calc.Interpolation
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         dx.Clear();
         dy.Clear();
@@ -712,16 +712,16 @@ namespace Altaxo.Calc.Interpolation
       }
 
       const int lo = 0;
-      int hi = x.Count - 1;
+      int hi = xvec.Count - 1;
 
-      if (dx.Count != x.Count)
+      if (dx.Count != xvec.Count)
       {
-        dx = CreateVector.Dense<double>(x.Count);  // abscissa difference vector
-        dy = CreateVector.Dense<double>(x.Count);  // vector of derivatives
-        a = CreateVector.Dense<double>(x.Count);   // spline coefficients
-        b = CreateVector.Dense<double>(x.Count);   // spline coefficients
-        c = CreateVector.Dense<double>(x.Count);   // spline coefficients
-        d = CreateVector.Dense<double>(x.Count);   // spline coefficients
+        dx = CreateVector.Dense<double>(xvec.Count);  // abscissa difference vector
+        dy = CreateVector.Dense<double>(xvec.Count);  // vector of derivatives
+        a = CreateVector.Dense<double>(xvec.Count);   // spline coefficients
+        b = CreateVector.Dense<double>(xvec.Count);   // spline coefficients
+        c = CreateVector.Dense<double>(xvec.Count);   // spline coefficients
+        d = CreateVector.Dense<double>(xvec.Count);   // spline coefficients
       }
 
       if (boundary == BoundaryConditions.FiniteDifferences || boundary == BoundaryConditions.Supply1stDerivative)
@@ -729,8 +729,8 @@ namespace Altaxo.Calc.Interpolation
         if (boundary == BoundaryConditions.FiniteDifferences)
         {
           // finite differences (quadratic Newton interpolation)
-          dy[lo] = deriv1(x, y, lo + 1, -1);
-          dy[hi] = deriv1(x, y, hi - 1, 1);
+          dy[lo] = deriv1(xvec, yvec, lo + 1, -1);
+          dy[hi] = deriv1(xvec, yvec, hi - 1, 1);
         }
         else
         {  // the 1st derivatives are supplied by the user
@@ -740,10 +740,10 @@ namespace Altaxo.Calc.Interpolation
         }
 
         // start the calculation
-        InverseDifferences(x, dx);       // inverse difference vector
+        InverseDifferences(xvec, dx);       // inverse difference vector
         SplineA(p, dx, a);      // a used as working vector
-        SplineB1(p, dx, y, dy, b, a);    // a and b used as working vector
-        SplineC1(p, x, dx, y, dy, a, b, c, d);  // spline coeff. returned in a,b,c,d
+        SplineB1(p, dx, yvec, dy, b, a);    // a and b used as working vector
+        SplineC1(p, xvec, dx, yvec, dy, a, b, c, d);  // spline coeff. returned in a,b,c,d
       }
       else if (boundary == BoundaryConditions.Natural || boundary == BoundaryConditions.Supply2ndDerivative)
       {
@@ -760,10 +760,10 @@ namespace Altaxo.Calc.Interpolation
         }
 
         // start the calculation
-        Differences(x, dx);              // difference vector
+        Differences(xvec, dx);              // difference vector
         SplineA(p, dx, a);      // a used as working vector
-        SplineB2(p, dx, y, dy, b, a);    // a and b used as working vector
-        SplineC2(p, x, dx, y, dy, a, b, c, d);  // spline coeff. returned in a,b,c,d
+        SplineB2(p, dx, yvec, dy, b, a);    // a and b used as working vector
+        SplineC2(p, xvec, dx, yvec, dy, a, b, c, d);  // spline coeff. returned in a,b,c,d
       }
       else if (boundary == BoundaryConditions.Periodic)
       {
@@ -778,9 +778,9 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public double GetYOfX(double u)
+    public double GetYOfX(double x)
     {
-      return GetYOfU(u);
+      return GetYOfU(x);
     }
 
     /// <inheritdoc/>

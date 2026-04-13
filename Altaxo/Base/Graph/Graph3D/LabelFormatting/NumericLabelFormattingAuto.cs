@@ -46,9 +46,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericLabelFormattingAuto)obj;
+        var s = (NumericLabelFormattingAuto)o;
 
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingAuto).BaseType!);
       }

@@ -51,9 +51,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LineShape)obj;
+        var s = (LineShape)o;
         info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 

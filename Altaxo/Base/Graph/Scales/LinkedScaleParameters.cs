@@ -56,9 +56,9 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
     /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinkedScaleParameters)obj;
+        var s = (LinkedScaleParameters)o;
 
         info.AddValue("OrgA", s._orgA);
         info.AddValue("OrgB", s._orgB);

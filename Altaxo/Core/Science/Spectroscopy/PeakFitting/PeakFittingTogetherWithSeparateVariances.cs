@@ -50,9 +50,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public new class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingTogetherWithSeparateVariances)obj;
+        var s = (PeakFittingTogetherWithSeparateVariances)o;
         info.AddValue("FitFunction", s.FitFunction);
       }
 
@@ -77,9 +77,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public new class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingTogetherWithSeparateVariances)obj;
+        var s = (PeakFittingTogetherWithSeparateVariances)o;
         info.AddValue("FitFunction", s.FitFunction);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
@@ -109,9 +109,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public new class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingTogetherWithSeparateVariances)obj;
+        var s = (PeakFittingTogetherWithSeparateVariances)o;
         info.AddValue("FitFunction", s.FitFunction);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
         info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);

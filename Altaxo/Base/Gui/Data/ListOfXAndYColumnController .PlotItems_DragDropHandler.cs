@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Data
       }
 
       /// <inheritdoc />
-      public void DropCanAcceptData(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
+      public void DropCanAcceptData(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         if (data is IEnumerable<NGTreeNode> nodes1)
         {
@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Data
       }
 
       /// <inheritdoc />
-      public void Drop(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+      public void Drop(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         isMove = false;
         isCopy = false;
@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Data
         // the data came from the list of available items
         int insertPositionIndex = _parent.DataItems.Items.Count;
         // determine the insert position
-        if (targetObject is MyNode myNode)
+        if (targetItem is MyNode myNode)
         {
           var targetIndex = _parent.DataItems.Items.IndexOfFirst((n, i) => object.ReferenceEquals(n, myNode));
           if (targetIndex != -1)

@@ -199,24 +199,24 @@ namespace Altaxo.Analysis.Statistics.Histograms
     #region IBinningDefinition
 
     /// <inheritdoc />
-    public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> list)
+    public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> sortedList)
     {
-      if (list is null)
+      if (sortedList is null)
         throw new ArgumentNullException();
-      if (list.Count == 0)
+      if (sortedList.Count == 0)
         throw new ArgumentException("list is empty");
 
-      var numberOfValues = list.Count;
-      var minValue = list[0];
-      var maxValue = list[numberOfValues - 1];
+      var numberOfValues = sortedList.Count;
+      var minValue = sortedList[0];
+      var maxValue = sortedList[numberOfValues - 1];
 
       if (!IsUserDefinedBinWidth)
       {
-        double q1 = list[(numberOfValues * 1) / 4]; // 25% Quantile
-        double q3 = list[(numberOfValues * 3) / 4]; // 75% Quantile
+        double q1 = sortedList[(numberOfValues * 1) / 4]; // 25% Quantile
+        double q3 = sortedList[(numberOfValues * 3) / 4]; // 75% Quantile
 
         // Width of a bin after Freedman and Diaconis
-        double widthOfBin = 2 * (q3 - q1) / Math.Pow(list.Count, 1.0 / 3.0);
+        double widthOfBin = 2 * (q3 - q1) / Math.Pow(sortedList.Count, 1.0 / 3.0);
 
         BinWidth = widthOfBin; // use property in order to invalidate the bins if the value has changed
       }
@@ -244,7 +244,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     }
 
     /// <inheritdoc />
-    public void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfValues)
+    public void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfData)
     {
       _binCounts = new int[_numberOfBins];
       int listIndex = 0;
@@ -255,7 +255,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         double binCenter = GetBinCenterPosition(binIndex);
 
         int orgListIndex = listIndex;
-        while (listIndex < sortedListOfValues.Count && (sortedListOfValues[listIndex] < binUpperBound || binIndex == (NumberOfBins - 1)))  // with binIndex == (Count - 1) make sure that rounding errors will not swallow the last value
+        while (listIndex < sortedListOfData.Count && (sortedListOfData[listIndex] < binUpperBound || binIndex == (NumberOfBins - 1)))  // with binIndex == (Count - 1) make sure that rounding errors will not swallow the last value
         {
           ++listIndex;
         }

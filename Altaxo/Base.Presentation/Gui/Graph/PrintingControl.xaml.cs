@@ -97,11 +97,11 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Shows the printer-properties dialog for the specified printer settings.
     /// </summary>
-    /// <param name="psSettings">The printer settings to edit.</param>
-    public void ShowPrinterPropertiesDialog(PrinterSettings psSettings)
+    /// <param name="currentSettings">The printer settings to edit.</param>
+    public void ShowPrinterPropertiesDialog(PrinterSettings currentSettings)
     {
       IntPtr handle = Current.Gui.MainWindowHandle;
-      UnmanagedPrinterPropertiesDialogHelper.OpenPrinterPropertiesDialog(psSettings, handle);
+      UnmanagedPrinterPropertiesDialogHelper.OpenPrinterPropertiesDialog(currentSettings, handle);
     }
 
     #endregion Interop for printer properties

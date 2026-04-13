@@ -72,9 +72,9 @@ namespace Altaxo.Graph.Graph3D.GuiModels
       private AbsoluteDocumentPath? _pathToGraphDocument;
       private GraphViewOptions? _deserializedObject;
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphViewOptions)obj;
+        var s = (GraphViewOptions)o;
         info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
         info.AddNullableEnum("RootLayerMarkersVisibility", s._rootLayerMarkersVisibility);
       }

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -47,9 +47,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
+    public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor baseColor)
     {
-      return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
+      return AxoColor.FromAhsb(1, baseColor.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
     }
 
     /// <inheritdoc/>

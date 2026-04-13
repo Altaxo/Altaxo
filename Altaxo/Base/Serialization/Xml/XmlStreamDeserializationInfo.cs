@@ -705,19 +705,19 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <inheritdoc />
-    public object GetValue(string name, object? parentobject)
+    public object GetValue(string name, object? parent)
     {
 #if !NONULLSTRICTCHECK
-      return GetValueOrNull(parentobject) ?? throw new DeserializationNullException(name, parentobject);
+      return GetValueOrNull(parent) ?? throw new DeserializationNullException(name, parent);
 #else
       return GetValueOrNull(parentobject)!;
 #endif
     }
 
     /// <inheritdoc />
-    public object? GetValueOrNull(string name, object? parentobject)
+    public object? GetValueOrNull(string name, object? parent)
     {
-      return GetValueOrNull(parentobject);
+      return GetValueOrNull(parent);
     }
 
     /// <inheritdoc />
@@ -815,12 +815,12 @@ namespace Altaxo.Serialization.Xml
     /// is not loaded yet), the outer XML node is returned as string value, so it can be deserialized later.
     /// </summary>
     /// <param name="name">Name of the node.</param>
-    /// <param name="parentobject">The parent object.</param>
+    /// <param name="parent">The parent object.</param>
     /// <param name="returnValueIsOuterXml">If set to <c>true</c>, the return value is a string containing the outer XML node.</param>
     /// <returns>The deserialized value (if <paramref name="returnValueIsOuterXml"/> is false), or the outer XML node (if <paramref name="returnValueIsOuterXml"/> is true).</returns>
     /// <exception cref="ApplicationException"></exception>
     /// <inheritdoc />
-    public object? GetValueOrOuterXml(string name, object parentobject, out bool returnValueIsOuterXml)
+    public object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml)
     {
       returnValueIsOuterXml = false;
       var type = _xmlReader.GetAttribute("Type");
@@ -842,7 +842,7 @@ namespace Altaxo.Serialization.Xml
           if (bNotEmpty)
             _xmlReader.ReadStartElement();  // note: this must now be done by  in the deserialization code
 
-          var retvalue = surr.Deserialize(null, this, parentobject);
+          var retvalue = surr.Deserialize(null, this, parent);
 
           if (bNotEmpty)
             _xmlReader.ReadEndElement();

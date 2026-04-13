@@ -154,9 +154,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public void TrySetHueOfButton(int indexOfMovedButton, double phi, double[] hueOfButtons)
+    public void TrySetHueOfButton(int indexOfMovedButton, double hue, double[] hueOfButtons)
     {
-      hueOfButtons[0] = BringInbetween0To1(phi);
+      hueOfButtons[0] = BringInbetween0To1(hue);
     }
   }
 

@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not allowed.");
         /*
@@ -86,9 +86,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ScatterSymbolGroupStyle)obj;
+        var s = (ScatterSymbolGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
 
         info.AddValue("Value", s._value);
@@ -162,11 +162,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc />
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (ScatterSymbolGroupStyle)fromb;
-      _value = from._value;
-      _listOfValues = from._listOfValues;
+      var fromX = (ScatterSymbolGroupStyle)from;
+      _value = fromX._value;
+      _listOfValues = fromX._listOfValues;
     }
 
     /// <inheritdoc />

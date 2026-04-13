@@ -40,9 +40,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (InverseScaleRescaleConditions)obj;
+        var s = (InverseScaleRescaleConditions)o;
 
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }

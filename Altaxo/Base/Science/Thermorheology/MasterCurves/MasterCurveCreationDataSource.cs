@@ -54,9 +54,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MasterCurveCreationDataSource)obj;
+        var s = (MasterCurveCreationDataSource)o;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);

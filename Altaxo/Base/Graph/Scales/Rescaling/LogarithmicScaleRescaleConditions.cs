@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Rescaling.LogarithmicAxisRescaleConditions", 1)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -79,9 +79,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicScaleRescaleConditions), 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LogarithmicScaleRescaleConditions)obj;
+        var s = (LogarithmicScaleRescaleConditions)o;
 
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }

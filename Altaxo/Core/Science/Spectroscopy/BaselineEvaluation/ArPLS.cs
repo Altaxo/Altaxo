@@ -39,9 +39,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ArPLS)obj;
+        var s = (ArPLS)o;
         info.AddValue("Lambda", s.Lambda);
         info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
         info.AddValue("TerminationRatio", s.TerminationRatio);

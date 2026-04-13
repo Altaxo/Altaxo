@@ -53,9 +53,9 @@ namespace Altaxo.Graph.Gdi.Plot
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionPlotItem), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYNonlinearFitFunctionPlotItem)obj;
+        var s = (XYNonlinearFitFunctionPlotItem)o;
         info.AddValue("Data", s._plotData);
         info.AddValue("Style", s._plotStyles);
       }

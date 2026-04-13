@@ -121,7 +121,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -183,9 +183,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BarGraphPlotStyle)obj;
+        var s = (BarGraphPlotStyle)o;
         info.AddValue("InnerGapWidth", s._relInnerGapX);
         info.AddValue("OuterGapWidth", s._relOuterGapX);
         info.AddValue("IndependentFillColor", s._independentFillColor);
@@ -259,15 +259,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
+    public virtual bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
 
-      var from = obj as BarGraphPlotStyle;
-      if (from is not null)
+      if (from is BarGraphPlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }

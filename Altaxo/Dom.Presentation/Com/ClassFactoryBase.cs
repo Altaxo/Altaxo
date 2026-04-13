@@ -151,9 +151,9 @@ namespace Altaxo.Com
       InternalCreateInstance(pUnkOuter, ref riid, out ppvObject);
     }
 
-    public void LockServer(bool bLock)
+    public void LockServer(bool fLock)
     {
-      if (bLock)
+      if (fLock)
       {
         _comManager.InterlockedIncrementServerLockCount();
       }

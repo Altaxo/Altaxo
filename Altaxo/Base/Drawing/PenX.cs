@@ -195,7 +195,7 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("This point should not be reached");
         /*
@@ -319,7 +319,7 @@ if (0 != (cp & PenHolder.Configured.Width))
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 2)]
     private class XmlSerializationSurrogate1 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("Serialization into old versions is not supported");
         /*
@@ -452,7 +452,7 @@ if (0 != (cp & PenX.Configured.Width))
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 3)]
     private class XmlSerializationSurrogate3 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -597,7 +597,7 @@ if (0 != (cp & PenX.Configured.Width))
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 4)]
     private class XmlSerializationSurrogate4 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version!");
         /*
@@ -731,9 +731,9 @@ if (0 != (cp & PenX.Configured.Width))
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 5)]
     private class XmlSerializationSurrogate5 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PenX)obj;
+        var s = (PenX)o;
         var cp = s.GetConfiguredProperties();
         info.AddValue("Configured", (int)cp);
 

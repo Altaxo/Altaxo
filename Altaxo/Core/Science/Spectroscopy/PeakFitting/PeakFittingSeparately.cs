@@ -48,9 +48,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingSeparately)obj;
+        var s = (PeakFittingSeparately)o;
         info.AddValue("FitFunction", s.FitFunction);
       }
 
@@ -77,9 +77,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingSeparately)obj;
+        var s = (PeakFittingSeparately)o;
         info.AddValue("FitFunction", s.FitFunction);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
@@ -110,9 +110,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingSeparately)obj;
+        var s = (PeakFittingSeparately)o;
         info.AddValue("FitFunction", s.FitFunction);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
         info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
@@ -148,7 +148,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       double[] y,
       int[]? regions,
       IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakFittingResults
-      ) Execute(double[] xArray, double[] yArray, int[]? regions, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
+      ) Execute(double[] x, double[] y, int[]? regions, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
     {
       var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (peakDesc, start, end) in peakDescriptions)
@@ -156,13 +156,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         cancellationToken.ThrowIfCancellationRequested();
         var subX = new double[end - start];
         var subY = new double[end - start];
-        Array.Copy(xArray, start, subX, 0, end - start);
-        Array.Copy(yArray, start, subY, 0, end - start);
+        Array.Copy(x, start, subX, 0, end - start);
+        Array.Copy(y, start, subY, 0, end - start);
         var result = Execute(subX, subY, peakDesc, cancellationToken);
         peakFitDescriptions.Add((result, start, end));
       }
 
-      return (xArray, yArray, regions, peakFitDescriptions);
+      return (x, y, regions, peakFitDescriptions);
     }
 
     /// <summary>

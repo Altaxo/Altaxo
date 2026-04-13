@@ -47,7 +47,7 @@ namespace Altaxo.Data.Transformations
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DecadicExponentialTransformation), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -72,9 +72,9 @@ namespace Altaxo.Data.Transformations
     }
 
     /// <inheritdoc/>
-    public double Transform(double value)
+    public double Transform(double y)
     {
-      return Math.Pow(10, value);
+      return Math.Pow(10, y);
     }
 
     /// <inheritdoc/>

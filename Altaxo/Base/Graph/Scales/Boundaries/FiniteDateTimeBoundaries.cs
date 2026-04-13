@@ -53,9 +53,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FiniteDateTimeBoundaries)obj;
+        var s = (FiniteDateTimeBoundaries)o;
         info.AddValue("NumberOfItems", s._numberOfItems);
         info.AddValue("MinValue", s._minValue);
         info.AddValue("MaxValue", s._maxValue);

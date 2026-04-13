@@ -1487,7 +1487,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
           /*
@@ -1538,7 +1538,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleStyle), 1)]
       private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("Serialization of old versions is not supported");
           /*
@@ -1681,7 +1681,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DScaleStyleCollection), 1)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("Serialization of old versions is not supported");
           /*
@@ -1852,11 +1852,11 @@ namespace Altaxo.Graph.Gdi
       {
       }
 
-      public virtual void PaintPreprocessing(IPaintContext paintContext)
+      public virtual void PaintPreprocessing(IPaintContext context)
       {
       }
 
-      public abstract void Paint(Graphics g, IPaintContext paintContext);
+      public abstract void Paint(Graphics g, IPaintContext context);
 
       public virtual PointD2D Position
       {
@@ -1930,9 +1930,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleLinePlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (AxisStyleLinePlaceHolder)obj;
+          var s = (AxisStyleLinePlaceHolder)o;
           info.AddValue("Index", s.Index);
         }
 
@@ -2035,9 +2035,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleMajorLabelPlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (AxisStyleMajorLabelPlaceHolder)obj;
+          var s = (AxisStyleMajorLabelPlaceHolder)o;
           info.AddValue("Index", s.Index);
         }
 
@@ -2129,9 +2129,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleMinorLabelPlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (AxisStyleMinorLabelPlaceHolder)obj;
+          var s = (AxisStyleMinorLabelPlaceHolder)o;
           info.AddValue("Index", s.Index);
         }
 
@@ -2223,9 +2223,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleTitlePlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (AxisStyleTitlePlaceHolder)obj;
+          var s = (AxisStyleTitlePlaceHolder)o;
           info.AddValue("Index", s.Index);
         }
 
@@ -2357,9 +2357,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlanesPlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (GridPlanesPlaceHolder)obj;
+          var s = (GridPlanesPlaceHolder)o;
         }
 
         public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -2407,7 +2407,7 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemPlaceHolder), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           // Note there is no need to serialize PlotItemParent nor PlotItemIndex, since these variables are used only temporarily
         }
@@ -2538,9 +2538,9 @@ namespace Altaxo.Graph.Gdi
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LegendText), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (LegendText)obj;
+          var s = (LegendText)o;
           info.AddBaseValueEmbedded(s, typeof(LegendText).BaseType!);
         }
 

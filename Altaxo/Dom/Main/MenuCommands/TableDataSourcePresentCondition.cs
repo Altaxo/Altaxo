@@ -34,7 +34,7 @@ namespace Altaxo.Worksheet.Commands
   public class TableDataSourcePresentConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       if (Current.Workbench.ActiveViewContent is null)
       {

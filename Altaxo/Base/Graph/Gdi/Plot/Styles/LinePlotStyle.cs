@@ -75,9 +75,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public class FillDirectionXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FillDirection)obj;
+        var s = (FillDirection)o;
         info.SetNodeContent(s.ToString());
       }
 
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
       }
@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
         /*
@@ -324,7 +324,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
@@ -364,7 +364,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
@@ -412,7 +412,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not allowed");
         /*
@@ -459,9 +459,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinePlotStyle)obj;
+        var s = (LinePlotStyle)o;
 
         info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
         info.AddValue("SkipFreq", s._skipFrequency);
@@ -559,14 +559,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as LinePlotStyle;
-      if (from is not null)
+      if (from is LinePlotStyle fromX)
       {
-        CopyFrom(from, Main.EventFiring.Enabled);
+        CopyFrom(fromX, Main.EventFiring.Enabled);
         return true;
       }
       return false;

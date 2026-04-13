@@ -47,9 +47,9 @@ namespace Altaxo.Graph.Scales.Ticks
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AdditionalTicks), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AdditionalTicks)obj;
+        var s = (AdditionalTicks)o;
 
         info.CreateArray("ByValues", s._additionalTicks.Count);
         foreach (AltaxoVariant v in s._additionalTicks)

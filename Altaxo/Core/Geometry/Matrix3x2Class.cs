@@ -65,7 +65,7 @@ namespace Altaxo.Geometry
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         var m11 = info.GetDouble("M11");
         var m12 = info.GetDouble("M12");

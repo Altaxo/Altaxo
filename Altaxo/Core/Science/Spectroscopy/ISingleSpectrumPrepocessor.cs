@@ -38,7 +38,7 @@ namespace Altaxo.Science.Spectroscopy
   public interface ISingleSpectrumPreprocessor
   {
     /// <summary>
-    /// Executes the processor.
+    /// Executes the processor for a single spectrum.
     /// </summary>
     /// <param name="x">The x-values of the spectrum.</param>
     /// <param name="y">The y-values of the spectrum.</param>

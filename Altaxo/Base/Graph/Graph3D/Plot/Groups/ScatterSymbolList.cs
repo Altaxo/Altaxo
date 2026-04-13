@@ -50,9 +50,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ScatterSymbolList)obj;
+        var s = (ScatterSymbolList)o;
 
         info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
 

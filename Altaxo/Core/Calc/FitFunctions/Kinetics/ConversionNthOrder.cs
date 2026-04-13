@@ -49,9 +49,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ConversionNthOrder)obj;
+        var s = (ConversionNthOrder)o;
       }
 
       /// <inheritdoc/>
@@ -158,66 +158,66 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = P[1] * EvaluateConversion(X[0], P[0], P[2], P[3]);
+      dependent[0] = parameters[1] * EvaluateConversion(independent[0], parameters[0], parameters[2], parameters[3]);
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        FV[r] = P[1] * EvaluateConversion(x, P[0], P[2], P[3]);
+        dependent[r] = parameters[1] * EvaluateConversion(x, parameters[0], parameters[2], parameters[3]);
       }
     }
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
-        double t0 = P[0];
-        double A0 = P[1];
-        double k = P[2];
-        double n = P[3];
+        var x = independent[r, 0];
+        double t0 = parameters[0];
+        double A0 = parameters[1];
+        double k = parameters[2];
+        double n = parameters[3];
 
         if (!(x >= t0))
         {
-          DY[r, 0] = 0;
-          DY[r, 1] = 0;
-          DY[r, 2] = 0;
-          DY[r, 3] = 0;
+          DF[r, 0] = 0;
+          DF[r, 1] = 0;
+          DF[r, 2] = 0;
+          DF[r, 3] = 0;
         }
         else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
         {
-          DY[r, 0] = 0;
-          DY[r, 1] = 0;
-          DY[r, 2] = 0;
-          DY[r, 3] = 0;
+          DF[r, 0] = 0;
+          DF[r, 1] = 0;
+          DF[r, 2] = 0;
+          DF[r, 3] = 0;
         }
         else
         {
           if (n == 1)
           {
             var term = Math.Exp(k * (t0 - x));
-            DY[r, 0] = -A0 * term * k;
-            DY[r, 1] = 1 - term;
-            DY[r, 2] = A0 * term * (x - t0);
-            DY[r, 3] = -A0 * term * 0.5 * RMath.Pow2(k * (x - t0));
+            DF[r, 0] = -A0 * term * k;
+            DF[r, 1] = 1 - term;
+            DF[r, 2] = A0 * term * (x - t0);
+            DF[r, 3] = -A0 * term * 0.5 * RMath.Pow2(k * (x - t0));
           }
           else
           {
             var term = 1 - k * (n - 1) * (t0 - x);
             var termE = Math.Pow(term, 1 / (1 - n));
 
-            DY[r, 0] = -A0 * termE * k / term;
-            DY[r, 1] = 1 - termE;
-            DY[r, 2] = A0 * termE * (x - t0) / term;
-            DY[r, 3] = -A0 * termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0 - x) / (term * (1 - n)));
+            DF[r, 0] = -A0 * termE * k / term;
+            DF[r, 1] = 1 - termE;
+            DF[r, 2] = A0 * termE * (x - t0) / term;
+            DF[r, 3] = -A0 * termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0 - x) / (term * (1 - n)));
           }
         }
       }

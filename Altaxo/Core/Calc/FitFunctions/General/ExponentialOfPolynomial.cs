@@ -53,9 +53,9 @@ namespace Altaxo.Calc.FitFunctions.General
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExponentialOfPolynomial)obj;
+        var s = (ExponentialOfPolynomial)o;
         info.AddValue("OrderPositive", s._order_n);
         info.AddValue("OrderNegative", s._order_m);
       }
@@ -226,14 +226,14 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of terms x^0 .. x^n
-      double sum = P[_order_n + 1];
+      double sum = parameters[_order_n + 1];
       for (int i = _order_n; i > 0; i--)
       {
-        sum *= X[0];
-        sum += P[i];
+        sum *= independent[0];
+        sum += parameters[i];
       }
 
       if (_order_m > 0)
@@ -242,23 +242,23 @@ namespace Altaxo.Calc.FitFunctions.General
         double isum = 0;
         for (int i = _order_n + _order_m + 1; i > _order_n + 1; i--)
         {
-          isum += P[i];
+          isum += parameters[i];
           if (!(isum == 0)) // avoid NaN if x=0 and coefficients are fixed to zero
           {
-            isum /= X[0];
+            isum /= independent[0];
           }
         }
-        Y[0] = P[0] + Math.Exp(sum + isum);
+        dependent[0] = parameters[0] + Math.Exp(sum + isum);
       }
       else
       {
-        Y[0] = P[0] + Math.Exp(sum);
+        dependent[0] = parameters[0] + Math.Exp(sum);
       }
     }
 
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -266,11 +266,11 @@ namespace Altaxo.Calc.FitFunctions.General
         var x = independent[r, 0];
 
         // evaluation of terms x^0 .. x^n
-        double sum = P[_order_n + 1];
+        double sum = parameters[_order_n + 1];
         for (int i = _order_n; i > 0; i--)
         {
           sum *= x;
-          sum += P[i];
+          sum += parameters[i];
         }
 
         if (_order_m > 0)
@@ -279,17 +279,17 @@ namespace Altaxo.Calc.FitFunctions.General
           double isum = 0;
           for (int i = _order_n + _order_m + 1; i > _order_n + 1; i--)
           {
-            isum += P[i];
+            isum += parameters[i];
             if (!(isum == 0)) // avoid NaN if x=0 and coefficients are fixed to zero
             {
               isum /= x;
             }
           }
-          FV[r] = P[0] + Math.Exp(sum + isum);
+          dependent[r] = parameters[0] + Math.Exp(sum + isum);
         }
         else
         {
-          FV[r] = P[0] + Math.Exp(sum);
+          dependent[r] = parameters[0] + Math.Exp(sum);
         }
       }
     }
@@ -304,20 +304,20 @@ namespace Altaxo.Calc.FitFunctions.General
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         double y;
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
         // evaluation of terms x^0 .. x^n
-        double sum = P[_order_n + 1];
+        double sum = parameters[_order_n + 1];
         for (int i = _order_n; i > 0; i--)
         {
           sum *= x;
-          sum += P[i];
+          sum += parameters[i];
         }
 
         if (_order_m > 0)
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.FitFunctions.General
           double isum = 0;
           for (int i = _order_n + _order_m + 1; i > _order_n + 1; i--)
           {
-            isum += P[i];
+            isum += parameters[i];
             if (!(isum == 0)) // avoid NaN if x=0 and coefficients are fixed to zero
             {
               isum /= x;
@@ -339,13 +339,13 @@ namespace Altaxo.Calc.FitFunctions.General
           y = Math.Exp(sum); // without offset
         }
 
-        DY[r, 0] = 1; // derivative with respect to offset
-        DY[r, 1] = y; // derivative with respect to a0
+        DF[r, 0] = 1; // derivative with respect to offset
+        DF[r, 1] = y; // derivative with respect to a0
         double xn = y;
         for (int i = 1; i <= _order_n; i++)
         {
           xn *= x;
-          DY[r, 1 + i] = xn;
+          DF[r, 1 + i] = xn;
         }
 
         if (_order_m > 0)
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.FitFunctions.General
           for (int i = 1; i <= _order_m; ++i)
           {
             xm /= x;
-            DY[r, 1 + _order_n + i] = xm;
+            DF[r, 1 + _order_n + i] = xm;
           }
         }
       }

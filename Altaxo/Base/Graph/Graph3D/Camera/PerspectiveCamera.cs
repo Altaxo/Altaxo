@@ -49,9 +49,9 @@ namespace Altaxo.Graph.Graph3D.Camera
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PerspectiveCamera)obj;
+        var s = (PerspectiveCamera)o;
         info.AddValue("UpVector", s._upVector);
         info.AddValue("EyePosition", s._eyePosition);
         info.AddValue("TargetPosition", s._targetPosition);

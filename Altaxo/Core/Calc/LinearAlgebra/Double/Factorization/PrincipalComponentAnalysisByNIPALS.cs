@@ -56,9 +56,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PrincipalComponentAnalysisByNIPALS)obj;
+        var s = (PrincipalComponentAnalysisByNIPALS)o;
         info.AddValue("Accuracy", s.Accuracy);
       }
 
@@ -197,9 +197,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     } // end NIPALS
 
     /// <inheritdoc/>
-    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> A, int rank)
+    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> X, int rank)
     {
-      var x = A.Clone();
+      var x = X.Clone();
       var (factors, loads, _) = NIPALS_HO(x, rank, 1E-9);
       return (factors, loads);
     }

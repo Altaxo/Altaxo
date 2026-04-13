@@ -173,9 +173,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VogelFulcherLawRate), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VogelFulcherLawRate)obj;
+        var s = (VogelFulcherLawRate)o;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("ParamBUnit", s._temperatureUnitOfB);
         info.AddEnum("ParamT0Unit", s._temperatureUnitOfT0);
@@ -305,25 +305,25 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// <summary>
     /// Evaluates the Vogel-Fulcher law for rate-like quantities at the specified temperature and stores the result in Y.
     /// </summary>
-    /// <param name="X">Array where X[0] is the temperature in the unit represented by <see cref="IndependentVariableRepresentation"/>.</param>
-    /// <param name="P">Parameter array where P[0]=y0, P[1]=B and P[2]=T0.</param>
-    /// <param name="Y">Array that receives the evaluated function value at index 0.</param>
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    /// <param name="independent">Array where X[0] is the temperature in the unit represented by <see cref="IndependentVariableRepresentation"/>.</param>
+    /// <param name="parameters">Parameter array where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="dependent">Array that receives the evaluated function value at index 0.</param>
+    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
-      double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
-      double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-      Y[0] = P[0] * Math.Exp(-B / (temperature - T0));
+      double temperature = Temperature.ToKelvin(independent[0], _temperatureUnitOfX);
+      double B = Temperature.ToKelvin(parameters[1], _temperatureUnitOfB);
+      double T0 = Temperature.ToKelvin(parameters[2], _temperatureUnitOfT0);
+      dependent[0] = parameters[0] * Math.Exp(-B / (temperature - T0));
     }
 
     /// <summary>
-    /// Evaluates the Vogel-Fulcher law for multiple rows of independent variables and writes results to <paramref name="FV"/>.
+    /// Evaluates the Vogel-Fulcher law for multiple rows of independent variables and writes results to <paramref name="dependent"/>.
     /// </summary>
     /// <param name="independent">Matrix of independent variable values (rows x columns), expected single-column.</param>
-    /// <param name="P">Parameter list where P[0]=y0, P[1]=B and P[2]=T0.</param>
-    /// <param name="FV">Vector that receives the function values for each row.</param>
+    /// <param name="parameters">Parameter list where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="dependent">Vector that receives the function values for each row.</param>
     /// <param name="dependentVariableChoice">Not used; retained for compatibility.</param>
-    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -331,9 +331,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
         var x = independent[r, 0];
 
         double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
-        double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
-        double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-        FV[r] = P[0] * Math.Exp(-B / (temperature - T0));
+        double B = Temperature.ToKelvin(parameters[1], _temperatureUnitOfB);
+        double T0 = Temperature.ToKelvin(parameters[2], _temperatureUnitOfT0);
+        dependent[r] = parameters[0] * Math.Exp(-B / (temperature - T0));
       }
     }
 

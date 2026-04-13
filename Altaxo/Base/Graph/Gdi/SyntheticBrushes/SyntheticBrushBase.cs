@@ -72,9 +72,9 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SyntheticBrushBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SyntheticBrushBase)obj;
+        var s = (SyntheticBrushBase)o;
         info.AddValue("RepeatLength", s._repeatLengthPt);
       }
 

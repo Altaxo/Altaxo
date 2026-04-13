@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -161,9 +160,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DropLinePlotStyle)obj;
+        var s = (DropLinePlotStyle)o;
 
         info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
         info.AddValue("SkipFreq", s._skipFrequency);
@@ -258,14 +257,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion Serialization
 
     /// <inheritdoc />
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as DropLinePlotStyle;
-      if (from is not null)
+      if (from is DropLinePlotStyle fromX)
       {
-        CopyFrom(from, Main.EventFiring.Enabled);
+        CopyFrom(fromX, Main.EventFiring.Enabled);
         return true;
       }
       return false;

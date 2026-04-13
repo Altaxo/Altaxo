@@ -51,9 +51,9 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD4D), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VectorD4D)obj;
+        var s = (VectorD4D)o;
         info.AddValue("X", s.X);
         info.AddValue("Y", s.Y);
         info.AddValue("Z", s.Z);

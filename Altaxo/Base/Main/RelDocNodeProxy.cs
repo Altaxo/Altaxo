@@ -74,7 +74,7 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not supported");
         /*
@@ -120,9 +120,9 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RelDocNodeProxy)obj;
+        var s = (RelDocNodeProxy)o;
         if (s._parent is null)
           throw new InvalidProgramException();
         Main.RelativeDocumentPath path = s._docNodePath;

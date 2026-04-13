@@ -24,9 +24,7 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -53,9 +51,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VariableColorGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VariableColorGroupStyle)obj;
+        var s = (VariableColorGroupStyle)o;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -111,11 +109,11 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (VariableColorGroupStyle)fromb;
-      _isInitialized = from._isInitialized;
-      _colorForIndex = from._colorForIndex;
+      var fromX = (VariableColorGroupStyle)from;
+      _isInitialized = fromX._isInitialized;
+      _colorForIndex = fromX._colorForIndex;
     }
 
     /// <inheritdoc/>

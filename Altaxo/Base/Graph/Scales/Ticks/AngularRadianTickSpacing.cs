@@ -43,10 +43,10 @@ namespace Altaxo.Graph.Scales.Ticks
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, typeof(AngularTickSpacing));
-        var s = (AngularRadianTickSpacing)obj;
+        info.AddBaseValueEmbedded(o, typeof(AngularTickSpacing));
+        var s = (AngularRadianTickSpacing)o;
       }
 
       /// <inheritdoc />

@@ -81,11 +81,11 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       /// Serializes the specified enum value.
       /// </summary>
-      /// <param name="obj">The enum value to serialize.</param>
+      /// <param name="o">The enum value to serialize.</param>
       /// <param name="info">The serialization target.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYPlotLayerSizeType)obj;
+        var s = (XYPlotLayerSizeType)o;
         info.SetNodeContent(s.ToString());
       }
 
@@ -178,9 +178,9 @@ namespace Altaxo.Graph.Gdi
     private class PositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYPlotLayerPositionType)obj;
+        var s = (XYPlotLayerPositionType)o;
         info.SetNodeContent(s.ToString());
       }
 
@@ -365,9 +365,9 @@ namespace Altaxo.Graph.Gdi
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
         /// <inheritdoc />
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (XYPlotLayerPositionAndSize_V0)obj;
+          var s = (XYPlotLayerPositionAndSize_V0)o;
 
           info.AddValue("Width", s._layerWidth);
           info.AddEnum("WidthType", s._layerWidthType);
@@ -441,7 +441,7 @@ namespace Altaxo.Graph.Gdi
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new InvalidOperationException();
           /*
@@ -475,7 +475,7 @@ namespace Altaxo.Graph.Gdi
       private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
         /// <inheritdoc />
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new InvalidOperationException();
           /*

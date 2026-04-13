@@ -40,23 +40,23 @@ namespace Poly2Tri
   public class DTSweepPointComparator : IComparer<TriangulationPoint>
   {
     /// <inheritdoc/>
-    public int Compare(TriangulationPoint p1, TriangulationPoint p2)
+    public int Compare(TriangulationPoint x, TriangulationPoint y)
     {
-      if (p1.Y < p2.Y)
+      if (x.Y < y.Y)
       {
         return -1;
       }
-      else if (p1.Y > p2.Y)
+      else if (x.Y > y.Y)
       {
         return 1;
       }
       else
       {
-        if (p1.X < p2.X)
+        if (x.X < y.X)
         {
           return -1;
         }
-        else if (p1.X > p2.X)
+        else if (x.X > y.X)
         {
           return 1;
         }

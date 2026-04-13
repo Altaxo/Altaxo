@@ -57,7 +57,7 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version not supported");
         /*
@@ -111,9 +111,9 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AbsoluteDocumentPath)obj;
+        var s = (AbsoluteDocumentPath)o;
 
         info.CreateArray("Path", s._pathParts.Length);
         for (int i = 0; i < s._pathParts.Length; i++)

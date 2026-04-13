@@ -48,9 +48,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FileImportScriptDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FileImportScriptDataSource)obj;
+        var s = (FileImportScriptDataSource)o;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("ImportScript", s._importScript);

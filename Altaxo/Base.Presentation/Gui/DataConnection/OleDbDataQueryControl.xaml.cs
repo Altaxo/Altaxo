@@ -89,10 +89,10 @@ namespace Altaxo.Gui.DataConnection
     }
 
     /// <inheritdoc/>
-    public void SetConnectionListSource(SelectableListNodeList list, string currentItem)
+    public void SetConnectionListSource(SelectableListNodeList list, string currentValue)
     {
       GuiHelper.Initialize(_cmbConnString, list);
-      _cmbConnString.Text = currentItem;
+      _cmbConnString.Text = currentValue;
     }
 
     private void EhConnectionStringSelectionChanged(object sender, SelectionChangedEventArgs e)

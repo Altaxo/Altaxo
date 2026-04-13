@@ -130,9 +130,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ArrheniusLawTime)obj;
+        var s = (ArrheniusLawTime)o;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
@@ -271,20 +271,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = Evaluate(X[0], P);
+      dependent[0] = Evaluate(independent[0], parameters);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        FV[r] = Evaluate(x, P);
+        dependent[r] = Evaluate(x, parameters);
       }
     }
 

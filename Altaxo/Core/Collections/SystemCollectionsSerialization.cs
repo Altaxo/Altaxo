@@ -35,9 +35,9 @@ namespace Altaxo.Collections
   public class SystemCollectionsArrayListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (ArrayList)obj;
+      var s = (ArrayList)o;
       info.CreateArray("List", s.Count);
 
       for (int i = 0; i < s.Count; ++i)
@@ -47,10 +47,10 @@ namespace Altaxo.Collections
     }
 
     /// <inheritdoc/>
-    public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");
-      var s = (ArrayList?)obj ?? new ArrayList(count);
+      var s = (ArrayList?)o ?? new ArrayList(count);
       s.Clear();
       for (int i = 0; i < count; ++i)
         s.Add(info.GetValueOrNull("e", parent));
@@ -67,9 +67,9 @@ namespace Altaxo.Collections
   public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (System.Collections.Generic.List<object?>)obj;
+      var s = (System.Collections.Generic.List<object?>)o;
       info.CreateArray("List", s.Count);
 
       for (int i = 0; i < s.Count; ++i)
@@ -79,10 +79,10 @@ namespace Altaxo.Collections
     }
 
     /// <inheritdoc/>
-    public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");
-      var s = (System.Collections.Generic.List<object?>?)obj ?? new System.Collections.Generic.List<object?>(count);
+      var s = (System.Collections.Generic.List<object?>?)o ?? new System.Collections.Generic.List<object?>(count);
       s.Clear();
       for (int i = 0; i < count; ++i)
         s.Add(info.GetValueOrNull("e", parent));

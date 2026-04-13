@@ -66,9 +66,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaterfallTransform), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (WaterfallTransform)obj;
+        var s = (WaterfallTransform)o;
         info.AddValue("XScale", s._scaleXInc);
         info.AddValue("YScale", s._scaleYInc);
         info.AddValue("UseClipping", s._useClipping);
@@ -363,33 +363,33 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     /// <inheritdoc />
-    public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int i)
+    public void PaintChild(System.Drawing.Graphics g, IPaintContext context, IPlotArea layer, PlotItemCollection collection, int indexOfChild)
     {
-      CachedPaintData paintData = paintContext.GetValue<CachedPaintData>(this);
+      CachedPaintData paintData = context.GetValue<CachedPaintData>(this);
 
       if (_useClipping)
       {
         //g.SetClip(clippingColl[i], CombineMode.Replace);
-        g.Clip = paintData._clippingColl[i];
+        g.Clip = paintData._clippingColl[indexOfChild];
       }
 
-      if (paintData._plotDataColl[i] is null)
+      if (paintData._plotDataColl[indexOfChild] is null)
       {
-        coll[i].Paint(g, paintContext, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
+        collection[indexOfChild].Paint(g, context, layer, indexOfChild == collection.Count - 1 ? null : collection[indexOfChild - 1], indexOfChild == 0 ? null : collection[indexOfChild - 1]);
       }
       else
       {
-        var layerwrapper = new TransformedLayerWrapper(layer, paintData._xincColl[i], paintData._yincColl[i]);
-        ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, paintData._plotDataColl[i], i == coll.Count - 1 ? null : paintData._plotDataColl[i + 1], i == 0 ? null : paintData._plotDataColl[i - 1]);
+        var layerwrapper = new TransformedLayerWrapper(layer, paintData._xincColl[indexOfChild], paintData._yincColl[indexOfChild]);
+        ((G2DPlotItem)collection[indexOfChild]).Paint(g, layerwrapper, paintData._plotDataColl[indexOfChild], indexOfChild == collection.Count - 1 ? null : paintData._plotDataColl[indexOfChild + 1], indexOfChild == 0 ? null : paintData._plotDataColl[indexOfChild - 1]);
       }
 
       // The clipping region is no longer needed, so we can dispose it
       if (_useClipping)
       {
-        if (i == 0)
+        if (indexOfChild == 0)
           g.Clip = paintData._clippingColl[0]; // restore the original clipping region
         else
-          paintData._clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
+          paintData._clippingColl[indexOfChild].Dispose(); // for i!=0 dispose the clipping region
       }
     }
 

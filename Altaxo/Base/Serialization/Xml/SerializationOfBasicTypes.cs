@@ -46,14 +46,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForSystemString : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, IXmlSerializationInfo info)
+      public void Serialize(object o, IXmlSerializationInfo info)
       {
-        var s = (string)obj;
+        var s = (string)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetString("e");
       }
@@ -68,14 +68,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForSystemDouble : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (double)obj;
+        var s = (double)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetDouble("e");
       }
@@ -90,14 +90,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForSystemInt32 : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (int)obj;
+        var s = (int)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetInt32("e");
       }
@@ -112,14 +112,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForSystemInt64 : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (long)obj;
+        var s = (long)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetInt64("e");
       }
@@ -134,14 +134,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForSystemDateTime : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DateTime)obj;
+        var s = (DateTime)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetDateTime("e");
       }
@@ -156,14 +156,14 @@ namespace Altaxo.Serialization.Xml
     private class XmlSerializationSurrogateForBoolean : IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (bool)obj;
+        var s = (bool)o;
         info.AddValue("e", s);
       }
 
       /// <inheritdoc/>
-      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public object Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         return info.GetBoolean("e");
       }

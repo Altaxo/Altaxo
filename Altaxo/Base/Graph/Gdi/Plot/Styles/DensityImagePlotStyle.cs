@@ -117,9 +117,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DensityImagePlotStyle)obj;
+        var s = (DensityImagePlotStyle)o;
 
         // nothing to save up to now
       }
@@ -140,7 +140,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This function should not be called, since a newer serialization version is available");
         /*
@@ -189,9 +189,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DensityImagePlotStyle)obj;
+        var s = (DensityImagePlotStyle)o;
 
         info.AddValue("ClipToLayer", s._clipToLayer);
         info.AddValue("Scale", s._scale);

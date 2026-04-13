@@ -63,9 +63,9 @@ namespace Altaxo.Graph.Graph3D
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GridPartitioning)obj;
+        var s = (GridPartitioning)o;
 
         info.AddValue("XPartitioning", s._xPartitioning);
         info.AddValue("YPartitioning", s._yPartitioning);

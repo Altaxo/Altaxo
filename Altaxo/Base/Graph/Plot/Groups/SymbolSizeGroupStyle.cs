@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -47,9 +45,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SymbolSizeGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SymbolSizeGroupStyle)obj;
+        var s = (SymbolSizeGroupStyle)o;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -104,11 +102,11 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (SymbolSizeGroupStyle)fromb;
-      _isInitialized = from._isInitialized;
-      _symbolSize = from._symbolSize;
+      var fromX = (SymbolSizeGroupStyle)from;
+      _isInitialized = fromX._isInitialized;
+      _symbolSize = fromX._symbolSize;
     }
 
     /// <inheritdoc/>

@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -35,9 +34,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Altaxo.Main;
   using Drawing;
   using Drawing.D3D;
-  using Drawing.D3D.Material;
   using Geometry;
-  using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using GraphicsContext;
   using Plot.Data;
@@ -154,9 +151,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BarGraphPlotStyle)obj;
+        var s = (BarGraphPlotStyle)o;
         info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
         info.AddValue("BaseValue", (object)s._baseValue);
         info.AddValue("StartAtPrevious", s._startAtPreviousItem);
@@ -238,19 +235,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Copies values from another instance.
     /// </summary>
-    /// <param name="obj">The source object.</param>
+    /// <param name="from">The source object.</param>
     /// <param name="copyWithDataReferences">Unused flag kept for interface compatibility.</param>
     /// <returns><see langword="true"/> if copying succeeded; otherwise, <see langword="false"/>.</returns>
-    public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
+    public virtual bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return true;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
-      if (obj is BarGraphPlotStyle from)
+      if (from is BarGraphPlotStyle fromX)
       {
-        CopyFrom(from);
+        CopyFrom(fromX);
         EhSelfChanged();
         return true;
       }

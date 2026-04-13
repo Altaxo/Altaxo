@@ -227,9 +227,9 @@ namespace Altaxo.Gui.Common
     /// <param name="value">The value to convert. Has to be a <see cref="DimensionfulQuantity"/>.</param>
     /// <param name="targetType">Ignored.</param>
     /// <param name="parameter">Ignored.</param>
-    /// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, the current Altaxo Gui culture is used.</param>
+    /// <param name="culture">This parameter is not used. Instead, the current Altaxo Gui culture is used.</param>
     /// <returns></returns>
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var q = (DimensionfulQuantity)value;
 
@@ -272,9 +272,9 @@ namespace Altaxo.Gui.Common
     /// <param name="value">String to convert.</param>
     /// <param name="targetType">Ignored.</param>
     /// <param name="parameter">Ignored.</param>
-    /// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
+    /// <param name="culture">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
     /// <returns>The converted quantity.</returns>
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       string s = (string)value;
       var result = ConvertValidate(s, out var q); // do not use culture parameter here, it is sometimes different from UICulture
@@ -290,9 +290,9 @@ namespace Altaxo.Gui.Common
     /// Validates a string, whether or not it can be converted to a <see cref="DimensionfulQuantity"/>.
     /// </summary>
     /// <param name="value">String value to validate.</param>
-    /// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
+    /// <param name="cultureInfo">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
     /// <returns>A validation result depending on the result of the validation.</returns>
-    public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
       if (value is string s)
       {

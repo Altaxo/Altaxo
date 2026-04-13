@@ -77,9 +77,9 @@ namespace Altaxo.Settings
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CultureSettings), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CultureSettings)obj;
+        var s = (CultureSettings)o;
         info.AddValue("CultureID", s._cultureID);
         info.AddValue("CultureName", s._cultureName);
         info.AddValue("NumberDecimalSeparator", s._numberDecimalSeparator);

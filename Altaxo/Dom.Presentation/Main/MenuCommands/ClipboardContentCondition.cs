@@ -34,7 +34,7 @@ namespace Altaxo.Main.Commands
   public class ClipboardContentConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       string expectedcontent = condition.Properties["content"].ToLower();
 

@@ -61,9 +61,9 @@ namespace Altaxo.Main
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy2ndLevel), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DocNodeProxy2ndLevel)obj;
+        var s = (DocNodeProxy2ndLevel)o;
 
         var node = s.InternalDocumentNode;
         if (node is not null && !node.IsDisposeInProgress)

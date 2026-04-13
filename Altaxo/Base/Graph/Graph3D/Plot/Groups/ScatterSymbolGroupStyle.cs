@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
@@ -65,9 +63,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ScatterSymbolGroupStyle)obj;
+        var s = (ScatterSymbolGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
 
         info.AddValue("Value", s._value);
@@ -141,11 +139,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (ScatterSymbolGroupStyle)fromb;
-      _value = from._value;
-      _listOfValues = from._listOfValues;
+      var fromX = (ScatterSymbolGroupStyle)from;
+      _value = fromX._value;
+      _listOfValues = fromX._listOfValues;
     }
 
     /// <inheritdoc/>

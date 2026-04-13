@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
@@ -37,7 +36,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Altaxo.Calc;
   using Altaxo.Graph;
   using Altaxo.Main;
-  using Altaxo.Main.Services;
   using Data;
   using Drawing;
   using Drawing.D3D;
@@ -175,9 +173,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ErrorBarPlotStyle)obj;
+        var s = (ErrorBarPlotStyle)o;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
@@ -363,13 +361,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      if (obj is ErrorBarPlotStyle from)
+      if (from is ErrorBarPlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }
@@ -1267,9 +1265,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarXPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -1338,9 +1336,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarYPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -1409,9 +1407,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarZPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

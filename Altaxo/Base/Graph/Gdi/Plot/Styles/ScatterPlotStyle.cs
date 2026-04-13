@@ -203,14 +203,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as ScatterPlotStyle;
-      if (from is not null)
+      if (from is ScatterPlotStyle fromX)
       {
-        CopyFrom(from, Main.EventFiring.Enabled);
+        CopyFrom(fromX, Main.EventFiring.Enabled);
         return true;
       }
       return false;

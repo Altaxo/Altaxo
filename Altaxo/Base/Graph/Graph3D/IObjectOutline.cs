@@ -101,9 +101,9 @@ namespace Altaxo.Graph.Graph3D
     }
 
     /// <inheritdoc/>
-    public RectangleD3D GetBounds(Matrix3x3 transformation)
+    public RectangleD3D GetBounds(Matrix3x3 additionalTransformation)
     {
-      return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints().Select(p => transformation.Transform(p)));
+      return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints().Select(p => additionalTransformation.Transform(p)));
     }
 
     /// <inheritdoc/>

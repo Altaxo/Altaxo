@@ -164,9 +164,9 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HostLayer), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HostLayer)obj;
+        var s = (HostLayer)o;
 
         // size, position, rotation and scale
         info.AddValue("CachedParentSize", s._cachedParentLayerSize);
@@ -539,17 +539,17 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Sets the parent size used to calculate cached size and position values.
     /// </summary>
-    /// <param name="newParentSize">The new parent size.</param>
+    /// <param name="parentSize">The new parent size.</param>
     /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, raises a changed event when the size changed.</param>
-    public void SetParentSize(PointD2D newParentSize, bool isTriggeringChangedEvent)
+    public void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _cachedParentLayerSize;
-      _cachedParentLayerSize = newParentSize;
+      _cachedParentLayerSize = parentSize;
 
       if (_location is ItemLocationDirect)
         ((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false); // don't trigger change event now
 
-      if (oldParentSize != newParentSize)
+      if (oldParentSize != parentSize)
       {
         CalculateCachedSizeAndPosition();
 
@@ -1241,9 +1241,9 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Determines whether this layer is compatible with the specified parent.
     /// </summary>
-    /// <param name="parent">The parent object.</param>
+    /// <param name="parentObject">The parent object.</param>
     /// <returns><c>true</c> if the layer is compatible; otherwise, <c>false</c>.</returns>
-    public virtual bool IsCompatibleWithParent(object parent)
+    public virtual bool IsCompatibleWithParent(object parentObject)
     {
       return true;
     }

@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
@@ -114,9 +114,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LineShape)obj;
+        var s = (LineShape)o;
         info.AddBaseValueEmbedded(s, typeof(LineShape).BaseType!);
       }
 

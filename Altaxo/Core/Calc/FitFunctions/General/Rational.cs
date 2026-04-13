@@ -55,9 +55,9 @@ namespace Altaxo.Calc.FitFunctions.General
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Rational)obj;
+        var s = (Rational)o;
         info.AddValue("OrderNominator", s._order_n);
         info.AddValue("OrderDenominator", s._order_m);
       }
@@ -229,14 +229,14 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of nominator terms a0*x^0 .. an*x^n
-      double nominator = P[_order_n];
+      double nominator = parameters[_order_n];
       for (int i = _order_n - 1; i >= 0; i--)
       {
-        nominator *= X[0];
-        nominator += P[i];
+        nominator *= independent[0];
+        nominator += parameters[i];
       }
 
       // evaluation of denominator terms 1 + .. + bm*x^m
@@ -247,20 +247,20 @@ namespace Altaxo.Calc.FitFunctions.General
       }
       else
       {
-        denominator = P[_order_n + _order_m];
+        denominator = parameters[_order_n + _order_m];
         for (int i = _order_n + _order_m - 1; i > _order_n; i--)
         {
-          denominator *= X[0];
-          denominator += P[i];
+          denominator *= independent[0];
+          denominator += parameters[i];
         }
-        denominator *= X[0];
+        denominator *= independent[0];
         denominator += 1;
       }
 
-      Y[0] = nominator / denominator;
+      dependent[0] = nominator / denominator;
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -268,11 +268,11 @@ namespace Altaxo.Calc.FitFunctions.General
         var x = independent[r, 0];
 
         // evaluation of nominator terms a0*x^0 .. an*x^n
-        double nominator = P[_order_n];
+        double nominator = parameters[_order_n];
         for (int i = _order_n - 1; i >= 0; i--)
         {
           nominator *= x;
-          nominator += P[i];
+          nominator += parameters[i];
         }
 
         // evaluation of denominator terms 1 + .. + bm*x^m
@@ -283,17 +283,17 @@ namespace Altaxo.Calc.FitFunctions.General
         }
         else
         {
-          denominator = P[_order_n + _order_m];
+          denominator = parameters[_order_n + _order_m];
           for (int i = _order_n + _order_m - 1; i > _order_n; i--)
           {
             denominator *= x;
-            denominator += P[i];
+            denominator += parameters[i];
           }
           denominator *= x;
           denominator += 1;
         }
 
-        FV[r] = nominator / denominator;
+        dependent[r] = nominator / denominator;
       }
     }
 
@@ -308,24 +308,24 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>
     /// Evaluates the derivative of the fit function with respect to parameters for all rows.
     /// </summary>
-    /// <param name="X">The independent variables.</param>
-    /// <param name="P">The parameter values.</param>
-    /// <param name="isParameterFixed">Flags indicating fixed parameters.</param>
-    /// <param name="DY">The matrix receiving the derivatives.</param>
+    /// <param name="independent">The independent variables.</param>
+    /// <param name="parameters">The parameter values.</param>
+    /// <param name="isFixed">Flags indicating fixed parameters.</param>
+    /// <param name="DF">The matrix receiving the derivatives.</param>
     /// <param name="dependentVariableChoice">The selected dependent variables.</param>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
         // evaluation of nominator terms a0*x^0 .. an*x^n
-        double nominator = P[_order_n];
+        double nominator = parameters[_order_n];
         for (int i = _order_n - 1; i >= 0; i--)
         {
           nominator *= x;
-          nominator += P[i];
+          nominator += parameters[i];
         }
 
         // evaluation of denominator terms 1 + .. + bm*x^m
@@ -336,11 +336,11 @@ namespace Altaxo.Calc.FitFunctions.General
         }
         else
         {
-          denominator = P[_order_n + _order_m];
+          denominator = parameters[_order_n + _order_m];
           for (int i = _order_n + _order_m - 1; i > _order_n; i--)
           {
             denominator *= x;
-            denominator += P[i];
+            denominator += parameters[i];
           }
           denominator *= x;
           denominator += 1;
@@ -352,7 +352,7 @@ namespace Altaxo.Calc.FitFunctions.General
         double xn = 1;
         for (int i = 0; i <= _order_n; ++i)
         {
-          DY[r, i] = xn / denominator;
+          DF[r, i] = xn / denominator;
           xn *= x;
         }
 
@@ -360,7 +360,7 @@ namespace Altaxo.Calc.FitFunctions.General
         for (int i = 1; i <= _order_m; ++i)
         {
           xn *= x;
-          DY[r, i + _order_n] = -xn * nomByDenomSqr;
+          DF[r, i + _order_n] = -xn * nomByDenomSqr;
         }
       }
     }

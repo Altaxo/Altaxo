@@ -42,9 +42,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NNDSVD)obj;
+        var s = (NNDSVD)o;
       }
 
       /// <inheritdoc/>
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// Creates an NNDSVD initialization for NMF. Intentionally allows zeros in the result (algorithm for sparse matrices).
     /// </summary>
     /// <param name="X">The non-negative input matrix to be factorized.</param>
-    /// <param name="r">The target factorization rank.</param>
+    /// <param name="rank">The target factorization rank.</param>
     /// <returns>
     /// A tuple <c>(W0, H0)</c> containing non-negative initial factors. Both factors may contain zeros; callers are expected
     /// to handle zeros as needed (e.g. by adding small offsets).
@@ -70,17 +70,17 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// Intentionally allows zeros in the result (algorithm for sparse matrices).
     /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>.
     /// </remarks>
-    public virtual (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
+    public virtual (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int rank)
     {
-      var svd = TruncatedSVD.BlockKrylovSvd(X, r);
+      var svd = TruncatedSVD.BlockKrylovSvd(X, rank);
       var U = svd.U;          // m x m (or m x k)
       var S = svd.S;          // singular values as a Vector
       var Vt = svd.VT;        // n x n (or k x n)
 
       int m = X.RowCount;
       int n = X.ColumnCount;
-      var W = Matrix<double>.Build.Dense(m, r);
-      var H = Matrix<double>.Build.Dense(r, n);
+      var W = Matrix<double>.Build.Dense(m, rank);
+      var H = Matrix<double>.Build.Dense(rank, n);
 
       // First component
       // Note that the first component can be used directly
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       H.SetRow(0, Vt.Row(0).PointwiseAbs() * Math.Sqrt(S[0]));
 
       // Further components
-      for (int j = 1; j < r && j < S.Count; j++)
+      for (int j = 1; j < rank && j < S.Count; j++)
       {
         var xj = U.Column(j);
         var yj = Vt.Row(j);

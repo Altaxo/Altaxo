@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
@@ -171,7 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
 
@@ -253,9 +252,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ErrorBarPlotStyle)obj;
+        var s = (ErrorBarPlotStyle)o;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
@@ -450,13 +449,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc />
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      if (obj is ErrorBarPlotStyle from)
+      if (from is ErrorBarPlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }
@@ -1446,9 +1445,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarXPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -1527,9 +1526,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarYPlotStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

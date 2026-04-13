@@ -77,7 +77,7 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.Selections.RangeOfRows", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions");
         /*
@@ -102,9 +102,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RangeOfRowIndices), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RangeOfRowIndices)obj;
+        var s = (RangeOfRowIndices)o;
 
         info.AddValue("First", s._firstRowIndexInclusive);
         info.AddValue("Last", s._lastRowIndexInclusive);
@@ -171,10 +171,10 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndex, DataColumnCollection? table, int totalRowCount)
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount)
     {
       int start = Math.Max(startIndex, _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount);
-      int endInclusive = Math.Min(Math.Min(maxIndex - 1, totalRowCount - 1), _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount);
+      int endInclusive = Math.Min(Math.Min(maxIndexExclusive - 1, totalRowCount - 1), _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount);
 
       if (endInclusive >= start)
         yield return (start, endInclusive + 1);
@@ -224,12 +224,12 @@ namespace Altaxo.Data.Selections
 
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
       return
-        rowSel is RangeOfRowIndices other &&
-        this._firstRowIndexInclusive == other._firstRowIndexInclusive &&
-        this._lastRowIndexInclusive == other._lastRowIndexInclusive;
+        other is RangeOfRowIndices otherX &&
+        this._firstRowIndexInclusive == otherX._firstRowIndexInclusive &&
+        this._lastRowIndexInclusive == otherX._lastRowIndexInclusive;
     }
   }
 }

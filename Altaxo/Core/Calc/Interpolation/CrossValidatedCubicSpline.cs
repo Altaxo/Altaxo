@@ -44,9 +44,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CrossValidatedCubicSplineOptions)obj;
+        var s = (CrossValidatedCubicSplineOptions)o;
         info.AddValue("StandardDeviation", s._errorStandardDeviation);
       }
 

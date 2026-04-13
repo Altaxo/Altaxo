@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
 
     /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
-        int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, float[] values,
+        int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, float[] values,
         int nRhs, float[] rhs, float[] solution)
     {
       throw new NotImplementedException();
@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
 
     /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
-        int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, double[] values,
+        int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, double[] values,
         int nRhs, double[] rhs, double[] solution)
     {
       throw new NotImplementedException();
@@ -65,7 +65,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
 
     /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
-        int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, Complex32[] values,
+        int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, Complex32[] values,
         int nRhs, Complex32[] rhs, Complex32[] solution)
     {
       throw new NotImplementedException();
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
 
     /// <inheritdoc/>
     public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType,
-        int rowCount, int columnCount, int nonZerosCount, int[] rowPointers, int[] columnIndices, Complex[] values,
+        int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, Complex[] values,
         int nRhs, Complex[] rhs, Complex[] solution)
     {
       throw new NotImplementedException();

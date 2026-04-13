@@ -146,9 +146,9 @@ namespace Altaxo.Geometry
     }
 
     /// <inheritdoc/>
-    public bool Equals(PlaneD3D a, PlaneD3D b)
+    public bool Equals(PlaneD3D x, PlaneD3D y)
     {
-      return a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
+      return x.X == y.X && x.Y == y.Y && x.Z == y.Z && x.W == y.W;
     }
 
     /// <inheritdoc/>

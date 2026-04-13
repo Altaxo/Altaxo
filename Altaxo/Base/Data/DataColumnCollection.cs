@@ -249,9 +249,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataColumnCollection", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataColumnCollection)obj;
+        var s = (Altaxo.Data.DataColumnCollection)o;
 
         info.CreateArray("ColumnArray", s._columnsByNumber.Count);
         for (int i = 0; i < s._columnsByNumber.Count; i++)
@@ -323,12 +323,12 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         // Note: info property 'DataOnly': stores only the data, but not the scripts and so on
 
 
-        var s = (Altaxo.Data.DataColumnCollection)obj;
+        var s = (Altaxo.Data.DataColumnCollection)o;
 
         var storeDataOnly = info.GetProperty(SerialiationInfoProperty_StoreDataOnly) == "true";
         var saveAsTemplate = info.GetProperty(DataTable.SerializationInfoProperty_SaveAsTemplate) == "true";
@@ -470,9 +470,9 @@ namespace Altaxo.Data
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection.ClipboardMemento), 0)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (Altaxo.Data.DataColumnCollection.ClipboardMemento)obj;
+          var s = (Altaxo.Data.DataColumnCollection.ClipboardMemento)o;
 
           int numberOfColumns;
           bool useColumnSelection;

@@ -42,7 +42,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// is the start index of a new spectral region.
     /// </param>
     /// <returns>X-values, y-values, and regions of the processed spectra, plus optional auxiliary data.</returns>
-    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions);
+    public new (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions);
 
     /// <summary>
     /// Processes the spectra for prediction.
@@ -50,11 +50,11 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <see cref="Execute(double[], Matrix{double}, int[])"/>, in order to apply the same treatment to the spectra.
     /// </summary>
     /// <param name="x">The x-values of the spectra.</param>
-    /// <param name="spectraMatrix">The matrix of spectra. Each row of the matrix represents a spectrum.</param>
+    /// <param name="y">The matrix of spectra. Each row of the matrix represents a spectrum.</param>
     /// <param name="regions">Vector of spectral regions. Each element is the index of the start of a new region.</param>
     /// <param name="auxiliaryData">The auxiliary data previously evaluated by the ensemble preprocessing.</param>
     /// <returns>X-values, y-values, and regions of the processed spectra for prediction.</returns>
-    (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData);
+    public new (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData);
 
     /// <summary>
     /// Executes the single spectrum processor. By definition, in an ensemble preprocessor this does nothing.
@@ -72,7 +72,4 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       return (x, y, regions);
     }
   }
-
-
-
 }

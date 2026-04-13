@@ -86,9 +86,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.TextColumn), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.TextColumn)obj;
+        var s = (Altaxo.Data.TextColumn)o;
         // serialize the base class
         info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn));
 

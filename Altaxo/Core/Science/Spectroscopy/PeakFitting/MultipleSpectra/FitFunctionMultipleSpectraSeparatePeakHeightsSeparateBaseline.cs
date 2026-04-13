@@ -163,21 +163,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       var x = MatrixMath.ToROMatrixWithOneRow(independent);
-      var y = VectorMath.ToVector(FV);
+      var y = VectorMath.ToVector(dependent);
       Evaluate(x, parameters, y, null);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int indexOfSpectrum = 0; indexOfSpectrum < _numberOfSpectra; ++indexOfSpectrum)
       {
         TransferGlobalToLocalParameters(indexOfSpectrum, parameters);
         int lengthOfSpectrum = indexOfSpectrum + 1 < _numberOfSpectra ? _startIndicesOfSpectra[indexOfSpectrum + 1] - _startIndicesOfSpectra[indexOfSpectrum] : independent.RowCount - _startIndicesOfSpectra[indexOfSpectrum];
-        _underlyingFitFunction.Evaluate(MatrixMath.ToROSubMatrix(independent, _startIndicesOfSpectra[indexOfSpectrum], 0, lengthOfSpectrum, 1), _parametersLocal, VectorMath.ToSubVector(FV, _startIndicesOfSpectra[indexOfSpectrum], lengthOfSpectrum), null);
+        _underlyingFitFunction.Evaluate(MatrixMath.ToROSubMatrix(independent, _startIndicesOfSpectra[indexOfSpectrum], 0, lengthOfSpectrum, 1), _parametersLocal, VectorMath.ToSubVector(dependent, _startIndicesOfSpectra[indexOfSpectrum], lengthOfSpectrum), null);
       }
     }
 

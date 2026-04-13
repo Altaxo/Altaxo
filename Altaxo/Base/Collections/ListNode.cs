@@ -952,12 +952,12 @@ namespace Altaxo.Collections
 
 
     /// <inheritdoc/>
-    public void EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasSet)
+    public void EhChild_IsSelectedChanged(SelectableListNodeWithParent child)
     {
-      if (itemThatWasSet.IsSelected == false)
+      if (child.IsSelected == false)
         return;
 
-      if (!object.ReferenceEquals(itemThatWasSet, _selectedItem))
+      if (!object.ReferenceEquals(child, _selectedItem))
       {
         // Do not set SelectedItem property here directly, in
         // order to avoid endless loops (because SelectedItem itself try to set the IsSelected property)
@@ -965,7 +965,7 @@ namespace Altaxo.Collections
         {
           oldSelectedItem.IsSelected = false;
         }
-        _selectedItem = itemThatWasSet;
+        _selectedItem = child;
         OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
         OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedValue)));
       }
@@ -1127,7 +1127,7 @@ namespace Altaxo.Collections
 
 
     /// <inheritdoc/>
-    void SelectableListNodeWithParent.IParent.EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasChanged)
+    void SelectableListNodeWithParent.IParent.EhChild_IsSelectedChanged(SelectableListNodeWithParent child)
     {
       OnSelectedItemsChanged();
     }

@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Workbench
   public class ActiveContentExtensionConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object? caller, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
       var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
       if (workbench is null || workbench.ActiveViewContent is null)

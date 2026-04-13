@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException();
         /*
@@ -142,9 +142,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ParameterSetElement)obj;
+        var s = (ParameterSetElement)o;
 
         info.AddValue("Name", s.Name);
         info.AddValue("Value", s.Parameter);

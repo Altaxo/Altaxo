@@ -68,11 +68,11 @@ namespace Altaxo.Graph.Scales.Ticks
       /// <summary>
       /// Performs the a dd operation.
       /// </summary>
-      public void Add(double x)
+      public void Add(double item)
       {
-        if (_coll.Add(x))
+        if (_coll.Add(item))
         {
-          if (_org <= x && x <= _end)
+          if (_org <= item && item <= _end)
             ++NumberOfEntriesWithinBounds;
         }
       }
@@ -278,9 +278,9 @@ namespace Altaxo.Graph.Scales.Ticks
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CumulativeProbabilityTickSpacing)obj;
+        var s = (CumulativeProbabilityTickSpacing)o;
 
         info.AddValue("MinGrace", s._orgGrace);
         info.AddValue("MaxGrace", s._endGrace);

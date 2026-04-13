@@ -67,9 +67,9 @@ namespace Altaxo.Graph.Graph3D.Lighting
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HemisphericAmbientLight)obj;
+        var s = (HemisphericAmbientLight)o;
         info.AddValue("IsAffixedToCamera", s._isAffixedToCamera);
         info.AddValue("LightAmplitude", s._lightAmplitude);
         info.AddValue("ColorBelow", s._colorBelow);

@@ -71,13 +71,13 @@ namespace Altaxo.Calc.Optimization
     /// by fminsearch() in Matlab are used instead
     /// http://se.mathworks.com/help/matlab/math/optimizing-nonlinear-functions.html#bsgpq6p-11
     /// </summary>
-    /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
+    /// <param name="objective">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
     /// <returns>The minimum point</returns>
     /// <inheritdoc/>
-    public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess)
+    public MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess)
     {
-      return Minimum(objectiveFunction, initialGuess, default, default, ConvergenceTolerance, MaximumIterations);
+      return Minimum(objective, initialGuess, default, default, ConvergenceTolerance, MaximumIterations);
     }
 
 

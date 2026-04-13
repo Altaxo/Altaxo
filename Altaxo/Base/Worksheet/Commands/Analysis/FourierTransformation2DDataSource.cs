@@ -65,9 +65,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FourierTransformation2DDataSource)obj;
+        var s = (FourierTransformation2DDataSource)o;
 
         info.AddValue("InputData", s._processData);
         info.AddValue("TransformationOptions", s._processOptions);

@@ -99,9 +99,9 @@ namespace Altaxo.Data
     protected class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IndependentAndDependentColumns)obj;
+        var s = (IndependentAndDependentColumns)o;
 
         info.AddValueOrNull("DataTable", s._dataTable);
         info.AddValue("GroupNumber", s._groupNumber);
@@ -793,12 +793,12 @@ namespace Altaxo.Data
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-    public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
+    /// <param name="ReportProxies">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public virtual void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
       if (_dataTable is not null)
       {
-        Report(_dataTable, this, nameof(DataTable));
+        ReportProxies(_dataTable, this, nameof(DataTable));
       }
 
       {
@@ -808,7 +808,7 @@ namespace Altaxo.Data
           {
             if (v[i] is { } vv)
             {
-              Report(vv, this, FormattableString.Invariant($"IndependentVariable{i}"));
+              ReportProxies(vv, this, FormattableString.Invariant($"IndependentVariable{i}"));
             }
           }
         }
@@ -820,13 +820,13 @@ namespace Altaxo.Data
           {
             if (v[i] is { } vv)
             {
-              Report(vv, this, FormattableString.Invariant($"DependentVariable{i}"));
+              ReportProxies(vv, this, FormattableString.Invariant($"DependentVariable{i}"));
             }
           }
         }
       }
       {
-        _rangeOfRows.VisitDocumentReferences(Report);
+        _rangeOfRows.VisitDocumentReferences(ReportProxies);
       }
     }
 

@@ -48,9 +48,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (OpenCardinalSpline)obj;
+        var s = (OpenCardinalSpline)o;
         info.AddBaseValueEmbedded(s, typeof(OpenCardinalSpline).BaseType!);
         info.AddValue("Tension", s._tension);
         info.CreateArray("Points", s._curvePoints.Count);

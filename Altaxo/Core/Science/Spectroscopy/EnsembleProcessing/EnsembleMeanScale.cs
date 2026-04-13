@@ -58,9 +58,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EnsembleMeanScale)obj;
+        var s = (EnsembleMeanScale)o;
       }
 
       /// <inheritdoc/>
@@ -95,29 +95,29 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
-      if (auxillaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
+      if (auxiliaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
       {
-        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxiliaryDataCompound.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxiliaryDataCompound.", nameof(auxiliaryData));
       }
       if (data.Values.Length != 2)
       {
-        throw new System.ArgumentException("Auxillary data does not contain two elements.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxillary data does not contain two elements.", nameof(auxiliaryData));
       }
       if (data.Values[0] is not EnsembleAuxiliaryDataVector aux0 || aux0.Name != AuxiliaryDataMeanName)
       {
-        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataMeanName}.", nameof(auxillaryData));
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataMeanName}.", nameof(auxiliaryData));
       }
       if (data.Values[1] is not EnsembleAuxiliaryDataVector aux1 || aux1.Name != AuxiliaryDataScaleName)
       {
-        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataScaleName}.", nameof(auxillaryData));
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataScaleName}.", nameof(auxiliaryData));
       }
       var xMean = aux0.Value;
       var xScale = aux1.Value;
 
-      var yNew = spectraMatrix.Clone();
-      MatrixMath.SubtractRow(spectraMatrix, xMean, yNew);
+      var yNew = y.Clone();
+      MatrixMath.SubtractRow(y, xMean, yNew);
       MatrixMath.MultiplyRow(yNew, xScale, yNew);
       return (x, yNew, regions);
     }

@@ -59,9 +59,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SimpleTextGraphic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SimpleTextGraphic)obj;
+        var s = (SimpleTextGraphic)o;
         info.AddBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType!);
 
         info.AddValue("Text", s._text);

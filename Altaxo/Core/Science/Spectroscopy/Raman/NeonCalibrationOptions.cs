@@ -75,9 +75,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NeonCalibrationOptions)obj;
+        var s = (NeonCalibrationOptions)o;
         info.AddEnum("XAxisUnit", s.XAxisUnit);
         info.AddValue("ApproximateLaserWavelength", s.LaserWavelength_Nanometer);
         info.AddValue("WavelengthTolerance", s.Wavelength_Tolerance_nm);
@@ -114,9 +114,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NeonCalibrationOptions)obj;
+        var s = (NeonCalibrationOptions)o;
         info.AddEnum("XAxisUnit", s.XAxisUnit);
         info.AddValue("ApproximateLaserWavelength", s.LaserWavelength_Nanometer);
         info.AddValue("WavelengthTolerance", s.Wavelength_Tolerance_nm);

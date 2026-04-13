@@ -58,7 +58,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void ReportProgress(string text, double progressFraction)
+    public void ReportProgress(string text, double progressValue)
     {
     }
 

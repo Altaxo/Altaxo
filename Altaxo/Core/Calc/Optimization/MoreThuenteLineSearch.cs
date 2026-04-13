@@ -84,10 +84,10 @@ namespace Altaxo.Calc.Optimization
     public int maxiter_ = 20; // positive
 
     /// <inheritdoc/>
-    public override Vector<double> Search(Vector<double> x, Vector<double> s, double stp)
+    public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       var grad = GradientEvaluation(x);
-      double dginit = grad.DotProduct(s);
+      double dginit = grad.DotProduct(direction);
 
       // this is a port of CVSMOD in CG++
       var retx = x.Clone();
@@ -169,36 +169,36 @@ namespace Altaxo.Calc.Optimization
         else
         {
           stmin = stx;
-          stmax = stp + xtrapf * (stp - stx);
+          stmax = step + xtrapf * (step - stx);
         }
 
         // FORCE THE STEP TO BE WITHIN THE BOUNDS STPMAX AND STPMIN.
-        stp = System.Math.Max(stp, stpmin_);
-        stp = System.Math.Min(stp, stpmax_);
+        step = System.Math.Max(step, stpmin_);
+        step = System.Math.Min(step, stpmax_);
 
         // IF AN UNUSAL TERMINATION IS TO OCCUR THEN LET
         // STP BE THE LOWEST POINT OBTAINED SO FAR
-        if ((brackt && (stp <= stmin || stp >= stmax)) || nfev >= (maxfev_ - 1) || infoc == 0
+        if ((brackt && (step <= stmin || step >= stmax)) || nfev >= (maxfev_ - 1) || infoc == 0
           || (brackt && (stmax - stmin) <= xtol_ * stmax))
-          stp = stx;
+          step = stx;
 
         // EVALUATE THE FUNCTION AND GRADIENT AT STP
         // AND COMPUTE THE DIRECTION DERIVATIVE.
-        retx = wa + stp * s;
+        retx = wa + step * direction;
 
         // Compute function value;
         f = FunctionEvaluation(retx);
         nfev = nfev + 1;
-        dg = g.DotProduct(s);
-        ftest1 = finit + stp * dgtest;
+        dg = g.DotProduct(direction);
+        ftest1 = finit + step * dgtest;
 
         info = 0;
         // TEST FOR CONVERGENCE.
-        if ((brackt && (stp <= stmin || stp >= stmax)) || infoc == 0)
+        if ((brackt && (step <= stmin || step >= stmax)) || infoc == 0)
           info = 6;
-        if (stp == stpmax_ && f <= ftest1 && dg <= dgtest)
+        if (step == stpmax_ && f <= ftest1 && dg <= dgtest)
           info = 5;
-        if (stp == stpmin_ && f >= ftest1 || dg >= dgtest)
+        if (step == stpmin_ && f >= ftest1 || dg >= dgtest)
           info = 4;
         if (nfev >= maxfev_)
           info = 3;
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Optimization
         if (stage1 && f <= fx && f > ftest1)
         {
           // DEFINE THE MODIFIED FUNCTION AND DERIVATIVE VALUES.
-          fm = f - stp * dgtest;
+          fm = f - step * dgtest;
           fxm = fx - stx * dgtest;
           fym = fy - sty * dgtest;
           dgm = dg - dgtest;
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.Optimization
 
           // CALL CSTEPM TO UPDATE THE INTERVAL OF UNCERTAINTY
           // AND TO COMPUTE THE NEW STEP.
-          Cstepm(ref stx, ref fxm, ref dgxm, ref sty, ref fym, ref dgym, ref stp, ref fm, ref dgm, ref brackt,
+          Cstepm(ref stx, ref fxm, ref dgxm, ref sty, ref fym, ref dgym, ref step, ref fm, ref dgm, ref brackt,
             ref stmin, ref stmax, ref infoc);
 
           // RESET THE FUNCTION AND GRADIENT VALUES FOR F.
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.Optimization
         {
           // CALL CSTEPM TO UPDATE THE INTERVAL OF UNCERTAINTY
           // AND TO COMPUTE THE NEW STEP.
-          Cstepm(ref stx, ref fx, ref dgx, ref sty, ref fy, ref dgy, ref stp, ref f, ref dg, ref brackt,
+          Cstepm(ref stx, ref fx, ref dgx, ref sty, ref fy, ref dgy, ref step, ref f, ref dg, ref brackt,
             ref stmin, ref stmax, ref infoc);
         }
 
@@ -261,7 +261,7 @@ namespace Altaxo.Calc.Optimization
         if (brackt)
         {
           if (System.Math.Abs(sty - stx) > 0.66 * width1)
-            stp = stx + 0.5 * (sty - stx);
+            step = stx + 0.5 * (sty - stx);
           width1 = width;
           width = System.Math.Abs(sty - stx);
         }

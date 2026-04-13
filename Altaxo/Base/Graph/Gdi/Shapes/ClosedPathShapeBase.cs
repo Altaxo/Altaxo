@@ -54,9 +54,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedPathShapeBase), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ClosedPathShapeBase)obj;
+        var s = (ClosedPathShapeBase)o;
         info.AddBaseValueEmbedded(s, typeof(ClosedPathShapeBase).BaseType!);
 
         info.AddValue("LinePen", s._linePen);

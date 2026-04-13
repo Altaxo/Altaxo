@@ -49,9 +49,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KineticsNthOrder)obj;
+        var s = (KineticsNthOrder)o;
       }
 
       /// <inheritdoc/>
@@ -156,54 +156,54 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = CoreSolution(X[0], P[0], P[1], P[2]);
+      dependent[0] = CoreSolution(independent[0], parameters[0], parameters[1], parameters[2]);
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
-        FV[r] = CoreSolution(x, P[0], P[1], P[2]);
+        dependent[r] = CoreSolution(x, parameters[0], parameters[1], parameters[2]);
       }
     }
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
-        double y0 = P[0];
-        double k = P[1];
-        double n = P[2];
+        var x = independent[r, 0];
+        double y0 = parameters[0];
+        double k = parameters[1];
+        double n = parameters[2];
 
         if (!(y0 >= 0))
         {
-          DY[r, 0] = double.NaN;
-          DY[r, 1] = double.NaN;
-          DY[r, 2] = double.NaN;
+          DF[r, 0] = double.NaN;
+          DF[r, 1] = double.NaN;
+          DF[r, 2] = double.NaN;
         }
         else
         {
           if (n == 1)
           {
             var term = Math.Exp(-k * x);
-            DY[r, 0] = term;
-            DY[r, 1] = -term * y0 * x;
-            DY[r, 2] = term * 0.5 * k * x * y0 * (k * x - 2 * Math.Log(y0));
+            DF[r, 0] = term;
+            DF[r, 1] = -term * y0 * x;
+            DF[r, 2] = term * 0.5 * k * x * y0 * (k * x - 2 * Math.Log(y0));
           }
           else
           {
             var term = k * (n - 1) * x + Math.Pow(y0, 1 - n);
             var termE = Math.Pow(term, 1 / (1 - n));
 
-            DY[r, 0] = termE / (term * Math.Pow(y0, n));
-            DY[r, 1] = -termE * x / term;
-            DY[r, 2] = termE * ((k * x - Math.Pow(y0, 1 - n) * Math.Log(y0)) / ((1 - n) * term) + Math.Log(term) / ((1 - n) * (1 - n)));
+            DF[r, 0] = termE / (term * Math.Pow(y0, n));
+            DF[r, 1] = -termE * x / term;
+            DF[r, 2] = termE * ((k * x - Math.Pow(y0, 1 - n) * Math.Log(y0)) / ((1 - n) * term) + Math.Log(term) / ((1 - n) * (1 - n)));
           }
         }
       }

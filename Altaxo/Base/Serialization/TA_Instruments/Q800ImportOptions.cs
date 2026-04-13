@@ -76,9 +76,9 @@ namespace Altaxo.Serialization.TA_Instruments
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Q800ImportOptions)obj;
+        var s = (Q800ImportOptions)o;
         info.AddValue("ConvertUnitsToSIUnits", s.ConvertUnitsToSIUnits);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
         info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);

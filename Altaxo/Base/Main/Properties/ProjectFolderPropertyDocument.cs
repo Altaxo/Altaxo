@@ -54,9 +54,9 @@ namespace Altaxo.Main.Properties
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ProjectFolderPropertyDocument)obj;
+        var s = (ProjectFolderPropertyDocument)o;
 
         info.AddValue("Name", s._name);
         info.AddValue("CreationTimeUtc", s._creationTimeUtc);
@@ -293,10 +293,10 @@ namespace Altaxo.Main.Properties
 
     /// <summary>
     /// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
-    /// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// has to be reported to the <paramref name="ReportProxies" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
     /// </summary>
-    /// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
-    public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
+    /// <param name="ReportProxies">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
+    public void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
       // currently there is nothing to do here
     }

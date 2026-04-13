@@ -114,9 +114,9 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    public override object ProvideValue(IServiceProvider provider)
+    public override object ProvideValue(IServiceProvider serviceProvider)
     {
-      var service = (IProvideValueTarget)provider.GetService(typeof(IProvideValueTarget));
+      var service = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
 
       if (service is null)
         return null;
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Common
       if (FullPropertyName is not null)
       {
         string[] name = FullPropertyName.Split('.');
-        var typeResolver = provider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
+        var typeResolver = serviceProvider.GetService(typeof(IXamlTypeResolver)) as IXamlTypeResolver;
         propertyDeclaringType = typeResolver.Resolve(name[0]);
         propertyName = name[1];
       }

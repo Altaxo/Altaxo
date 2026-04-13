@@ -51,9 +51,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EnsembleAuxiliaryDataVector)obj;
+        var s = (EnsembleAuxiliaryDataVector)o;
 
         info.AddValue("Name", s.Name);
         info.AddEnum("VectorType", s.VectorType);

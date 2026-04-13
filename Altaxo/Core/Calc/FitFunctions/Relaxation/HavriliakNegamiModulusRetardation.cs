@@ -50,9 +50,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRetardation", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HavriliakNegamiModulusRetardation)obj;
+        var s = (HavriliakNegamiModulusRetardation)o;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
@@ -78,9 +78,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRetardation), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HavriliakNegamiModulusRetardation)obj;
+        var s = (HavriliakNegamiModulusRetardation)o;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
@@ -389,40 +389,40 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public event EventHandler? Changed { add { } remove { } }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double x = X[0];
+      double x = independent[0];
       if (_useFrequencyInsteadOfOmega)
         x *= (2 * Math.PI);
 
       // Model this first as compliance
-      var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-      result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
+      var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * parameters[2], parameters[3]), parameters[4]);
+      result = (1 / parameters[1]) + ((1 / parameters[0]) - (1 / parameters[1])) * result;
 
       if (_useFlowTerm)
       {
         if (_invertViscosity)
-          result -= Complex64T.ImaginaryOne * P[5] / x;
+          result -= Complex64T.ImaginaryOne * parameters[5] / x;
         else
-          result -= Complex64T.ImaginaryOne / (x * P[5]);
+          result -= Complex64T.ImaginaryOne / (x * parameters[5]);
       }
 
       result = 1 / result; // but now convert to modulus
 
       if (_logarithmizeResults)
       {
-        Y[0] = Math.Log10(result.Real);
-        Y[1] = Math.Log10(result.Imaginary);
+        dependent[0] = Math.Log10(result.Real);
+        dependent[1] = Math.Log10(result.Imaginary);
       }
       else
       {
-        Y[0] = result.Real;
-        Y[1] = result.Imaginary;
+        dependent[0] = result.Real;
+        dependent[1] = result.Imaginary;
       }
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       int rd = 0;
@@ -434,15 +434,15 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
           x *= (2 * Math.PI);
 
         // Model this first as compliance
-        var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-        result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
+        var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * parameters[2], parameters[3]), parameters[4]);
+        result = (1 / parameters[1]) + ((1 / parameters[0]) - (1 / parameters[1])) * result;
 
         if (_useFlowTerm)
         {
           if (_invertViscosity)
-            result -= Complex64T.ImaginaryOne * P[5] / x;
+            result -= Complex64T.ImaginaryOne * parameters[5] / x;
           else
-            result -= Complex64T.ImaginaryOne / (x * P[5]);
+            result -= Complex64T.ImaginaryOne / (x * parameters[5]);
         }
 
         result = 1 / result; // but now convert to modulus
@@ -461,19 +461,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
         if (dependentVariableChoice is null)
         {
-          FV[rd++] = yre;
-          FV[rd++] = yim;
+          dependent[rd++] = yre;
+          dependent[rd++] = yim;
         }
         else
         {
           if (dependentVariableChoice[0] == true)
           {
-            FV[rd++] = yre;
+            dependent[rd++] = yre;
           }
 
           if (dependentVariableChoice[1] == true)
           {
-            FV[rd++] = yim;
+            dependent[rd++] = yim;
           }
         }
       }

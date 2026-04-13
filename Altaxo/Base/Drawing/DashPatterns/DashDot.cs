@@ -52,9 +52,9 @@ namespace Altaxo.Drawing.DashPatterns
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashDot), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SerializeV0((IDashPattern)obj, info);
+        SerializeV0((IDashPattern)o, info);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

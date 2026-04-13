@@ -48,9 +48,9 @@ namespace Altaxo.Collections
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AscendingIntegerCollection)obj;
+        var s = (AscendingIntegerCollection)o;
         int count = s.GetRangeCount();
         info.CreateArray("Ranges", count);
         int currentpos = 0;

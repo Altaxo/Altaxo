@@ -53,9 +53,9 @@ namespace Altaxo.Worksheet
       private WorksheetViewLayout? _tableController;
 
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (WorksheetViewLayout)obj;
+        var s = (WorksheetViewLayout)o;
         info.AddValue("Layout", AbsoluteDocumentPath.GetAbsolutePath(s.WorksheetLayout));
       }
 

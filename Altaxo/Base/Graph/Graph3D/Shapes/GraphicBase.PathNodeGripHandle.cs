@@ -175,12 +175,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
 
       /// <inheritdoc/>
-      public bool IsGripHit(HitTestPointData mousePosition)
+      public bool IsGripHit(HitTestPointData hitData)
       {
         var vec = new VectorD3D(_gripRadius, _gripRadius, _gripRadius);
         var rect = new RectangleD3D(_gripCenter - vec, 2 * vec);
 
-        return mousePosition.IsHit(rect, out var z);
+        return hitData.IsHit(rect, out var z);
       }
 
       #endregion IGripManipulationHandle Members

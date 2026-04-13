@@ -116,9 +116,9 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineComposition), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AsciiLineComposition)obj;
+        var s = (AsciiLineComposition)o;
 
         info.CreateArray("ColumnTypes", s.Columns.Length);
         for (int i = 0; i < s.Columns.Length; ++i)
@@ -183,10 +183,10 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object? other)
+    public override bool Equals(object? obj)
     {
       return
-        (other is AsciiLineComposition o) &&
+        (obj is AsciiLineComposition o) &&
         (ShortCuts == o.ShortCuts);
     }
 

@@ -260,20 +260,20 @@ namespace Altaxo.Main
     /// <summary>
     /// Used by childs of this object to inform us about a change in their state.
     /// </summary>
-    /// <param name="sender">The sender of this event, usually a child of this object.</param>
+    /// <param name="child">The sender of this event, usually a child of this object.</param>
     /// <param name="e">The change details.</param>
-    public void EhChildChanged(object? sender, System.EventArgs e)
+    public void EhChildChanged(object? child, System.EventArgs e)
     {
       if (IsDisposeInProgress)
         return; // do not handle any event if dispose is in progress or is already disposed
 
-      if (HandleHighPriorityChildChangeCases(sender, ref e))
+      if (HandleHighPriorityChildChangeCases(child, ref e))
         return;
 
       if (!IsSuspendedOrResumeInProgress)
       {
         EventArgs eventArgsTransformed = e;
-        if (HandleLowPriorityChildChangeCases(sender, ref eventArgsTransformed))
+        if (HandleLowPriorityChildChangeCases(child, ref eventArgsTransformed))
           return;
 
         // Notify parent
@@ -296,21 +296,21 @@ namespace Altaxo.Main
       if (IsSuspended)
       {
         CountEvent();
-        if (sender is Main.ISuspendableByToken)
+        if (child is Main.ISuspendableByToken)
         {
           var suspendTokenOfChilds = _suspendTokensOfChilds;
           if (suspendTokenOfChilds is null)
             _suspendTokensOfChilds = suspendTokenOfChilds = new HashSet<ISuspendToken>();
-          suspendTokenOfChilds.Add(((Main.ISuspendableByToken)sender).SuspendGetToken()); // add sender to suspended child
+          suspendTokenOfChilds.Add(((Main.ISuspendableByToken)child).SuspendGetToken()); // add sender to suspended child
         }
         else
         {
-          AccumulateChangeData(sender, e);  // child is unable to accumulate change data, we have to to it by ourself
+          AccumulateChangeData(child, e);  // child is unable to accumulate change data, we have to to it by ourself
         }
       }
       else // Resume is in Progress
       {
-        AccumulateChangeData(sender, e);  // child is sending us data, we accumulate them until resume is finished
+        AccumulateChangeData(child, e);  // child is sending us data, we accumulate them until resume is finished
       }
     }
 
@@ -413,15 +413,15 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets the name of child node.
     /// </summary>
-    /// <param name="docNode">The child node.</param>
+    /// <param name="o">The child node.</param>
     /// <returns>The name of the child node.</returns>
     /// <exception cref="System.ArgumentNullException">The provided argument docNode was null.</exception>
-    public virtual string? GetNameOfChildObject(IDocumentLeafNode docNode)
+    public virtual string? GetNameOfChildObject(IDocumentLeafNode o)
     {
-      if (docNode is null)
+      if (o is null)
         throw new ArgumentNullException("docNode");
 
-      return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.DocumentNode, docNode)).Name;
+      return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.DocumentNode, o)).Name;
     }
 
     #endregion Tunneling event handling

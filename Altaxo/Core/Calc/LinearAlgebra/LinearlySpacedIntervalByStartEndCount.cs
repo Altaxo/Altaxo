@@ -62,11 +62,11 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Serializes the specified object.
       /// </summary>
-      /// <param name="obj">The object to serialize.</param>
+      /// <param name="o">The object to serialize.</param>
       /// <param name="info">The serialization information.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearlySpacedIntervalByStartEndCount)obj;
+        var s = (LinearlySpacedIntervalByStartEndCount)o;
         info.AddValue("Start", s.Start);
         info.AddValue("End", s.End);
         info.AddValue("Count", s.Count);

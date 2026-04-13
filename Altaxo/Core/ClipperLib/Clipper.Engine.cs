@@ -227,12 +227,12 @@ namespace Clipper2Lib
     /// <summary>
     /// Compares two local minima by their Y coordinate.
     /// </summary>
-    /// <param name="locMin1">The first local minimum.</param>
-    /// <param name="locMin2">The second local minimum.</param>
+    /// <param name="x">The first local minimum.</param>
+    /// <param name="y">The second local minimum.</param>
     /// <returns>A value indicating their relative sort order.</returns>
-    public readonly int Compare(LocalMinima locMin1, LocalMinima locMin2)
+    public readonly int Compare(LocalMinima x, LocalMinima y)
     {
-      return locMin2.vertex.pt.Y.CompareTo(locMin1.vertex.pt.Y);
+      return y.vertex.pt.Y.CompareTo(x.vertex.pt.Y);
     }
   }
 
@@ -1036,11 +1036,11 @@ namespace Clipper2Lib
 
     private struct IntersectListSort : IComparer<IntersectNode>
     {
-      public readonly int Compare(IntersectNode a, IntersectNode b)
+      public readonly int Compare(IntersectNode x, IntersectNode y)
       {
-        if (a.pt.Y != b.pt.Y) return (a.pt.Y > b.pt.Y) ? -1 : 1;
-        if (a.pt.X == b.pt.X) return 0;
-        return (a.pt.X < b.pt.X) ? -1 : 1;
+        if (x.pt.Y != y.pt.Y) return (x.pt.Y > y.pt.Y) ? -1 : 1;
+        if (x.pt.X == y.pt.X) return 0;
+        return (x.pt.X < y.pt.X) ? -1 : 1;
       }
     }
 

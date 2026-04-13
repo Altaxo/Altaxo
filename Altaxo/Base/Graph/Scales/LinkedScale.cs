@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
         /*
@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Scales
       private LinkedScale? _instance;
 
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions not supported.");
 
@@ -264,9 +264,9 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinkedScale)obj;
+        var s = (LinkedScale)o;
 
         info.AddValue("ScaleWrapped", s._scaleWrapped);
         info.AddValueOrNull("ScaleLinkedTo", s._scaleLinkedToProxy);
@@ -295,9 +295,9 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinkedScale)obj;
+        var s = (LinkedScale)o;
 
         info.AddValue("ScaleWrapped", s._scaleWrapped);
         info.AddValueOrNull("ScaleLinkedTo", s._scaleLinkedToProxy);

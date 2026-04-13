@@ -43,10 +43,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 #nullable enable
 
     /// <inheritdoc/>
-    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
+    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixXPre)
     {
       CalculatePRESS(
-        matrixX,
+        matrixXPre,
         _calib.XLoads,
         _calib.YLoads,
         _calib.XScores,
@@ -61,12 +61,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
 
     /// <inheritdoc/>
-    public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
+    public override void SetCalibrationModel(IMultivariateCalibrationModel calibrationModel)
     {
-      if (calib is PCRCalibrationModel)
-        _calib = (PCRCalibrationModel)calib;
+      if (calibrationModel is PCRCalibrationModel)
+        _calib = (PCRCalibrationModel)calibrationModel;
       else
-        throw new ArgumentException("Expecting argument of type PCRCalibrationModel, but actual type is " + calib.GetType().ToString());
+        throw new ArgumentException("Expecting argument of type PCRCalibrationModel, but actual type is " + calibrationModel.GetType().ToString());
     }
 
     /// <inheritdoc/>
@@ -91,13 +91,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <inheritdoc/>
-    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
+    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixXPre, IROMatrix<double> matrixYPre, int maximalNumberOfFactors)
     {
-      int numFactors = Math.Min(matrixX.ColumnCount, maxFactors);
-      ExecuteAnalysis(matrixX, matrixY, ref numFactors, out var xLoads, out var xScores, out var V);
+      int numFactors = Math.Min(matrixXPre.ColumnCount, maximalNumberOfFactors);
+      ExecuteAnalysis(matrixXPre, matrixYPre, ref numFactors, out var xLoads, out var xScores, out var V);
 
-      var yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.RowCount, matrixY.ColumnCount);
-      MatrixMath.Copy(matrixY, yLoads);
+      var yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixYPre.RowCount, matrixYPre.ColumnCount);
+      MatrixMath.Copy(matrixYPre, yLoads);
 
       _calib.NumberOfFactors = numFactors;
       _calib.XLoads = xLoads;
@@ -108,37 +108,37 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     /// <inheritdoc/>
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
-      IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
-      int numFactors, // number of factors to use for prediction
+      IROMatrix<double> XUPre, // unknown spectrum or spectra,  horizontal oriented
+      int numberOfFactors, // number of factors to use for prediction
       IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
-      if (numFactors > _calib.NumberOfFactors)
-        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, NumberOfFactors));
+      if (numberOfFactors > _calib.NumberOfFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numberOfFactors, NumberOfFactors));
 
       Predict(
-        XU, // unknown spectrum or spectra,  horizontal oriented
+        XUPre, // unknown spectrum or spectra,  horizontal oriented
         _calib.XLoads, // x-loads matrix
         _calib.YLoads, // y-loads matrix
         _calib.XScores, // weighting matrix
         _calib.CrossProduct,  // Cross product vector
-        numFactors, // number of factors to use for prediction
+        numberOfFactors, // number of factors to use for prediction
         predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
         spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
         );
     }
 
     /// <inheritdoc/>
-    protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
+    protected override void InternalGetPredictionScores(int numberOfFactors, IMatrix<double> predictionScores)
     {
-      GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XScores, _calib.CrossProduct, numFactors, predictionScores);
+      GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XScores, _calib.CrossProduct, numberOfFactors, predictionScores);
     }
 
     /// <inheritdoc/>
-    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixXPre, int numberOfFactors, IMatrix<double> xLeverage)
     {
-      CalculateXLeverageFromPreprocessed(_calib.XScores, numFactors, xLeverage);
+      CalculateXLeverageFromPreprocessed(_calib.XScores, numberOfFactors, xLeverage);
     }
 
     /// <summary>

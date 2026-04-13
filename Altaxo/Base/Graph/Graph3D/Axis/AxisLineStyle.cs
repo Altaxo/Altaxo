@@ -122,9 +122,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisLineStyle)obj;
+        var s = (AxisLineStyle)o;
         info.AddValue("AxisPen", s._axisPen);
         info.AddValue("MajorPen", s._majorTickPen);
         info.AddValue("MinorPen", s._minorTickPen);

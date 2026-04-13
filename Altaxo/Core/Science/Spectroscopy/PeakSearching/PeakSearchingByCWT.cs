@@ -177,9 +177,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByCwt)obj;
+        var s = (PeakSearchingByCwt)o;
 
         info.AddValue("Wavelet", s.Wavelet);
         info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);
@@ -213,9 +213,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByCwt)obj;
+        var s = (PeakSearchingByCwt)o;
 
         info.AddValue("Wavelet", s.Wavelet);
         info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);
@@ -250,9 +250,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByCwt)obj;
+        var s = (PeakSearchingByCwt)o;
 
         info.AddValue("Wavelet", s.Wavelet);
         info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);

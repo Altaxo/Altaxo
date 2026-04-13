@@ -108,9 +108,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColumnDrivenSymbolSizePlotStyle)obj;
+        var s = (ColumnDrivenSymbolSizePlotStyle)o;
 
         info.AddValue("DataColumn", s._dataColumnProxy);
         info.AddValue("Scale", s._scale);
@@ -228,16 +228,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Copies values from another instance.
     /// </summary>
-    /// <param name="obj">The source object.</param>
+    /// <param name="from">The source object.</param>
     /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
     /// <returns><c>true</c> if the copy succeeded; otherwise, <c>false</c>.</returns>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      if (obj is ColumnDrivenSymbolSizePlotStyle from)
+      if (from is ColumnDrivenSymbolSizePlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
         return true;
       }
       return false;

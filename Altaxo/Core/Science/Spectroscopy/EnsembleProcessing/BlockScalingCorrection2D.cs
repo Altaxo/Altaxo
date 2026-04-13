@@ -56,9 +56,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BlockScalingCorrection2D)obj;
+        var s = (BlockScalingCorrection2D)o;
         info.AddValue("SizeOfDimension0", s.SizeOfDimension0);
         info.AddValue("SizeOfDimension1", s.SizeOfDimension1);
         info.AddValue("IndexOfDimensionToAverage", s.IndexOfDimensionToAverage);
@@ -166,7 +166,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[]? regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
       throw new InvalidOperationException($"The {this.GetType().Name} preprocessor is not suitable for prediction. You have to remove it from the training process.");
     }

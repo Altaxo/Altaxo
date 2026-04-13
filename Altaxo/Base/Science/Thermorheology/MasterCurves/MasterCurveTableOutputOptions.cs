@@ -74,9 +74,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MasterCurveTableOutputOptions)obj;
+        var s = (MasterCurveTableOutputOptions)o;
 
         info.AddValue("OriginalCurves", s.OutputOriginalCurves);
         info.AddValue("ShiftedCurves", s.OutputShiftedCurves);
@@ -110,9 +110,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MasterCurveTableOutputOptions)obj;
+        var s = (MasterCurveTableOutputOptions)o;
 
         info.AddValue("OriginalCurves", s.OutputOriginalCurves);
         info.AddValue("ShiftedCurves", s.OutputShiftedCurves);

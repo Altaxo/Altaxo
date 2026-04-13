@@ -51,9 +51,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RangeOfNumericalValues), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RangeOfNumericalValues)obj;
+        var s = (RangeOfNumericalValues)o;
 
         info.AddValue("LowerValue", (object)s._lowerValue);
         info.AddValue("LowerIsInclusive", s._isLowerInclusive);
@@ -344,15 +344,15 @@ namespace Altaxo.Data.Selections
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
       return
-        rowSel is RangeOfNumericalValues other &&
-        this._lowerValue == other._lowerValue &&
-        this._isLowerInclusive == other._isLowerInclusive &&
-        this._upperValue == other._upperValue &&
-        this._isUpperInclusive == other._isUpperInclusive &&
-        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+        other is RangeOfNumericalValues otherX &&
+        this._lowerValue == otherX._lowerValue &&
+        this._isLowerInclusive == otherX._isLowerInclusive &&
+        this._upperValue == otherX._upperValue &&
+        this._isUpperInclusive == otherX._isUpperInclusive &&
+        object.ReferenceEquals(this._columnProxy?.Document(), otherX._columnProxy?.Document());
     }
 
   }

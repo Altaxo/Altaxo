@@ -26,8 +26,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -67,9 +65,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (G3DPlotStyleCollection)obj;
+        var s = (G3DPlotStyleCollection)o;
 
         info.CreateArray("Styles", s._innerList.Count);
         for (int i = 0; i < s._innerList.Count; i++)
@@ -176,14 +174,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as G3DPlotStyleCollection;
-      if (from is not null)
+      if (from is G3DPlotStyleCollection fromX)
       {
-        CopyFrom(from);
+        CopyFrom(fromX);
         return true;
       }
       return false;
@@ -614,11 +611,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="options">Information what to replace.</param>
-    public void VisitDocumentReferences(DocNodeProxyReporter options)
+    /// <param name="Report">Information what to replace.</param>
+    public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       foreach (var s in this)
-        s.VisitDocumentReferences(options);
+        s.VisitDocumentReferences(Report);
     }
 
     #endregion IDocumentNode Members

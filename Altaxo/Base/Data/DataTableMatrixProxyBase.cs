@@ -205,10 +205,10 @@ namespace Altaxo.Data
       }
 
       /// <inheritdoc />
-      public int Compare(IReadableColumnProxy? a, IReadableColumnProxy? b)
+      public int Compare(IReadableColumnProxy? x, IReadableColumnProxy? y)
       {
-        var ca = a?.Document() as DataColumn;
-        var cb = b?.Document() as DataColumn;
+        var ca = x?.Document() as DataColumn;
+        var cb = y?.Document() as DataColumn;
 
         if (ca is not null && cb is not null)
         {
@@ -459,19 +459,19 @@ namespace Altaxo.Data
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
-    public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
+    /// <param name="ReportProxies">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
+    public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter ReportProxies)
     {
       using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
       {
         if (_dataTable is not null)
-          Report(_dataTable, this, "DataTable");
+          ReportProxies(_dataTable, this, "DataTable");
 
-        Report(_rowHeaderColumn, this, "RowHeaderColumn");
+        ReportProxies(_rowHeaderColumn, this, "RowHeaderColumn");
         for (int i = 0; i < _columnHeaderColumns.Count; i++)
-          Report(_columnHeaderColumns[i], this, $"ColumnHeaderColumns[{i}]");
+          ReportProxies(_columnHeaderColumns[i], this, $"ColumnHeaderColumns[{i}]");
         for (int i = 0; i < _dataColumns.Count; ++i)
-          Report(_dataColumns[i], this, $"DataColumns[{i}]");
+          ReportProxies(_dataColumns[i], this, $"DataColumns[{i}]");
 
         suspendToken.Resume();
       }

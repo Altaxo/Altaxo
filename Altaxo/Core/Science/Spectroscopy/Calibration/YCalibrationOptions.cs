@@ -90,7 +90,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -152,7 +152,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -217,7 +217,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
 
@@ -295,9 +295,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (YCalibrationOptions)obj;
+        var s = (YCalibrationOptions)o;
         info.AddValue("SpectralPreprocessing", s.Preprocessing);
         info.AddValue("CurveShape", s.CurveShape);
         info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);

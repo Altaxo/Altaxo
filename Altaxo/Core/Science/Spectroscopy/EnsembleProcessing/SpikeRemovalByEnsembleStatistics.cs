@@ -74,9 +74,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpikeRemovalByEnsembleStatistics)obj;
+        var s = (SpikeRemovalByEnsembleStatistics)o;
         info.AddValue("NumberOfSigmas", s.NumberOfSigmas);
         info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
         info.AddValue("MaximalWidth", s.MaximalWidth);
@@ -119,9 +119,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
-      var yNew = Execute(x, spectraMatrix);
+      var yNew = Execute(x, y);
 
       return (x, yNew, regions);
     }

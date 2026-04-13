@@ -79,9 +79,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotItemCollection)obj;
+        var s = (PlotItemCollection)o;
 
         info.CreateArray("PlotItems", s.Count);
         for (int i = 0; i < s.Count; i++)
@@ -123,9 +123,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotItemCollection)obj;
+        var s = (PlotItemCollection)o;
 
         info.AddValue("GroupStyles", s._plotGroupStyles);
 
@@ -371,7 +371,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     /// <inheritdoc/>
-    public void PaintSymbol(IGraphicsContext3D g, RectangleD3D symbolRect)
+    public void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
     {
       throw new NotImplementedException();
     }
@@ -447,15 +447,15 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     /// <inheritdoc/>
-    public void PrepareGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles, Graph3D.IPlotArea layer)
+    public void PrepareGroupStyles(PlotGroupStyleCollection? styles, Graph3D.IPlotArea layer)
     {
-      PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
+      PrepareGroupStylesForward_HierarchyUpOnly(styles, layer);
     }
 
     /// <inheritdoc/>
-    public void ApplyGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles)
+    public void ApplyGroupStyles(PlotGroupStyleCollection? styles)
     {
-      ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
+      ApplyGroupStylesForward_HierarchyUpOnly(styles);
     }
 
     /// <summary>

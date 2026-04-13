@@ -49,9 +49,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RateOfConversionNthOrder)obj;
+        var s = (RateOfConversionNthOrder)o;
       }
 
       /// <inheritdoc/>
@@ -158,56 +158,56 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = P[1] * EvaluateConversionRate(X[0], P[0], P[2], P[3]);
+      dependent[0] = parameters[1] * EvaluateConversionRate(independent[0], parameters[0], parameters[2], parameters[3]);
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        FV[r] = P[1] * EvaluateConversionRate(x, P[0], P[2], P[3]);
+        dependent[r] = parameters[1] * EvaluateConversionRate(x, parameters[0], parameters[2], parameters[3]);
       }
     }
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
-        double t0 = P[0];
-        double A0 = P[1];
-        double k = P[2];
-        double n = P[3];
+        var x = independent[r, 0];
+        double t0 = parameters[0];
+        double A0 = parameters[1];
+        double k = parameters[2];
+        double n = parameters[3];
 
         if (!(x >= t0))
         {
-          DY[r, 0] = 0;
-          DY[r, 1] = 0;
-          DY[r, 2] = 0;
-          DY[r, 3] = 0;
+          DF[r, 0] = 0;
+          DF[r, 1] = 0;
+          DF[r, 2] = 0;
+          DF[r, 3] = 0;
         }
         else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
         {
-          DY[r, 0] = 0;
-          DY[r, 1] = 0;
-          DY[r, 2] = 0;
-          DY[r, 3] = 0;
+          DF[r, 0] = 0;
+          DF[r, 1] = 0;
+          DF[r, 2] = 0;
+          DF[r, 3] = 0;
         }
         else
         {
           if (n == 1)
           {
             var term = Math.Exp(k * (t0 - x));
-            DY[r, 0] = A0 * term * k * k;
-            DY[r, 1] = term * k;
-            DY[r, 2] = A0 * term * (1 + k * (t0 - x));
-            DY[r, 3] = A0 * term * 0.5 * RMath.Pow2(k) * (2 + k * (t0 - x)) * (t0 - x);
+            DF[r, 0] = A0 * term * k * k;
+            DF[r, 1] = term * k;
+            DF[r, 2] = A0 * term * (1 + k * (t0 - x));
+            DF[r, 3] = A0 * term * 0.5 * RMath.Pow2(k) * (2 + k * (t0 - x)) * (t0 - x);
           }
           else
           {
@@ -215,10 +215,10 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
             var termE = Math.Pow(term, 1 / (1 - n));
             var termEN = Math.Pow(term, n / (1 - n));
 
-            DY[r, 0] = A0 * k * k * n * termE / RMath.Pow2(term);
-            DY[r, 1] = k * termEN;
-            DY[r, 2] = A0 * termEN * (1 + (k * n * (t0 - x)) / term);
-            DY[r, 3] = A0 * k * termEN * (n * (1 / term - 1) + Math.Log(term)) / RMath.Pow2(n - 1);
+            DF[r, 0] = A0 * k * k * n * termE / RMath.Pow2(term);
+            DF[r, 1] = k * termEN;
+            DF[r, 2] = A0 * termEN * (1 + (k * n * (t0 - x)) / term);
+            DF[r, 3] = A0 * k * termEN * (n * (1 / term - 1) + Math.Log(term)) / RMath.Pow2(n - 1);
           }
         }
       }

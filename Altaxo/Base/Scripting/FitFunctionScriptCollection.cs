@@ -130,19 +130,19 @@ namespace Altaxo.Scripting
     }
 
     /// <inheritdoc/>
-    void ICollection<FitFunctionScript>.Add(FitFunctionScript script)
+    void ICollection<FitFunctionScript>.Add(FitFunctionScript item)
     {
-      Add(script);
+      Add(item);
     }
 
     /// <summary>
     /// Determines whether the collection contains the specified script.
     /// </summary>
-    /// <param name="script">The script to locate.</param>
+    /// <param name="item">The script to locate.</param>
     /// <returns><see langword="true"/> if the script is contained in the collection; otherwise, <see langword="false"/>.</returns>
-    public bool Contains(FitFunctionScript script)
+    public bool Contains(FitFunctionScript item)
     {
-      return _innerList.ContainsKey(script);
+      return _innerList.ContainsKey(item);
     }
 
     /// <summary>
@@ -164,10 +164,10 @@ namespace Altaxo.Scripting
     /// Copies the scripts to the specified array.
     /// </summary>
     /// <param name="array">The destination array.</param>
-    /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
-    public void CopyTo(FitFunctionScript[] array, int index)
+    /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+    public void CopyTo(FitFunctionScript[] array, int arrayIndex)
     {
-      _innerList.Keys.CopyTo(array, index);
+      _innerList.Keys.CopyTo(array, arrayIndex);
     }
 
     /// <summary>

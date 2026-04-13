@@ -52,9 +52,9 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithoutTabSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FixedColumnWidthWithoutTabSeparationStrategy)obj;
+        var s = (FixedColumnWidthWithoutTabSeparationStrategy)o;
         info.AddArray("StartPositions", s.StartPositions.ToArray(), s.StartPositions.Length);
       }
 

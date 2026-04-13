@@ -39,9 +39,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PrincipalComponentAnalysisBySVD)obj;
+        var s = (PrincipalComponentAnalysisBySVD)o;
       }
 
       /// <inheritdoc/>
@@ -54,15 +54,15 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     #endregion
 
     /// <inheritdoc/>
-    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> data, int numberOfComponents)
+    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> X, int rank)
     {
-      int numberOfSpectra = data.RowCount;
-      int spectralPoints = data.ColumnCount;
+      int numberOfSpectra = X.RowCount;
+      int spectralPoints = X.ColumnCount;
 
-      var svd = TruncatedSVD.BlockKrylovSvd(data, numberOfComponents);
+      var svd = TruncatedSVD.BlockKrylovSvd(X, rank);
 
-      var mfactors = CreateMatrix.Dense<double>(numberOfSpectra, numberOfComponents);
-      for (int i = 0; i < numberOfComponents; i++)
+      var mfactors = CreateMatrix.Dense<double>(numberOfSpectra, rank);
+      for (int i = 0; i < rank; i++)
       {
         var singularValue = svd.S[i];
         for (int r = 0; r < numberOfSpectra; r++)
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           mfactors[r, i] = svd.U[r, i] * singularValue;
         }
       }
-      var mloads = svd.VT.SubMatrix(0, numberOfComponents, 0, spectralPoints);
+      var mloads = svd.VT.SubMatrix(0, rank, 0, spectralPoints);
       return (mfactors, mloads);
     }
   }

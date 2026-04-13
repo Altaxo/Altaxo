@@ -98,9 +98,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SiliconCalibrationOptions)obj;
+        var s = (SiliconCalibrationOptions)o;
         info.AddValue("Temperature", s.Temperature);
         info.AddValue("RelativeShiftTolerance", s.RelativeShift_Tolerance_invcm);
         info.AddValue("PeakFindingOptions", s.PeakFindingOptions);

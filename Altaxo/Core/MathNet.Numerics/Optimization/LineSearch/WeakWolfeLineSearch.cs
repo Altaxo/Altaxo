@@ -70,11 +70,11 @@ namespace Altaxo.Calc.Optimization.LineSearch
     }
 
     /// <inheritdoc />
-    protected override void ValidateValue(IObjectiveFunctionEvaluation eval)
+    protected override void ValidateValue(IObjectiveFunctionEvaluation objective)
     {
-      if (!IsFinite(eval.Value))
+      if (!IsFinite(objective.Value))
       {
-        throw new EvaluationException(FormattableString.Invariant($"Non-finite value returned by objective function: {eval.Value}"), eval);
+        throw new EvaluationException(FormattableString.Invariant($"Non-finite value returned by objective function: {objective.Value}"), objective);
       }
     }
 
@@ -86,13 +86,13 @@ namespace Altaxo.Calc.Optimization.LineSearch
     }
 
     /// <inheritdoc />
-    protected override void ValidateGradient(IObjectiveFunctionEvaluation eval)
+    protected override void ValidateGradient(IObjectiveFunctionEvaluation objective)
     {
-      foreach (double x in eval.Gradient)
+      foreach (double x in objective.Gradient)
       {
         if (!IsFinite(x))
         {
-          throw new EvaluationException(FormattableString.Invariant($"Non-finite value returned by gradient: {x}"), eval);
+          throw new EvaluationException(FormattableString.Invariant($"Non-finite value returned by gradient: {x}"), objective);
         }
       }
     }

@@ -81,17 +81,17 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <inheritdoc/>
-    public override Vector<double> Search(Vector<double> x, Vector<double> d, double stp)
+    public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       var ret = x.Clone();
       double j = 0;
-      double delta_d = d.DotProduct(d);
+      double delta_d = direction.DotProduct(direction);
       double alpha;
       do
       {
-        alpha = -GradientEvaluation(ret).DotProduct(d) /
-          d.DotProduct(HessianEvaluation(ret) * d);
-        ret = ret + alpha * d;
+        alpha = -GradientEvaluation(ret).DotProduct(direction) /
+          direction.DotProduct(HessianEvaluation(ret) * direction);
+        ret = ret + alpha * direction;
         j++;
       } while ((j < maxIteration) && (alpha * alpha * delta_d > tolerance * tolerance));
       return ret;

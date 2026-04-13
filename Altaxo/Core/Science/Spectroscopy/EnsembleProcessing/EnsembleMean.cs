@@ -47,9 +47,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EnsembleMean)obj;
+        var s = (EnsembleMean)o;
       }
 
       /// <inheritdoc/>
@@ -76,13 +76,13 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
-      if (auxillaryData is not EnsembleAuxiliaryDataVector data || data.Name != AuxillaryDataName)
+      if (auxiliaryData is not EnsembleAuxiliaryDataVector data || data.Name != AuxillaryDataName)
       {
-        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxillaryDataVector.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxillaryDataVector.", nameof(auxiliaryData));
       }
-      var yNew = spectraMatrix.Clone();
+      var yNew = y.Clone();
       var ensembleMean = data.Value;
       MatrixMath.SubtractRow(yNew, ensembleMean, yNew);
       return (x, yNew, regions);

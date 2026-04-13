@@ -73,9 +73,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VoigtAreaParametrizationNu)obj;
+        var s = (VoigtAreaParametrizationNu)o;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
@@ -285,31 +285,31 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]) * OneBySqrtLog4, P[j + 2] * (1 - P[j + 3]));
+        sumTerms += parameters[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(independent[0] - parameters[j + 1], parameters[j + 2] * Math.Sqrt(parameters[j + 3]) * OneBySqrtLog4, parameters[j + 2] * (1 - parameters[j + 3]));
       }
 
       if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
         for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      Y[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -319,37 +319,37 @@ namespace Altaxo.Calc.FitFunctions.Probability
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]) * OneBySqrtLog4, P[j + 2] * (1 - P[j + 3]));
+          sumTerms += parameters[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - parameters[j + 1], parameters[j + 2] * Math.Sqrt(parameters[j + 3]) * OneBySqrtLog4, parameters[j + 2] * (1 - parameters[j + 3]));
         }
 
         if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
           for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
       const double Sqrt2 = 1.4142135623730950488016887242097;  // Math.Sqrt(2)
       const double Sqrt2Pi = 2.5066282746310005024157652848110; // Math.Sqrt(2*Math.Pi)
 
-      var rows = X.RowCount;
+      var rows = independent.RowCount;
       for (int r = 0; r < rows; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3])
+          if (isFixed is not null && isFixed[j] && isFixed[j + 1] && isFixed[j + 2] && isFixed[j + 3])
           {
             // avoid calculation of the derivatives, if all parameters of that peak are fixed
             continue;
@@ -418,7 +418,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double fullWidth, double relativeHeight)
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
     {
       bool useLorenzLimit = false;
 
@@ -428,7 +428,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (useLorenzLimit)
       {
         // we calculate at the Lorentz limit (nu==0)
-        var w = 0.5 * fullWidth * Math.Sqrt(relativeHeight / (1 - relativeHeight));
+        var w = 0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight));
         var area = height * w * Math.PI;
         return new double[NumberOfParametersPerPeak] { area, position, w, 0 };
       }
@@ -437,7 +437,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         const double SqrtLog2 = 0.832554611157697756353165; // Math.Sqrt(Math.Log(2))
         const double Sqrt2PiByLog4 = 2.12893403886245235863054; // Math.Sqrt(2*Math.Pi/Math.Log(4))
 
-        var w = 0.5 * fullWidth * SqrtLog2 / Math.Sqrt(-Math.Log(relativeHeight));
+        var w = 0.5 * width * SqrtLog2 / Math.Sqrt(-Math.Log(relativeHeight));
         var area = height * w * Sqrt2PiByLog4;
         return new double[] { area, position, w, 1 };
       }

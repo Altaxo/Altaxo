@@ -44,9 +44,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.LabelFormatting.NumericLabelFormattingScientific", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericLabelFormattingScientific)obj;
+        var s = (NumericLabelFormattingScientific)o;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
       }
 
@@ -61,9 +61,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericLabelFormattingScientific)obj;
+        var s = (NumericLabelFormattingScientific)o;
         info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
         info.AddValue("ShowExponentAlways", s._showExponentAlways);
       }

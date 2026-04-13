@@ -71,9 +71,9 @@ namespace Altaxo.Main.Properties
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PropertyBag)obj;
+        var s = (PropertyBag)o;
         var keyList = new List<string>(s._properties.Count);
         foreach (var entry in s._properties)
         {

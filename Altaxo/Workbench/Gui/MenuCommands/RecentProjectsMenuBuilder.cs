@@ -40,7 +40,7 @@ namespace Altaxo.Gui.MenuCommands
   public class RecentProjectsMenuBuilder : IMenuItemBuilder
   {
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       // search either as part of IFileService or directly as service IRecentOpen
       var recentOpen = Altaxo.Current.GetService<IFileService>()?.RecentOpen ?? Altaxo.Current.GetService<IRecentOpen>();

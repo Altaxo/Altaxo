@@ -40,10 +40,10 @@ namespace Altaxo.Gui.Workbench
   public class WindowOpenConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object? caller, Condition condition)
+    public bool IsValid(object? parameter, Condition condition)
     {
       var workbench = Altaxo.Current.GetRequiredService<Workbench.IWorkbenchEx>();
-      IViewContent? activeViewContent = caller as IViewContent;
+      IViewContent? activeViewContent = parameter as IViewContent;
       if (activeViewContent is null) // active view content is probably coming from the data context of the menu
       {
         activeViewContent = workbench.ActiveViewContent; // else active view content is retrieved from the workbench

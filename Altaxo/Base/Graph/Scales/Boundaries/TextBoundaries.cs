@@ -52,9 +52,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TextBoundaries)obj;
+        var s = (TextBoundaries)o;
         info.CreateArray("Items", s._itemList.Count);
         foreach (string name in s._itemList)
           info.AddValue("e", name);

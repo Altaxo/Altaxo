@@ -359,9 +359,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Interpolates a curve using abcissa x and ordinate y.
     /// </summary>
-    /// <param name="x">The vector of abscissa values.</param>
-    /// <param name="y">The vector of ordinate values.</param>
-    public abstract void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y);
+    /// <param name="xvec">The vector of abscissa values.</param>
+    /// <param name="yvec">The vector of ordinate values.</param>
+    public abstract void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec);
 
     /// <summary>
     /// Get the abscissa value in dependence on parameter u.

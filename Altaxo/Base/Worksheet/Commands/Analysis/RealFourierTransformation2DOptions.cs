@@ -145,9 +145,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.Commands.Analysis.RealFourierTransformation2DOptions", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RealFourierTransformation2DOptions)obj;
+        var s = (RealFourierTransformation2DOptions)o;
 
         info.AddValue("RowIncrementValue", s._rowIncrementValue);
         info.AddValue("ColumnIncrementValue", s._columnIncrementValue);
@@ -214,9 +214,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RealFourierTransformation2DOptions), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RealFourierTransformation2DOptions)obj;
+        var s = (RealFourierTransformation2DOptions)o;
 
         info.AddValue("IsUserDefinedRowIncrementValue", s._isUserDefinedRowIncrementValue);
         info.AddValue("RowIncrementValue", s._rowIncrementValue);

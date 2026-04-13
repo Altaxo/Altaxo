@@ -95,9 +95,9 @@ namespace Altaxo.Drawing
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TextureScaling)obj;
+        var s = (TextureScaling)o;
         info.AddEnum("Mode", s.ScalingMode);
         info.AddEnum("AspectPreserving", s.SourceAspectRatioPreserving);
         info.AddValue("X", s.X);

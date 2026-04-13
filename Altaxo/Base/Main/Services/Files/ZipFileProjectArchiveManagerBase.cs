@@ -212,13 +212,13 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Saves the project with a name given in <paramref name="destinationFileName"/>. The name can or can not be the same name as was used before.
+    /// Saves the project with a name given in <paramref name="fileName"/>. The name can or can not be the same name as was used before.
     /// </summary>
-    /// <param name="destinationFileName">Name of the destination file.</param>
+    /// <param name="fileName">Name of the destination file.</param>
     /// <param name="saveProjectAndWindowsState">Delegate to store the project document and the windows state into an <see cref="IProjectArchive"/>.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ObjectDisposedException"></exception>
-    public IDictionary<string, IProjectItem> SaveAs(FileName destinationFileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
+    public IDictionary<string, IProjectItem> SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
 #nullable disable
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
@@ -229,7 +229,7 @@ namespace Altaxo.Main.Services
       IDictionary<string, IProjectItem> dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = originalFileName != (string)destinationFileName;
+      bool isNewDestinationFileName = originalFileName != (string)fileName;
 
       TryFinishCloneTask();  // Force decision whether we have a cloned file of the original file or not
       bool useClonedStreamAsBackup = _clonedFileStream is not null;
@@ -243,7 +243,7 @@ namespace Altaxo.Main.Services
       if (isNewDestinationFileName)
       {
         // create a new file stream for writing to
-        newProjectArchiveFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        newProjectArchiveFileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
       else if (useClonedStreamAsBackup)
       {
@@ -256,7 +256,7 @@ namespace Altaxo.Main.Services
         var instanceStorageService = Current.GetService<IInstanceStorageService>();
         var path = instanceStorageService.InstanceStoragePath;
         var clonedPath = Path.Combine(path, ClonedProjectRelativePath);
-        var clonedFileName = Path.Combine(clonedPath, ClonedProjectFileName + Path.GetExtension(destinationFileName));
+        var clonedFileName = Path.Combine(clonedPath, ClonedProjectFileName + Path.GetExtension(fileName));
         Directory.CreateDirectory(clonedPath);
         newProjectArchiveFileStream = new FileStream(clonedFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
@@ -314,7 +314,7 @@ namespace Altaxo.Main.Services
           _originalFileStream?.Dispose();
           _originalFileStream = null;
 
-          var orgFileStream = new FileStream(destinationFileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+          var orgFileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
           _clonedFileStream.Seek(0, SeekOrigin.Begin);
           _clonedFileStream.CopyTo(orgFileStream);
           _originalFileStream = orgFileStream;

@@ -53,9 +53,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExcludeUnionOfRowSelections), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExcludeUnionOfRowSelections)obj;
+        var s = (ExcludeUnionOfRowSelections)o;
 
         info.CreateArray("RowSelections", s._rowSelections.Count);
 
@@ -317,17 +317,17 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
-      if (rowSel is not ExcludeUnionOfRowSelections other)
+      if (other is not ExcludeUnionOfRowSelections otherX)
         return false;
 
-      if (this._rowSelections.Count != other._rowSelections.Count)
+      if (this._rowSelections.Count != otherX._rowSelections.Count)
         return false;
 
       for (int i = 0; i < this._rowSelections.Count; ++i)
       {
-        if (!this._rowSelections[i].Equals(other._rowSelections[i]))
+        if (!this._rowSelections[i].Equals(otherX._rowSelections[i]))
           return false;
       }
 

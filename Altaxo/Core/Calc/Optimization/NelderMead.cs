@@ -406,9 +406,9 @@ namespace Altaxo.Calc.Optimization
       }
 
       /// <inheritdoc/>
-      public double Value(Altaxo.Calc.LinearAlgebra.Vector<double> v)
+      public double Value(Altaxo.Calc.LinearAlgebra.Vector<double> x)
       {
-        return CostFunction(v);
+        return CostFunction(x);
       }
 
       /// <inheritdoc/>

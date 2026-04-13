@@ -43,7 +43,7 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -105,9 +105,9 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
-      if (rowSel is not AllRows other)
+      if (other is not AllRows otherX)
         return false;
 
       return true;

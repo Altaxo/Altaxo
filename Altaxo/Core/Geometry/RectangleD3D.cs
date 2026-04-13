@@ -58,9 +58,9 @@ namespace Altaxo.Geometry
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RectangleD3D)obj;
+        var s = (RectangleD3D)o;
         info.AddValue("X", s._x);
         info.AddValue("Y", s._y);
         info.AddValue("Z", s._z);

@@ -101,7 +101,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       ref int vertexIndexOffset,
       bool isStartCap,
       PointD3D basePoint,
-      VectorD3D eastVector,
+      VectorD3D westVector,
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,

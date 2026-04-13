@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -69,9 +67,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the range list source displayed by the control.
     /// </summary>
-    public void SetRangeListSource(IEnumerable<object> ranges)
+    public void SetRangeListSource(IEnumerable<object> source)
     {
-      _ranges = ranges;
+      _ranges = source;
       _guiDataGrid.ItemsSource = _ranges;
     }
 

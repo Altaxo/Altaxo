@@ -53,9 +53,9 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphExportOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphExportOptions)obj;
+        var s = (GraphExportOptions)o;
 
         info.AddValue("ImageFormat", s._imageFormat);
         info.AddEnum("PixelFormat", s._pixelFormat);

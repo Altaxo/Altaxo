@@ -56,14 +56,14 @@ namespace Altaxo.Calc.Statistics
       /// <summary>
       /// Compares a point and a bucket. The point will be encapsulated in a bucket with width 0.
       /// </summary>
-      /// <param name="bkt1">The first bucket to compare.</param>
-      /// <param name="bkt2">The second bucket to compare.</param>
+      /// <param name="x">The first bucket to compare.</param>
+      /// <param name="y">The second bucket to compare.</param>
       /// <returns>-1 when the point is less than this bucket, 0 when it is in this bucket and 1 otherwise.</returns>
-      public int Compare(Bucket bkt1, Bucket bkt2)
+      public int Compare(Bucket x, Bucket y)
       {
-        return bkt2.IsSinglePoint
-            ? -bkt1.Contains(bkt2.UpperBound)
-            : -bkt2.Contains(bkt1.UpperBound);
+        return y.IsSinglePoint
+            ? -x.Contains(y.UpperBound)
+            : -y.Contains(x.UpperBound);
       }
     }
 
@@ -181,21 +181,21 @@ namespace Altaxo.Calc.Statistics
     ///  1 if This bucket is lower that the compared bucket
     /// -1 otherwise
     /// </returns>
-    /// <param name="bucket">The bucket to compare with this bucket.</param>
-    public int CompareTo(Bucket bucket)
+    /// <param name="other">The bucket to compare with this bucket.</param>
+    public int CompareTo(Bucket other)
     {
-      if (UpperBound > bucket.LowerBound && LowerBound < bucket.LowerBound)
+      if (UpperBound > other.LowerBound && LowerBound < other.LowerBound)
       {
         throw new ArgumentException("The two arguments can\'t be compared (maybe they are part of a partial ordering?)");
       }
 
-      if (UpperBound.Equals(bucket.UpperBound)
-          && LowerBound.Equals(bucket.LowerBound))
+      if (UpperBound.Equals(other.UpperBound)
+          && LowerBound.Equals(other.LowerBound))
       {
         return 0;
       }
 
-      if (bucket.UpperBound <= LowerBound)
+      if (other.UpperBound <= LowerBound)
       {
         return 1;
       }

@@ -52,9 +52,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SNIP_Linear)obj;
+        var s = (SNIP_Linear)o;
         info.AddValue("HalfWidth", s.HalfWidth);
         info.AddValue("IsHalfWidthInXUnits", s.IsHalfWidthInXUnits);
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
@@ -84,7 +84,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     #endregion
 
     /// <inheritdoc/>
-    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
+    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       var srcY = new double[yArray.Length];
       var tmpY = new double[yArray.Length];
@@ -102,22 +102,22 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       if (_isHalfWidthInXUnits && 0.5 * (stat.Max - stat.Min) / stat.Max > 1.0 / xArray.Length)
       {
         // if the interpoint distance is not uniform, we need to use the algorithm with locally calculated half width
-        EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, result);
+        EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, resultingBaseline);
         return;
       }
       else
       {
         var w = _isHalfWidthInXUnits ? Math.Max(1, (int)Math.Abs(_halfWidth / stat.Mean)) : Math.Max(1, (int)_halfWidth);
-        EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, result);
+        EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, resultingBaseline);
       }
 
       // Back transform
       for (int i = 0; i < srcY.Length; ++i)
       {
-        result[i] = Math.Exp(Math.Exp(result[i]) - 1) + yOffset;
+        resultingBaseline[i] = Math.Exp(Math.Exp(resultingBaseline[i]) - 1) + yOffset;
       }
 
-      srcY.CopyTo(result);
+      srcY.CopyTo(resultingBaseline);
     }
 
     /// <inheritdoc/>

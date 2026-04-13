@@ -172,9 +172,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VogelFulcherLawTime)obj;
+        var s = (VogelFulcherLawTime)o;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("ParamBUnit", s._temperatureUnitOfB);
         info.AddEnum("ParamT0Unit", s._temperatureUnitOfT0);
@@ -317,13 +317,13 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = Evaluate(X[0], P);
+      dependent[0] = Evaluate(independent[0], parameters);
     }
 
     /// <inheritdoc/>
-    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -331,9 +331,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
         var x = independent[r, 0];
 
         double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
-        double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
-        double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-        FV[r] = P[0] * Math.Exp(B / (temperature - T0));
+        double B = Temperature.ToKelvin(parameters[1], _temperatureUnitOfB);
+        double T0 = Temperature.ToKelvin(parameters[2], _temperatureUnitOfT0);
+        dependent[r] = parameters[0] * Math.Exp(B / (temperature - T0));
       }
     }
 

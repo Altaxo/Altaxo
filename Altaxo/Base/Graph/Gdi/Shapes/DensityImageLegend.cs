@@ -68,9 +68,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DensityImageLegend)obj;
+        var s = (DensityImageLegend)o;
         info.AddBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType!);
 
         info.AddValue("PlotItem", s._plotItemProxy);

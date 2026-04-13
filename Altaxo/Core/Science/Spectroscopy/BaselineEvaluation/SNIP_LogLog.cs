@@ -38,9 +38,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SNIP_LogLog)obj;
+        var s = (SNIP_LogLog)o;
         info.AddValue("HalfWidth", s.HalfWidth);
         info.AddValue("IsHalfWidthInXUnits", s.IsHalfWidthInXUnits);
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);

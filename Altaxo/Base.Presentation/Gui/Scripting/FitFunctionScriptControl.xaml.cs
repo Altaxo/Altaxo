@@ -124,9 +124,9 @@ namespace Altaxo.Gui.Scripting
     }
 
     /// <inheritdoc/>
-    public void SetScriptView(object viewAsObject)
+    public void SetScriptView(object scriptView)
     {
-      if (object.ReferenceEquals(_scriptView, viewAsObject))
+      if (object.ReferenceEquals(_scriptView, scriptView))
         return;
 
       if (_scriptView is not null)
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Scripting
         _mainGrid.Children.Remove(_scriptView);
       }
 
-      _scriptView = (UserControl)viewAsObject;
+      _scriptView = (UserControl)scriptView;
 
       if (_scriptView is not null)
       {

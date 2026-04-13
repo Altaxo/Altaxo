@@ -277,15 +277,15 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      return CDF(z, lambda);
+      return CDF(x, lambda);
     }
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      return PDF(z, lambda);
+      return PDF(x, lambda);
     }
 
     /// <inheritdoc/>

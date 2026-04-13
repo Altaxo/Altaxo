@@ -67,20 +67,20 @@ namespace Altaxo.Main.Services.Implementation
     }
 
     /// <inheritdoc/>
-    public void WriteLine(MessageLevel level, string caption, string message)
+    public void WriteLine(MessageLevel level, string source, string message)
     {
       switch (level)
       {
         case MessageLevel.Info:
-          ShowMessage(message, caption);
+          ShowMessage(message, source);
           break;
 
         case MessageLevel.Warning:
-          ShowWarning(caption + message);
+          ShowWarning(source + message);
           break;
 
         case MessageLevel.Error:
-          WriteErrorLine(caption, message);
+          WriteErrorLine(source, message);
           break;
 
         default:

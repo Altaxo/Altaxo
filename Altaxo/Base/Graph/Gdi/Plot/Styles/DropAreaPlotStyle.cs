@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -36,7 +35,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
-  using Drawing.ColorManagement;
   using Geometry;
   using Graph.Plot.Data;
   using Graph.Plot.Groups;
@@ -110,9 +108,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DropAreaPlotStyle)obj;
+        var s = (DropAreaPlotStyle)o;
 
         info.AddValue("Connection", s._connectionStyle);
         info.AddValue("ConnectCircular", s._connectCircular);
@@ -187,14 +185,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as DropAreaPlotStyle;
-      if (from is not null)
+      if (from is DropAreaPlotStyle fromX)
       {
-        CopyFrom(from, Main.EventFiring.Enabled);
+        CopyFrom(fromX, Main.EventFiring.Enabled);
         return true;
       }
       return false;
@@ -206,7 +203,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (ReferenceEquals(this, obj))
         return true;
 
-        return CopyFrom(obj, true);
+      return CopyFrom(obj, true);
     }
 
     /// <inheritdoc/>

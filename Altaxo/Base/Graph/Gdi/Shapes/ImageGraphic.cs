@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -111,9 +111,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ImageGraphic)obj;
+        var s = (ImageGraphic)o;
         info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType!);
 
         info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);

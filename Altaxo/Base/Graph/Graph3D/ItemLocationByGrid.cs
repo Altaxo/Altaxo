@@ -106,9 +106,9 @@ namespace Altaxo.Graph.Graph3D
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ItemLocationByGrid)obj;
+        var s = (ItemLocationByGrid)o;
 
         info.AddValue("PosX", s._gridPosX);
         info.AddValue("PosY", s._gridPosY);

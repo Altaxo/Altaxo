@@ -127,9 +127,9 @@ namespace Altaxo.Science.Signals
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PronySeriesRelaxation)obj;
+        var s = (PronySeriesRelaxation)o;
         info.AddValue("MinimalRelaxationTime", s.MinimalRelaxationTime);
         info.AddValue("MaximalRelaxationTime", s.MaximalRelaxationTime);
         info.AddValue("NumberOfRelaxationTimes", s.NumberOfRelaxationTimes);

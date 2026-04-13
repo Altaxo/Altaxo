@@ -48,9 +48,9 @@ namespace Altaxo.Data.Transformations
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CompoundTransformation), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CompoundTransformation)obj;
+        var s = (CompoundTransformation)o;
         info.CreateArray("Transformations", s._transformations.Count);
         foreach (var t in s._transformations)
           info.AddValue("e", t);
@@ -304,11 +304,11 @@ namespace Altaxo.Data.Transformations
     }
 
     /// <inheritdoc/>
-    public double Transform(double value)
+    public double Transform(double y)
     {
       foreach (var item in _transformations)
-        value = item.Transform(value);
-      return value;
+        y = item.Transform(y);
+      return y;
     }
 
     /// <inheritdoc/>

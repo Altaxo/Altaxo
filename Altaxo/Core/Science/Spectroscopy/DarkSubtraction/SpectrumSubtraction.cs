@@ -48,9 +48,9 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
     public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectrumSubtraction)obj;
+        var s = (SpectrumSubtraction)o;
 
         info.AddValue("TableName", s.XYDataOrigin?.TableName);
         info.AddValue("GroupNumber", (int?)s.XYDataOrigin?.GroupNumber);

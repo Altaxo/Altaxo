@@ -144,9 +144,9 @@ namespace Altaxo.DataConnection
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoOleDbDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AltaxoOleDbDataSource)obj;
+        var s = (AltaxoOleDbDataSource)o;
 
         info.AddValue("DataQuery", s._dataQuery);
         info.AddValue("ImportOptions", s._importOptions);

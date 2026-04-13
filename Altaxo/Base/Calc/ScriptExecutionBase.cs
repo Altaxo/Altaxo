@@ -1826,16 +1826,16 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="independent">The independent variables.</param>
     /// <param name="parameters">Parameters for evaluation.</param>
-    /// <param name="result">On return, this array contains the one (or more) evaluated
+    /// <param name="dependent">On return, this array contains the one (or more) evaluated
     /// function values at the point (independent).</param>
-    public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
+    public abstract void Evaluate(double[] independent, double[] parameters, double[] dependent);
 
     /// <inheritdoc/>
-    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var xx = new double[NumberOfIndependentVariables];
       var yy = new double[NumberOfDependentVariables];
-      var pp = P.ToArray();
+      var pp = parameters.ToArray();
 
       var rowCount = independent.RowCount;
       var colCount = independent.ColumnCount;
@@ -1853,7 +1853,7 @@ namespace Altaxo.Calc
         {
           for (int c = 0; c < yy.Length; ++c)
           {
-            FV[rd++] = yy[c];
+            dependent[rd++] = yy[c];
           }
         }
         else
@@ -1862,7 +1862,7 @@ namespace Altaxo.Calc
           {
             if (dependentVariableChoice[c] == true)
             {
-              FV[rd++] = yy[c];
+              dependent[rd++] = yy[c];
             }
           }
         }

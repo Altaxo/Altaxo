@@ -189,9 +189,9 @@ namespace Altaxo.Scripting
       private FitFunctionScript? _deserializedObject;
 
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AbstractScript)obj;
+        var s = (AbstractScript)o;
 
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
@@ -231,9 +231,9 @@ namespace Altaxo.Scripting
       private FitFunctionScript? _deserializedObject;
 
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitFunctionScript)obj;
+        var s = (FitFunctionScript)o;
 
         // Update the user defined paramter names
         if (s._scriptObject is not null && s.IsUsingUserDefinedParameterNames)
@@ -310,9 +310,9 @@ namespace Altaxo.Scripting
       private FitFunctionScript? _deserializedObject;
 
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitFunctionScript)obj;
+        var s = (FitFunctionScript)o;
 
         // Update the user defined paramter names
         if (s._scriptObject is not null && s.IsUsingUserDefinedParameterNames)
@@ -1314,7 +1314,7 @@ namespace Altaxo.Scripting
     }
 
     /// <inheritdoc/>
-    void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
+    void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       MakeSureWasTriedToCompile();
 
@@ -1326,7 +1326,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((IFitFunction)_scriptObject).Evaluate(independent, parameters, result);
+        ((IFitFunction)_scriptObject).Evaluate(independent, parameters, dependent);
         return;
       }
       catch (Exception)
@@ -1336,7 +1336,7 @@ namespace Altaxo.Scripting
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       MakeSureWasTriedToCompile();
 
@@ -1348,7 +1348,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((IFitFunction)_scriptObject).Evaluate(independent, P, FV, dependentVariableChoice);
+        ((IFitFunction)_scriptObject).Evaluate(independent, parameters, dependent, dependentVariableChoice);
         return;
       }
       catch (Exception ex)

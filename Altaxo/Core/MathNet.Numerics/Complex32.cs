@@ -796,16 +796,16 @@ namespace Altaxo.Calc
 
     /// <summary>Converts the value of the current complex number to its equivalent string representation
     /// in Cartesian form by using the specified format and culture-specific format information for its real and imaginary parts.</summary>
-    /// <returns>The string representation of the current instance in Cartesian form, as specified by <paramref name="format" /> and <paramref name="provider" />.</returns>
+    /// <returns>The string representation of the current instance in Cartesian form, as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</returns>
     /// <param name="format">A standard or custom numeric format string.</param>
-    /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+    /// <param name="formatProvider">An object that supplies culture-specific formatting information.</param>
     /// <exception cref="T:System.FormatException">
     ///   <paramref name="format" /> is not a valid format string.</exception>
-    public string ToString(string format, IFormatProvider provider)
+    public string ToString(string format, IFormatProvider formatProvider)
     {
-      return string.Format(provider, "({0}, {1})",
-          _real.ToString(format, provider),
-          _imag.ToString(format, provider));
+      return string.Format(formatProvider, "({0}, {1})",
+          _real.ToString(format, formatProvider),
+          _imag.ToString(format, formatProvider));
     }
 
     #endregion

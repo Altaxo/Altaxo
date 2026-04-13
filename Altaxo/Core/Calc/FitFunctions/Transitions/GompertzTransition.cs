@@ -58,9 +58,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GompertzTransition)obj;
+        var s = (GompertzTransition)o;
         info.AddValue("OrderLeft", s._order_l);
         info.AddValue("OrderRight", s._order_r);
       }
@@ -270,13 +270,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.AsSpan(2, _order_l + 1), parameters.AsSpan(2 + _order_l + 1, _order_r + 1));
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.AsSpan(2, _order_l + 1), parameters.AsSpan(2 + _order_l + 1, _order_r + 1));
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var pa = parameters as double[];
       var coeffsLeft = (pa is not null) ? pa.AsSpan(2, _order_l + 1) : stackalloc double[_order_l + 1];
@@ -291,7 +291,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = Evaluate(independent[i, 0], parameters[0], parameters[1], coeffsLeft, coeffsRight);
+        dependent[i] = Evaluate(independent[i, 0], parameters[0], parameters[1], coeffsLeft, coeffsRight);
       }
     }
 

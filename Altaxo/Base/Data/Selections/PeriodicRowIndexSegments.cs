@@ -92,9 +92,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeriodicRowIndexSegments), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeriodicRowIndexSegments)obj;
+        var s = (PeriodicRowIndexSegments)o;
 
         info.AddValue("First", s._firstRowIndexInclusive);
         info.AddValue("PeriodLength", s._lengthOfPeriod);
@@ -171,10 +171,10 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
-    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndex, DataColumnCollection? table, int totalRowCount)
+    public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount)
     {
       int start = Math.Max(startIndex, _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount);
-      int endExclusive = Math.Min(maxIndex, totalRowCount);
+      int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
 
       for (int segmentStart = start; segmentStart < endExclusive; segmentStart += _lengthOfPeriod)
       {
@@ -217,13 +217,13 @@ namespace Altaxo.Data.Selections
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
       return
-        rowSel is PeriodicRowIndexSegments other &&
-        this._firstRowIndexInclusive == other._firstRowIndexInclusive &&
-        this._lengthOfPeriod == other._lengthOfPeriod &&
-        this._numberOfItemsPerPeriod == other._numberOfItemsPerPeriod;
+        other is PeriodicRowIndexSegments otherX &&
+        this._firstRowIndexInclusive == otherX._firstRowIndexInclusive &&
+        this._lengthOfPeriod == otherX._lengthOfPeriod &&
+        this._numberOfItemsPerPeriod == otherX._numberOfItemsPerPeriod;
     }
 
   }

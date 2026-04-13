@@ -40,17 +40,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   public class ListItemSelectionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       bool result;
 
       string expectedSelCount = condition.Properties["selcount"].ToLowerInvariant();
-      result = EvaluateSelCount(caller, expectedSelCount);
+      result = EvaluateSelCount(parameter, expectedSelCount);
       if (false == result)
         return result;
 
       string expectedItemType = condition.Properties["selitems"];
-      result = EvaluateItemType(caller, expectedItemType);
+      result = EvaluateItemType(parameter, expectedItemType);
       if (false == result)
         return result;
 

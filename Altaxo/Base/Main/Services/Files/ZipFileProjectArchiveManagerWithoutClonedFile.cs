@@ -172,20 +172,20 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Saves the project with a name given in <paramref name="destinationFileName"/>. The name can or can not be the same name as was used before.
+    /// Saves the project with a name given in <paramref name="fileName"/>. The name can or can not be the same name as was used before.
     /// </summary>
-    /// <param name="destinationFileName">Name of the destination file.</param>
+    /// <param name="fileName">Name of the destination file.</param>
     /// <param name="saveProjectAndWindowsState">Delegate to store the project document and the windows state into an <see cref="IProjectArchive"/>.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
     /// <exception cref="ObjectDisposedException"></exception>
-    public IDictionary<string, IProjectItem> SaveAs(FileName destinationFileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
+    public IDictionary<string, IProjectItem> SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
 
       IDictionary<string, IProjectItem>? dictionaryResult = null;
 
       var originalFileName = _originalFileStream?.Name;
-      bool isNewDestinationFileName = originalFileName != destinationFileName.ToString();
+      bool isNewDestinationFileName = originalFileName != fileName.ToString();
 
 
       // Open the old archive, using the original stream
@@ -196,7 +196,7 @@ namespace Altaxo.Main.Services
       if (isNewDestinationFileName)
       {
         // create a new file stream for writing to
-        newProjectArchiveFileStream = new FileStream(destinationFileName.ToString(), FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+        newProjectArchiveFileStream = new FileStream(fileName.ToString(), FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
       }
 
       // now serialize the data

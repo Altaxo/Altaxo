@@ -45,10 +45,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotGroupStyleCollection)obj;
-        info.AddBaseValueEmbedded(obj, obj.GetType().BaseType!);
+        var s = (PlotGroupStyleCollection)o;
+        info.AddBaseValueEmbedded(o, o.GetType().BaseType!);
 
         info.AddValueOrNull("TransformingStyle", s._coordinateTransformingStyle);
       }

@@ -46,9 +46,9 @@ namespace Altaxo.Serialization.Bitmaps
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BitmapImportDataSource)obj;
+        var s = (BitmapImportDataSource)o;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("ProcessOptions", s._processOptions);

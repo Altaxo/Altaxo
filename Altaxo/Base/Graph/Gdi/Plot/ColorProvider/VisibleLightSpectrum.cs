@@ -64,9 +64,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VisibleLightSpectrum), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VisibleLightSpectrum)obj;
+        var s = (VisibleLightSpectrum)o;
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
         info.AddValue("Gamma", s._gamma);
         info.AddValue("Brightness", s._brightness);

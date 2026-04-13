@@ -109,10 +109,10 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void SetValue<T>(string p, T value)
+    public void SetValue<T>(string property, T value)
     {
-      UserSettings.SetValue<T>(p, value);
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+      UserSettings.SetValue<T>(property, value);
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
     }
 
     /// <inheritdoc/>

@@ -80,9 +80,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.FillToCurvePlotStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SSerialize(obj, info);
+        SSerialize(o, info);
       }
 
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -121,9 +121,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillToCurvePlotStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SSerialize(obj, info);
+        SSerialize(o, info);
       }
 
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -192,14 +192,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as FillToCurvePlotStyle;
-      if (from is not null)
+      if (from is FillToCurvePlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences, Main.EventFiring.Enabled);
+        CopyFrom(fromX, copyWithDataReferences, Main.EventFiring.Enabled);
         return true;
       }
       return false;

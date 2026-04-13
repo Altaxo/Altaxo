@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Commands
   public class LayerItemsBuilder : IMenuItemBuilder
   {
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.Graph.Gdi.Viewing.GraphController;
       if (ctrl is null)

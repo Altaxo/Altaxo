@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -123,9 +123,9 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (InverseScale)obj;
+        var s = (InverseScale)o;
         info.AddValue("InvOrg", s._cachedAxisOrgInv);
         info.AddValue("InvEnd", s._cachedAxisEndInv);
         info.AddValue("Bounds", s._dataBounds);

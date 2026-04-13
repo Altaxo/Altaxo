@@ -44,7 +44,7 @@ namespace Altaxo.Serialization.Xml
     /// </summary>
     /// <param name="o">This is <c>null</c> except when a base type is deserialized; in that case it is the instance of the super class to populate.</param>
     /// <param name="info">The deserialization info used to read values from the XML input.</param>
-    /// <param name="parentobject">The parent object in the object hierarchy which was deserialized before the current object; may be <c>null</c> for top-level objects.</param>
+    /// <param name="parent">The parent object in the object hierarchy which was deserialized before the current object; may be <c>null</c> for top-level objects.</param>
     /// <returns>The deserialized object instance.</returns>
     /// <remarks>All deserialization code should check if object <c>o</c> is null. In this case it has to create an instance of the class which is about to
     /// be deserialized. If it is not null, the deserialization code of a super class has already created an instance. In this case the code must
@@ -57,6 +57,6 @@ namespace Altaxo.Serialization.Xml
     /// }
     /// </code>
     /// </remarks>
-    object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject);
+    object? Deserialize(object? o, IXmlDeserializationInfo info, object? parent);
   }
 }

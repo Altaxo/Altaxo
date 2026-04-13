@@ -67,9 +67,9 @@ namespace Altaxo.Main.Services
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (List<FileName>)obj;
+        var s = (List<FileName>)o;
 
         var count = s.Count;
 
@@ -123,16 +123,16 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void AddRecentFile(FileName name)
+    public void AddRecentFile(FileName fileName)
     {
-      _recentFiles.Remove(name); // remove if the filename is already in the list
+      _recentFiles.Remove(fileName); // remove if the filename is already in the list
 
       while (_recentFiles.Count >= MAX_LENGTH)
       {
         _recentFiles.RemoveAt(_recentFiles.Count - 1);
       }
 
-      _recentFiles.Insert(0, name);
+      _recentFiles.Insert(0, fileName);
 
       Current.PropertyService.SetValue(PropertyKeyRecentFiles, _recentFiles);
     }
@@ -152,9 +152,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void RemoveRecentProject(PathName pathName)
+    public void RemoveRecentProject(PathName fileName)
     {
-      if (pathName is FileName name)
+      if (fileName is FileName name)
       {
         _recentProjects.Remove(name);
       }
@@ -162,9 +162,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public virtual void AddRecentProject(PathName pathName)
+    public virtual void AddRecentProject(PathName fileName)
     {
-      if (pathName is FileName name)
+      if (fileName is FileName name)
       {
         _recentProjects.Remove(name);
 

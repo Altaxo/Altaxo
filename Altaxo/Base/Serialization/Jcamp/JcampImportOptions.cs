@@ -55,9 +55,9 @@ namespace Altaxo.Serialization.Jcamp
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (JcampImportOptions)obj;
+        var s = (JcampImportOptions)o;
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);

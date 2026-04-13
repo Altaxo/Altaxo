@@ -62,12 +62,12 @@ namespace Altaxo.Geometry
   public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      if (obj is null)
-        throw new ArgumentNullException(nameof(obj));
+      if (o is null)
+        throw new ArgumentNullException(nameof(o));
 
-      info.SetNodeContent(obj.ToString() ?? "Left");
+      info.SetNodeContent(o.ToString() ?? "Left");
     }
 
     /// <inheritdoc/>

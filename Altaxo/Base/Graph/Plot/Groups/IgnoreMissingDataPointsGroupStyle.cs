@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -53,9 +50,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IgnoreMissingDataPointsGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IgnoreMissingDataPointsGroupStyle)obj;
+        var s = (IgnoreMissingDataPointsGroupStyle)o;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -113,11 +110,11 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (IgnoreMissingDataPointsGroupStyle)fromb;
-      _isInitialized = from._isInitialized;
-      _ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+      var fromX = (IgnoreMissingDataPointsGroupStyle)from;
+      _isInitialized = fromX._isInitialized;
+      _ignoreMissingDataPoints = fromX._ignoreMissingDataPoints;
     }
 
     /// <inheritdoc/>

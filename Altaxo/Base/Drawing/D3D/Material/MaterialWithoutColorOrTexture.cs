@@ -43,9 +43,9 @@ namespace Altaxo.Drawing.D3D.Material
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MaterialWithoutColorOrTexture), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MaterialWithoutColorOrTexture)obj;
+        var s = (MaterialWithoutColorOrTexture)o;
 
         info.AddValue("Smoothness", s._smoothness);
         info.AddValue("Metalness", s._metalness);

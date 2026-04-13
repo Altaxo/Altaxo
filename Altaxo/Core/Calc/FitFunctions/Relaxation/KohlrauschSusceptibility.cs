@@ -53,9 +53,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)o;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -76,9 +76,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)o;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -108,9 +108,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KohlrauschSusceptibility)obj;
+        var s = (KohlrauschSusceptibility)o;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
@@ -534,18 +534,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion parameter definition
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double x = X[0];
+      double x = independent[0];
       if (_useFrequencyInsteadOmega)
         x *= (2 * Math.PI);
 
-      Complex64T result = P[0];
+      Complex64T result = parameters[0];
 
       int iPar, i;
       for (i = 0, iPar = 1; i < _numberOfTerms; i++, iPar += 3)
       {
-        result += P[0 + iPar] * Kohlrausch.ReIm(P[2 + iPar], P[1 + iPar] * x);
+        result += parameters[0 + iPar] * Kohlrausch.ReIm(parameters[2 + iPar], parameters[1 + iPar] * x);
       }
 
       // note: because it is a susceptiblity, the imaginary part is still negative
@@ -555,16 +555,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         if (_isDielectricData)
         {
           if (_invertViscosity)
-            result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x * 8.854187817e-12));
+            result = new Complex64T(result.Real, result.Imaginary - parameters[iPar] / (x * 8.854187817e-12));
           else
-            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x * 8.854187817e-12));
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (parameters[iPar] * x * 8.854187817e-12));
         }
         else
         {
           if (_invertViscosity)
-            result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x));
+            result = new Complex64T(result.Real, result.Imaginary - parameters[iPar] / (x));
           else
-            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x));
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (parameters[iPar] * x));
         }
       }
 
@@ -579,11 +579,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
       }
 
-      Y[0] = result.Real;
-      Y[1] = result.Imaginary;
+      dependent[0] = result.Real;
+      dependent[1] = result.Imaginary;
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       int rd = 0;
@@ -594,12 +594,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         if (_useFrequencyInsteadOmega)
           x *= (2 * Math.PI);
 
-        Complex64T result = P[0];
+        Complex64T result = parameters[0];
 
         int iPar, i;
         for (i = 0, iPar = 1; i < _numberOfTerms; i++, iPar += 3)
         {
-          result += P[0 + iPar] * Kohlrausch.ReIm(P[2 + iPar], P[1 + iPar] * x);
+          result += parameters[0 + iPar] * Kohlrausch.ReIm(parameters[2 + iPar], parameters[1 + iPar] * x);
         }
 
         // note: because it is a susceptiblity, the imaginary part is still negative
@@ -609,16 +609,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
           if (_isDielectricData)
           {
             if (_invertViscosity)
-              result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x * 8.854187817e-12));
+              result = new Complex64T(result.Real, result.Imaginary - parameters[iPar] / (x * 8.854187817e-12));
             else
-              result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x * 8.854187817e-12));
+              result = new Complex64T(result.Real, result.Imaginary - 1 / (parameters[iPar] * x * 8.854187817e-12));
           }
           else
           {
             if (_invertViscosity)
-              result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x));
+              result = new Complex64T(result.Real, result.Imaginary - parameters[iPar] / (x));
             else
-              result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x));
+              result = new Complex64T(result.Real, result.Imaginary - 1 / (parameters[iPar] * x));
           }
         }
 
@@ -635,19 +635,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
         if (dependentVariableChoice is null)
         {
-          FV[rd++] = result.Real;
-          FV[rd++] = result.Imaginary;
+          dependent[rd++] = result.Real;
+          dependent[rd++] = result.Imaginary;
         }
         else
         {
           if (dependentVariableChoice[0] == true)
           {
-            FV[rd++] = result.Real;
+            dependent[rd++] = result.Real;
           }
 
           if (dependentVariableChoice[1] == true)
           {
-            FV[rd++] = result.Imaginary;
+            dependent[rd++] = result.Imaginary;
           }
         }
       }

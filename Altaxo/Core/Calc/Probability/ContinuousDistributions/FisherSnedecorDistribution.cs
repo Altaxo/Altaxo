@@ -376,9 +376,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <inheritdoc/>
-    public override double Quantile(double probability)
+    public override double Quantile(double p)
     {
-      return Quantile(probability, alpha, beta);
+      return Quantile(p, alpha, beta);
     }
 
     /// <summary>

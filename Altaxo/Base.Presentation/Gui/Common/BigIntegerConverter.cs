@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Common
 
 
       /// <inheritdoc/>
-      public object Convert(object value, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
         BigInteger val = (BigInteger)value;
 
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
         var validationResult = ConvertAndValidate(value, out var result);
         if (validationResult.IsValid)
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public override ValidationResult Validate(object value, CultureInfo cultureInfoBuggyDontUse)
+      public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
         var validationResult = ConvertAndValidate(value, out var result);
         if (validationResult.IsValid)

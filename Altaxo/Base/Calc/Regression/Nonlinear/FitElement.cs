@@ -115,7 +115,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
 
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version now allowed");
         /*
@@ -187,9 +187,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitElement)obj;
+        var s = (FitElement)o;
 
         s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
 
@@ -271,9 +271,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitElement)obj;
+        var s = (FitElement)o;
 
         s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
 

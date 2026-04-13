@@ -1050,18 +1050,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// The controller should show a data context menu (contains all plots of the currentLayer).
     /// </summary>
-    /// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
-    /// <param name="parent">The parent control which is the parent of the context menu.</param>
+    /// <param name="layerNumber">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
+    /// <param name="guiParent">The parent control which is the parent of the context menu.</param>
     /// <param name="pt">The location where the context menu should be shown.</param>
-    public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, Point pt)
+    public virtual void EhView_ShowDataContextMenu(int[] layerNumber, object guiParent, Point pt)
     {
       int oldCurrLayer = ActiveLayer.Number;
 
-      CurrentLayerNumber = new List<int>(currLayer);
+      CurrentLayerNumber = new List<int>(layerNumber);
 
       if (ActiveLayer is not null)
       {
-        Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
+        Current.Gui.ShowContextMenu(guiParent, guiParent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
       }
     }
 

@@ -45,7 +45,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -108,7 +108,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -178,9 +178,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (YCalibrationOptionsDocNode)obj;
+        var s = (YCalibrationOptionsDocNode)o;
         var preprocessingOptions = s.InternalGetSpectralPreprocessingOptions();
         s.InternalSpectralPreprocessingOptions = preprocessingOptions;
         info.AddValue("Options", s._optionsObject);

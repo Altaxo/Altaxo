@@ -60,9 +60,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitEnsemble)obj;
+        var s = (FitEnsemble)o;
 
         info.CreateArray("FitElements", s._fitElements.Count);
         for (int i = 0; i < s._fitElements.Count; ++i)
@@ -219,10 +219,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <inheritdoc/>
-    public void Add(FitElement e)
+    public void Add(FitElement item)
     {
-      e.ParentObject = this;
-      _fitElements.Add(e);
+      item.ParentObject = this;
+      _fitElements.Add(item);
 
       CollectParameterNames();
       EhSelfChanged(EventArgs.Empty);

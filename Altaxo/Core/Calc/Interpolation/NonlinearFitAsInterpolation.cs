@@ -60,9 +60,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NonlinearFitAsInterpolation)obj;
+        var s = (NonlinearFitAsInterpolation)o;
         info.AddValue("CurveShape", s.CurveShape);
         info.AddArray("CurveParameters", s.Parameters, s.Parameters.Count);
       }

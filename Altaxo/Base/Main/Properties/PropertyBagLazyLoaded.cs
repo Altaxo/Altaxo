@@ -53,9 +53,9 @@ namespace Altaxo.Main.Properties
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PropertyBagLazyLoaded)obj;
+        var s = (PropertyBagLazyLoaded)o;
 
         var assemblyVersion = s.GetType().Assembly.GetName().Version ?? throw new InvalidOperationException($"Can not get version info from assembly {s.GetType().Assembly}");
         var keyList = new HashSet<string>();

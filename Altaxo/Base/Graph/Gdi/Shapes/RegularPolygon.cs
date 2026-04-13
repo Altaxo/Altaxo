@@ -44,9 +44,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RegularPolygon), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RegularPolygon)obj;
+        var s = (RegularPolygon)o;
         info.AddBaseValueEmbedded(s, typeof(RegularPolygon).BaseType!);
         info.AddValue("NumberOfVertices", s._vertices);
         info.AddValue("CornerRadius", s._cornerRadius);

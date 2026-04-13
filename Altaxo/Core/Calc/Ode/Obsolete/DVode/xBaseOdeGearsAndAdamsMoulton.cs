@@ -558,7 +558,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     #endregion Constructor
 
     /// <inheritdoc/>
-    public void Run(int NEQ, double T, double[] Y, int o_y, ref double[] YDOT, int o_ydot, double RPAR, int IPAR)
+    public void Run(int NEQ, double T, double[] Y, int offset_y, ref double[] YDOT, int offset_ydot, double RPAR, int IPAR)
     {
       #region Array Index Correction
 
@@ -566,21 +566,21 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_ydot = -1 + o_ydot;
+      int c_y = -1 + offset_y;
+      int c_ydot = -1 + offset_ydot;
 
       #endregion Array Index Correction
 
       for (int i = 0; i < MeNEq; i++)
       {
-        MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + offset_y];
       }
 
       MeFunction(T, MeY, MeYDot);
 
       for (int i = 0; i < MeNEq; i++)
       {
-        YDOT[i + o_ydot] = MeYDot[i];
+        YDOT[i + offset_ydot] = MeYDot[i];
       }
 
       return;
@@ -619,7 +619,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     }
 
     /// <inheritdoc/>
-    public void Run(int NEQ, double T, double[] Y, int o_y, int ML, int MU, ref double[] PD, int o_pd
+    public void Run(int NEQ, double T, double[] Y, int offset_y, int ML, int MU, ref double[] PD, int offset_pd
                      , int NRPD, double RPAR, int IPAR)
     {
       #region Array Index Correction
@@ -628,14 +628,14 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_pd = -1 - NRPD + o_pd;
+      int c_y = -1 + offset_y;
+      int c_pd = -1 - NRPD + offset_pd;
 
       #endregion Array Index Correction
 
       for (int i = 0; i < MeNEq; i++)
       {
-        MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + offset_y];
       }
 
       MeJacobian(T, MeY, MeJac);
@@ -644,7 +644,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
       {
         for (int i = 0; i < MeNEq; i++)
         {
-          PD[i + j * NRPD + o_pd] = MeJac[i, j];
+          PD[i + j * NRPD + offset_pd] = MeJac[i, j];
         }
       }
 

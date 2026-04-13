@@ -65,11 +65,11 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void WriteLine(MessageLevel messageLevel, string source, string text)
+    public void WriteLine(MessageLevel messageLevel, string source, string message)
     {
       var msg = new InfoWarningErrorTextMessageItem(level: messageLevel,
           source: source,
-          message: text,
+          message: message,
           timeUtc: DateTime.UtcNow
           );
 

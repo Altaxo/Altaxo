@@ -45,9 +45,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EquallySpacedColumn), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EquallySpacedColumn)obj;
+        var s = (EquallySpacedColumn)o;
         info.AddValue("StartValue", s._start);
         info.AddValue("Increment", s._increment);
       }

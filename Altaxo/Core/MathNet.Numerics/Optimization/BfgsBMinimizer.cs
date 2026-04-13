@@ -169,22 +169,22 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <inheritdoc/>
-    protected override Vector<double> CalculateSearchDirection(ref Matrix<double> pseudoHessian,
+    protected override Vector<double> CalculateSearchDirection(ref Matrix<double> inversePseudoHessian,
         out double maxLineSearchStep,
         out double startingStepSize,
         IObjectiveFunction previousPoint,
-        IObjectiveFunction candidatePoint,
+        IObjectiveFunction candidate,
         Vector<double> step)
     {
       Vector<double> lineSearchDirection;
-      var y = candidatePoint.Gradient - previousPoint.Gradient;
+      var y = candidate.Gradient - previousPoint.Gradient;
 
       double sy = step * y;
       if (sy > 0.0) // only do update if it will create a positive definite matrix
       {
-        var Hs = pseudoHessian * step;
-        var sHs = step * pseudoHessian * step;
-        pseudoHessian = pseudoHessian + y.OuterProduct(y) * (1.0 / sy) - Hs.OuterProduct(Hs) * (1.0 / sHs);
+        var Hs = inversePseudoHessian * step;
+        var sHs = step * inversePseudoHessian * step;
+        inversePseudoHessian = inversePseudoHessian + y.OuterProduct(y) * (1.0 / sy) - Hs.OuterProduct(Hs) * (1.0 / sHs);
       }
       else
       {
@@ -192,7 +192,7 @@ namespace Altaxo.Calc.Optimization
       }
 
       // Determine active set
-      var gradientProjectionResult = QuadraticGradientProjectionSearch.Search(candidatePoint.Point, candidatePoint.Gradient, pseudoHessian, _lowerBound, _upperBound);
+      var gradientProjectionResult = QuadraticGradientProjectionSearch.Search(candidate.Point, candidate.Gradient, inversePseudoHessian, _lowerBound, _upperBound);
       var cauchyPoint = gradientProjectionResult.CauchyPoint;
       var fixedCount = gradientProjectionResult.FixedCount;
       var isFixed = gradientProjectionResult.IsFixed;
@@ -206,7 +206,7 @@ namespace Altaxo.Calc.Optimization
         var reducedInitialPoint = new DenseVector(freeCount);
         var reducedCauchyPoint = new DenseVector(freeCount);
 
-        CreateReducedData(candidatePoint.Point, cauchyPoint, isFixed, _lowerBound, _upperBound, candidatePoint.Gradient, pseudoHessian, reducedInitialPoint, reducedCauchyPoint, reducedGradient, reducedHessian, reducedMap);
+        CreateReducedData(candidate.Point, cauchyPoint, isFixed, _lowerBound, _upperBound, candidate.Gradient, inversePseudoHessian, reducedInitialPoint, reducedCauchyPoint, reducedGradient, reducedHessian, reducedMap);
 
         // Determine search direction and maximum step size
         Vector<double> reducedSolution1 = reducedInitialPoint + reducedHessian.Cholesky().Solve(-reducedGradient);
@@ -223,16 +223,16 @@ namespace Altaxo.Calc.Optimization
 
       var solution2 = cauchyPoint + Math.Min(maxStepFromCauchyPoint, 1.0) * directionFromCauchy;
 
-      lineSearchDirection = solution2 - candidatePoint.Point;
-      maxLineSearchStep = FindMaxStep(candidatePoint.Point, lineSearchDirection, _lowerBound, _upperBound);
+      lineSearchDirection = solution2 - candidate.Point;
+      maxLineSearchStep = FindMaxStep(candidate.Point, lineSearchDirection, _lowerBound, _upperBound);
 
       if (maxLineSearchStep == 0.0)
       {
-        lineSearchDirection = cauchyPoint - candidatePoint.Point;
-        maxLineSearchStep = FindMaxStep(candidatePoint.Point, lineSearchDirection, _lowerBound, _upperBound);
+        lineSearchDirection = cauchyPoint - candidate.Point;
+        maxLineSearchStep = FindMaxStep(candidate.Point, lineSearchDirection, _lowerBound, _upperBound);
       }
 
-      double estStepSize = -candidatePoint.Gradient * lineSearchDirection / (lineSearchDirection * pseudoHessian * lineSearchDirection);
+      double estStepSize = -candidate.Gradient * lineSearchDirection / (lineSearchDirection * inversePseudoHessian * lineSearchDirection);
 
       startingStepSize = Math.Min(Math.Max(estStepSize, 1.0), maxLineSearchStep);
       return lineSearchDirection;

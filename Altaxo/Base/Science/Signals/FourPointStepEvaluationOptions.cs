@@ -95,9 +95,9 @@ namespace Altaxo.Science.Signals
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FourPointStepEvaluationOptions)obj;
+        var s = (FourPointStepEvaluationOptions)o;
 
         info.AddValue("UseRegressionForLeftAndRightLine", s.UseRegressionForLeftAndRightLine);
         info.AddValue("MiddleRegressionLowerLevel", s.MiddleRegressionLevels.LowerLevel);

@@ -66,9 +66,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussArea), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GaussArea)obj;
+        var s = (GaussArea)o;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
@@ -326,32 +326,32 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of gaussian terms
       double sumGauss = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
       {
-        double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumGauss += P[j] / P[j + 2] * Math.Exp(-0.5 * x * x);
+        double x = (independent[0] - parameters[j + 1]) / parameters[j + 2];
+        sumGauss += parameters[j] / parameters[j + 2] * Math.Exp(-0.5 * x * x);
       }
 
       if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = 3 * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
         for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      Y[0] = sumGauss * OneBySqrt2Pi + sumPolynomial;
+      dependent[0] = sumGauss * OneBySqrt2Pi + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -362,22 +362,22 @@ namespace Altaxo.Calc.FitFunctions.Probability
         double sumGauss = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          double arg = (x - P[j + 1]) / P[j + 2];
-          sumGauss += P[j] / P[j + 2] * Math.Exp(-0.5 * arg * arg);
+          double arg = (x - parameters[j + 1]) / parameters[j + 2];
+          sumGauss += parameters[j] / parameters[j + 2] * Math.Exp(-0.5 * arg * arg);
         }
 
         if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = 3 * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
           for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumGauss * OneBySqrt2Pi + sumPolynomial;
+        dependent[r] = sumGauss * OneBySqrt2Pi + sumPolynomial;
       }
     }
 
@@ -387,20 +387,20 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
         // at first, the gaussian terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          var arg = (x - P[j + 1]) / P[j + 2];
-          var expTerm = Math.Exp(-0.5 * arg * arg) / (P[j + 2] * Math.Sqrt(2 * Math.PI));
-          DY[r, j + 0] = expTerm;
-          DY[r, j + 1] = expTerm * arg * P[j] / P[j + 2];
-          DY[r, j + 2] = expTerm * P[j] / P[j + 2] * (arg * arg - 1);
+          var arg = (x - parameters[j + 1]) / parameters[j + 2];
+          var expTerm = Math.Exp(-0.5 * arg * arg) / (parameters[j + 2] * Math.Sqrt(2 * Math.PI));
+          DF[r, j + 0] = expTerm;
+          DF[r, j + 1] = expTerm * arg * parameters[j] / parameters[j + 2];
+          DF[r, j + 2] = expTerm * parameters[j] / parameters[j + 2] * (arg * arg - 1);
         }
 
         if (_orderOfBaselinePolynomial >= 0)
@@ -408,7 +408,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           double xn = 1;
           for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
         }

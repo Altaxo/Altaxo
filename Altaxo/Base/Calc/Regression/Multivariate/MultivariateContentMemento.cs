@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -103,9 +103,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class CrossPRESSCalculationTypeXmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.SetNodeContent(obj.ToString() ?? string.Empty);
+        info.SetNodeContent(o.ToString() ?? string.Empty);
       }
 
       /// <inheritdoc/>
@@ -122,9 +122,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)o;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValueOrNull("SpectralIndices", s.SpectralIndices);
@@ -156,9 +156,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)o;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValueOrNull("SpectralIndices", s.SpectralIndices);
@@ -206,9 +206,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MultivariateContentMemento)obj;
+        var s = (MultivariateContentMemento)o;
         info.AddValue("TableName", s.OriginalDataTableName); // name of the Table
         info.AddValue("SpectrumIsRow", s.SpectrumIsRow);
         info.AddValueOrNull("SpectralIndices", s.SpectralIndices);

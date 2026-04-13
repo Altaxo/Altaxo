@@ -186,9 +186,9 @@ namespace Altaxo.Gui.Pads.Output
     }
 
     /// <inheritdoc/>
-    public void WriteLine(string format, params object[] args)
+    public void WriteLine(string format, params object[] list)
     {
-      Write(string.Format(format, args) + System.Environment.NewLine);
+      Write(string.Format(format, list) + System.Environment.NewLine);
     }
 
     /// <inheritdoc/>
@@ -198,9 +198,9 @@ namespace Altaxo.Gui.Pads.Output
     }
 
     /// <inheritdoc/>
-    public void Write(string format, params object[] args)
+    public void Write(string format, params object[] list)
     {
-      Write(string.Format(format, args));
+      Write(string.Format(format, list));
     }
 
     /// <inheritdoc/>

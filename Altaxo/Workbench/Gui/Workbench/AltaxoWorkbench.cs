@@ -163,13 +163,13 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public void SetMemento(object obj)
+    public void SetMemento(object memento)
     {
-      if (obj is WorkbenchLayoutMemento memento && !string.IsNullOrEmpty(memento.LayoutAsString))
+      if (memento is WorkbenchLayoutMemento mementoX && !string.IsNullOrEmpty(mementoX.LayoutAsString))
       {
         try
         {
-          CurrentLayoutConfiguration = memento.LayoutAsString;
+          CurrentLayoutConfiguration = mementoX.LayoutAsString;
         }
         catch (Exception)
         {
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Workbench
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("Workbench", "Altaxo.Gui.Workbench.AltaxoWorkbench", 2)]
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
         }
 
@@ -214,9 +214,9 @@ namespace Altaxo.Gui.Workbench
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorkbenchLayoutMemento), 3)]
       private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (WorkbenchLayoutMemento)obj;
+          var s = (WorkbenchLayoutMemento)o;
           info.AddValue("CurrentLayoutConfiguration", s.LayoutAsString);
         }
 
@@ -950,21 +950,21 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <summary>
     /// Closes the pad.
     /// </summary>
-    /// <param name="content">The content.</param>
+    /// <param name="pad">The content.</param>
     /// <exception cref="ArgumentNullException">content</exception>
-    public void ClosePad(IPadContent content)
+    public void ClosePad(IPadContent pad)
     {
-      if (content is null)
-        throw new ArgumentNullException(nameof(content));
+      if (pad is null)
+        throw new ArgumentNullException(nameof(pad));
 
-      if (content.PadDescriptor is null) // this is a document in the pad area
+      if (pad.PadDescriptor is null) // this is a document in the pad area
       {
-        _padContentCollection.Remove(content);
-        (content as IDisposable)?.Dispose();
+        _padContentCollection.Remove(pad);
+        (pad as IDisposable)?.Dispose();
       }
       else
       {
-        content.IsVisible = false;
+        pad.IsVisible = false;
       }
     }
 
@@ -1010,10 +1010,10 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     }
 
     /// <inheritdoc/>
-    public void CloseContent(IViewContent viewcontent)
+    public void CloseContent(IViewContent content)
     {
-      if (_documentCollection.Remove(viewcontent))
-        viewcontent.Dispose();
+      if (_documentCollection.Remove(content))
+        content.Dispose();
     }
 
     #endregion Document handling

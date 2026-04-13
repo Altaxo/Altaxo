@@ -94,9 +94,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AngularScale)obj;
+        var s = (AngularScale)o;
 
         info.AddValue("UseDegree", s._useDegree);
         info.AddValue("MajorTickDiv", s._majorTickDivider);

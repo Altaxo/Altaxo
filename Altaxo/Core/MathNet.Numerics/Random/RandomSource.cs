@@ -147,25 +147,25 @@ namespace Altaxo.Calc.Random
     /// <summary>
     /// Returns a random number less than a specified maximum.
     /// </summary>
-    /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 1.</param>
-    /// <returns>A 32-bit signed integer less than <paramref name="maxExclusive"/>.</returns>
-    /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maxExclusive"/> is zero or negative.</exception>
-    public sealed override int Next(int maxExclusive)
+    /// <param name="maxValue">The exclusive upper bound of the random number returned. Range: maxExclusive ≥ 1.</param>
+    /// <returns>A 32-bit signed integer less than <paramref name="maxValue"/>.</returns>
+    /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maxValue"/> is zero or negative.</exception>
+    public sealed override int Next(int maxValue)
     {
       // Invalid case: Zero and less are not valid use cases.
-      if (maxExclusive <= 0)
+      if (maxValue <= 0)
       {
         throw new ArgumentException("Value must be positive.");
       }
 
       // Fast case: Only zero is allowed to be returned. No sampling is needed.
-      if (maxExclusive == 1)
+      if (maxValue == 1)
       {
         return 0;
       }
 
       // Simple case: standard range
-      if (maxExclusive == int.MaxValue)
+      if (maxValue == int.MaxValue)
       {
         return Next();
       }
@@ -175,48 +175,48 @@ namespace Altaxo.Calc.Random
       {
         lock (_lock)
         {
-          return DoSampleInteger(maxExclusive);
+          return DoSampleInteger(maxValue);
         }
       }
       else
       {
-        return DoSampleInteger(maxExclusive);
+        return DoSampleInteger(maxValue);
       }
     }
 
     /// <summary>
     /// Returns a random number within a specified range.
     /// </summary>
-    /// <param name="minInclusive">The inclusive lower bound of the random number returned.</param>
-    /// <param name="maxExclusive">The exclusive upper bound of the random number returned. Range: maxExclusive > minExclusive.</param>
+    /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
+    /// <param name="maxValue">The exclusive upper bound of the random number returned. Range: maxExclusive > minExclusive.</param>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to <paramref name="minInclusive"/> and less than <paramref name="maxExclusive"/>; that is, the range of return values includes <paramref name="minInclusive"/> but not <paramref name="maxExclusive"/>. If <paramref name="minInclusive"/> equals <paramref name="maxExclusive"/>, <paramref name="minInclusive"/> is returned.
+    /// A 32-bit signed integer greater than or equal to <paramref name="minValue"/> and less than <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but not <paramref name="maxValue"/>. If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
     /// </returns>
-    /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minInclusive"/> is greater than <paramref name="maxExclusive"/>. </exception>
-    public sealed override int Next(int minInclusive, int maxExclusive)
+    /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minValue"/> is greater than <paramref name="maxValue"/>. </exception>
+    public sealed override int Next(int minValue, int maxValue)
     {
       // Invalid case: empty range.
-      if (minInclusive >= maxExclusive)
+      if (minValue >= maxValue)
       {
         throw new ArgumentException("In the specified range, the exclusive maximum must be greater than the inclusive minimum.");
       }
 
       // Fast case: Only minInclusive is allowed to be returned. No sampling is needed.
-      if (maxExclusive == minInclusive + 1)
+      if (maxValue == minValue + 1)
       {
-        return minInclusive;
+        return minValue;
       }
 
       // Simple case: simple range
-      if (minInclusive == 0)
+      if (minValue == 0)
       {
         // Simple case: standard range
-        if (maxExclusive == int.MaxValue)
+        if (maxValue == int.MaxValue)
         {
           return Next();
         }
 
-        return Next(maxExclusive);
+        return Next(maxValue);
       }
 
       // Sample with maxExclusive ≥ minExclusive + 2
@@ -224,12 +224,12 @@ namespace Altaxo.Calc.Random
       {
         lock (_lock)
         {
-          return DoSampleInteger(minInclusive, maxExclusive);
+          return DoSampleInteger(minValue, maxValue);
         }
       }
       else
       {
-        return DoSampleInteger(minInclusive, maxExclusive);
+        return DoSampleInteger(minValue, maxValue);
       }
     }
 

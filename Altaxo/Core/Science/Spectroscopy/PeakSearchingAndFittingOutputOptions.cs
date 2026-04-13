@@ -146,9 +146,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingAndFittingOutputOptions)obj;
+        var s = (PeakSearchingAndFittingOutputOptions)o;
         info.AddValue("OutputPreprocessed", s.OutputPreprocessedCurve);
         info.AddValue("OutputFitCurve", s.OutputFitCurve);
         info.AddValue("FitCurveSamplingFactor", s.OutputFitCurveSamplingFactor);
@@ -185,9 +185,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingAndFittingOutputOptions)obj;
+        var s = (PeakSearchingAndFittingOutputOptions)o;
         info.AddValue("OutputPreprocessed", s.OutputPreprocessedCurve);
         info.AddValue("OutputFitCurve", s.OutputFitCurve);
         info.AddValue("FitCurveSamplingFactor", s.OutputFitCurveSamplingFactor);

@@ -85,9 +85,9 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassChangeAfterExponentialEquilibrationForCylinder), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MassChangeAfterExponentialEquilibrationForCylinder)obj;
+        var s = (MassChangeAfterExponentialEquilibrationForCylinder)o;
         info.AddValue(nameof(Radius), s.Radius);
       }
 
@@ -283,17 +283,17 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = Evaluate(independent[0], Radius, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+      dependent[0] = Evaluate(independent[0], Radius, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = Evaluate(independent[i, 0], Radius, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+        dependent[i] = Evaluate(independent[i, 0], Radius, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
       }
     }
 

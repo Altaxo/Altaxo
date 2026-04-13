@@ -95,9 +95,9 @@ namespace Altaxo.Serialization.HDF5.Nexus
     }
 
     /// <inheritdoc/>
-    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (NexusImportOptions)importOptionsObj;
+      var importOptionsNexus = (NexusImportOptions)importOptions;
       var errors = new StringBuilder();
 
       int groupNumber = 0;
@@ -113,7 +113,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
           foreach (var nxEntry in file.GetAllObjectsWithClassName<IH5Group>("NXentry"))
           {
             nxEntryIndex++;
-            if (importOptions.IndicesOfImportedEntries.Count > 0 && !importOptions.IndicesOfImportedEntries.Contains(nxEntryIndex))
+            if (importOptionsNexus.IndicesOfImportedEntries.Count > 0 && !importOptionsNexus.IndicesOfImportedEntries.Contains(nxEntryIndex))
             {
               continue;
             }
@@ -172,9 +172,9 @@ namespace Altaxo.Serialization.HDF5.Nexus
                   // Note that only the last dimension of the axes can form columns in Altaxo
                   // the other dimensions can be metadata of the columns
                   var xdata = axesDataSets[^1].ReadData();
-                  var (xCol, xColPostfix) = CreateDoubleDataColumn(importOptions.UseNeutralColumnName || axesNames.Length == 0 || string.IsNullOrEmpty(axesNames[^1]) ? "X" : axesNames[^1], ColumnKind.X, groupNumber, table, columnNameDictionary);
+                  var (xCol, xColPostfix) = CreateDoubleDataColumn(importOptionsNexus.UseNeutralColumnName || axesNames.Length == 0 || string.IsNullOrEmpty(axesNames[^1]) ? "X" : axesNames[^1], ColumnKind.X, groupNumber, table, columnNameDictionary);
                   xCol.Data = xdata;
-                  SetColumnProperties(table, xCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                  SetColumnProperties(table, xCol, importOptionsNexus, fileName, nxEntry.Name, nxEntryIndex, title,
                     axesDataSets[^1].TryGetAttributeValueAsString("long_name"),
                     axesDataSets[^1].TryGetAttributeValueAsString("units")
                     );
@@ -198,13 +198,13 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
                     if (signalDimensions.Length == 1)
                     {
-                      string yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
-                        (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName) :
+                      string yColumnName = (importOptionsNexus.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                        (string.IsNullOrEmpty(importOptionsNexus.NeutralColumnName) ? "Y" : importOptionsNexus.NeutralColumnName) :
                         yDataSetName;
                       var (yCol, yColPostFix) = CreateDoubleDataColumn(yColumnName, ColumnKind.V, groupNumber, table, columnNameDictionary);
                       yCol.Data = yData;
 
-                      SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                      SetColumnProperties(table, yCol, importOptionsNexus, fileName, nxEntry.Name, nxEntryIndex, title,
                               yDataSet.TryGetAttributeValueAsString("long_name"),
                               yDataSet.TryGetAttributeValueAsString("units")
                               );
@@ -214,7 +214,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
                       {
                         var errCol = table.DataColumns.EnsureExistence(FormattableString.Invariant($"{yColumnName}{(yColPostFix.HasValue ? yColPostFix.Value : "")}.Err"), typeof(DoubleColumn), ColumnKind.Err, groupNumber);
                         errCol.Data = errorData;
-                        SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                        SetColumnProperties(table, yCol, importOptionsNexus, fileName, nxEntry.Name, nxEntryIndex, title,
                              yDataSet.TryGetAttributeValueAsString("long_name"),
                              yDataSet.TryGetAttributeValueAsString("units")
                              );
@@ -233,14 +233,14 @@ namespace Altaxo.Serialization.HDF5.Nexus
                         string yColumnName;
                         if (signalDimensions[0] == 1)
                         {
-                          yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
-                          (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName) :
+                          yColumnName = (importOptionsNexus.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                          (string.IsNullOrEmpty(importOptionsNexus.NeutralColumnName) ? "Y" : importOptionsNexus.NeutralColumnName) :
                           yDataSetName;
                         }
                         else
                         {
-                          yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
-                          (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? FormattableString.Invariant($"Y({iD0}") : FormattableString.Invariant($"{importOptions.NeutralColumnName}({iD0}")) :
+                          yColumnName = (importOptionsNexus.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                          (string.IsNullOrEmpty(importOptionsNexus.NeutralColumnName) ? FormattableString.Invariant($"Y({iD0}") : FormattableString.Invariant($"{importOptionsNexus.NeutralColumnName}({iD0}")) :
                           FormattableString.Invariant($"{yDataSetName}({iD0}");
                         }
 
@@ -252,7 +252,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
                           axis0Col[yColIdx] = axesDataValues[0][iD0];
                         }
 
-                        SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                        SetColumnProperties(table, yCol, importOptionsNexus, fileName, nxEntry.Name, nxEntryIndex, title,
                                 yDataSet.TryGetAttributeValueAsString("long_name"),
                                 yDataSet.TryGetAttributeValueAsString("units")
                                 );
@@ -266,7 +266,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
                             var errColIdx = table.DataColumns.GetColumnNumber(errCol);
                             axis0Col[errColIdx] = axesDataValues[0][iD0];
                           }
-                          SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                          SetColumnProperties(table, yCol, importOptionsNexus, fileName, nxEntry.Name, nxEntryIndex, title,
                                yDataSet.TryGetAttributeValueAsString("long_name"),
                                yDataSet.TryGetAttributeValueAsString("units")
                                );
@@ -297,7 +297,7 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(fileNames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptionsNexus);
       }
 
       return errors.Length == 0 ? null : errors.ToString();

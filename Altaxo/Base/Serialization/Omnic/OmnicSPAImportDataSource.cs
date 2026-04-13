@@ -48,9 +48,9 @@ namespace Altaxo.Serialization.Omnic
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (OmnicSPAImportDataSource)obj;
+        var s = (OmnicSPAImportDataSource)o;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("ProcessOptions", s._processOptions);

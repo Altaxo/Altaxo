@@ -58,7 +58,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -79,9 +79,9 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NormalizationArea)obj;
+        var s = (NormalizationArea)o;
         info.AddValue("MinimumXValue", s.MinimumXValue);
         info.AddValue("MaximumXValue", s.MaximumXValue);
         info.AddValue("BasedOnMinimumYValue", s.BasedOnMinimumYValue);

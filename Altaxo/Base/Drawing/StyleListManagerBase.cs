@@ -455,7 +455,7 @@ namespace Altaxo.Drawing
     }
 
     /// <inheritdoc />
-    public abstract TList CreateNewList(string name, IEnumerable<TItem> symbols);
+    public abstract TList CreateNewList(string listName, IEnumerable<TItem> listItems);
 
     /// <inheritdoc />
     [return: MaybeNull]

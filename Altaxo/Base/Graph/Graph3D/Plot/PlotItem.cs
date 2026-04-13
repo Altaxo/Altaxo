@@ -209,10 +209,10 @@ namespace Altaxo.Graph.Graph3D.Plot
     public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
     /// <inheritdoc/>
-    public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
+    public abstract void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer);
 
     /// <inheritdoc/>
-    public abstract void ApplyGroupStyles(PlotGroupStyleCollection externalGroups);
+    public abstract void ApplyGroupStyles(PlotGroupStyleCollection styles);
 
     /// <summary>
     /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.

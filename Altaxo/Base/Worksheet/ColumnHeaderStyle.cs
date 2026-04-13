@@ -48,9 +48,9 @@ namespace Altaxo.Worksheet
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColumnHeaderStyle)obj;
+        var s = (ColumnHeaderStyle)o;
         info.AddBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType!);
       }
 

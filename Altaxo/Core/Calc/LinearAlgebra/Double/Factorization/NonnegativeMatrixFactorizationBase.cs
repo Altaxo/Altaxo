@@ -98,17 +98,17 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
 
     /// <inheritdoc/>
-    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> V, int rank)
+    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> X, int rank)
     {
-      var (W, H) = FactorizeOneTrial(V, rank);
+      var (W, H) = FactorizeOneTrial(X, rank);
       if (NumberOfAdditionalTrials == 0)
       {
         return (W, H);
       }
       else
       {
-        var vNorm = V.FrobeniusNorm();
-        double bestErr = (V - (W * H)).FrobeniusNorm() / vNorm;
+        var vNorm = X.FrobeniusNorm();
+        double bestErr = (X - (W * H)).FrobeniusNorm() / vNorm;
         Matrix<double> bestW = W;
         Matrix<double> bestH = H;
 
@@ -118,14 +118,14 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           if (InitializationMethod is not NMFInitializationRandom)
           {
             var method = this with { InitializationMethod = new NMFInitializationRandom() };
-            (W, H) = method.FactorizeOneTrial(V, rank);
+            (W, H) = method.FactorizeOneTrial(X, rank);
           }
           else
           {
-            (W, H) = FactorizeOneTrial(V, rank);
+            (W, H) = FactorizeOneTrial(X, rank);
           }
 
-          double finalErr = (V - (W * H)).FrobeniusNorm() / vNorm;
+          double finalErr = (X - (W * H)).FrobeniusNorm() / vNorm;
           if (finalErr < bestErr)
           {
             bestErr = finalErr;

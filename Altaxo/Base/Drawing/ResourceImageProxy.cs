@@ -62,9 +62,9 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(ResourceImageProxy), 1)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ResourceImageProxy)obj;
+        var s = (ResourceImageProxy)o;
         info.AddValue("Url", s._url);
         info.AddValue("Name", s._name);
       }

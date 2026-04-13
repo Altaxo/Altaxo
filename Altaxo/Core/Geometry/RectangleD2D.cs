@@ -84,9 +84,9 @@ namespace Altaxo.Geometry
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RectangleD2D)obj;
+        var s = (RectangleD2D)o;
         info.AddValue("X", s.X);
         info.AddValue("Y", s.Y);
         info.AddValue("Width", s.Width);
@@ -188,9 +188,9 @@ namespace Altaxo.Geometry
     }
 
     /// <inheritdoc/>
-    public bool Equals(RectangleD2D q)
+    public bool Equals(RectangleD2D other)
     {
-      return _x == q._x && _y == q._y && _w == q._w && _h == q._h;
+      return _x == other._x && _y == other._y && _w == other._w && _h == other._h;
     }
 
     /// <inheritdoc/>

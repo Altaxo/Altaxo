@@ -154,9 +154,9 @@ namespace Altaxo.Com
     }
 
     /// <inheritdoc/>
-    public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object obj)
+    public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object altaxoObject)
     {
-      if (obj is GraphDocument doc)
+      if (altaxoObject is GraphDocument doc)
       {
         return GetDocumentsComObjectForGraphDocument(doc);
       }
@@ -165,9 +165,9 @@ namespace Altaxo.Com
     }
 
     /// <inheritdoc/>
-    public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object obj)
+    public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object altaxoObject)
     {
-      if (obj is GraphDocumentBase doc)
+      if (altaxoObject is GraphDocumentBase doc)
       {
         return GetDocumentsDataObjectForGraphDocument(doc);
       }

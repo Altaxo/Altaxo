@@ -54,9 +54,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericalBoundaries)obj;
+        var s = (NumericalBoundaries)o;
 
         if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
           throw new InvalidOperationException(string.Format("Type {0} has NumberOfItems={1}, but MinValue is {2} and MaxValue is {3}", s.GetType(), s._numberOfItems, s._minValue, s._maxValue));

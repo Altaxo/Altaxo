@@ -76,9 +76,9 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MassBasedFloryDistribution)obj;
+        var s = (MassBasedFloryDistribution)o;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s.OrderOfBaselinePolynomial);
         info.AddValue("MolecularWeightOfMonomerUnit", s.MolecularWeightOfMonomerUnit);
@@ -274,7 +274,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, independent[0]) : independent[0];
 
@@ -296,11 +296,11 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
           sumPolynomial += parameters[i + offset];
         }
       }
-      FV[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (var r = 0; r < rowCount; ++r)
@@ -310,49 +310,49 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += GetYOfOneTerm(x, P[j], P[j + 1], MolecularWeightOfMonomerUnit);
+          sumTerms += GetYOfOneTerm(x, parameters[j], parameters[j + 1], MolecularWeightOfMonomerUnit);
         }
 
         if (OrderOfBaselinePolynomial >= 0)
         {
           var offset = NumberOfParametersPerPeak * NumberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[OrderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[OrderOfBaselinePolynomial + offset];
           for (var i = OrderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (var r = 0; r < rowCount; ++r)
       {
-        var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, X[r, 0]) : X[r, 0];
+        var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, independent[r, 0]) : independent[r, 0];
         var arg = x / MolecularWeightOfMonomerUnit;
 
 
         // at first, the peak terms
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1])
+          if (isFixed is not null && isFixed[j] && isFixed[j + 1])
           {
             continue;
           }
-          var area = P[j];
-          var tau = P[j + 1];
+          var area = parameters[j];
+          var tau = parameters[j + 1];
 
           var argtau = arg * tau;
           var body = _lnOf10 * argtau * argtau * Math.Exp(-argtau);
 
-          DY[r, j + 0] = body;
-          DY[r, j + 1] = area * body * (2 / tau - arg);
+          DF[r, j + 0] = body;
+          DF[r, j + 1] = area * body * (2 / tau - arg);
         }
 
         // then, the baseline
@@ -361,7 +361,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
           double xn = 1;
           for (int i = 0, j = NumberOfParametersPerPeak * NumberOfTerms; i <= OrderOfBaselinePolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
         }

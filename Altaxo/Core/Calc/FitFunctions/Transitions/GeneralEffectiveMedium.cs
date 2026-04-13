@@ -42,9 +42,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralEffectiveMedium), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GeneralEffectiveMedium)obj;
+        var s = (GeneralEffectiveMedium)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -161,23 +161,23 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Evaluates the model for a single independent input.
     /// </summary>
-    /// <param name="X">Array containing the independent variable.</param>
-    /// <param name="P">Array of parameters.</param>
-    /// <param name="Y">Output array for the dependent variable.</param>
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    /// <param name="independent">Array containing the independent variable.</param>
+    /// <param name="parameters">Array of parameters.</param>
+    /// <param name="dependent">Output array for the dependent variable.</param>
+    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        FV[r] = Evaluate(x, P[0], P[1], P[2], P[3], P[4]);
+        dependent[r] = Evaluate(x, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
       }
     }
 
@@ -390,9 +390,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralEffectiveMediumLog10), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GeneralEffectiveMediumLog10)obj;
+        var s = (GeneralEffectiveMediumLog10)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

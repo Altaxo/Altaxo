@@ -54,9 +54,9 @@ namespace Altaxo.Calc.FitFunctions.General
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TwoPolynomialSegments)obj;
+        var s = (TwoPolynomialSegments)o;
         info.AddValue("OrderLeftSide", s._order_n);
         info.AddValue("OrderRightSide", s._order_m);
       }
@@ -267,30 +267,30 @@ namespace Altaxo.Calc.FitFunctions.General
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = Evaluate(X[0], P[0], P[1], P.AsSpan(2, _order_n), P.AsSpan(2 + _order_n, _order_m));
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.AsSpan(2, _order_n), parameters.AsSpan(2 + _order_n, _order_m));
     }
 
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var pa = P as double[];
+      var pa = parameters as double[];
       var coeffsLeft = _order_n == 0 ? Span<double>.Empty : ((pa is not null) ? pa.AsSpan(2, _order_n) : stackalloc double[_order_n]);
       var coeffsRight = _order_n == 0 ? Span<double>.Empty : ((pa is not null) ? pa.AsSpan(2 + _order_n, _order_m) : stackalloc double[_order_m]);
       if (pa is null)
       {
         for (int i = 0; i < _order_n; i++)
-          coeffsLeft[i] = P[2 + i];
+          coeffsLeft[i] = parameters[2 + i];
         for (int i = 0; i < _order_m; i++)
-          coeffsRight[i] = P[2 + _order_n + i];
+          coeffsRight[i] = parameters[2 + _order_n + i];
       }
 
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        FV[r] = Evaluate(independent[r, 0], P[0], P[1], coeffsLeft, coeffsRight);
+        dependent[r] = Evaluate(independent[r, 0], parameters[0], parameters[1], coeffsLeft, coeffsRight);
       }
     }
 
@@ -303,15 +303,15 @@ namespace Altaxo.Calc.FitFunctions.General
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var xc = P[0];
-      var y0 = P[1];
+      var xc = parameters[0];
+      var y0 = parameters[1];
 
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
         var arg = x - xc;
 
 
@@ -322,24 +322,24 @@ namespace Altaxo.Calc.FitFunctions.General
           double sum = 0;
           for (int i = 0; i < _order_n; i++)
           {
-            sum += P[i + 2] * (i + 1) * prod;
+            sum += parameters[i + 2] * (i + 1) * prod;
             prod *= arg;
           }
-          DY[r, 0] = -sum; // derivative w.r.t. xc
-          DY[r, 1] = 1; // derivative wrt y0
+          DF[r, 0] = -sum; // derivative w.r.t. xc
+          DF[r, 1] = 1; // derivative wrt y0
 
           // w.r.t. a_i
           prod = arg;
           for (int i = 0; i < _order_n; i++)
           {
-            DY[r, i + 2] = prod;
+            DF[r, i + 2] = prod;
             prod *= arg;
           }
 
           int offset = 2 + _order_n;
           for (int i = 0; i < _order_m; i++)
           {
-            DY[r, i + offset] = 0; // derivative w.r.t b_i is zero
+            DF[r, i + offset] = 0; // derivative w.r.t b_i is zero
           }
         }
         else
@@ -350,22 +350,22 @@ namespace Altaxo.Calc.FitFunctions.General
           int offset = 2 + _order_n;
           for (int i = 0; i < _order_m; i++)
           {
-            sum += P[i + offset] * (i + 1) * prod;
+            sum += parameters[i + offset] * (i + 1) * prod;
             prod *= arg;
           }
-          DY[r, 0] = -sum; // derivative w.r.t. xc
-          DY[r, 1] = 1; // derivative wrt y0
+          DF[r, 0] = -sum; // derivative w.r.t. xc
+          DF[r, 1] = 1; // derivative wrt y0
 
           for (int i = 0; i < _order_n; i++)
           {
-            DY[r, i + 2] = 0; // derivative wrt a_i is zero
+            DF[r, i + 2] = 0; // derivative wrt a_i is zero
           }
 
           // w.r.t. b_i
           prod = arg;
           for (int i = 0; i < _order_m; i++)
           {
-            DY[r, i + offset] = prod;
+            DF[r, i + offset] = prod;
             prod *= arg;
           }
         }

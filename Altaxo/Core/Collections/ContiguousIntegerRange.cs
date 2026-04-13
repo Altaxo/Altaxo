@@ -50,7 +50,7 @@ namespace Altaxo.Collections
     private class XmlSerializationSurrogate00 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Should not serialize deprecated type");
         /*
@@ -72,9 +72,9 @@ namespace Altaxo.Collections
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ContiguousIntegerRange)obj;
+        var s = (ContiguousIntegerRange)o;
         info.AddValue("Start", s.Start);
         info.AddValue("Count", s.Count);
       }
@@ -332,11 +332,11 @@ namespace Altaxo.Collections
     /// <summary>
     /// Determines whether the specified item is contained in the range.
     /// </summary>
-    /// <param name="item">The item to test.</param>
+    /// <param name="nValue">The item to test.</param>
     /// <returns><see langword="true"/> if the item is contained in the range; otherwise, <see langword="false"/>.</returns>
-    public bool Contains(int item)
+    public bool Contains(int nValue)
     {
-      return (item >= _start && item <= LastInclusive);
+      return (nValue >= _start && nValue <= LastInclusive);
     }
 
     /// <summary>

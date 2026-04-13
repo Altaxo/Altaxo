@@ -134,52 +134,52 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public override double GetYOfU(double t)
+    public override double GetYOfU(double u)
     {
       const int lo = 0;
       int hi = x.Count - 1;
-      int i = FindInterval(t, x);
+      int i = FindInterval(u, x);
 
       if (i < lo || hi - lo == 1)
       {
         // linear extrapolation and interpolation for 2 points
-        return y[lo] + (t - x[lo]) * (y[lo + 1] - y[lo]) / (x[lo + 1] - x[lo]);
+        return y[lo] + (u - x[lo]) * (y[lo + 1] - y[lo]) / (x[lo + 1] - x[lo]);
       }
       else if (i == lo)
       {
         i = lo;
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (-1.0 + u * (u - 1.0) / 2.0),
-          c2 = u * (1.0 + u * (1.0 - u)),
-          c3 = u2 * (u - 1.0) / 2.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (-1.0 + t * (t - 1.0) / 2.0),
+          c2 = t * (1.0 + t * (1.0 - t)),
+          c3 = t2 * (t - 1.0) / 2.0;
         return c1 * y[i] + c2 * y[i + 1] + c3 * y[i + 2];
       }
       else if (i >= hi)
       {
         // linear extrapolation
-        return y[hi] + (t - x[hi]) * (y[hi] - y[hi - 1]) / (x[hi] - x[hi - 1]);
+        return y[hi] + (u - x[hi]) * (y[hi] - y[hi - 1]) / (x[hi] - x[hi - 1]);
       }
       else if (i == hi - 1)
       {
         i = hi - 1;
-        double u = (x[i + 1] - t) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (-1.0 + u * (u - 1.0) / 2.0),
-          c2 = u * (1.0 + u * (1.0 - u)),
-          c3 = u2 * (u - 1.0) / 2.0;
+        double t = (x[i + 1] - u) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (-1.0 + t * (t - 1.0) / 2.0),
+          c2 = t * (1.0 + t * (1.0 - t)),
+          c3 = t2 * (t - 1.0) / 2.0;
         return c1 * y[i + 1] + c2 * y[i] + c3 * y[i - 1];
       }
       else
       {
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          u3 = 1.0 - u,
-          u4 = u3 * u3,
-          c1 = -u4 * u / 2.0,
-          c2 = 1.0 + u2 * (3.0 * u - 5.0) / 2.0,
-          c3 = u * (1.0 + u * (4.0 - 3.0 * u)) / 2.0,
-          c4 = -u2 * u3 / 2.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          t3 = 1.0 - t,
+          t4 = t3 * t3,
+          c1 = -t4 * t / 2.0,
+          c2 = 1.0 + t2 * (3.0 * t - 5.0) / 2.0,
+          c3 = t * (1.0 + t * (4.0 - 3.0 * t)) / 2.0,
+          c4 = -t2 * t3 / 2.0;
         return c1 * y[i - 1] + c2 * y[i] + c3 * y[i + 1] + c4 * y[i + 2];
       }
     }

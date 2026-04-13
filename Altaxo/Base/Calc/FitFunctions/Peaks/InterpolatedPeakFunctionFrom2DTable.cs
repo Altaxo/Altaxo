@@ -68,9 +68,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (InterpolatedPeakFunctionFrom2DTable)obj;
+        var s = (InterpolatedPeakFunctionFrom2DTable)o;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s.OrderOfBaselinePolynomial);
         info.AddValue("TableName", s.TableName);

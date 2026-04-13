@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.GraphicBase", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
         /*
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -281,9 +281,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 5)]
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphicBase)obj;
+        var s = (GraphicBase)o;
         info.AddValue("Location", s._location);
       }
 
@@ -395,8 +395,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Sets the size of the parent object.
     /// </summary>
     /// <param name="parentSize">The parent size.</param>
-    /// <param name="shouldTriggerChangeEvent">If set to <c>true</c>, a change event is raised when needed.</param>
-    public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
+    /// <param name="isTriggeringChangedEvent">If set to <c>true</c>, a change event is raised when needed.</param>
+    public void SetParentSize(PointD2D parentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _location.ParentSize;
       _location.SetParentSize(parentSize, false); // do not trigger change event here
@@ -405,7 +405,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         UpdateTransformationMatrix(); // update the matrix in every case
 
-        if (shouldTriggerChangeEvent)
+        if (isTriggeringChangedEvent)
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -854,11 +854,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Tests whether a rectangular selection hits the object.
     /// </summary>
-    /// <param name="parentHitData">The rectangular hit-test data.</param>
+    /// <param name="hitData">The rectangular hit-test data.</param>
     /// <returns>The hit-test object, or <see langword="null"/> if no hit occurred.</returns>
-    public virtual IHitTestObject? HitTest(HitTestRectangularData parentHitData)
+    public virtual IHitTestObject? HitTest(HitTestRectangularData hitData)
     {
-      var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+      var localHitData = hitData.NewFromAdditionalTransformation(_transformation);
       if (localHitData.IsCovering(Bounds))
         return GetNewHitTestObject();
       else

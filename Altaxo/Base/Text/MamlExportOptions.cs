@@ -86,9 +86,9 @@ namespace Altaxo.Text
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MamlExportOptions)obj;
+        var s = (MamlExportOptions)o;
 
         info.AddValue("SplitLevel", s.SplitLevel);
         info.AddValue("ImageFolderName", s.ImageFolderName);

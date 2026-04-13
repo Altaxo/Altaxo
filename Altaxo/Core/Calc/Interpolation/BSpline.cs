@@ -48,9 +48,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BSpline1DOptions)obj;
+        var s = (BSpline1DOptions)o;
         info.AddValue("Degree", s._degree);
       }
 
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       throw new NotImplementedException();
     }

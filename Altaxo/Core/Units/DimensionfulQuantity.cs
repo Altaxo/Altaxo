@@ -53,11 +53,11 @@ namespace Altaxo.Units
       /// Serializes the specified <see cref="DimensionfulQuantity"/> instance into the provided
       /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
       /// </summary>
-      /// <param name="obj">The object to serialize (expected to be a <see cref="DimensionfulQuantity"/>).</param>
+      /// <param name="o">The object to serialize (expected to be a <see cref="DimensionfulQuantity"/>).</param>
       /// <param name="info">The serialization info where values should be written.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionfulQuantity)obj;
+        var s = (DimensionfulQuantity)o;
 
         info.AddValue("Value", s.Value);
         info.AddValue("Prefix", s.Prefix);
@@ -333,14 +333,14 @@ namespace Altaxo.Units
     }
 
     /// <inheritdoc/>
-    public int CompareTo(object? value)
+    public int CompareTo(object? obj)
     {
-      if (value is null)
+      if (obj is null)
         return 1;
-      if (value is DimensionfulQuantity other)
+      if (obj is DimensionfulQuantity other)
         return CompareTo(other);
       else
-        throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but actually is {value?.GetType()}");
+        throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but actually is {obj?.GetType()}");
     }
 
     /// <inheritdoc/>

@@ -428,9 +428,9 @@ namespace Altaxo.Dom
     /// <summary>
     /// Saves a project.
     /// </summary>
-    /// <param name="archiveToSaveTo">The project archive to save the project to.</param>
+    /// <param name="archive">The project archive to save the project to.</param>
     /// <returns>A dictionary where the keys are the entrynames that where used to store the project items that are the values.</returns>
-    public IDictionary<string, IProjectItem> SaveProject(IProjectArchive archiveToSaveTo) => SaveProjectAndWindowsState(archiveToSaveTo, null);
+    public IDictionary<string, IProjectItem> SaveProject(IProjectArchive archive) => SaveProjectAndWindowsState(archive, null);
 
     #endregion Project saving
 
@@ -439,26 +439,26 @@ namespace Altaxo.Dom
     /// <summary>
     /// Loads the project from project archive.
     /// </summary>
-    /// <param name="archive">The project archive to load from.</param>
-    public void OpenProjectFromArchive(IProjectArchive archive)
+    /// <param name="istream">The project archive to load from.</param>
+    public void OpenProjectFromArchive(IProjectArchive istream)
     {
-      InternalLoadProjectAndWindowsStateFromArchive(archive);
+      InternalLoadProjectAndWindowsStateFromArchive(istream);
     }
 
     /// <summary>
     /// Opens a project.
     /// If the current project is dirty, and <paramref name="showUserInteraction"/> is <c>true</c>, the user is ask to save the current project before.
     /// </summary>
-    /// <param name="fileOrFolderName">The file name of the project to open.</param>
+    /// <param name="pathName">The file name of the project to open.</param>
     /// <param name="showUserInteraction">If <c>true</c>, the user will see dialog if the current project is dirty and needs to be saved. In addition, the user will see
     /// an error dialog if the opening of the new document fails due to exceptions. If this parameter is <c>false</c>, then the old document is forced
     /// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
-    public void OpenProject(PathName fileOrFolderName, bool showUserInteraction)
+    public void OpenProject(PathName pathName, bool showUserInteraction)
     {
-      if (fileOrFolderName is null)
-        throw new ArgumentNullException(nameof(fileOrFolderName));
+      if (pathName is null)
+        throw new ArgumentNullException(nameof(pathName));
 
-      if (!fileOrFolderName.Exists())
+      if (!pathName.Exists())
       {
         return;
       }
@@ -476,7 +476,7 @@ namespace Altaxo.Dom
 
       try
       {
-        LoadProjectFromFileOrFolder(fileOrFolderName, showUserInteraction);
+        LoadProjectFromFileOrFolder(pathName, showUserInteraction);
       }
       catch (Exception ex)
       {
@@ -901,10 +901,10 @@ namespace Altaxo.Dom
 
 
     /// <summary>This will remove the controller and its view from the Gui.</summary>
-    /// <param name="controller">The view content to remove.</param>
-    public void CloseViewContent(IViewContent controller)
+    /// <param name="content">The view content to remove.</param>
+    public void CloseViewContent(IViewContent content)
     {
-      Current.Dispatcher.InvokeIfRequired(CloseViewContent_Unsynchronized, controller);
+      Current.Dispatcher.InvokeIfRequired(CloseViewContent_Unsynchronized, content);
     }
 
     private void CloseViewContent_Unsynchronized(IViewContent controller)

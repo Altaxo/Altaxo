@@ -53,9 +53,9 @@ namespace Altaxo.Drawing.DashPatterns
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Custom), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Custom)obj;
+        var s = (Custom)o;
         info.AddValue("DashOffset", s._dashOffset);
         info.CreateArray("Pattern", s._customDashPattern.Length);
         foreach (var v in s._customDashPattern)

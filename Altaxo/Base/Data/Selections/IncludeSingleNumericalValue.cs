@@ -46,9 +46,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IncludeSingleNumericalValue), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IncludeSingleNumericalValue)obj;
+        var s = (IncludeSingleNumericalValue)o;
 
         info.AddValue("Value", (object)s._value);
         info.AddValueOrNull("Column", s._columnProxy);
@@ -246,12 +246,12 @@ namespace Altaxo.Data.Selections
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
       return
-        rowSel is IncludeSingleNumericalValue other &&
-        this._value == other._value &&
-        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+        other is IncludeSingleNumericalValue otherX &&
+        this._value == otherX._value &&
+        object.ReferenceEquals(this._columnProxy?.Document(), otherX._columnProxy?.Document());
     }
   }
 }

@@ -41,9 +41,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0ar : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NNDSVDar)obj;
+        var s = (NNDSVDar)o;
       }
 
       /// <inheritdoc/>

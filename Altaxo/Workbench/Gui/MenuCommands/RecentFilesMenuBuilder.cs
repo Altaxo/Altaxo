@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.AddInItems;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
@@ -39,7 +35,7 @@ namespace Altaxo.Gui.MenuCommands
   public class RecentFilesMenuBuilder : IMenuItemBuilder
   {
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       // search either as part of IFileService or directly as service IRecentOpen
       var recentOpen = Altaxo.Current.GetService<IFileService>()?.RecentOpen ?? Altaxo.Current.GetService<IRecentOpen>();

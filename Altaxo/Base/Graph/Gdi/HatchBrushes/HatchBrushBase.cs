@@ -66,9 +66,9 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HatchBrushBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HatchBrushBase)obj;
+        var s = (HatchBrushBase)o;
         info.AddValue("RepeatLength", s._repeatLengthPt);
         info.AddValue("StructureFactor", s._structureFactor);
       }

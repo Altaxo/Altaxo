@@ -65,9 +65,9 @@ namespace Altaxo.Geometry
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PointD3D)obj;
+        var s = (PointD3D)o;
         info.AddValue("X", s.X);
         info.AddValue("Y", s.Y);
         info.AddValue("Z", s.Z);

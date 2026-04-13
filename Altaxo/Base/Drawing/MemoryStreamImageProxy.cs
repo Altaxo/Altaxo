@@ -72,7 +72,7 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.MemoryStreamImageProxy", 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -120,9 +120,9 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 2)]
     private class XmlSerializationSurrogate1 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MemoryStreamImageProxy)obj;
+        var s = (MemoryStreamImageProxy)o;
         info.AddValue("Url", s.Url);
         info.AddValue("Name", s.Name);
         info.AddValue("Hash", s.ContentHash);

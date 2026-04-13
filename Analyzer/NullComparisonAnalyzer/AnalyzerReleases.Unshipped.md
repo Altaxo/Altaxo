@@ -6,3 +6,4 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CopyFromAnalyzer | Naming | Warning | CopyFromAnalyzer
 NullComparisonAnalyzer | Naming | Warning | NullComparisonAnalyzerAnalyzer
+LEL001  | Naming   | Warning  | InterfaceParameterNameAnalyzer

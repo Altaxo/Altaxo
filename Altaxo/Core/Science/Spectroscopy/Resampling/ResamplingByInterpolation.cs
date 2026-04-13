@@ -61,9 +61,9 @@ namespace Altaxo.Science.Spectroscopy.Resampling
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ResamplingByInterpolation)obj;
+        var s = (ResamplingByInterpolation)o;
         info.AddValue("Interpolation", s.Interpolation);
         info.AddValue("SamplingPoints", s.SamplingPoints);
         info.AddValue("CombineRegions", s.CombineRegions);

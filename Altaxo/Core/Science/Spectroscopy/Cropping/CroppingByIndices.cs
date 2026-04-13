@@ -52,9 +52,9 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CroppingByIndices)obj;
+        var s = (CroppingByIndices)o;
         info.AddValue("MinimalIndex", s.MinimalIndex);
         info.AddValue("MaximalIndex", s.MaximalIndex);
       }

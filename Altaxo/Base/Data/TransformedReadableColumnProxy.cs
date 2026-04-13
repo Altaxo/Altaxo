@@ -46,10 +46,10 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.TransformedReadableColumnProxy", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TransformedReadableColumnProxy)obj;
-        info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
+        var s = (TransformedReadableColumnProxy)o;
+        info.AddBaseValueEmbedded(o, typeof(DocNodeProxy)); // serialize the base class
         info.AddValue("Transformation", s._transformation);
       }
 
@@ -69,10 +69,10 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TransformedReadableColumnProxy), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TransformedReadableColumnProxy)obj;
-        info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy2ndLevel)); // serialize the base class
+        var s = (TransformedReadableColumnProxy)o;
+        info.AddBaseValueEmbedded(o, typeof(DocNodeProxy2ndLevel)); // serialize the base class
         info.AddValue("Transformation", s._transformation);
       }
 

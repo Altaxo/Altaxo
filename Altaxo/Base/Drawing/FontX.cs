@@ -67,7 +67,7 @@ namespace Altaxo.Drawing
     {
       private static System.Drawing.FontConverter _fontConverter = new System.Drawing.FontConverter();
 
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old versions is not allowed");
       }
@@ -99,9 +99,9 @@ namespace Altaxo.Drawing
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FontX), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FontX)obj;
+        var s = (FontX)o;
         info.SetNodeContent(s._invariantDescriptionString);
       }
 

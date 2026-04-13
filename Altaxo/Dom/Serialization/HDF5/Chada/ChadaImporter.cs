@@ -88,7 +88,7 @@ namespace Altaxo.Serialization.HDF5.Chada
 
 
     /// <inheritdoc/>
-    public override string? Import(IReadOnlyList<string> fileNames, DataTable dataTable, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
       var stb = new StringBuilder();
       DataColumn? lastXColumn = null;
@@ -96,7 +96,7 @@ namespace Altaxo.Serialization.HDF5.Chada
       int lastYNumber = -1;
       for (int i = 0; i < fileNames.Count; ++i)
       {
-        var err = ImportRamanCHADA(fileNames[i], dataTable, fileNames.Count, ref lastXColumn, ref lastGroupNumber, ref lastYNumber);
+        var err = ImportRamanCHADA(fileNames[i], table, fileNames.Count, ref lastXColumn, ref lastGroupNumber, ref lastYNumber);
         if (!string.IsNullOrEmpty(err))
           stb.Append(err);
       }

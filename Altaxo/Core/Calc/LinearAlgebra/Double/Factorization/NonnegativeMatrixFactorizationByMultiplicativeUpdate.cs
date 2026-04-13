@@ -44,9 +44,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NonnegativeMatrixFactorizationByMultiplicativeUpdate)obj;
+        var s = (NonnegativeMatrixFactorizationByMultiplicativeUpdate)o;
         info.AddValue("InitializationMethod", s.InitializationMethod);
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
         info.AddValue("NumberOfTrials", s.NumberOfAdditionalTrials);

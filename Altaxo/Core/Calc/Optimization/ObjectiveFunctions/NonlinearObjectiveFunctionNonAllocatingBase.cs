@@ -267,20 +267,20 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// <summary>
     /// Sets model parameters and optional fixed flags for individual parameters.
     /// </summary>
-    /// <param name="initialGuess">The initial values of the parameters.</param>
+    /// <param name="parameters">The initial values of the parameters.</param>
     /// <param name="isFixed">
-    /// Optional list with the same length as <paramref name="initialGuess"/>.
+    /// Optional list with the same length as <paramref name="parameters"/>.
     /// For every fixed parameter, the corresponding element is <see langword="true"/>.
     /// </param>
-    public virtual void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
+    public virtual void SetParameters(IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed = null)
     {
-      _coefficients ??= Vector<double>.Build.Dense(initialGuess.Count);
-      for (int i = 0; i < initialGuess.Count; ++i)
+      _coefficients ??= Vector<double>.Build.Dense(parameters.Count);
+      for (int i = 0; i < parameters.Count; ++i)
       {
-        _coefficients[i] = initialGuess[i];
+        _coefficients[i] = parameters[i];
       }
 
-      if (isFixed is not null && isFixed.Count != initialGuess.Count)
+      if (isFixed is not null && isFixed.Count != parameters.Count)
       {
         throw new ArgumentException("The isFixed can't have different size from the initial guess.");
       }
@@ -292,8 +292,8 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       IsFixedByUserOrBoundary = isFixed;
 
       // allocate already some
-      _negativeGradientValue ??= Vector<double>.Build.Dense(initialGuess.Count);
-      _hessianValue ??= Matrix<double>.Build.Dense(initialGuess.Count, initialGuess.Count);
+      _negativeGradientValue ??= Vector<double>.Build.Dense(parameters.Count);
+      _hessianValue ??= Matrix<double>.Build.Dense(parameters.Count, parameters.Count);
       _jacobianValue ??= Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
       _jacobianValueTransposed ??= Matrix<double>.Build.Dense(NumberOfParameters, NumberOfObservations);
     }
@@ -307,22 +307,22 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// <summary>
     /// Evaluates the model at the given parameter vector and invalidates cached dependent values.
     /// </summary>
-    /// <param name="parameters">The parameter vector.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameters"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when any element of <paramref name="parameters"/> is not finite.</exception>
-    public void EvaluateAt(IReadOnlyList<double> parameters)
+    /// <param name="parameter">The parameter vector.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameter"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when any element of <paramref name="parameter"/> is not finite.</exception>
+    public void EvaluateAt(IReadOnlyList<double> parameter)
     {
-      if (parameters is null)
+      if (parameter is null)
       {
-        throw new ArgumentNullException(nameof(parameters));
+        throw new ArgumentNullException(nameof(parameter));
       }
-      if (parameters.Count(p => double.IsNaN(p) || double.IsInfinity(p)) > 0)
+      if (parameter.Count(p => double.IsNaN(p) || double.IsInfinity(p)) > 0)
       {
         throw new ArgumentException("The parameters must be finite.");
       }
 
-      for (int i = 0; i < parameters.Count; i++)
-        _coefficients[i] = parameters[i];
+      for (int i = 0; i < parameter.Count; i++)
+        _coefficients[i] = parameter[i];
 
       _hasFunctionValue = false;
       _hasJacobianValue = false;

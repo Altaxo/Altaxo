@@ -242,9 +242,9 @@ namespace Altaxo.Scripting
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AbstractScript)obj;
+        var s = (AbstractScript)o;
 
         info.AddValue("Text", s._scriptText);
       }
@@ -315,9 +315,9 @@ namespace Altaxo.Scripting
     }
 
     /// <inheritdoc/>
-    void IScriptText.CopyFrom(IScriptText from, bool forModification)
+    void IScriptText.CopyFrom(IScriptText script, bool forModification)
     {
-      CopyFrom((AbstractScript)from, forModification);
+      CopyFrom((AbstractScript)script, forModification);
     }
 
     /// <summary>

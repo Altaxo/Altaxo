@@ -71,9 +71,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectralPreprocessingOptions)obj;
+        var s = (SpectralPreprocessingOptions)o;
         info.AddValue("Sanitizer", s.Sanitizer);
         info.AddValue("SpikeRemoval", s.SpikeRemoval);
         info.AddValue("Resampling", s.Resampling);
@@ -122,9 +122,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectralPreprocessingOptions)obj;
+        var s = (SpectralPreprocessingOptions)o;
         info.AddValue("Sanitizer", s.Sanitizer);
         info.AddValue("SpikeRemoval", s.SpikeRemoval);
         info.AddValue("Calibration", s.XCalibration);
@@ -177,9 +177,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectralPreprocessingOptions)obj;
+        var s = (SpectralPreprocessingOptions)o;
         info.AddValue("Sanitizer", s.Sanitizer);
         info.AddValue("DarkSubtraction", s.DarkSubtraction);
         info.AddValue("SpikeRemoval", s.SpikeRemoval);
@@ -237,9 +237,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectralPreprocessingOptions)obj;
+        var s = (SpectralPreprocessingOptions)o;
         info.AddValue("Sanitizer", s.Sanitizer);
         info.AddValue("DarkSubtraction", s.DarkSubtraction);
         info.AddValue("SpikeRemoval", s.SpikeRemoval);

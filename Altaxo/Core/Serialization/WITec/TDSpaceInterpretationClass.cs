@@ -49,9 +49,9 @@ namespace Altaxo.Serialization.WITec
 
 
     /// <inheritdoc/>
-    public override (string Description, string shortCut) GetUnit(int unit)
+    public override (string Description, string shortCut) GetUnit(int unitIndex)
     {
-      return unit switch
+      return unitIndex switch
       {
         0 => ("Meters", "m"),
         1 => ("Millimeters", "mm"),

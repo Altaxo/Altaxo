@@ -45,9 +45,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RelativeVarianceScaling)obj;
+        var s = (RelativeVarianceScaling)o;
 
         info.AddValue("ScalingFactor", s._scaling);
       }
@@ -66,12 +66,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion Serialization
 
     /// <inheritdoc/>
-    public double GetWeight(double yr, int i)
+    public double GetWeight(double yreal, int i)
     {
-      if (yr == 0)
+      if (yreal == 0)
         return _scaling;
       else
-        return _scaling / Math.Abs(yr);
+        return _scaling / Math.Abs(yreal);
     }
 
     /// <inheritdoc/>

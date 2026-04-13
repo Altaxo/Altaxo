@@ -42,9 +42,9 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ForwardDiagonalHatchBrush), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ForwardDiagonalHatchBrush)obj;
+        var s = (ForwardDiagonalHatchBrush)o;
         info.AddBaseValueEmbedded(s, typeof(ForwardDiagonalHatchBrush).BaseType!);
       }
 

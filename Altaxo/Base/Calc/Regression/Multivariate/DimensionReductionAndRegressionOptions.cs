@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new System.InvalidOperationException("Serialization of old version");
         /*
@@ -192,9 +192,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionAndRegressionOptions)obj;
+        var s = (DimensionReductionAndRegressionOptions)o;
         info.AddValue("SinglePreprocessing", s.Preprocessing);
         info.AddValue("Analysis", s.WorksheetAnalysis);
         info.AddValue("MaximumNumberOfFactors", s.MaximumNumberOfFactors);

@@ -194,9 +194,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
       }
 
       /// <inheritdoc/>
-      public bool IsGripHit(HitTestPointData point)
+      public bool IsGripHit(HitTestPointData hitData)
       {
-        return _gripPath.IsHittedBy(point);
+        return _gripPath.IsHittedBy(hitData);
       }
 
       #endregion IGripManipulationHandle Members

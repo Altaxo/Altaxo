@@ -65,9 +65,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void WriteLine(string format, params object[] args)
+    public void WriteLine(string format, params object[] list)
     {
-      InternalWrite(string.Format(format, args) + System.Environment.NewLine);
+      InternalWrite(string.Format(format, list) + System.Environment.NewLine);
     }
 
     /// <inheritdoc/>
@@ -77,9 +77,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void Write(string format, params object[] args)
+    public void Write(string format, params object[] list)
     {
-      InternalWrite(string.Format(format, args));
+      InternalWrite(string.Format(format, list));
     }
 
     /// <inheritdoc/>

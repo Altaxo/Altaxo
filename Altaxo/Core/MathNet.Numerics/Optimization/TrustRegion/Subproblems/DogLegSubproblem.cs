@@ -14,7 +14,7 @@ namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
     public bool HitBoundary { get; private set; }
 
     /// <inheritdoc />
-    public void Solve(IObjectiveModel objective, double delta)
+    public void Solve(IObjectiveModel objective, double radius)
     {
       var Gradient = objective.Gradient;
       var Hessian = objective.Hessian;
@@ -27,23 +27,23 @@ namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
       var Psd = -alpha * Gradient;
 
       // update step and prectted reduction
-      if (Pgn.L2Norm() <= delta)
+      if (Pgn.L2Norm() <= radius)
       {
         // Pgn is inside trust region radius
         HitBoundary = false;
         Pstep = Pgn;
       }
-      else if (alpha * Psd.L2Norm() >= delta)
+      else if (alpha * Psd.L2Norm() >= radius)
       {
         // Psd is outside trust region radius
         HitBoundary = true;
-        Pstep = delta / Psd.L2Norm() * Psd;
+        Pstep = radius / Psd.L2Norm() * Psd;
       }
       else
       {
         // Pstep is intersection of the trust region boundary
         HitBoundary = true;
-        var beta = Util.FindBeta(alpha, Psd, Pgn, delta).Item2;
+        var beta = Util.FindBeta(alpha, Psd, Pgn, radius).Item2;
         Pstep = alpha * Psd + beta * (Pgn - alpha * Psd);
       }
     }

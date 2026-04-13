@@ -56,9 +56,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScaleRescaleConditions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearScaleRescaleConditions)obj;
+        var s = (LinearScaleRescaleConditions)o;
 
         info.AddBaseValueEmbedded(s, s.GetType().BaseType!);
       }

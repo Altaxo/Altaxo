@@ -93,9 +93,9 @@ namespace Altaxo.Settings
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AutoUpdateSettings)obj;
+        var s = (AutoUpdateSettings)o;
         info.AddValue("EnableAutoUpdates", s.EnableAutoUpdates);
         info.AddValue("DownloadUnstableVersion", s.DownloadUnstableVersion);
         info.AddValue("DownloadIntervalInDays", s.DownloadIntervalInDays);

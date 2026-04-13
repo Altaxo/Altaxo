@@ -422,18 +422,18 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
-    /// <param name="i0">Starttial row index</param>
-    /// <param name="i1">End row index</param>
-    /// <param name="j0">Start column index</param>
-    /// <param name="j1">End column index</param>
+    /// <param name="startRow">Starttial row index</param>
+    /// <param name="endRow">End row index</param>
+    /// <param name="startColumn">Start column index</param>
+    /// <param name="endColumn">End column index</param>
     /// <returns>The extracted submatrix.</returns>
-    public IMapackMatrix Submatrix(int i0, int i1, int j0, int j1)
+    public IMapackMatrix Submatrix(int startRow, int endRow, int startColumn, int endColumn)
     {
-      var X = new MapackMatrix(i1 - i0 + 1, j1 - j0 + 1);
+      var X = new MapackMatrix(endRow - startRow + 1, endColumn - startColumn + 1);
       double[][] x = X.Array;
-      for (int i = i0; i <= i1; i++)
-        for (int j = j0; j <= j1; j++)
-          x[i - i0][j - j0] = data[i][j];
+      for (int i = startRow; i <= endRow; i++)
+        for (int j = startColumn; j <= endColumn; j++)
+          x[i - startRow][j - startColumn] = data[i][j];
       return X;
     }
 
@@ -452,32 +452,32 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
-    /// <param name="i0">Starttial row index</param>
-    /// <param name="i1">End row index</param>
+    /// <param name="startRow">Starttial row index</param>
+    /// <param name="endRow">End row index</param>
     /// <param name="c">Array of row indices</param>
     /// <returns>The extracted submatrix.</returns>
-    public IMapackMatrix Submatrix(int i0, int i1, int[] c)
+    public IMapackMatrix Submatrix(int startRow, int endRow, int[] c)
     {
-      var X = new MapackMatrix(i1 - i0 + 1, c.Length);
+      var X = new MapackMatrix(endRow - startRow + 1, c.Length);
       double[][] x = X.Array;
-      for (int i = i0; i <= i1; i++)
+      for (int i = startRow; i <= endRow; i++)
         for (int j = 0; j < c.Length; j++)
-          x[i - i0][j] = data[i][c[j]];
+          x[i - startRow][j] = data[i][c[j]];
       return X;
     }
 
     /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
     /// <param name="r">Array of row indices</param>
-    /// <param name="j0">Start column index</param>
-    /// <param name="j1">End column index</param>
+    /// <param name="startColumn">Start column index</param>
+    /// <param name="endColumn">End column index</param>
     /// <returns>The extracted submatrix.</returns>
-    public IMapackMatrix Submatrix(int[] r, int j0, int j1)
+    public IMapackMatrix Submatrix(int[] r, int startColumn, int endColumn)
     {
-      var X = new MapackMatrix(r.Length, j1 - j0 + 1);
+      var X = new MapackMatrix(r.Length, endColumn - startColumn + 1);
       double[][] x = X.Array;
       for (int i = 0; i < r.Length; i++)
-        for (int j = j0; j <= j1; j++)
-          x[i][j - j0] = data[r[i]][j];
+        for (int j = startColumn; j <= endColumn; j++)
+          x[i][j - startColumn] = data[r[i]][j];
       return X;
     }
 
@@ -1092,16 +1092,16 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 
-      public IMapackMatrix Solve(IMapackMatrix B)
+      public IMapackMatrix Solve(IMapackMatrix rhs)
       {
-        if (B.RowCount != LU.RowCount)
+        if (rhs.RowCount != LU.RowCount)
           throw new ArgumentException("Invalid matrix dimensions.");
         if (!IsNonSingular)
           throw new InvalidOperationException("Matrix is singular");
 
         // Copy right hand side with pivoting
-        int count = B.ColumnCount;
-        IMapackMatrix X = B.Submatrix(pivotVector, 0, count - 1);
+        int count = rhs.ColumnCount;
+        IMapackMatrix X = rhs.Submatrix(pivotVector, 0, count - 1);
 
         int rows = LU.RowCount;
         int columns = LU.ColumnCount;

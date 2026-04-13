@@ -40,9 +40,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MultiplicativeScatterCorrection)obj;
+        var s = (MultiplicativeScatterCorrection)o;
         info.AddValue("EnsembleScale", s.EnsembleScale);
       }
 
@@ -56,7 +56,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     #endregion
 
     /// <inheritdoc/>
-    public void Process(IMatrix<double> xMatrix, int[] regions, IVector<double> xMean, IVector<double> xScale)
+    public void Process(IMatrix<double> spectraMatrix, int[] regions, IVector<double> spectraMean, IVector<double> spectraScale)
     {
       // Note: We have a slight deviation from the literature:
       // we repeat the multiple scattering correction until the xMean vector is self-consistent.
@@ -66,70 +66,70 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
       // for MSC (the x in linear regression) and another to center the MSC-corrected spectra.
 
-      var xMatrixOrg = MatrixMath.DenseOfMatrix(xMatrix);
+      var xMatrixOrg = MatrixMath.DenseOfMatrix(spectraMatrix);
 
 
-      VectorMath.FillWith(xMean, 0);
+      VectorMath.FillWith(spectraMean, 0);
 
       IVector<double>? xMeanBefore = null;
-      double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.RowCount;
+      double threshold = 1E-14 * MatrixMath.SumOfSquares(spectraMatrix) / spectraMatrix.RowCount;
       for (int cycle = 0; cycle < 50; cycle++)
       {
         // 1.) Get the mean spectrum
         // we want to have the mean of each matrix column, but not center the matrix now, since this
         // is done later on
-        int cols = xMatrix.ColumnCount;
-        int rows = xMatrix.RowCount;
+        int cols = spectraMatrix.ColumnCount;
+        int rows = spectraMatrix.RowCount;
         for (int n = 0; n < cols; n++)
         {
           double sum = 0;
           for (int i = 0; i < rows; i++)
           {
-            sum += xMatrix[i, n];
+            sum += spectraMatrix[i, n];
           }
-          xMean[n] += sum / rows; // xMean is in the first cycle 0 before, thus becomes mean. In later cycles it is incrementally updated.
+          spectraMean[n] += sum / rows; // xMean is in the first cycle 0 before, thus becomes mean. In later cycles it is incrementally updated.
         }
 
         // 2.) Process the spectra
-        foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
+        foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, spectraMatrix.ColumnCount))
         {
-          ProcessForPrediction(xMatrixOrg, xMean, start, end, xMatrix);
+          ProcessForPrediction(xMatrixOrg, spectraMean, start, end, spectraMatrix);
         }
 
         // 3. Compare the xMean with the xMeanBefore
         if (xMeanBefore is null)
         {
-          xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Count);
-          VectorMath.Copy(xMean, xMeanBefore);
+          xMeanBefore = VectorMath.CreateExtensibleVector<double>(spectraMean.Count);
+          VectorMath.Copy(spectraMean, xMeanBefore);
         }
         else
         {
-          double sumdiffsquare = VectorMath.SumOfSquaredDifferences(xMean, xMeanBefore);
+          double sumdiffsquare = VectorMath.SumOfSquaredDifferences(spectraMean, xMeanBefore);
           if (sumdiffsquare < threshold)
             break;
           else
-            VectorMath.Copy(xMean, xMeanBefore);
+            VectorMath.Copy(spectraMean, xMeanBefore);
         }
       }
 
       if (EnsembleScale)
       {
         // because by the previous MSC correction, the mean is already zero, we only need the scale here
-        MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix, null, xScale);
+        MatrixMath.ColumnsToZeroMeanAndUnitVariance(spectraMatrix, null, spectraScale);
       }
     }
 
     /// <inheritdoc/>
-    public void ProcessForPrediction(IMatrix<double> xMatrix, int[] regions, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale)
+    public void ProcessForPrediction(IMatrix<double> spectraMatrix, int[] regions, IReadOnlyList<double> spectraMean, IReadOnlyList<double> spectraScale)
     {
-      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, spectraMatrix.ColumnCount))
       {
-        ProcessForPrediction(xMatrix, xMean, start, end, xMatrix);
+        ProcessForPrediction(spectraMatrix, spectraMean, start, end, spectraMatrix);
       }
 
       if (EnsembleScale)
       {
-        MatrixMath.MultiplyRow(xMatrix, xScale, xMatrix);
+        MatrixMath.MultiplyRow(spectraMatrix, spectraScale, spectraMatrix);
       }
     }
 
@@ -193,29 +193,29 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
-      if (auxillaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
+      if (auxiliaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
       {
-        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxiliaryDataCompound.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxiliaryDataCompound.", nameof(auxiliaryData));
       }
       if (data.Values.Length != 2)
       {
-        throw new System.ArgumentException("Auxillary data does not contain two elements.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxillary data does not contain two elements.", nameof(auxiliaryData));
       }
       if (data.Values[0] is not EnsembleAuxiliaryDataVector aux0 || aux0.Name != AuxiliaryDataMeanName)
       {
-        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataMeanName}.", nameof(auxillaryData));
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataMeanName}.", nameof(auxiliaryData));
       }
       if (data.Values[1] is not EnsembleAuxiliaryDataVector aux1 || aux1.Name != AuxiliaryDataScaleName)
       {
-        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataScaleName}.", nameof(auxillaryData));
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataScaleName}.", nameof(auxiliaryData));
       }
 
       var xMean = aux0.Value;
       var xScale = aux1.Value;
 
-      var yNew = spectraMatrix.Clone();
+      var yNew = y.Clone();
       ProcessForPrediction(yNew, regions, xMean, xScale);
       return (x, yNew, regions);
     }

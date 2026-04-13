@@ -103,24 +103,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
 
       /// <inheritdoc/>
-      public void Evaluate(double[] independent, double[] parameters, double[] FV)
+      public void Evaluate(double[] independent, double[] parameters, double[] dependent)
       {
-        _func(independent, parameters, FV);
+        _func(independent, parameters, dependent);
       }
 
       /// <inheritdoc/>
-      public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+      public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
       {
         var XX = new double[1];
         var YY = new double[1];
-        var PP = P.ToArray();
+        var PP = parameters.ToArray();
         var rowCount = independent.RowCount;
         for (int r = 0; r < rowCount; ++r)
         {
           XX[0] = independent[r, 0];
 
           _func(XX, PP, YY);
-          FV[r] = YY[0];
+          dependent[r] = YY[0];
         }
       }
 

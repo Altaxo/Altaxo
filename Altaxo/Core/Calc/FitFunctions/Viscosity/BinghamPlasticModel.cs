@@ -27,9 +27,9 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BinghamPlasticModel)obj;
+        var s = (BinghamPlasticModel)o;
       }
 
       /// <inheritdoc/>
@@ -116,17 +116,17 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = Evaluate(independent[0], parameters[0], parameters[1]);
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1]);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = Evaluate(independent[i, 0], parameters[0], parameters[1]);
+        dependent[i] = Evaluate(independent[i, 0], parameters[0], parameters[1]);
       }
     }
 

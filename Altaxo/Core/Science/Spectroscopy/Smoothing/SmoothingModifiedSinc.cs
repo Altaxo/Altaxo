@@ -88,9 +88,9 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SmoothingModifiedSinc)obj;
+        var s = (SmoothingModifiedSinc)o;
         info.AddValue("NumberOfPoints", s.NumberOfPoints);
         info.AddValue("PolynomialOrder", s.Degree);
         info.AddValue("IsMS1", s.IsMS1Smoothing);

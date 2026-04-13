@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var val = (DateTime)value;
 
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var validationResult = ConvertAndValidate(value, out var result);
       if (validationResult.IsValid)
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
+    public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
     {
       var validationResult = ConvertAndValidate(value, out var result);
       if (validationResult.IsValid)

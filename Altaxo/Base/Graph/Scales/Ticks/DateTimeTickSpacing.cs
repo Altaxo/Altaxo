@@ -635,9 +635,9 @@ namespace Altaxo.Graph.Scales.Ticks
       /// <summary>
       /// Performs the s er ia li ze operation.
       /// </summary>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DateTimeTickSpacing)obj;
+        var s = (DateTimeTickSpacing)o;
       }
 
       /// <summary>

@@ -82,9 +82,9 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (OdgenUniaxial)obj;
+        var s = (OdgenUniaxial)o;
         info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
       }
 
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       var epsilon = independent[0];
       var sum = 0d;
@@ -189,11 +189,11 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
         sum += EvaluateOneTerm(epsilon, µ, α);
       }
 
-      FV[0] = CrossSectionArea * sum;
+      dependent[0] = CrossSectionArea * sum;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
           var α = parameters[2 * k + 1];
           sum += EvaluateOneTerm(epsilon, µ, α);
         }
-        FV[i] = CrossSectionArea * sum;
+        dependent[i] = CrossSectionArea * sum;
       }
     }
 

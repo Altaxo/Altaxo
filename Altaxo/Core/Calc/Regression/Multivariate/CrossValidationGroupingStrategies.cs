@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -111,7 +111,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     /// <inheritdoc/>
-    public int[][] Group(IROMatrix<double> Y)
+    public int[][] Group(IROMatrix<double> matrixY)
     {
       var groups = new List<List<int>>();
 
@@ -122,16 +122,16 @@ namespace Altaxo.Calc.Regression.Multivariate
       };
       groups.Add(newcoll);
       // now test all other rows of the y-matrix against the existing groups
-      for (int i = 1; i < Y.RowCount; i++)
+      for (int i = 1; i < matrixY.RowCount; i++)
       {
         bool bNewGroup = true;
         for (int gr = 0; gr < groups.Count; gr++)
         {
           int refrow = groups[gr][0];
           bool match = true;
-          for (int j = 0; j < Y.ColumnCount; j++)
+          for (int j = 0; j < matrixY.ColumnCount; j++)
           {
-            if (Y[i, j] != Y[refrow, j])
+            if (matrixY[i, j] != matrixY[refrow, j])
             {
               match = false;
               break;
@@ -177,7 +177,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -190,13 +190,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
     /// <inheritdoc/>
-    public int[][] Group(IROMatrix<double> Y)
+    public int[][] Group(IROMatrix<double> matrixY)
     {
       var groups = new List<int>[2];
       for (int i = 0; i < 2; i++)
         groups[i] = new List<int>();
 
-      int[][] similarGroups = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements().Group(Y);
+      int[][] similarGroups = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements().Group(matrixY);
 
       int destinationGroupNumber = 0;
       for (int g = 0; g < similarGroups.Length; g++)
@@ -229,7 +229,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -243,11 +243,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     /// <inheritdoc/>
-    public int[][] Group(IROMatrix<double> Y)
+    public int[][] Group(IROMatrix<double> matrixY)
     {
-      int[][] groups = new int[Y.RowCount][];
+      int[][] groups = new int[matrixY.RowCount][];
 
-      for (int i = 0; i < Y.RowCount; i++)
+      for (int i = 0; i < matrixY.RowCount; i++)
       {
         int[] newcoll = new int[1];
         newcoll[0] = i;

@@ -377,9 +377,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      return CDF(z, mu, sigma);
+      return CDF(x, mu, sigma);
     }
 
     /// <summary>
@@ -395,9 +395,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      return PDF(z, mu, sigma);
+      return PDF(x, mu, sigma);
     }
 
     /// <summary>

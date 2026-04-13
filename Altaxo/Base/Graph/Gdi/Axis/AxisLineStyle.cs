@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
         /*
@@ -143,9 +143,9 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisLineStyle)obj;
+        var s = (AxisLineStyle)o;
         info.AddValue("AxisPen", s._axisPen);
         info.AddValue("MajorPen", s._majorTickPen);
         info.AddValue("MinorPen", s._minorTickPen);

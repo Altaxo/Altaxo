@@ -36,7 +36,7 @@ namespace Altaxo.Worksheet.Commands
   public class SelectedDataConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       string selectedData = condition.Properties["selected"].ToLower();
 
@@ -94,7 +94,7 @@ namespace Altaxo.Worksheet.Commands
   public class SelectedPropertyConditionEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       string selectedData = condition.Properties["selected"].ToLower();
 

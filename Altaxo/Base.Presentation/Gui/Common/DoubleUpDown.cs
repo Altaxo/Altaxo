@@ -77,9 +77,9 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public object Convert(object obj, Type targetType, object parameter, CultureInfo culture)
+      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        var val = (double)obj;
+        var val = (double)value;
 
         if (_parent is not null)
         {
@@ -93,15 +93,15 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture)
+      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        return ConvertBack(obj, targetType, parameter, culture, out var validationResult);
+        return ConvertBack(value, targetType, parameter, culture, out var validationResult);
       }
 
       /// <inheritdoc/>
-      public override ValidationResult Validate(object obj, CultureInfo cultureInfo)
+      public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
-        ConvertBack(obj, null, null, cultureInfo, out var validationResult);
+        ConvertBack(value, null, null, cultureInfo, out var validationResult);
         return validationResult;
       }
 

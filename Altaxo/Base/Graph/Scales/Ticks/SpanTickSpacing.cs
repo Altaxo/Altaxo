@@ -56,9 +56,9 @@ namespace Altaxo.Graph.Scales.Ticks
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpanTickSpacing)obj;
+        var s = (SpanTickSpacing)o;
         info.AddValue("ShowRatioEndOrg", s._showRatioEndOrg);
         info.AddValue("RelTickPosition", s._relTickPosition);
 

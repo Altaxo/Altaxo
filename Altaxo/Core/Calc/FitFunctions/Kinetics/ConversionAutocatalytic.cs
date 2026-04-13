@@ -50,9 +50,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ConversionAutocatalytic)obj;
+        var s = (ConversionAutocatalytic)o;
       }
 
       /// <inheritdoc/>
@@ -178,21 +178,21 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      EvaluateConversion(X, P, Y);
-      Y[0] *= P[1];
+      EvaluateConversion(independent, parameters, dependent);
+      dependent[0] *= parameters[1];
     }
 
     /// <inheritdoc/>
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       IEnumerable<double> GetXPoints()
       {
         for (int r = 0; r < independent.RowCount; ++r)
         {
-          var x = independent[r, 0] - P[0];
+          var x = independent[r, 0] - parameters[0];
           if (x > 0)
             yield return x;
         }
@@ -202,13 +202,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
       for (int r = 0; r < independent.RowCount; ++r)
       {
-        var x = independent[r, 0] - P[0];
+        var x = independent[r, 0] - parameters[0];
         if (!(x > 0))
         {
           for (int s = 0; s < _y0.Length; ++s)
           {
             if (dependentVariableChoice is null || dependentVariableChoice[s] == true)
-              FV[rd++] = _y0[s];
+              dependent[rd++] = _y0[s];
           }
         }
       }
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         for (int s = 0; s < _y0.Length; ++s)
         {
           if (dependentVariableChoice is null || dependentVariableChoice[s] == true)
-            FV[rd++] = solution.Current.Y_volatile[s];
+            dependent[rd++] = solution.Current.Y_volatile[s];
         }
       }
     }

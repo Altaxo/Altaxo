@@ -52,9 +52,9 @@ namespace Altaxo.Gui.Units
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (UserDefinedUnitEnvironment)obj;
+        var s = (UserDefinedUnitEnvironment)o;
         info.AddValue("Name", s.Name);
         info.AddValue("Quantity", s.Quantity);
         info.AddValue("Environment", s.Environment);

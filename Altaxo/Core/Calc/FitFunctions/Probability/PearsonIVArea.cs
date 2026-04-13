@@ -63,9 +63,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonIVArea), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PearsonIVArea)obj;
+        var s = (PearsonIVArea)o;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
@@ -264,31 +264,31 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        sumTerms += GetYOfOneTerm(X[0], P[j], P[j + 1], P[j + 2], P[j + 3], P[j + 4]);
+        sumTerms += GetYOfOneTerm(independent[0], parameters[j], parameters[j + 1], parameters[j + 2], parameters[j + 3], parameters[j + 4]);
       }
 
       if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
         for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      Y[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -299,57 +299,57 @@ namespace Altaxo.Calc.FitFunctions.Probability
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += GetYOfOneTerm(x, P[j], P[j + 1], P[j + 2], P[j + 3], P[j + 4]);
+          sumTerms += GetYOfOneTerm(x, parameters[j], parameters[j + 1], parameters[j + 2], parameters[j + 3], parameters[j + 4]);
         }
 
         if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          sumPolynomial = parameters[_orderOfBaselinePolynomial + offset];
           for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
       const double Log2 = 0.69314718055994530941723212145818; // Math.Log(2)
 
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
         // at first, the peak terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3] && isParameterFixed[j + 4])
+          if (isFixed is not null && isFixed[j] && isFixed[j + 1] && isFixed[j + 2] && isFixed[j + 3] && isFixed[j + 4])
           {
             continue;
           }
 
-          var height = P[j];
-          var pos = P[j + 1];
-          var w = P[j + 2];
-          var m = P[j + 3];
-          var v = P[j + 4];
+          var height = parameters[j];
+          var pos = parameters[j + 1];
+          var w = parameters[j + 2];
+          var m = parameters[j + 3];
+          var v = parameters[j + 4];
 
           var lnprefactor = 2 * (GammaRelated.LnGamma(new Complex64T(m, v / 2)).Real - GammaRelated.LnGamma(m)) - GammaRelated.LnBeta(m - 0.5, 0.5);
           var z = (x - pos) / w;
           var body = (1 / w) * Math.Exp(lnprefactor - m * Math.Log(1 + z * z) - v * Math.Atan(z));
 
-          DY[r, j + 0] = body;
-          DY[r, j + 1] = height * body * (2 * z * m + v) / (w * (1 + z * z));
-          DY[r, j + 2] = height * body * (-1 + z * (z * (-1 + 2 * m) + v)) / (w * (1 + z * z));
-          DY[r, j + 3] = height * body * (Math.Log(4) - Math.Log(1 + z * z) - 2 * SpecialFunctions.DiGamma(2 * m - 1) + 2 * SpecialDigamma.Digamma(new Complex64T(m, 0.5 * v)).Real);
-          DY[r, j + 4] = -height * body * (Math.Atan(z) + SpecialDigamma.Digamma(new Complex64T(m, 0.5 * v)).Imaginary);
+          DF[r, j + 0] = body;
+          DF[r, j + 1] = height * body * (2 * z * m + v) / (w * (1 + z * z));
+          DF[r, j + 2] = height * body * (-1 + z * (z * (-1 + 2 * m) + v)) / (w * (1 + z * z));
+          DF[r, j + 3] = height * body * (Math.Log(4) - Math.Log(1 + z * z) - 2 * SpecialFunctions.DiGamma(2 * m - 1) + 2 * SpecialDigamma.Digamma(new Complex64T(m, 0.5 * v)).Real);
+          DF[r, j + 4] = -height * body * (Math.Atan(z) + SpecialDigamma.Digamma(new Complex64T(m, 0.5 * v)).Imaginary);
         }
 
         // then, the baseline
@@ -358,7 +358,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           double xn = 1;
           for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
           }

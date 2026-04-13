@@ -59,14 +59,14 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>Serializes the DataColumn given by object obj.</summary>
-      /// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
+      /// <param name="o">The <see cref="DataColumn"/> instance which should be serialized.</param>
       /// <param name="info">The serialization info.</param>
       /// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
       /// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
       /// </remarks>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataColumn)obj;
+        var s = (Altaxo.Data.DataColumn)o;
       }
 
       /// <summary>

@@ -93,20 +93,20 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <inheritdoc/>
-    public override Vector<double> Search(Vector<double> x, Vector<double> d, double step)
+    public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       var ret = x.Clone();
       double j = 0;
       double eta;
 
-      double delta_d = d.DotProduct(d);
+      double delta_d = direction.DotProduct(direction);
       double alpha = -sigma_0;
-      double eta_prev = d.DotProduct(GradientEvaluation(ret + sigma_0 * d));
+      double eta_prev = direction.DotProduct(GradientEvaluation(ret + sigma_0 * direction));
       do
       {
-        eta = d.DotProduct(GradientEvaluation(ret));
+        eta = direction.DotProduct(GradientEvaluation(ret));
         alpha = alpha * (eta / (eta_prev - eta));
-        ret = ret + alpha * d;
+        ret = ret + alpha * direction;
         eta_prev = eta;
         j++;
       } while ((j < maxIteration) && (alpha * alpha * delta_d > tolerance * tolerance));

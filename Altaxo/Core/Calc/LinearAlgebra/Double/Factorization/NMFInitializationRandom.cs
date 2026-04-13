@@ -45,9 +45,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NMFInitializationRandom)obj;
+        var s = (NMFInitializationRandom)o;
       }
 
       /// <inheritdoc/>
@@ -59,26 +59,26 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     #endregion
     /// <inheritdoc/>
-    public (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
+    public (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int rank)
     {
       int m = X.RowCount;
       int n = X.ColumnCount;
 
-      var W = CreateMatrix.Dense<double>(m, r);
-      var H = CreateMatrix.Dense<double>(r, n);
+      var W = CreateMatrix.Dense<double>(m, rank);
+      var H = CreateMatrix.Dense<double>(rank, n);
 
       var rnd = System.Random.Shared;
       var scale = Math.Sqrt(X.FrobeniusNorm() / ((double)X.RowCount * X.ColumnCount)); // scale the random values with the inverse sqrt of the average element magnitude
 
       for (int i = 0; i < m; i++)
       {
-        for (int j = 0; j < r; j++)
+        for (int j = 0; j < rank; j++)
         {
           W[i, j] = scale * Math.Max(1E-6, rnd.NextDouble()); // ensure that never any element is zero
         }
       }
 
-      for (int i = 0; i < r; i++)
+      for (int i = 0; i < rank; i++)
       {
         for (int j = 0; j < n; j++)
         {

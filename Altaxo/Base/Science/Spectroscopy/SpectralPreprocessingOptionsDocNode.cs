@@ -47,7 +47,7 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -101,9 +101,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SpectralPreprocessingOptionsDocNode)obj;
+        var s = (SpectralPreprocessingOptionsDocNode)o;
         var processingOptions = s.InternalGetSpectralPreprocessingOptions();
         info.AddValue("SpectralPreprocessingOptions", processingOptions);
 

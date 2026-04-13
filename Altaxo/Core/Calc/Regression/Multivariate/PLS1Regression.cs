@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public IReadOnlyList<double> PRESS { get { return _PRESS; } }
 
     /// <inheritdoc/>
-    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
+    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixXPre)
     {
       return _PRESS;
     }
@@ -58,12 +58,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
 
     /// <inheritdoc/>
-    public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
+    public override void SetCalibrationModel(IMultivariateCalibrationModel calibrationModel)
     {
-      if (calib is PLS1CalibrationModel)
-        _calib = (PLS1CalibrationModel)calib;
+      if (calibrationModel is PLS1CalibrationModel)
+        _calib = (PLS1CalibrationModel)calibrationModel;
       else
-        throw new ArgumentException("Expecting argument of type PLS1CalibrationModel, but actual type is " + calib.GetType().ToString());
+        throw new ArgumentException("Expecting argument of type PLS1CalibrationModel, but actual type is " + calibrationModel.GetType().ToString());
     }
 
     /// <inheritdoc/>
@@ -91,18 +91,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <inheritdoc/>
-    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
+    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixXPre, IROMatrix<double> matrixYPre, int maximalNumberOfFactors)
     {
-      int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.ColumnCount, maxFactors);
-      IMatrix<double> helperY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.RowCount, 1);
+      int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixXPre.ColumnCount, maximalNumberOfFactors);
+      IMatrix<double> helperY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixYPre.RowCount, 1);
 
       _PRESS = null;
 
-      for (int i = 0; i < matrixY.ColumnCount; i++)
+      for (int i = 0; i < matrixYPre.ColumnCount; i++)
       {
-        MatrixMath.Submatrix(matrixY, helperY, 0, i);
+        MatrixMath.Submatrix(matrixYPre, helperY, 0, i);
 
-        var r = PLS2Regression.CreateFromPreprocessed(matrixX, helperY, maxFactors);
+        var r = PLS2Regression.CreateFromPreprocessed(matrixXPre, helperY, maximalNumberOfFactors);
 
         IPLS2CalibrationModel cal = r.CalibrationModel;
         _calib.NumberOfFactors = Math.Min(_calib.NumberOfFactors, cal.NumberOfFactors);
@@ -119,26 +119,26 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     /// <inheritdoc/>
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
-      IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
-      int numFactors, // number of factors to use for prediction
+      IROMatrix<double> XUPre, // unknown spectrum or spectra,  horizontal oriented
+      int numberOfFactors, // number of factors to use for prediction
       IMatrix<double>? predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix<double>? spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
-      if (numFactors > NumberOfFactors)
-        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, NumberOfFactors));
+      if (numberOfFactors > NumberOfFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numberOfFactors, NumberOfFactors));
 
-      IMatrix<double>? helperY = predictedY is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
-      IMatrix<double>? helperS = spectralResiduals is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
+      IMatrix<double>? helperY = predictedY is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XUPre.RowCount, 1);
+      IMatrix<double>? helperS = spectralResiduals is null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XUPre.RowCount, 1);
       for (int i = 0; i < _calib.NumberOfY; i++)
       {
         PLS2Regression.Predict(
-          XU, // unknown spectrum or spectra,  horizontal oriented
+          XUPre, // unknown spectrum or spectra,  horizontal oriented
           _calib.XLoads[i], // x-loads matrix
           _calib.YLoads[i], // y-loads matrix
           _calib.XWeights[i], // weighting matrix
           _calib.CrossProduct[i],  // Cross product vector
-          numFactors, // number of factors to use for prediction
+          numberOfFactors, // number of factors to use for prediction
           helperY, // Matrix of predicted y-values, must be same number of rows as spectra
           helperS // Matrix of spectral residuals, n rows x 1 column, can be zero
           );
@@ -151,21 +151,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <inheritdoc/>
-    protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
+    protected override void InternalGetPredictionScores(int numberOfFactors, IMatrix<double> predictionScores)
     {
       IMatrix<double> pred = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionScores.RowCount, 1);
       for (int i = 0; i < _calib.NumberOfY; i++)
       {
-        PLS2Regression.GetPredictionScoreMatrix(_calib.XLoads[i], _calib.YLoads[i], _calib.XWeights[i], _calib.CrossProduct[i], numFactors, pred);
+        PLS2Regression.GetPredictionScoreMatrix(_calib.XLoads[i], _calib.YLoads[i], _calib.XWeights[i], _calib.CrossProduct[i], numberOfFactors, pred);
         MatrixMath.SetColumn(pred, predictionScores, i);
       }
     }
 
     /// <inheritdoc/>
-    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixXPre, int numberOfFactors, IMatrix<double> xLeverage)
     {
       for (int i = 0; i < _calib.NumberOfY; i++)
-        PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX, _calib.XWeights[i], numFactors, xLeverage, i);
+        PLS2Regression.CalculateXLeverageFromPreprocessed(matrixXPre, _calib.XWeights[i], numberOfFactors, xLeverage, i);
     }
   }
 }

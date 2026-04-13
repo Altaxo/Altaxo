@@ -41,7 +41,7 @@ namespace Altaxo.Main.Commands
   public class RecentProjectsMenuBuilder : IMenuItemBuilder
   {
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       var recentOpen = Current.GetRequiredService<IRecentOpen>();
 

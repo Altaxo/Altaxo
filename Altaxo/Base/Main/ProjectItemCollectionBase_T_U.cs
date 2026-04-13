@@ -367,11 +367,11 @@ namespace Altaxo.Main
     /// Removes the item, referenced by its name, from the collection and disposes it.
     /// Only items that belong to this collection will be removed and disposed.
     /// </summary>
-    /// <param name="itemName">The name of the item to remove and dispose.</param>
+    /// <param name="projectItemName">The name of the item to remove and dispose.</param>
     /// <returns>True if the item was found in the collection and thus removed successfully.</returns>
-    public bool Remove(string itemName)
+    public bool Remove(string projectItemName)
     {
-      if (_itemsByName.TryGetValue(itemName, out var result) && result is TItem item)
+      if (_itemsByName.TryGetValue(projectItemName, out var result) && result is TItem item)
         return Remove(item);
       else
         return false;
@@ -431,25 +431,25 @@ namespace Altaxo.Main
     }
 
     /// <inheritdoc/>
-    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string? oldName)
+    void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner childNode, string? oldName)
     {
-      if (_itemsByName.ContainsKey(item.Name))
+      if (_itemsByName.ContainsKey(childNode.Name))
       {
-        if (object.ReferenceEquals(_itemsByName[item.Name], item))
+        if (object.ReferenceEquals(_itemsByName[childNode.Name], childNode))
           return; // Item alredy renamed
         else
-          throw new ApplicationException(string.Format("{0} with name " + item.Name + " already exists!", typeof(TItem).Name));
+          throw new ApplicationException(string.Format("{0} with name " + childNode.Name + " already exists!", typeof(TItem).Name));
       }
 
       if (!(oldName is null) && _itemsByName.ContainsKey(oldName))
       {
-        if (!object.ReferenceEquals(_itemsByName[oldName], item))
+        if (!object.ReferenceEquals(_itemsByName[oldName], childNode))
           throw new ApplicationException(string.Format("Names between parent collection and {0} not in sync", typeof(TItem).Name));
 
         _itemsByName.Remove(oldName);
-        _itemsByName.Add(item.Name, (TItem)item);
+        _itemsByName.Add(childNode.Name, (TItem)childNode);
 
-        EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
+        EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(childNode, oldName));
       }
       else
       {
@@ -543,9 +543,9 @@ namespace Altaxo.Main
     }
 
     /// <inheritdoc/>
-    public override string? GetNameOfChildObject(Main.IDocumentLeafNode obj)
+    public override string? GetNameOfChildObject(Main.IDocumentLeafNode o)
     {
-      if (obj is TItem item)
+      if (o is TItem item)
       {
         if (_itemsByName.ContainsKey(item.Name))
           return item.Name;

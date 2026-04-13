@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -87,9 +85,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarSizePosition2DGroupStyle), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BarSizePosition2DGroupStyle)obj;
+        var s = (BarSizePosition2DGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
@@ -119,15 +117,15 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (BarSizePosition2DGroupStyle)fromb;
+      var fromX = (BarSizePosition2DGroupStyle)from;
 
-      _relInnerGapX = from._relInnerGapX;
-      _relOuterGapX = from._relOuterGapX;
-      _logicalClusterSizeX = from._logicalClusterSizeX;
-      _logicalItemSizeX = from._logicalItemSizeX;
-      _logicalItemOffsetX = from._logicalItemOffsetX;
+      _relInnerGapX = fromX._relInnerGapX;
+      _relOuterGapX = fromX._relOuterGapX;
+      _logicalClusterSizeX = fromX._logicalClusterSizeX;
+      _logicalItemSizeX = fromX._logicalItemSizeX;
+      _logicalItemOffsetX = fromX._logicalItemOffsetX;
     }
 
     /// <summary>

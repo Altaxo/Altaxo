@@ -47,9 +47,9 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipWhiteSpaceSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SkipWhiteSpaceSeparationStrategy)obj;
+        var s = (SkipWhiteSpaceSeparationStrategy)o;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

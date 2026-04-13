@@ -59,9 +59,9 @@ namespace Altaxo.Graph.Gdi
   public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (XAnchorPositionType)obj;
+      var s = (XAnchorPositionType)o;
       info.SetNodeContent(s.ToString());
     }
 

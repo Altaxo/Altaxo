@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -48,9 +48,9 @@ namespace Altaxo.Serialization.Ascii
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AsciiImportDataSource)obj;
+        var s = (AsciiImportDataSource)o;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("AsciiImportOptions", s._processOptions);

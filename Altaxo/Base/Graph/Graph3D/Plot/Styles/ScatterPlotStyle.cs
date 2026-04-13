@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -38,7 +37,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
   using Drawing.D3D;
   using Drawing.D3D.Material;
   using Geometry;
-  using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using GraphicsContext;
   using Plot.Data;
@@ -100,9 +98,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ScatterPlotStyle)obj;
+        var s = (ScatterPlotStyle)o;
         info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
         info.AddValue("SkipFreq", s._skipFreq);
 
@@ -156,14 +154,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     #endregion Serialization
 
     /// <inheritdoc/>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as ScatterPlotStyle;
-      if (from is not null)
+      if (from is ScatterPlotStyle fromX)
       {
-        CopyFrom(from, Main.EventFiring.Enabled);
+        CopyFrom(fromX, Main.EventFiring.Enabled);
         return true;
       }
       return false;

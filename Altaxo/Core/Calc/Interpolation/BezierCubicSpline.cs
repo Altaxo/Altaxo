@@ -87,46 +87,46 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public override double GetXOfU(double t)
+    public override double GetXOfU(double u)
     {
       int hi = x.Count - 1;
-      int i = FindInterval(t, x);
+      int i = FindInterval(u, x);
 
       if (i < 0 || i >= hi || hi == 1)
       {
         // linear extrapolation and interpolation for 2 points
-        return t;
+        return u;
       }
       else if (0 == i)
       {
         i = 0;
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (u2 / 6.0 - 1.0),
-          c2 = u * (1.0 - u2 / 3.0),
-          c3 = u * u2 / 6.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (t2 / 6.0 - 1.0),
+          c2 = t * (1.0 - t2 / 3.0),
+          c3 = t * t2 / 6.0;
         return c1 * x[i] + c2 * x[i + 1] + c3 * x[i + 2];
       }
       else if (i == hi - 1)
       {
         i = hi - 1;
-        double u = (x[i + 1] - t) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (u2 / 6.0 - 1.0),
-          c2 = u * (1.0 - u2 / 3.0),
-          c3 = u * u2 / 6.0;
+        double t = (x[i + 1] - u) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (t2 / 6.0 - 1.0),
+          c2 = t * (1.0 - t2 / 3.0),
+          c3 = t * t2 / 6.0;
         return c1 * x[i + 1] + c2 * x[i] + c3 * x[i - 1];
       }
       else
       {
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          u3 = 1.0 - u,
-          u4 = u3 * u3,
-          c1 = u3 * u4 / 6.0,
-          c2 = u2 * (u / 2.0 - 1.0) + 4.0 / 6.0,
-          c3 = u * (1.0 + u * u3) / 2.0 + 1.0 / 6.0,
-          c4 = u * u2 / 6.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          t3 = 1.0 - t,
+          t4 = t3 * t3,
+          c1 = t3 * t4 / 6.0,
+          c2 = t2 * (t / 2.0 - 1.0) + 4.0 / 6.0,
+          c3 = t * (1.0 + t * t3) / 2.0 + 1.0 / 6.0,
+          c4 = t * t2 / 6.0;
         return c1 * x[i - 1] + c2 * x[i] + c3 * x[i + 1] + c4 * x[i + 2];
       }
     }

@@ -21,11 +21,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.AddInItems;
-using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
-using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
@@ -126,7 +123,7 @@ namespace Altaxo.Gui.Workbench.Commands
     }
 
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       if (NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards)
       {
@@ -172,7 +169,7 @@ namespace Altaxo.Gui.Workbench.Commands
   public class OpenContentsMenuBuilder : IMenuItemBuilder
   {
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
@@ -364,7 +361,7 @@ namespace Altaxo.Gui.Workbench.Commands
     }
 
     /// <inheritdoc/>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 

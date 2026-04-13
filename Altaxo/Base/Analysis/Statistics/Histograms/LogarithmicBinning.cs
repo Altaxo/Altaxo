@@ -227,27 +227,27 @@ namespace Altaxo.Analysis.Statistics.Histograms
     }
 
     /// <inheritdoc />
-    public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> list)
+    public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> sortedList)
     {
-      if (list is null)
+      if (sortedList is null)
         throw new ArgumentNullException();
-      if (list.Count == 0)
+      if (sortedList.Count == 0)
         throw new ArgumentException("list is empty");
 
-      var numberOfValues = list.Count;
-      var minValue = list[0];
-      var maxValue = list[numberOfValues - 1];
+      var numberOfValues = sortedList.Count;
+      var minValue = sortedList[0];
+      var maxValue = sortedList[numberOfValues - 1];
 
       if (!(minValue > 0))
         throw new InvalidOperationException(string.Format("For logarithmic binning the minimum ensemble value should be > 0, but it is {0}. Try to exclude values <= 0 or use linear binning.", minValue));
 
       if (!IsUserDefinedBinWidth)
       {
-        double q1 = list[(numberOfValues * 1) / 4]; // 25% Quantile
-        double q3 = list[(numberOfValues * 3) / 4]; // 75% Quantile
+        double q1 = sortedList[(numberOfValues * 1) / 4]; // 25% Quantile
+        double q3 = sortedList[(numberOfValues * 3) / 4]; // 75% Quantile
 
         // Width of a bin after Freedman and Diaconis
-        _lgBinWidth = 2 * (Math.Log10(q3) - Math.Log10(q1)) / Math.Pow(list.Count, 1.0 / 3.0);
+        _lgBinWidth = 2 * (Math.Log10(q3) - Math.Log10(q1)) / Math.Pow(sortedList.Count, 1.0 / 3.0);
       }
 
       if (!IsUserDefinedBinOffset)
@@ -295,7 +295,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     }
 
     /// <inheritdoc />
-    public void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfValues)
+    public void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfData)
     {
       _binCounts = new int[_numberOfBins];
       int listIndex = 0;
@@ -306,7 +306,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         double binCenter = GetBinCenterPosition(binIndex);
 
         int orgListIndex = listIndex;
-        while (listIndex < sortedListOfValues.Count && (sortedListOfValues[listIndex] < binUpperBound || binIndex == (NumberOfBins - 1)))  // with binIndex == (Count - 1) make sure that rounding errors will not swallow the last value
+        while (listIndex < sortedListOfData.Count && (sortedListOfData[listIndex] < binUpperBound || binIndex == (NumberOfBins - 1)))  // with binIndex == (Count - 1) make sure that rounding errors will not swallow the last value
         {
           ++listIndex;
         }

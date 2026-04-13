@@ -25,9 +25,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EnsembleMeanAndScaleCorrection)obj;
+        var s = (EnsembleMeanAndScaleCorrection)o;
         info.AddValue("EnsembleScale", s.EnsembleScale);
       }
 
@@ -42,29 +42,29 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 
 
     /// <inheritdoc/>
-    public void Process(IMatrix<double> xMatrix, int[] regions, IVector<double> xMean, IVector<double> xScale)
+    public void Process(IMatrix<double> spectraMatrix, int[] regions, IVector<double> spectraMean, IVector<double> spectraScale)
     {
       if (EnsembleScale)
       {
-        MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix, xMean, xScale);
+        MatrixMath.ColumnsToZeroMeanAndUnitVariance(spectraMatrix, spectraMean, spectraScale);
       }
       else
       {
-        MatrixMath.ColumnsToZeroMean(xMatrix, xMean);
-        for (int i = 0; i < xMatrix.ColumnCount; ++i)
+        MatrixMath.ColumnsToZeroMean(spectraMatrix, spectraMean);
+        for (int i = 0; i < spectraMatrix.ColumnCount; ++i)
         {
-          xScale[i] = 1;
+          spectraScale[i] = 1;
         }
       }
     }
 
     /// <inheritdoc/>
-    public void ProcessForPrediction(IMatrix<double> xMatrix, int[] regions, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale)
+    public void ProcessForPrediction(IMatrix<double> spectraMatrix, int[] regions, IReadOnlyList<double> spectraMean, IReadOnlyList<double> spectraScale)
     {
-      MatrixMath.SubtractRow(xMatrix, xMean, xMatrix);
+      MatrixMath.SubtractRow(spectraMatrix, spectraMean, spectraMatrix);
       if (EnsembleScale)
       {
-        MatrixMath.MultiplyRow(xMatrix, xScale, xMatrix);
+        MatrixMath.MultiplyRow(spectraMatrix, spectraScale, spectraMatrix);
       }
     }
 

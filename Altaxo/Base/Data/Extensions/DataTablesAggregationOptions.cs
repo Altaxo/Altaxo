@@ -69,9 +69,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTablesAggregationOptions)obj;
+        var s = (DataTablesAggregationOptions)o;
 
         info.AddArray("ClusteredPropertiesNames", s.ClusteredPropertiesNames, s.ClusteredPropertiesNames.Count);
         info.AddArray("AggregatedColumnNames", s.AggregatedColumnNames, s.AggregatedColumnNames.Count);

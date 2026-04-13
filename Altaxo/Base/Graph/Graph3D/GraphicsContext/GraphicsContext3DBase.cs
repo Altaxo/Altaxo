@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
     public abstract void TranslateTransform(double x, double y, double z);
 
     /// <inheritdoc/>
-    public abstract void TranslateTransform(VectorD3D translation);
+    public abstract void TranslateTransform(VectorD3D diff);
 
     /// <inheritdoc/>
     public abstract void RotateTransform(double degreeX, double degreeY, double degreeZ);
@@ -160,7 +160,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
     public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
     /// <inheritdoc/>
-    public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
+    public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] clipPlanes);
 
     /// <inheritdoc/>
     public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);

@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -59,7 +57,7 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle", 0)]
     private class XmlSerializationSurrogateForLineStyleGroupStyleVersion0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -87,9 +85,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DashPatternGroupStyle)obj;
+        var s = (DashPatternGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
 
         info.AddValue("Value", s._value);
@@ -138,11 +136,11 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (DashPatternGroupStyle)fromb;
-      _value = from._value;
-      _listOfValues = from._listOfValues;
+      var fromX = (DashPatternGroupStyle)from;
+      _value = fromX._value;
+      _listOfValues = fromX._listOfValues;
     }
 
     #endregion Constructors

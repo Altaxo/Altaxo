@@ -54,11 +54,11 @@ namespace Altaxo.Units
       /// Serializes the specified <see cref="SIPrefixList"/> instance into the provided
       /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
       /// </summary>
-      /// <param name="obj">The object to serialize (expected to be a <see cref="SIPrefixList"/>).</param>
+      /// <param name="o">The object to serialize (expected to be a <see cref="SIPrefixList"/>).</param>
       /// <param name="info">The serialization info where values should be written.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SIPrefixList)obj;
+        var s = (SIPrefixList)o;
 
         info.CreateArray("PrefixList", s.Count);
         foreach (var prefix in s)

@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
 
       /// <inheritdoc />
-      public void DropCanAcceptData(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
+      public void DropCanAcceptData(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
         if (data is not IEnumerable<NGTreeNode> nodes)
         {
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
           return;
         }
 
-        var targetNode = (targetObject as NGTreeNode) ?? _parent._plotItemsRootNode;
+        var targetNode = (targetItem as NGTreeNode) ?? _parent._plotItemsRootNode;
 
         if (targetNode.Tag is PlotItemCollection)
         {
@@ -117,12 +117,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
 
       /// <inheritdoc />
-      public void Drop(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+      public void Drop(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
         isMove = false;
         isCopy = false;
 
-        var targetNode = (targetObject as NGTreeNode) ?? _parent._plotItemsRootNode;
+        var targetNode = (targetItem as NGTreeNode) ?? _parent._plotItemsRootNode;
 
         bool canTargetSwallowNodes = targetNode is not null && targetNode.Tag is PlotItemCollection;
 

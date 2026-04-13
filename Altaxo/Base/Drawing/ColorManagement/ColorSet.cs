@@ -72,7 +72,7 @@ namespace Altaxo.Drawing.ColorManagement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.ColorManagement.ColorSet", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version is not supported");
         /*
@@ -125,9 +125,9 @@ namespace Altaxo.Drawing.ColorManagement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSet), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorSet)obj;
+        var s = (ColorSet)o;
 
         info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
 
@@ -379,11 +379,11 @@ namespace Altaxo.Drawing.ColorManagement
     /// <summary>
     /// Get the index of the given color in the ColorSet.
     /// </summary>
-    /// <param name="color">The color.</param>
+    /// <param name="colorValue">The color.</param>
     /// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
-    public virtual int IndexOf(AxoColor color)
+    public virtual int IndexOf(AxoColor colorValue)
     {
-      if (_colorToIndexDictionary.Value.TryGetValue(color, out var idx))
+      if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out var idx))
       {
         return idx;
       }
@@ -403,16 +403,16 @@ namespace Altaxo.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
+    public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> anotherList)
     {
-      if (l1 is null)
+      if (anotherList is null)
         return false;
 
       var l2 = this;
 
       int i = 0;
       int len2 = l2._innerList.Length;
-      foreach (var item1 in l1)
+      foreach (var item1 in anotherList)
       {
         if (i >= len2)
           return false;

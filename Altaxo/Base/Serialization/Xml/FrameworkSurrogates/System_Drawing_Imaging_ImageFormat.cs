@@ -47,9 +47,9 @@ namespace Altaxo.Serialization.Xml.FrameworkSurrogates
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ImageFormat)obj;
+        var s = (ImageFormat)o;
 
         info.AddValue("Guid", System.Xml.XmlConvert.ToString(s.Guid));
       }

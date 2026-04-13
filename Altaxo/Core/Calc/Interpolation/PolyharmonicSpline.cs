@@ -54,9 +54,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PolyharmonicSpline1DOptions)obj;
+        var s = (PolyharmonicSpline1DOptions)o;
         info.AddValue("DerivativeOrder", s.DerivativeOrder);
         info.AddValue("RegularizationParameter", s.RegularizationParameter);
       }
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Interpolation
     #endregion
 
     /// <inheritdoc />
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new PolyharmonicSpline() { DerivativeOrder = DerivativeOrder, RegularizationParameter = RegularizationParameter };
       spline.Construct(xvec, yvec);
@@ -81,9 +81,9 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc />
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 

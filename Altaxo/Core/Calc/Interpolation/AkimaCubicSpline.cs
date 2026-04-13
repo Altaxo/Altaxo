@@ -98,19 +98,19 @@ namespace Altaxo.Calc.Interpolation
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         y1.Clear();
         y2.Clear();
@@ -119,26 +119,26 @@ namespace Altaxo.Calc.Interpolation
       }
 
       const int lo = 0, lo1 = lo + 1, lo2 = lo + 2;
-      int hi = x.Count - 1, hi1 = hi - 1, hi2 = hi - 2, hi3 = hi - 3;
+      int hi = xvec.Count - 1, hi1 = hi - 1, hi2 = hi - 2, hi3 = hi - 3;
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vectors already have the appropriate dimensions.
-      if (y1.Count != x.Count)
+      if (y1.Count != xvec.Count)
       {
-        y1 = CreateVector.Dense<double>(x.Count);
-        y2 = CreateVector.Dense<double>(x.Count);
-        y3 = CreateVector.Dense<double>(x.Count);
+        y1 = CreateVector.Dense<double>(xvec.Count);
+        y2 = CreateVector.Dense<double>(xvec.Count);
+        y3 = CreateVector.Dense<double>(xvec.Count);
       }
 
-      if (x.Count == 1)
+      if (xvec.Count == 1)
       {
         // default derivatives are 0.0
         y1[lo] = y2[lo] = y3[lo] = 0.0;
       }
-      else if (x.Count == 2)
+      else if (xvec.Count == 2)
       {
         // set derivatives for a line
-        y1[lo] = y1[hi] = (y[hi] - y[lo]) / (x[hi] - x[lo]);
+        y1[lo] = y1[hi] = (yvec[hi] - yvec[lo]) / (xvec[hi] - xvec[lo]);
         y2[lo] = y2[hi] =
           y3[lo] = y3[hi] = 0.0;
       }
@@ -153,19 +153,19 @@ namespace Altaxo.Calc.Interpolation
         // #define m(i) ((y(i+1)-y(i)) / (x(i+1)-x(i)))
 
         // interpolate the missing points
-        x_m1 = x[lo] + x[lo1] - x[lo2];
-        y_m1 = (x[lo] - x_m1) * (m(lo1) - 2 * m(lo)) + y[lo];
-        m_m1 = (y[lo] - y_m1) / (x[lo] - x_m1);
+        x_m1 = xvec[lo] + xvec[lo1] - xvec[lo2];
+        y_m1 = (xvec[lo] - x_m1) * (m(lo1) - 2 * m(lo)) + yvec[lo];
+        m_m1 = (yvec[lo] - y_m1) / (xvec[lo] - x_m1);
 
-        x_m2 = 2 * x[lo] - x[lo2];
+        x_m2 = 2 * xvec[lo] - xvec[lo2];
         y_m2 = (x_m1 - x_m2) * (m(lo) - 2 * m_m1) + y_m1;
         m_m2 = (y_m1 - y_m2) / (x_m1 - x_m2);
 
-        x_p1 = x[hi] + x[hi1] - x[hi2];
-        y_p1 = (2 * m(hi1) - m(hi2)) * (x_p1 - x[hi]) + y[hi];
-        m_p1 = (y_p1 - y[hi]) / (x_p1 - x[hi]);
+        x_p1 = xvec[hi] + xvec[hi1] - xvec[hi2];
+        y_p1 = (2 * m(hi1) - m(hi2)) * (x_p1 - xvec[hi]) + yvec[hi];
+        m_p1 = (y_p1 - yvec[hi]) / (x_p1 - xvec[hi]);
 
-        x_p2 = 2 * x[hi] - x[hi2];
+        x_p2 = 2 * xvec[hi] - xvec[hi2];
         y_p2 = (2 * m_p1 - m(hi1)) * (x_p2 - x_p1) + y_p1;
         m_p2 = (y_p2 - y_p1) / (x_p2 - x_p1);
 
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Interpolation
         y1[lo] = (den != 0.0) ? num / den : m(lo);
 
         // i = 1
-        if (x.Count > 3)
+        if (xvec.Count > 3)
         {
           num = Math.Abs(m(lo2) - m(lo1)) * m(lo) + Math.Abs(m(lo) - m_m1) * m(lo1);
           den = Math.Abs(m(lo2) - m(lo1)) + Math.Abs(m(lo) - m_m1);
@@ -200,8 +200,8 @@ namespace Altaxo.Calc.Interpolation
         else
         { // exactly three elements
           num = m(lo);
-          den = (m(lo1) - num) / (x[lo2] - x[lo]);
-          y1[lo1] = num + den * (x[lo1] - x[lo]);
+          den = (m(lo1) - num) / (xvec[lo2] - xvec[lo]);
+          y1[lo1] = num + den * (xvec[lo1] - xvec[lo]);
         }
 
         // i = n - 1
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Interpolation
         y1[hi] = (den != 0.0) ? num / den : m_p1;
 
         // calculate remaining spline coefficients y2(i) and y3(i)
-        CubicSplineCoefficients(x, y, y1, y2, y3);
+        CubicSplineCoefficients(xvec, yvec, y1, y2, y3);
       }
     }
 
@@ -227,9 +227,9 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public double GetYOfX(double u)
+    public double GetYOfX(double x)
     {
-      return CubicSplineHorner(u, x, y, y1, y2, y3);
+      return CubicSplineHorner(x, base.x, y, y1, y2, y3);
     }
 
     /// <summary>

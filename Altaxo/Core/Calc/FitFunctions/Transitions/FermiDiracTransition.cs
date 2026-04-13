@@ -161,17 +161,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     /// <param name="independent">Array containing the independent variable(s).</param>
     /// <param name="parameters">Array of parameters.</param>
-    /// <param name="FV">Output array for the function value(s).</param>
-    public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
+    /// <param name="dependent">Output array for the function value(s).</param>
+    public abstract void Evaluate(double[] independent, double[] parameters, double[] dependent);
 
     /// <summary>
     /// Evaluates the function for multiple input rows.
     /// </summary>
     /// <param name="independent">Matrix of independent variables (rows are observations).</param>
-    /// <param name="P">Parameter list.</param>
-    /// <param name="FV">Output vector for function values.</param>
+    /// <param name="parameters">Parameter list.</param>
+    /// <param name="dependent">Output vector for function values.</param>
     /// <param name="dependentVariableChoice">Optional selection of dependent variables.</param>
-    public abstract void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice);
+    public abstract void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice);
 
     /// <summary>
     /// Unused because this instance is immutable.
@@ -209,9 +209,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearFermiDiracTransition), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearFermiDiracTransition)obj;
+        var s = (LinearFermiDiracTransition)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -248,7 +248,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
+    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -280,9 +280,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicFermiDiracTransition), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LogarithmicFermiDiracTransition)obj;
+        var s = (LogarithmicFermiDiracTransition)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -319,7 +319,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
+    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)

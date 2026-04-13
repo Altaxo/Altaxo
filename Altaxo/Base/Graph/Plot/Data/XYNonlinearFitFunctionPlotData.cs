@@ -62,9 +62,9 @@ namespace Altaxo.Graph.Plot.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYNonlinearFitFunctionPlotData)obj;
+        var s = (XYNonlinearFitFunctionPlotData)o;
 
         info.AddValue("Function", s._function);
         info.AddValue("FitDocumentIdentifier", s._fitDocumentIdentifier);

@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Programming error - trying to serialize an old version of PlotItemCollection");
         /*
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -229,9 +229,9 @@ namespace Altaxo.Graph.Gdi.Plot
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotItemCollection)obj;
+        var s = (PlotItemCollection)o;
 
         info.AddValue("GroupStyles", s._plotGroupStyles);
 
@@ -489,15 +489,15 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <inheritdoc />
-    public void PrepareGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles, IPlotArea layer)
+    public void PrepareGroupStyles(PlotGroupStyleCollection? styles, IPlotArea layer)
     {
-      PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
+      PrepareGroupStylesForward_HierarchyUpOnly(styles, layer);
     }
 
     /// <inheritdoc />
-    public void ApplyGroupStyles(PlotGroupStyleCollection? parentPlotGroupStyles)
+    public void ApplyGroupStyles(PlotGroupStyleCollection? styles)
     {
-      ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
+      ApplyGroupStylesForward_HierarchyUpOnly(styles);
     }
 
     /// <summary>
@@ -873,17 +873,17 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <inheritdoc />
-    public virtual void PaintPreprocessing(IPaintContext paintContext)
+    public virtual void PaintPreprocessing(IPaintContext context)
     {
     }
 
     /// <inheritdoc />
-    public void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
+    public void Paint(System.Drawing.Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       //var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(this);
       if (_plotGroupStyles.CoordinateTransformingStyle is { } coordTransStyle)
       {
-        coordTransStyle.PaintPreprocessing(g, paintContext, layer, this);
+        coordTransStyle.PaintPreprocessing(g, context, layer, this);
       }
       else
       {
@@ -1336,7 +1336,7 @@ namespace Altaxo.Graph.Gdi.Plot
     private class PlotGroupStyleTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("This is deprectated stuff");
         //info.SetNodeContent(obj.ToString());
@@ -1410,7 +1410,7 @@ namespace Altaxo.Graph.Gdi.Plot
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
         /// <inheritdoc />
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("This is deprecated stuff");
           /*

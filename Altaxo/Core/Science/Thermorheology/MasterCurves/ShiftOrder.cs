@@ -96,7 +96,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -143,7 +143,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -193,9 +193,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PivotToLastThenToFirst)obj;
+        var s = (PivotToLastThenToFirst)o;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
@@ -245,9 +245,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PivotToFirstThenToLast)obj;
+        var s = (PivotToFirstThenToLast)o;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
@@ -301,9 +301,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PivotToLastAlternating)obj;
+        var s = (PivotToLastAlternating)o;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
@@ -357,9 +357,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PivotToFirstAlternating)obj;
+        var s = (PivotToFirstAlternating)o;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
@@ -430,9 +430,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Manual)obj;
+        var s = (Manual)o;
         info.AddArray("Indices", s._indices, s._indices.Length);
       }
 

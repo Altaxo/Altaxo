@@ -71,9 +71,9 @@ namespace Altaxo.Graph.Graph3D.Background
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RectangularBackground)obj;
+        var s = (RectangularBackground)o;
         info.AddValue("Material", s._material);
         info.AddValue("Padding", s._padding);
         info.AddValue("CustomDistance", s._customDistance);
@@ -313,17 +313,17 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <param name="g">The drawing context.</param>
     /// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
     /// This parameter should have the same size as was used in the previous call to <see cref="Measure(RectangleD3D)" /></param>
-    /// <param name="material">The material to use for this background.</param>
+    /// <param name="overrideMaterial">The material to use for this background.</param>
     /// <exception cref="NotImplementedException"></exception>
-    public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle, IMaterial material)
+    public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle, IMaterial overrideMaterial)
     {
       var rectangleToDraw = GetRectangleToDraw(itemRectangle);
 
-      var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
+      var buffers = g.GetPositionNormalIndexedTriangleBuffer(overrideMaterial);
 
       if (buffers.PositionNormalColorIndexedTriangleBuffer is not null)
       {
-        var c = material.Color.Color;
+        var c = overrideMaterial.Color.Color;
         var voffs = buffers.PositionNormalColorIndexedTriangleBuffer.VertexCount;
         Altaxo.Drawing.D3D.SolidCube.Add(
           rectangleToDraw.X, rectangleToDraw.Y, rectangleToDraw.Z, rectangleToDraw.SizeX, rectangleToDraw.SizeY, rectangleToDraw.SizeZ,

@@ -88,15 +88,15 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    protected override Size ArrangeOverride(Size arrangeSize)
+    protected override Size ArrangeOverride(Size finalSize)
     {
-      if (_lastMeasureSize != arrangeSize)
+      if (_lastMeasureSize != finalSize)
       {
-        _lastMeasureSize = arrangeSize;
-        base.MeasureOverride(arrangeSize);
+        _lastMeasureSize = finalSize;
+        base.MeasureOverride(finalSize);
       }
-      _lastArrangeSize = arrangeSize;
-      return base.ArrangeOverride(arrangeSize);
+      _lastArrangeSize = finalSize;
+      return base.ArrangeOverride(finalSize);
     }
   }
 }

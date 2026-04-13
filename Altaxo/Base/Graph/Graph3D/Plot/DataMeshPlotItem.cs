@@ -75,9 +75,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataMeshPlotItem)obj;
+        var s = (DataMeshPlotItem)o;
         info.AddValue("Data", s._plotData);
         info.AddValue("Style", s._plotStyle);
       }

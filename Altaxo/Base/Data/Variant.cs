@@ -336,9 +336,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AltaxoVariant)obj;
+        var s = (AltaxoVariant)o;
         info.AddEnum("Content", s._typeOfContent);
         switch (s._typeOfContent)
         {
@@ -705,20 +705,20 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc/>
-    public string ToString(string? formatString, IFormatProvider? provider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
       try
       {
         if (_typeOfContent == Content.VNull)
           return "(null)";
         else if (_typeOfContent == Content.VDouble)
-          return _double.ToString(formatString, provider);
+          return _double.ToString(format, formatProvider);
         else if (_typeOfContent == Content.VDateTime)
-          return ((DateTime)_object!).ToString(formatString, provider);
+          return ((DateTime)_object!).ToString(format, formatProvider);
         else if (_typeOfContent == Content.VDateTimeOffset)
-          return ((DateTimeOffset)_object!).ToString(formatString, provider);
+          return ((DateTimeOffset)_object!).ToString(format, formatProvider);
         else if (_typeOfContent == Content.VString)
-          return ((string?)_object)?.ToString(provider) ?? string.Empty;
+          return ((string?)_object)?.ToString(formatProvider) ?? string.Empty;
         else if (_object is not null)
           return _object.ToString() ?? string.Empty;
         else // everything is null

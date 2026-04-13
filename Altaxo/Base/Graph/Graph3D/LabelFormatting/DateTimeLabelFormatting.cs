@@ -72,9 +72,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DateTimeLabelFormatting)obj;
+        var s = (DateTimeLabelFormatting)o;
         info.AddBaseValueEmbedded(s, typeof(DateTimeLabelFormatting).BaseType!);
 
         info.AddEnum("TimeConversion", s._timeConversion);

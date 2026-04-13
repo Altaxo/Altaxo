@@ -15,7 +15,7 @@ namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
     public bool HitBoundary { get; private set; }
 
     /// <inheritdoc />
-    public void Solve(IObjectiveModel objective, double delta)
+    public void Solve(IObjectiveModel objective, double radius)
     {
       var Gradient = objective.Gradient;
       var Hessian = objective.Hessian;
@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
 
         if (dBd <= 0)
         {
-          var t = Util.FindBeta(1, z, d, delta);
+          var t = Util.FindBeta(1, z, d, radius);
           Pstep = z + t.Item1 * d;
           HitBoundary = true;
           return;
@@ -45,9 +45,9 @@ namespace Altaxo.Calc.Optimization.TrustRegion.Subproblems
         var r_sq = r.DotProduct(r);
         var alpha = r_sq / dBd;
         var znext = z + alpha * d;
-        if (znext.L2Norm() >= delta)
+        if (znext.L2Norm() >= radius)
         {
-          var t = Util.FindBeta(1, z, d, delta);
+          var t = Util.FindBeta(1, z, d, radius);
           Pstep = z + t.Item2 * d;
           HitBoundary = true;
           return;

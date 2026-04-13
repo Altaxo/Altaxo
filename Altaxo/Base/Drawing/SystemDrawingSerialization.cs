@@ -35,7 +35,7 @@ namespace System.Drawing
     private static System.Drawing.ColorConverter sm_Converter = new System.Drawing.ColorConverter();
 
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       throw new ApplicationException("Deprecated 2011-05-09: do not serialize System.Drawing.Color anymore");
       /*
@@ -62,9 +62,9 @@ namespace System.Drawing
   public class SizeFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (System.Drawing.SizeF)obj;
+      var s = (System.Drawing.SizeF)o;
 
       info.AddValue("Width", s.Width);
       info.AddValue("Height", s.Height);
@@ -87,9 +87,9 @@ namespace System.Drawing
   public class PointFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (System.Drawing.PointF)obj;
+      var s = (System.Drawing.PointF)o;
 
       info.AddValue("X", s.X);
       info.AddValue("Y", s.Y);
@@ -112,9 +112,9 @@ namespace System.Drawing
   public class RectangleFXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (System.Drawing.RectangleF)obj;
+      var s = (System.Drawing.RectangleF)o;
 
       info.AddValue("X", s.X);
       info.AddValue("Y", s.Y);

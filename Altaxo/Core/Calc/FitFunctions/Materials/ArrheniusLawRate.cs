@@ -127,9 +127,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLawRate), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ArrheniusLawRate)obj;
+        var s = (ArrheniusLawRate)o;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
@@ -251,14 +251,14 @@ namespace Altaxo.Calc.FitFunctions.Materials
     #endregion Change event
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
-      double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      Y[0] = Math.Exp(Math.Log(P[0]) - energyAsTemperature / temperature);
+      double temperature = Temperature.ToKelvin(independent[0], _temperatureUnitOfX);
+      double energyAsTemperature = Energy.ToTemperatureSI(parameters[1], _paramEnergyUnit);
+      dependent[0] = Math.Exp(Math.Log(parameters[0]) - energyAsTemperature / temperature);
     }
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -266,8 +266,8 @@ namespace Altaxo.Calc.FitFunctions.Materials
         var x = independent[r, 0];
 
         double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
-        double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-        FV[r] = Math.Exp(Math.Log(P[0]) - energyAsTemperature / temperature);
+        double energyAsTemperature = Energy.ToTemperatureSI(parameters[1], _paramEnergyUnit);
+        dependent[r] = Math.Exp(Math.Log(parameters[0]) - energyAsTemperature / temperature);
       }
     }
 

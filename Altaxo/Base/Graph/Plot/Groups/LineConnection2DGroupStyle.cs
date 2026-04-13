@@ -24,15 +24,13 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
   /// This group style is intended to make sure that all substyles have the same line connection.
-   /// Thus it is only intended for local use (only among substyles of a single plot item).
+  /// Thus it is only intended for local use (only among substyles of a single plot item).
   /// plot styles.
   /// </summary>
   public class LineConnection2DGroupStyle
@@ -56,10 +54,10 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineConnection2DGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-    /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      /// <inheritdoc />
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LineConnection2DGroupStyle)obj;
+        var s = (LineConnection2DGroupStyle)o;
       }
 
       /// <inheritdoc />
@@ -113,11 +111,11 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc />
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (LineConnection2DGroupStyle)fromb;
-      _isInitialized = from._isInitialized;
-      _lineConnectionStyle = from._lineConnectionStyle;
+      var fromX = (LineConnection2DGroupStyle)from;
+      _isInitialized = fromX._isInitialized;
+      _lineConnectionStyle = fromX._lineConnectionStyle;
     }
 
     /// <inheritdoc />

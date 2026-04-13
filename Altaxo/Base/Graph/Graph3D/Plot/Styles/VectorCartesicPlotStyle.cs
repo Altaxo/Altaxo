@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
@@ -34,7 +33,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
   using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
-  using Altaxo.Graph;
   using Altaxo.Main;
   using Data;
   using Drawing;
@@ -161,9 +159,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VectorCartesicPlotStyle)obj;
+        var s = (VectorCartesicPlotStyle)o;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValueOrNull("ColumnX", s._columnX);
@@ -334,13 +332,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
-      public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      if (obj is VectorCartesicPlotStyle from)
+      if (from is VectorCartesicPlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
         EhSelfChanged();
         return true;
       }

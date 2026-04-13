@@ -69,9 +69,9 @@ namespace Altaxo.Data
     protected abstract class XmlSerializationSurrogateBase : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TableDataSourceBaseImmutableOptions<TOptions, TData>)obj;
+        var s = (TableDataSourceBaseImmutableOptions<TOptions, TData>)o;
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);

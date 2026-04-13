@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -58,9 +58,9 @@ namespace Altaxo.Graph.Scales
   public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      var s = (ScaleLinkType)obj;
+      var s = (ScaleLinkType)o;
       info.SetNodeContent(s.ToString());
     }
 

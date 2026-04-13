@@ -321,9 +321,9 @@ namespace Altaxo.Graph.Graph3D
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphDocument)obj;
+        var s = (GraphDocument)o;
 
         info.AddValue("Name", s._name);
         info.AddValue("GraphIdentifier", s._graphIdentifier);

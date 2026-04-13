@@ -49,9 +49,9 @@ namespace Altaxo.Drawing.D3D.CrossSections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ellipsoidal), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Ellipsoidal)obj;
+        var s = (Ellipsoidal)o;
 
         info.AddValue("Size1", 2 * s._radius1);
         info.AddValue("Size2", 2 * s._radius2);

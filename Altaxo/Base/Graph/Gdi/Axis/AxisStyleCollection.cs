@@ -51,9 +51,9 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisStyleCollection)obj;
+        var s = (AxisStyleCollection)o;
 
         info.CreateArray("AxisStyles", s._axisStyles.Count);
         for (int i = 0; i < s._axisStyles.Count; ++i)

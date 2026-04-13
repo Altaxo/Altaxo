@@ -66,9 +66,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionAndRegressionResult)obj;
+        var s = (DimensionReductionAndRegressionResult)o;
         info.AddValue("NumberOfMeasurements", s.NumberOfMeasurements);
         info.AddValue("CalculatedNumberOfFactors", s.CalculatedNumberOfFactors);
         info.AddValue("PreferredNumberOfFactors", s.PreferredNumberOfFactors);
@@ -103,9 +103,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionAndRegressionResult)obj;
+        var s = (DimensionReductionAndRegressionResult)o;
         info.AddValue("NumberOfMeasurements", s.NumberOfMeasurements);
         info.AddValue("CalculatedNumberOfFactors", s.CalculatedNumberOfFactors);
         info.AddValue("PreferredNumberOfFactors", s.PreferredNumberOfFactors);

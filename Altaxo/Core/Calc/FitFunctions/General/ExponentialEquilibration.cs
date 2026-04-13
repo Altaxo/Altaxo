@@ -48,9 +48,9 @@ namespace Altaxo.Calc.FitFunctions.General
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExponentialEquilibration)obj;
+        var s = (ExponentialEquilibration)o;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
@@ -223,38 +223,38 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double x = X[0] - P[0]; // P[1] is x0
-      double sum = P[1]; // P[0] is offset
+      double x = independent[0] - parameters[0]; // P[1] is x0
+      double sum = parameters[1]; // P[0] is offset
       if (x > 0)
       {
-        for (int i = 2; i < P.Length; i += 2)
+        for (int i = 2; i < parameters.Length; i += 2)
         {
-          sum += P[i] * (1 - Math.Exp(-x / P[i + 1]));
+          sum += parameters[i] * (1 - Math.Exp(-x / parameters[i + 1]));
         }
       }
-      Y[0] = sum;
+      dependent[0] = sum;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var xx = independent[r, 0];
 
-        double x = xx - P[0]; // P[1] is x0
-        double sum = P[1]; // P[0] is offset
+        double x = xx - parameters[0]; // P[1] is x0
+        double sum = parameters[1]; // P[0] is offset
         if (x > 0)
         {
-          for (int i = 2; i < P.Count; i += 2)
+          for (int i = 2; i < parameters.Count; i += 2)
           {
-            sum += P[i] * (1 - Math.Exp(-x / P[i + 1]));
+            sum += parameters[i] * (1 - Math.Exp(-x / parameters[i + 1]));
           }
         }
-        FV[r] = sum;
+        dependent[r] = sum;
       }
     }
 
@@ -262,34 +262,34 @@ namespace Altaxo.Calc.FitFunctions.General
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var xx = X[r, 0];
+        var xx = independent[r, 0];
 
-        double x = xx - P[0]; // P[1] is x0
+        double x = xx - parameters[0]; // P[1] is x0
 
-        DY[r, 1] = 1; // offset
+        DF[r, 1] = 1; // offset
         if (x > 0)
         {
           double sum = 0;
-          for (int i = 2; i < P.Count; i += 2)
+          for (int i = 2; i < parameters.Count; i += 2)
           {
-            DY[r, i] = 1 - Math.Exp(-x / P[i + 1]);
-            DY[r, i + 1] = -P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
-            sum += -P[i] * Math.Exp(-x / P[i + 1]) / P[i + 1];
+            DF[r, i] = 1 - Math.Exp(-x / parameters[i + 1]);
+            DF[r, i + 1] = -parameters[i] * Math.Exp(-x / parameters[i + 1]) * x / RMath.Pow2(parameters[i + 1]);
+            sum += -parameters[i] * Math.Exp(-x / parameters[i + 1]) / parameters[i + 1];
           }
-          DY[r, 0] = sum; // derivative w.r.t. to x0
+          DF[r, 0] = sum; // derivative w.r.t. to x0
         }
         else // x < 0
         {
-          DY[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
-          for (int i = 2; i < P.Count; i += 2)
+          DF[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
+          for (int i = 2; i < parameters.Count; i += 2)
           {
-            DY[r, i] = 0;
-            DY[r, i + 1] = 0;
+            DF[r, i] = 0;
+            DF[r, i + 1] = 0;
           }
         }
       }

@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
@@ -102,9 +102,9 @@ info.CommitArray();
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (G2DPlotStyleCollection)obj;
+        var s = (G2DPlotStyleCollection)o;
 
         info.CreateArray("Styles", s._innerList.Count);
         for (int i = 0; i < s._innerList.Count; i++)
@@ -210,14 +210,13 @@ info.CommitArray();
     }
 
     /// <inheritdoc />
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
-      var from = obj as G2DPlotStyleCollection;
-      if (from is not null)
+      if (from is G2DPlotStyleCollection fromX)
       {
-        CopyFrom(from);
+        CopyFrom(fromX);
         return true;
       }
       return false;
@@ -684,12 +683,12 @@ info.CommitArray();
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="options">Information what to replace.</param>
+    /// <param name="Report">Information what to replace.</param>
     /// <inheritdoc />
-    public void VisitDocumentReferences(DocNodeProxyReporter options)
+    public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
       foreach (var s in this)
-        s.VisitDocumentReferences(options);
+        s.VisitDocumentReferences(Report);
     }
 
     #endregion IDocumentNode Members

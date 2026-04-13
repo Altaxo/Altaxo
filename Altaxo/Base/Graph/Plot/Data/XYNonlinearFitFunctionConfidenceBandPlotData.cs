@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Plot.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidProgramException("Serialization of old version");
 
@@ -201,9 +201,9 @@ namespace Altaxo.Graph.Plot.Data
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYNonlinearFitFunctionConfidenceBandPlotData)obj;
+        var s = (XYNonlinearFitFunctionConfidenceBandPlotData)o;
 
         info.AddValue("FitDocumentIdentifier", s._fitDocumentIdentifier);
         info.AddValue("FitDocument", s._fitDocument);

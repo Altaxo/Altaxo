@@ -97,9 +97,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTablesAggregationProcessData)obj;
+        var s = (DataTablesAggregationProcessData)o;
 
         info.AddArray("DataTables", s.DataTables, s.DataTables.Count);
         info.AddValue("RowSelection", s.RowSelection);

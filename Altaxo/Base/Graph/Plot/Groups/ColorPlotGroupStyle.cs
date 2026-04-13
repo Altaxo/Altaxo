@@ -71,9 +71,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.ColorGroupStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
@@ -91,9 +91,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.ColorGroupStyle", 1)] // 2011-05-11 adding ColorSet
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
         info.AddValue("ColorSet", s._listOfValues);
       }
@@ -116,9 +116,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorGroupStyle)obj;
+        var s = (ColorGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
         info.AddValue("ColorSet", s._listOfValues);
         info.AddValue("ColorIndex", s._colorIndex);
@@ -232,14 +232,14 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (ColorGroupStyle)fromb;
+      var fromX = (ColorGroupStyle)from;
       //System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
-      _isInitialized = from._isInitialized;
-      _listOfValues = from._listOfValues;
-      _colorIndex = from._colorIndex;
-      _cachedColor = from._cachedColor;
+      _isInitialized = fromX._isInitialized;
+      _listOfValues = fromX._listOfValues;
+      _colorIndex = fromX._colorIndex;
+      _cachedColor = fromX._cachedColor;
     }
 
     /// <inheritdoc/>

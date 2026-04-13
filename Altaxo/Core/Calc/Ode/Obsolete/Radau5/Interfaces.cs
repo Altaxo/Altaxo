@@ -248,7 +248,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     #endregion Constructor
 
     /// <inheritdoc/>
-    public void Run(int N, double X, double[] Y, int o_y, ref double[] F, int o_f, double RPAR, int IPAR)
+    public void Run(int N, double X, double[] Y, int offset_y, ref double[] F, int offset_f, double RPAR, int IPAR)
     {
       #region Array Index Correction
 
@@ -256,14 +256,14 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_f = -1 + o_f;
+      int c_y = -1 + offset_y;
+      int c_f = -1 + offset_f;
 
       #endregion Array Index Correction
 
       for (int i = 0; i < MeNEq; i++)
       {
-        MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + offset_y];
       }
 
       MeFunction(X, MeY, MeYDot);
@@ -272,7 +272,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       {
         for (int i = 0; i < MeNEq; i++)
         {
-          F[i + o_f] = MeYDot[i];
+          F[i + offset_f] = MeYDot[i];
         }
       }
       else
@@ -315,7 +315,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     }
 
     /// <inheritdoc/>
-    public void Run(int N, double X, double[] Y, int o_y, ref double[] DFY, int o_dfy, int LDFY, double RPAR
+    public void Run(int N, double X, double[] Y, int offset_y, ref double[] DFY, int offset_dfy, int LDFY, double RPAR
                        , int IPAR)
     {
       #region Array Index Correction
@@ -324,8 +324,8 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_dfy = -1 - LDFY + o_dfy;
+      int c_y = -1 + offset_y;
+      int c_dfy = -1 - LDFY + offset_dfy;
 
       #endregion Array Index Correction
 
@@ -338,7 +338,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
 
       for (int i = 0; i < MeNEq; i++)
       {
-        MeY[i] = Y[i + o_y];
+        MeY[i] = Y[i + offset_y];
       }
 
       MeJacobian(X, MeY, MeJac);
@@ -347,7 +347,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       {
         for (int i = 0; i < MeNEq; i++)
         {
-          DFY[i + j * LDFY + o_dfy] = MeJac[i, j];
+          DFY[i + j * LDFY + offset_dfy] = MeJac[i, j];
         }
       }
 
@@ -388,7 +388,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     }
 
     /// <inheritdoc/>
-    public void Run(int N, ref double[] B, int o_b, int LB, double[] RPAR, int o_rpar, int IPAR)
+    public void Run(int N, ref double[] B, int offset_b, int LB, double[] RPAR, int offset_rpar, int IPAR)
     {
       #region Array Index Correction
 
@@ -396,8 +396,8 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_b = -1 - LB + o_b;
-      int c_rpar = -1 + o_rpar;
+      int c_b = -1 - LB + offset_b;
+      int c_rpar = -1 + offset_rpar;
 
       #endregion Array Index Correction
 

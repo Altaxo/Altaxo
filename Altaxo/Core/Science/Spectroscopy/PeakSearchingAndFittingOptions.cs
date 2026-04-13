@@ -66,7 +66,7 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
       }
@@ -103,9 +103,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingAndFittingOptions)obj;
+        var s = (PeakSearchingAndFittingOptions)o;
         info.AddValue("Preprocessing", s.Preprocessing);
         info.AddValue("PeakSearching", s.PeakSearching);
         info.AddValue("PeakFitting", s.PeakFitting);
@@ -137,9 +137,9 @@ namespace Altaxo.Science.Spectroscopy
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingAndFittingOptions)obj;
+        var s = (PeakSearchingAndFittingOptions)o;
         info.AddValue("Preprocessing", s.Preprocessing);
         info.AddValue("PeakSearching", s.PeakSearching);
         info.AddValue("PeakFitting", s.PeakFitting);

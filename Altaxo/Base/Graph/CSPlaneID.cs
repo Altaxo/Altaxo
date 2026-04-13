@@ -69,9 +69,9 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneID), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (CSPlaneID)obj;
+        var s = (CSPlaneID)o;
         info.AddValue("Axis", s._perpendicularAxisNumber);
         info.AddValue("Logical", s._logicalValue);
         info.AddValue("UsePhysical", s._usePhysicalValue);

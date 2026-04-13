@@ -48,9 +48,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AbsoluteStackTransform)obj;
+        var s = (AbsoluteStackTransform)o;
       }
 
       /// <inheritdoc />
@@ -292,26 +292,26 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     /// <inheritdoc/>
     /// <inheritdoc/>
-    public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
+    public void PaintChild(System.Drawing.Graphics g, IPaintContext context, IPlotArea layer, PlotItemCollection collection, int indexOfChild)
     {
-      var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
+      var plotDataDict = context.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
 
       if (plotDataDict is null) // if initializing this dict was not successfull, then make a normal plot
       {
-        coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
+        collection[indexOfChild].Paint(g, context, layer, indexOfChild == collection.Count - 1 ? null : collection[indexOfChild + 1], indexOfChild == 0 ? null : collection[indexOfChild - 1]);
         return;
       }
 
       Processed2DPlotData? prevPlotData = null;
       Processed2DPlotData? nextPlotData = null;
 
-      if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem keyP1))
+      if ((indexOfChild + 1) < collection.Count && (collection[indexOfChild + 1] is G2DPlotItem keyP1))
         prevPlotData = plotDataDict[keyP1];
 
-      if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem keyM1))
+      if (indexOfChild > 0 && (collection[indexOfChild - 1] is G2DPlotItem keyM1))
         nextPlotData = plotDataDict[keyM1];
 
-      if (coll[indexOfChild] is G2DPlotItem gpi)
+      if (collection[indexOfChild] is G2DPlotItem gpi)
       {
         var pdata = plotDataDict[gpi];
         if (pdata is not null)
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
       else
       {
-        coll[indexOfChild].Paint(g, paintContext, layer, null, null);
+        collection[indexOfChild].Paint(g, context, layer, null, null);
       }
     }
 

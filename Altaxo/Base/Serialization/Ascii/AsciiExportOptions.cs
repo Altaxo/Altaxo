@@ -158,9 +158,9 @@ namespace Altaxo.Serialization.Ascii
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AsciiExportOptions)obj;
+        var s = (AsciiExportOptions)o;
 
         info.AddValue("CultureLCID", s.Culture?.LCID ?? -1);
         info.AddValue("SeparatorChar", s.SeparatorChar);

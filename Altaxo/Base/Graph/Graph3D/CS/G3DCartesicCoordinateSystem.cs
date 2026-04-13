@@ -75,9 +75,9 @@ namespace Altaxo.Graph.Graph3D.CS
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (G3DCartesicCoordinateSystem)obj;
+        var s = (G3DCartesicCoordinateSystem)o;
 
         info.AddValue("XReverse", s._isXreversed);
         info.AddValue("YReverse", s._isYreversed);

@@ -103,11 +103,11 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public void ReportProgress(string text, double progressFraction)
+    public void ReportProgress(string text, double progressValue)
     {
       _shouldReport = false;
       _reportText = text;
-      _progressFraction = progressFraction;
+      _progressFraction = progressValue;
     }
 
     /// <summary>

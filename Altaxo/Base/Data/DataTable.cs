@@ -124,9 +124,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)o;
         info.AddValue("Name", s._name); // name of the Table
         info.AddValue("DataCols", s._dataColumns);
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
@@ -155,9 +155,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)o;
         info.AddValue("Name", s._name); // name of the Table
         info.AddValue("DataCols", s._dataColumns);
         info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
@@ -191,7 +191,7 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
         /*
@@ -288,9 +288,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)o;
         info.AddValue("Name", s._name); // name of the Table
 
         string? originalSaveAsTemplateOption = null;
@@ -364,9 +364,9 @@ namespace Altaxo.Data
     private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Altaxo.Data.DataTable)obj;
+        var s = (Altaxo.Data.DataTable)o;
         info.AddValue("Name", s._name); // name of the Table
         info.AddValueOrNull("TableScript", s._tableScript);
         info.AddValueOrNull("Properties", s._tableProperties);
@@ -487,9 +487,9 @@ namespace Altaxo.Data
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
         /// <inheritdoc/>
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (Altaxo.Data.DataTable.ClipboardMemento)obj;
+          var s = (Altaxo.Data.DataTable.ClipboardMemento)o;
 
           info.AddValue("Name", s._table.Name);
 
@@ -1343,14 +1343,14 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Has to enumerate all references to other items in the project (<see cref="T:Altaxo.Main.DocNodeProxy" />) that are used in this project item and in all children of this project item. The references
-    /// have to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing the proxies, for instance to relocate the path.
+    /// have to be reported to the <paramref name="ReportProxies" /> function. This function is responsible for processing the proxies, for instance to relocate the path.
     /// </summary>
-    /// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
-    public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
+    /// <param name="ReportProxies">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
+    public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       if (_tableDataSource is not null)
       {
-        _tableDataSource.VisitDocumentReferences(ProxyProcessing);
+        _tableDataSource.VisitDocumentReferences(ReportProxies);
       }
     }
   } // end class Altaxo.Data.DataTable

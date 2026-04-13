@@ -221,11 +221,11 @@ namespace Altaxo.Calc.Interpolation
     /// Evaluates either a cross validated cubic spline (if <see cref="ErrorStandardDeviation"/> is negative,
     /// or a smoothing cubic spline (if <see cref="ErrorStandardDeviation"/> is greater than or equal to zero).
     /// </summary>
-    /// <param name="x">The abscissae values.</param>
-    /// <param name="y">The ordinate values.</param>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    /// <param name="xvec">The abscissae values.</param>
+    /// <param name="yvec">The ordinate values.</param>
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
-      Interpolate(x, y, _standardDeviation, null);
+      Interpolate(xvec, yvec, _standardDeviation, null);
     }
 
 

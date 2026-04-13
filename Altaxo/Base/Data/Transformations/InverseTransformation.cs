@@ -46,7 +46,7 @@ namespace Altaxo.Data.Transformations
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseTransformation), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
@@ -71,9 +71,9 @@ namespace Altaxo.Data.Transformations
     }
 
     /// <inheritdoc/>
-    public double Transform(double value)
+    public double Transform(double y)
     {
-      return 1 / value;
+      return 1 / y;
     }
 
     /// <inheritdoc/>

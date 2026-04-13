@@ -62,9 +62,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GridStyle)obj;
+        var s = (GridStyle)o;
 
         info.AddValue("Visible", s._showGrid);
         if (s._showGrid)

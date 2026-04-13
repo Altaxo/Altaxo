@@ -59,9 +59,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisStyleCollection)obj;
+        var s = (AxisStyleCollection)o;
 
         info.CreateArray("AxisStyles", s._axisStyles.Count);
         for (int i = 0; i < s._axisStyles.Count; ++i)

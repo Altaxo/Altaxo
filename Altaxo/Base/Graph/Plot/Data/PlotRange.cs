@@ -67,9 +67,9 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotRange), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotRange)obj;
+        var s = (PlotRange)o;
         info.AddValue("LowerBound", s._lowerBound);
         info.AddValue("UpperBound", s._upperBound);
       }

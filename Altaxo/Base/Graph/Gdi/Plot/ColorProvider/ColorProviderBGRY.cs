@@ -43,9 +43,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderBGRY), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorProviderBGRY)obj;
+        var s = (ColorProviderBGRY)o;
         info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
       }
 

@@ -52,9 +52,9 @@ namespace Altaxo.Graph
   internal class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString() ?? string.Empty);
+      info.SetNodeContent(o.ToString() ?? string.Empty);
     }
 
     /// <inheritdoc/>

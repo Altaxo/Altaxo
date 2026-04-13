@@ -45,9 +45,9 @@ namespace Altaxo.Scripting
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FileImportScript)obj;
+        var s = (FileImportScript)o;
 
         info.AddValue("Text", s.ScriptText);
       }

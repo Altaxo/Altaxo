@@ -1608,25 +1608,25 @@ namespace Altaxo.Calc.Probability.Old
 
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      if (z < low)
+      if (x < low)
         return 0;
-      else if (z >= high)
+      else if (x >= high)
         return 0;
       else
         return 1.0 / (high - low);
     }
 
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      if (z < low)
+      if (x < low)
         return 0;
-      else if (z >= high)
+      else if (x >= high)
         return 1;
       else
-        return (z - low) / (high - low);
+        return (x - low) / (high - low);
     }
 
     /// <inheritdoc/>
@@ -1673,25 +1673,25 @@ namespace Altaxo.Calc.Probability.Old
 
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      if (z < 0)
+      if (x < 0)
         return 0;
-      else if (z >= 1)
+      else if (x >= 1)
         return 0;
       else
         return 1;
     }
 
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      if (z < 0)
+      if (x < 0)
         return 0;
-      else if (z >= 1)
+      else if (x >= 1)
         return 1;
       else
-        return z;
+        return x;
     }
 
     /// <inheritdoc/>
@@ -1790,16 +1790,16 @@ namespace Altaxo.Calc.Probability.Old
 
     private static double Sqr(double x) { return x * x; }
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((z - mu) / sigma)) / sigma;
+      return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((x - mu) / sigma)) / sigma;
     }
 
     private static readonly double _OneBySqrt2 = 1 / Math.Sqrt(2);
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (z - mu) / sigma));
+      return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (x - mu) / sigma));
     }
 
     /// <inheritdoc/>
@@ -1975,20 +1975,20 @@ namespace Altaxo.Calc.Probability.Old
 
 
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      if (z < 0)
+      if (x < 0)
         return 0;
       else
-        return Math.Exp(-z / m) / m;
+        return Math.Exp(-x / m) / m;
     }
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      if (z < 0)
+      if (x < 0)
         return 0;
       else
-        return 1 - Math.Exp(-z / m);
+        return 1 - Math.Exp(-x / m);
     }
     /// <inheritdoc/>
     public override double Quantile(double p)
@@ -2797,9 +2797,9 @@ fin:;
     }
 
     /// <inheritdoc/>
-    public override double Quantile(double alpha)
+    public override double Quantile(double p)
     {
-      double inverse_beta = GammaRelated.InverseBetaRegularized(1 - alpha, DF / 2, NF / 2);
+      double inverse_beta = GammaRelated.InverseBetaRegularized(1 - p, DF / 2, NF / 2);
       return (DF / NF) * (1.0 / inverse_beta - 1.0);
     }
 
@@ -2978,7 +2978,7 @@ fin:;
     #endregion
 
     /// <inheritdoc/>
-    public override double Quantile(double x)
+    public override double Quantile(double p)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
     }
@@ -3168,7 +3168,7 @@ fin:;
     #endregion
 
     /// <inheritdoc/>
-    public override double Quantile(double x)
+    public override double Quantile(double p)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
     }
@@ -4119,7 +4119,7 @@ L_rluxgo:
     }
 
     /// <inheritdoc/>
-    public override double Quantile(double x)
+    public override double Quantile(double p)
     {
       throw new NotSupportedException();
     }

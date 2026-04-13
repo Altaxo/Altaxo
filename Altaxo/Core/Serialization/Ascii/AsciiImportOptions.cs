@@ -85,9 +85,9 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AsciiImportOptions)obj;
+        var s = (AsciiImportOptions)o;
 
         info.AddValue("RenameWorksheet", s.RenameWorksheet);
         info.AddValue("RenameColumns", s.RenameColumns);
@@ -150,9 +150,9 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AsciiImportOptions)obj;
+        var s = (AsciiImportOptions)o;
 
         info.AddValue("RenameWorksheet", s.RenameWorksheet);
         info.AddValue("RenameColumns", s.RenameColumns);

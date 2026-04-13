@@ -50,9 +50,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KohlrauschDecay)obj;
+        var s = (KohlrauschDecay)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -70,9 +70,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (KohlrauschDecay)obj;
+        var s = (KohlrauschDecay)o;
         info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
         info.AddValue("LogarithmizeResult", s._logarithmizeResult);
       }
@@ -240,30 +240,30 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double sum = P[0];
+      double sum = parameters[0];
 
       for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
-        sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j + 1], P[j + 2]));
+        sum += parameters[j] * Math.Exp(-Math.Pow(independent[0] / parameters[j + 1], parameters[j + 2]));
 
-      Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
+      dependent[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        double sum = P[0];
+        double sum = parameters[0];
 
         for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
-          sum += P[j] * Math.Exp(-Math.Pow(x / P[j + 1], P[j + 2]));
+          sum += parameters[j] * Math.Exp(-Math.Pow(x / parameters[j + 1], parameters[j + 2]));
 
-        FV[r] = _logarithmizeResult ? Math.Log10(sum) : sum;
+        dependent[r] = _logarithmizeResult ? Math.Log10(sum) : sum;
       }
     }
 

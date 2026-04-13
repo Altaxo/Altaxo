@@ -97,7 +97,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
       ref int vertexIndexOffset,
       bool isStartCap,
       PointD3D basePoint,
-      VectorD3D eastVector,
+      VectorD3D westVector,
       VectorD3D northVector,
       VectorD3D forwardVectorNormalized,
       ICrossSectionOfLine lineCrossSection,
@@ -112,7 +112,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
       if (baseCrossSectionPositions is null) // if null the positions were not provided
       {
-        var matrix = Math3D.Get2DProjectionToPlane(eastVector, northVector, basePoint);
+        var matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, basePoint);
         for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
         {
           capCrossSectionPositions[i] = matrix.Transform(lineCrossSection.Vertices(i));

@@ -47,9 +47,9 @@ namespace Altaxo.Data.Selections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IncludeTextStartsWith), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IncludeTextStartsWith)obj;
+        var s = (IncludeTextStartsWith)o;
 
         info.AddValue("Value", s._value);
         info.AddValue("IgnoreCase", s._ignoreCase);
@@ -266,13 +266,13 @@ namespace Altaxo.Data.Selections
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
     /// <inheritdoc/>
-    public bool Equals(IRowSelection? rowSel)
+    public bool Equals(IRowSelection? other)
     {
       return
-        rowSel is IncludeTextStartsWith other &&
-        this._value == other._value &&
-        this._ignoreCase == other._ignoreCase &&
-        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+        other is IncludeTextStartsWith otherX &&
+        this._value == otherX._value &&
+        this._ignoreCase == otherX._ignoreCase &&
+        object.ReferenceEquals(this._columnProxy?.Document(), otherX._columnProxy?.Document());
     }
   }
 }

@@ -60,9 +60,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource)obj;
+        var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource)o;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);

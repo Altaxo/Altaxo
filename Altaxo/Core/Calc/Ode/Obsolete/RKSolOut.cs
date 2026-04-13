@@ -338,19 +338,19 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <param name="XOLD">The previous grid point.</param>
     /// <param name="X">The current grid point.</param>
     /// <param name="Y">The current solution vector.</param>
-    /// <param name="o_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
     /// <param name="N">The number of equations.</param>
     /// <param name="CON">The dense output coefficients.</param>
-    /// <param name="o_con">The offset into <paramref name="CON"/>.</param>
+    /// <param name="offset_con">The offset into <paramref name="CON"/>.</param>
     /// <param name="ICOMP">The component map.</param>
-    /// <param name="o_icomp">The offset into <paramref name="ICOMP"/>.</param>
+    /// <param name="offset_icomp">The offset into <paramref name="ICOMP"/>.</param>
     /// <param name="ND">The number of dense output components.</param>
     /// <param name="RPAR">A user-supplied real parameter.</param>
-    /// <param name="o_rpar">The offset into <paramref name="RPAR"/>.</param>
+    /// <param name="offset_rpar">The offset into <paramref name="RPAR"/>.</param>
     /// <param name="IPAR">A user-supplied integer parameter.</param>
     /// <param name="IRTRN">The solver return flag.</param>
-    void ISOLOUT.Run(int NR, double XOLD, double X, double[] Y, int o_y, int N, double[] CON,
-        int o_con, int[] ICOMP, int o_icomp, int ND, double[] RPAR, int o_rpar, int IPAR, int IRTRN)
+    void ISOLOUT.Run(int NR, double XOLD, double X, double[] Y, int offset_y, int N, double[] CON,
+        int offset_con, int[] ICOMP, int offset_icomp, int ND, double[] RPAR, int offset_rpar, int IPAR, int IRTRN)
     {
       #region Array Index Correction
 
@@ -358,10 +358,10 @@ namespace Altaxo.Calc.Ode.Obsolete
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_con = -1 + o_con;
-      int c_icomp = -1 + o_icomp;
-      int c_rpar = -1 + o_rpar;
+      int c_y = -1 + offset_y;
+      int c_con = -1 + offset_con;
+      int c_icomp = -1 + offset_icomp;
+      int c_rpar = -1 + offset_rpar;
 
       #endregion Array Index Correction
 
@@ -396,14 +396,14 @@ namespace Altaxo.Calc.Ode.Obsolete
             _SolutionArray[_Index, 0] = _T;
             for (int j = 1; j <= _NEquations; j++)
             {
-              _SolutionArray[_Index, j] = _Contd5ExpicitRK.Run(j, _T, CON, o_con, ICOMP, o_icomp, ND);
+              _SolutionArray[_Index, j] = _Contd5ExpicitRK.Run(j, _T, CON, offset_con, ICOMP, offset_icomp, ND);
             }
           }
           else
           {
             for (int j = 0; j < _NEquations; j++)
             {
-              _TemporalSolution[j] = _Contd5ExpicitRK.Run(j + 1, _T, CON, o_con, ICOMP, o_icomp, ND);
+              _TemporalSolution[j] = _Contd5ExpicitRK.Run(j + 1, _T, CON, offset_con, ICOMP, offset_icomp, ND);
             }
             _SolutionOut(_T, _TemporalSolution);
           }
@@ -427,15 +427,15 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <param name="XOLD">The previous grid point.</param>
     /// <param name="X">The current grid point.</param>
     /// <param name="Y">The current solution vector.</param>
-    /// <param name="o_y">The offset into <paramref name="Y"/>.</param>
+    /// <param name="offset_y">The offset into <paramref name="Y"/>.</param>
     /// <param name="CONT">The dense output coefficients.</param>
-    /// <param name="o_cont">The offset into <paramref name="CONT"/>.</param>
+    /// <param name="offset_cont">The offset into <paramref name="CONT"/>.</param>
     /// <param name="LRC">The leading dimension of <paramref name="CONT"/>.</param>
     /// <param name="N">The number of equations.</param>
     /// <param name="RPAR">A user-supplied real parameter.</param>
     /// <param name="IPAR">A user-supplied integer parameter.</param>
     /// <param name="IRTRN">The solver return flag.</param>
-    void ISOLOUTR.Run(int NR, double XOLD, double X, double[] Y, int o_y, double[] CONT, int o_cont,
+    void ISOLOUTR.Run(int NR, double XOLD, double X, double[] Y, int offset_y, double[] CONT, int offset_cont,
         int LRC, int N, double RPAR, int IPAR, int IRTRN)
     {
       #region Array Index Correction
@@ -444,8 +444,8 @@ namespace Altaxo.Calc.Ode.Obsolete
       //                                              Array Index Correction
       //--------------------------------------------------------------------------------------------------------------------
 
-      int c_y = -1 + o_y;
-      int c_cont = -1 + o_cont;
+      int c_y = -1 + offset_y;
+      int c_cont = -1 + offset_cont;
 
       #endregion Array Index Correction
 
@@ -480,14 +480,14 @@ namespace Altaxo.Calc.Ode.Obsolete
             _SolutionArray[_Index, 0] = _T;
             for (int j = 1; j <= _NEquations; j++)
             {
-              _SolutionArray[_Index, j] = _Contr5ImplicitRK.Run(j, _T, CONT, o_cont, LRC);
+              _SolutionArray[_Index, j] = _Contr5ImplicitRK.Run(j, _T, CONT, offset_cont, LRC);
             }
           }
           else
           {
             for (int j = 0; j < _NEquations; j++)
             {
-              _TemporalSolution[j] = _Contr5ImplicitRK.Run(j + 1, _T, CONT, o_cont, LRC);
+              _TemporalSolution[j] = _Contr5ImplicitRK.Run(j + 1, _T, CONT, offset_cont, LRC);
             }
             _SolutionOut(_T, _TemporalSolution);
           }

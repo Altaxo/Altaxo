@@ -95,9 +95,9 @@ namespace Altaxo.Graph.Graph3D.Axis
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GridPlane)obj;
+        var s = (GridPlane)o;
 
         info.AddValue("ID", s._planeID);
         info.AddValueOrNull("Grid1", s._grid1);

@@ -77,9 +77,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SmoothingCubicSplineOptions)obj;
+        var s = (SmoothingCubicSplineOptions)o;
         info.AddValue("Smoothness", s.Smoothness);
         info.AddValue("ErrorStandardDeviation", s._errorStandardDeviation);
       }
@@ -103,9 +103,9 @@ namespace Altaxo.Calc.Interpolation
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SmoothingCubicSplineOptions)obj;
+        var s = (SmoothingCubicSplineOptions)o;
         info.AddValue("Smoothness", s.Smoothness);
         info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
         info.AddValue("ErrorStandardDeviation", s._errorStandardDeviation);

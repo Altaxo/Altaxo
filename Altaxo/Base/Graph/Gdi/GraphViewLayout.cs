@@ -76,9 +76,9 @@ namespace Altaxo.Graph.Gdi
       private AbsoluteDocumentPath? _PathToGraph;
       private GraphViewLayout? _GraphController;
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphViewLayout)obj;
+        var s = (GraphViewLayout)o;
         info.AddValue("AutoZoom", s._isAutoZoomActive);
         info.AddValue("Zoom", s._zoomFactor);
         info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
@@ -126,9 +126,9 @@ namespace Altaxo.Graph.Gdi
       private AbsoluteDocumentPath? _PathToGraph;
       private GraphViewLayout? _GraphController;
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphViewLayout)obj;
+        var s = (GraphViewLayout)o;
         info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
         info.AddValue("AutoZoom", s._isAutoZoomActive);
         if (false == s._isAutoZoomActive)

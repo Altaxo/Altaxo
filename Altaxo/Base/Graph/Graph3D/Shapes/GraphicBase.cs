@@ -83,9 +83,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GraphicBase)obj;
+        var s = (GraphicBase)o;
         info.AddValue("Location", s._location);
         info.AddValue("Tag", s._tag);
       }
@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     #endregion Suspend/Resume
 
     /// <inheritdoc/>
-    public void SetParentSize(VectorD3D parentSize, bool shouldTriggerChangeEvent)
+    public void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _location.ParentSize;
       _location.SetParentSize(parentSize, false); // do not trigger change event here
@@ -214,7 +214,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         UpdateTransformationMatrix(); // update the matrix in every case
 
-        if (shouldTriggerChangeEvent)
+        if (isTriggeringChangedEvent)
           EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -806,16 +806,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Tests a mouse click, whether or not it hits the object.
     /// </summary>
-    /// <param name="parentHitData">Data containing the position of the click and the transformations.</param>
+    /// <param name="hitData">Data containing the position of the click and the transformations.</param>
     /// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
     /// <inheritdoc/>
-    public virtual IHitTestObject? HitTest(HitTestPointData parentHitData)
+    public virtual IHitTestObject? HitTest(HitTestPointData hitData)
     {
-      var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+      var localHitData = hitData.NewFromAdditionalTransformation(_transformation);
 
       if (localHitData.IsHit(Bounds, out var z))
       {
-        var result = GetNewHitTestObject(parentHitData.WorldTransformation);
+        var result = GetNewHitTestObject(hitData.WorldTransformation);
         result.DoubleClick = null;
         return result;
       }

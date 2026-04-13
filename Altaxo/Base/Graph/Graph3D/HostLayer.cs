@@ -168,9 +168,9 @@ namespace Altaxo.Graph.Graph3D
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HostLayer)obj;
+        var s = (HostLayer)o;
 
         // size, position, rotation and scale
         info.AddValue("CachedParentSize", s._cachedParentLayerSize);
@@ -729,13 +729,13 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Performs preprocessing for all contained graph objects.
     /// </summary>
-    /// <param name="paintcontext">The paint context.</param>
-    public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext paintcontext)
+    /// <param name="context">The paint context.</param>
+    public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext context)
     {
       var mySize = Size;
       foreach (var graphObj in _graphObjects)
       {
-        graphObj.PaintPreprocessing(paintcontext);
+        graphObj.PaintPreprocessing(context);
       }
     }
 
@@ -743,14 +743,14 @@ namespace Altaxo.Graph.Graph3D
     /// Paints this layer and its graph objects.
     /// </summary>
     /// <param name="g">The graphics context.</param>
-    /// <param name="paintcontext">The paint context.</param>
-    public virtual void Paint(IGraphicsContext3D g, IPaintContext paintcontext)
+    /// <param name="context">The paint context.</param>
+    public virtual void Paint(IGraphicsContext3D g, IPaintContext context)
     {
       var savedgstate = g.SaveGraphicsState();
 
       g.PrependTransform(_transformation);
 
-      PaintInternal(g, paintcontext);
+      PaintInternal(g, context);
 
       g.RestoreGraphicsState(savedgstate);
     }
@@ -893,17 +893,17 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Updates the cached parent size for this layer.
     /// </summary>
-    /// <param name="newParentSize">The new parent size.</param>
+    /// <param name="parentSize">The new parent size.</param>
     /// <param name="isTriggeringChangedEvent">If set to <see langword="true"/>, a changed event is raised when the size changes.</param>
-    public void SetParentSize(VectorD3D newParentSize, bool isTriggeringChangedEvent)
+    public void SetParentSize(VectorD3D parentSize, bool isTriggeringChangedEvent)
     {
       var oldParentSize = _cachedParentLayerSize;
-      _cachedParentLayerSize = newParentSize;
+      _cachedParentLayerSize = parentSize;
 
       if (_location is ItemLocationDirect)
         ((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false); // don't trigger change event now
 
-      if (oldParentSize != newParentSize)
+      if (oldParentSize != parentSize)
       {
         CalculateCachedSizeAndPosition();
 
@@ -1583,11 +1583,11 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Performs hit testing against this layer.
     /// </summary>
-    /// <param name="parentCoord">The hit-test data in parent coordinates.</param>
+    /// <param name="hitData">The hit-test data in parent coordinates.</param>
     /// <returns>The matching hit-test object, or <see langword="null"/>.</returns>
-    public virtual IHitTestObject? HitTest(HitTestPointData parentCoord)
+    public virtual IHitTestObject? HitTest(HitTestPointData hitData)
     {
-      return HitTest(parentCoord, false);
+      return HitTest(hitData, false);
     }
 
     /// <summary>

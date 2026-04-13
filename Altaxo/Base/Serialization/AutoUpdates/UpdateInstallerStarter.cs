@@ -39,14 +39,14 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Starts the installer program when all prerequisites are fulfilled.
     /// </summary>
-    /// <param name="isAltaxoCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
+    /// <param name="isApplicationCurrentlyStarting">If set to <c>true</c>, Altaxo will be restarted after the installation is done.</param>
     /// <param name="commandLineArgs">Original command line arguments. Can be <c>null</c> when calling this function on shutdown.</param>
     /// <returns><c>true</c> if the installer program was started; otherwise, <c>false</c>.</returns>
-    public bool Run(bool isAltaxoCurrentlyStarting, string[]? commandLineArgs)
+    public bool Run(bool isApplicationCurrentlyStarting, string[]? commandLineArgs)
     {
       var updateSettings = Current.PropertyService.GetValue(Altaxo.Settings.AutoUpdateSettings.PropertyKeyAutoUpdate, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new Altaxo.Settings.AutoUpdateSettings());
 
-      var installationRequested = (isAltaxoCurrentlyStarting && updateSettings.InstallAtStartup) || (!isAltaxoCurrentlyStarting && updateSettings.InstallAtShutdown);
+      var installationRequested = (isApplicationCurrentlyStarting && updateSettings.InstallAtStartup) || (!isApplicationCurrentlyStarting && updateSettings.InstallAtShutdown);
       if (!installationRequested)
         return false;
 
@@ -117,9 +117,9 @@ namespace Altaxo.Serialization.AutoUpdates
           packageStream.Name,
           updateSettings.ShowInstallationWindow ? 1 : 0,
           updateSettings.InstallationWindowClosingTime,
-          isAltaxoCurrentlyStarting ? 1 : 0,
+          isApplicationCurrentlyStarting ? 1 : 0,
           entryAssembly.Location);
-        if (isAltaxoCurrentlyStarting && commandLineArgs is not null && commandLineArgs.Length > 0)
+        if (isApplicationCurrentlyStarting && commandLineArgs is not null && commandLineArgs.Length > 0)
         {
           foreach (var s in commandLineArgs)
             stb.AppendFormat("\t\"{0}\"", s);

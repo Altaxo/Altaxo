@@ -109,9 +109,9 @@ namespace Altaxo.Text.GuiModels
       private TextDocumentViewOptions? _deserializedInstance;
 
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TextDocumentViewOptions)obj;
+        var s = (TextDocumentViewOptions)o;
         info.AddValue("Document", AbsoluteDocumentPath.GetAbsolutePath(s.Document));
         info.AddEnum("WindowConfiguration", s.WindowConfiguration);
         info.AddValue("IsViewerSelected", s.IsViewerSelected);

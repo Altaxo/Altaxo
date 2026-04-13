@@ -46,9 +46,9 @@ namespace Altaxo.Data.Transformations
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleTransformation), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ScaleTransformation)obj;
+        var s = (ScaleTransformation)o;
         info.AddValue("Scale", s._scale);
       }
 
@@ -91,9 +91,9 @@ namespace Altaxo.Data.Transformations
     }
 
     /// <inheritdoc/>
-    public double Transform(double value)
+    public double Transform(double y)
     {
-      return _scale * value;
+      return _scale * y;
     }
 
     /// <inheritdoc/>

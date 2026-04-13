@@ -133,18 +133,18 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc/>
-    public ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn originalReadableColumn)
+    public ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn underlyingReadableColumn)
     {
-      if (object.Equals(_originalColumn, originalReadableColumn))
+      if (object.Equals(_originalColumn, underlyingReadableColumn))
       {
         return this;
       }
       else
       {
-        if (originalReadableColumn is null)
-          throw new ArgumentNullException(nameof(originalReadableColumn));
+        if (underlyingReadableColumn is null)
+          throw new ArgumentNullException(nameof(underlyingReadableColumn));
         var result = (TransformedReadableColumn)MemberwiseClone();
-        result._originalColumn = originalReadableColumn;
+        result._originalColumn = underlyingReadableColumn;
         return result;
       }
     }

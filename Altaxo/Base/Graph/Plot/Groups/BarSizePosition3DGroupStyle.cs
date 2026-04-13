@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -118,9 +116,9 @@ namespace Altaxo.Graph.Plot.Groups
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BarSizePosition3DGroupStyle)obj;
+        var s = (BarSizePosition3DGroupStyle)o;
         info.AddValue("StepEnabled", s._isStepEnabled);
       }
 
@@ -158,23 +156,23 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (BarSizePosition3DGroupStyle)fromb;
+      var fromX = (BarSizePosition3DGroupStyle)from;
 
-      _barShiftStrategy = from._barShiftStrategy;
-      _barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
-      _relInnerGapX = from._relInnerGapX;
-      _relOuterGapX = from._relOuterGapX;
-      _relInnerGapY = from._relInnerGapY;
-      _relOuterGapY = from._relOuterGapY;
+      _barShiftStrategy = fromX._barShiftStrategy;
+      _barShiftMaxNumberOfItemsInOneDirection = fromX._barShiftMaxNumberOfItemsInOneDirection;
+      _relInnerGapX = fromX._relInnerGapX;
+      _relOuterGapX = fromX._relOuterGapX;
+      _relInnerGapY = fromX._relInnerGapY;
+      _relOuterGapY = fromX._relOuterGapY;
 
-      _logicalClusterSizeX = from._logicalClusterSizeX;
-      _logicalClusterSizeY = from._logicalClusterSizeY;
-      _logicalItemSizeX = from._logicalItemSizeX;
-      _logicalItemOffsetX = from._logicalItemOffsetX;
-      _logicalItemSizeY = from._logicalItemSizeY;
-      _logicalItemOffsetY = from._logicalItemOffsetY;
+      _logicalClusterSizeX = fromX._logicalClusterSizeX;
+      _logicalClusterSizeY = fromX._logicalClusterSizeY;
+      _logicalItemSizeX = fromX._logicalItemSizeX;
+      _logicalItemOffsetX = fromX._logicalItemOffsetX;
+      _logicalItemSizeY = fromX._logicalItemSizeY;
+      _logicalItemOffsetY = fromX._logicalItemOffsetY;
     }
 
     /// <summary>

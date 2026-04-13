@@ -46,9 +46,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SubtractGlobalMinimum)obj;
+        var s = (SubtractGlobalMinimum)o;
       }
 
       /// <inheritdoc/>
@@ -77,14 +77,14 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[] regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
     {
-      if (auxillaryData is not EnsembleAuxiliaryDataScalar data)
+      if (auxiliaryData is not EnsembleAuxiliaryDataScalar data)
       {
-        throw new System.ArgumentException("Auxiliary data is not of expected type EnsembleAuxiliaryDataScalar.", nameof(auxillaryData));
+        throw new System.ArgumentException("Auxiliary data is not of expected type EnsembleAuxiliaryDataScalar.", nameof(auxiliaryData));
       }
       var min = data.Value;
-      return (x, spectraMatrix - min, regions);
+      return (x, y - min, regions);
     }
   }
 

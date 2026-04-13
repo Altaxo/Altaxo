@@ -68,9 +68,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ClosedSymbolBase)obj;
+        var s = (ClosedSymbolBase)o;
         info.AddEnum("PlotColorInfluence", s._plotColorInfluence);
         info.AddValue("StructureScale", s._relativeStructureWidth);
         info.AddValue("Fill", s._fillColor);
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     /// <inheritdoc/>
     public void CalculatePolygons(
-      double? overrideRelativeStructureWidth,
+      double? relativeStructureWidth,
       out Paths64? framePolygon,
       out Paths64? insetPolygon,
       out Paths64? fillPolygon)
@@ -318,17 +318,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       var outerPolygon = GetCopyOfOuterPolygon();
 
       Paths64? innerFramePolygon = null;
-      double relativeStructureWidth = overrideRelativeStructureWidth ?? _relativeStructureWidth;
-      if (_frame is not null && relativeStructureWidth > 0)
+      double relativeStructureWidthValue = relativeStructureWidth ?? _relativeStructureWidth;
+      if (_frame is not null && relativeStructureWidthValue > 0)
       {
         // get frame polygon
-        innerFramePolygon = _frame.GetCopyOfClipperPolygon(relativeStructureWidth, outerPolygon);
+        innerFramePolygon = _frame.GetCopyOfClipperPolygon(relativeStructureWidthValue, outerPolygon);
       }
 
       if (_inset is not null)
       {
         // get inset polygon
-        insetPolygon = _inset.GetCopyOfClipperPolygon(relativeStructureWidth);
+        insetPolygon = _inset.GetCopyOfClipperPolygon(relativeStructureWidthValue);
       }
 
       // if null != insetPolygon

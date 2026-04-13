@@ -44,9 +44,9 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DocumentInformation)obj;
+        var s = (DocumentInformation)o;
 
         info.AddValue("Identifier", s.DocumentIdentifier);
         info.AddValue("Notes", s.DocumentNotes);
@@ -75,9 +75,9 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DocumentInformation)obj;
+        var s = (DocumentInformation)o;
 
         info.AddValue("Identifier", s.DocumentIdentifier);
         info.AddValue("Notes", s.DocumentNotes);

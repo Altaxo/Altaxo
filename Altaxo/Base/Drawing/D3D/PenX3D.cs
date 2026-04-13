@@ -72,9 +72,9 @@ namespace Altaxo.Drawing.D3D
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX3D), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PenX3D)obj;
+        var s = (PenX3D)o;
 
         info.AddValue("Material", s._material);
         info.AddValue("CrossSection", s._crossSection);

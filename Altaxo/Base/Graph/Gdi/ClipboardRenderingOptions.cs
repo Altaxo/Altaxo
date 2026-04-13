@@ -50,11 +50,11 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClipboardRenderingOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ClipboardRenderingOptions)obj;
+        var s = (ClipboardRenderingOptions)o;
 
-        info.AddBaseValueEmbedded(obj, s.GetType().BaseType!);
+        info.AddBaseValueEmbedded(o, s.GetType().BaseType!);
 
         info.AddValue("RenderDropFile", s._renderDropFile);
         if (s._renderDropFile)
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.GraphClipboardExportOptions", 0)]
     private class XmlSerializationSurrogate20140131 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException();
       }

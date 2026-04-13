@@ -48,9 +48,9 @@ namespace Altaxo.Drawing.DashPatternManagement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternList), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DashPatternList)obj;
+        var s = (DashPatternList)o;
 
         info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
 

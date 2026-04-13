@@ -108,9 +108,9 @@ namespace Altaxo.Text
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (TextDocument)obj;
+        var s = (TextDocument)o;
 
         info.AddValue("Name", s._name);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
@@ -277,7 +277,7 @@ namespace Altaxo.Text
     }
 
     /// <inheritdoc/>
-    public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
+    public void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
     }
 

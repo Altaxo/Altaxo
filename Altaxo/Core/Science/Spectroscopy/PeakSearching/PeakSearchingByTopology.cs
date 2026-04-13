@@ -93,9 +93,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByTopology)obj;
+        var s = (PeakSearchingByTopology)o;
         info.AddValue("MinimalProminence", s._minimalProminence);
       }
 
@@ -118,9 +118,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByTopology)obj;
+        var s = (PeakSearchingByTopology)o;
         info.AddValue("MinimalProminence", s._minimalProminence);
         info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
       }
@@ -144,9 +144,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByTopology)obj;
+        var s = (PeakSearchingByTopology)o;
         info.AddValue("MinimalProminence", s._minimalProminence);
         info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
         info.AddValue("PeakEnhancement", s.PeakEnhancement);

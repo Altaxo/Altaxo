@@ -328,10 +328,10 @@ namespace Altaxo.Gui.Scripting
     }
 
     /// <inheritdoc/>
-    public void Execute(IProgressReporter progress)
+    public void Execute(IProgressReporter reporter)
     {
       _doc.ClearErrors();
-      _scriptExecutionHandler?.Invoke(_doc, progress);
+      _scriptExecutionHandler?.Invoke(_doc, reporter);
     }
 
     /// <inheritdoc/>

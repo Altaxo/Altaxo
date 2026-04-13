@@ -84,14 +84,14 @@ namespace Altaxo.Gui.Common
       /// <summary>
       /// Converts an integer value to its display text.
       /// </summary>
-      /// <param name="obj">The source value.</param>
+      /// <param name="value">The source value.</param>
       /// <param name="targetType">The target type.</param>
       /// <param name="parameter">The converter parameter.</param>
-      /// <param name="cultureBuggyDontUse">The culture supplied by the binding engine.</param>
+      /// <param name="culture">The culture supplied by the binding engine.</param>
       /// <returns>The converted display value.</returns>
-      public object Convert(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        int val = (int)obj;
+        int val = (int)value;
 
         if (_parent is not null)
         {
@@ -107,20 +107,20 @@ namespace Altaxo.Gui.Common
       /// <summary>
       /// Converts a display value back to an integer value.
       /// </summary>
-      /// <param name="obj">The display value.</param>
+      /// <param name="value">The display value.</param>
       /// <param name="targetType">The target type.</param>
       /// <param name="parameter">The converter parameter.</param>
-      /// <param name="cultureBuggyDontUse">The culture supplied by the binding engine.</param>
+      /// <param name="culture">The culture supplied by the binding engine.</param>
       /// <returns>The converted integer value.</returns>
-      public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        return ConvertBack(obj, targetType, parameter, out var validationResult);
+        return ConvertBack(value, targetType, parameter, out var validationResult);
       }
 
       /// <inheritdoc/>
-      public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
+      public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
-        ConvertBack(obj, null, null, out var validationResult);
+        ConvertBack(value, null, null, out var validationResult);
         return validationResult;
       }
 

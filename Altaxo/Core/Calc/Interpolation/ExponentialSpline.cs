@@ -104,19 +104,19 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         y1.Clear();
         tmp.Clear();
@@ -124,8 +124,8 @@ namespace Altaxo.Calc.Interpolation
       }
 
       const int lo = 0;
-      int hi = x.Count - 1,
-        n = x.Count;
+      int hi = xvec.Count - 1,
+        n = xvec.Count;
 
       if (y1.Count != n)
       {
@@ -147,20 +147,20 @@ namespace Altaxo.Calc.Interpolation
         diag1, diag2, diagin, dx1, dx2 = 0.0, exps, sigmap, sinhs, sinhin,
         slpp1, slppn = 0.0, spdiag;
 
-      delx1 = x[lo + 1] - x[lo];
-      dx1 = (y[lo + 1] - y[lo]) / delx1;
+      delx1 = xvec[lo + 1] - xvec[lo];
+      dx1 = (yvec[lo + 1] - yvec[lo]) / delx1;
 
       slpp1 = dx1;  // to get y1(lo) = 0 in unspecified cases
       if (boundary == BoundaryConditions.Supply1stDerivative)
         slpp1 = slp1;
       else if (n != 2)
       {
-        delx2 = x[lo + 2] - x[lo + 1];
-        delx12 = x[lo + 2] - x[lo];
+        delx2 = xvec[lo + 2] - xvec[lo + 1];
+        delx12 = xvec[lo + 2] - xvec[lo];
         c1 = -(delx12 + delx1) / delx12 / delx1;
         c2 = delx12 / delx1 / delx2;
         c3 = -delx1 / delx12 / delx2;
-        slpp1 = c1 * y[lo] + c2 * y[lo + 1] + c3 * y[lo + 2];
+        slpp1 = c1 * yvec[lo] + c2 * yvec[lo + 1] + c3 * yvec[lo + 2];
       }
       else
       {
@@ -171,13 +171,13 @@ namespace Altaxo.Calc.Interpolation
         slppn = slpn;
       else if (n != 2)
       {
-        deln = x[hi] - x[hi - 1];
-        delnm1 = x[hi - 1] - x[hi - 2];
-        delnn = x[hi] - x[hi - 2];
+        deln = xvec[hi] - xvec[hi - 1];
+        delnm1 = xvec[hi - 1] - xvec[hi - 2];
+        delnn = xvec[hi] - xvec[hi - 2];
         c1 = (delnn + deln) / delnn / deln;
         c2 = -delnn / deln / delnm1;
         c3 = deln / delnn / delnm1;
-        slppn = c3 * y[hi - 2] + c2 * y[hi - 1] + c1 * y[hi];
+        slppn = c3 * yvec[hi - 2] + c2 * yvec[hi - 1] + c1 * yvec[hi];
       }
       else
       {
@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Interpolation
       }
 
       // denormalize tension factor
-      sigmap = Math.Abs(sigma) * (n - 1) / (x[hi] - x[lo]);
+      sigmap = Math.Abs(sigma) * (n - 1) / (xvec[hi] - xvec[lo]);
 
       // set up right hand side and tridiagonal system for y1 and perform forward
       // elimination
@@ -202,8 +202,8 @@ namespace Altaxo.Calc.Interpolation
       {
         for (int i = lo + 1; i <= hi - 1; i++)
         {
-          delx2 = x[i + 1] - x[i];
-          dx2 = (y[i + 1] - y[i]) / delx2;
+          delx2 = xvec[i + 1] - xvec[i];
+          dx2 = (yvec[i + 1] - yvec[i]) / delx2;
           dels = sigmap * delx2;
           exps = Math.Exp(dels);
           sinhs = 0.5 * (exps - 1.0 / exps);

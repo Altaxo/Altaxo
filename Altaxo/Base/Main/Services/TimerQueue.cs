@@ -112,9 +112,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <inheritdoc/>
-    public bool AddOrUpdate(object token, TimeSpan time, Action<object, TimeSpan> action)
+    public bool AddOrUpdate(object token, TimeSpan time, Action<object, TimeSpan> value)
     {
-      var result = _items.AddOrUpdate(token, time, action);
+      var result = _items.AddOrUpdate(token, time, value);
       _event.Set();
       return result;
     }

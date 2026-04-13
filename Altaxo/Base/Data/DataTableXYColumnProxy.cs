@@ -99,9 +99,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableXYColumnProxy), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTableXYColumnProxy)obj;
+        var s = (DataTableXYColumnProxy)o;
         info.AddValue("Table", s._dataTable);
         info.AddValue("Group", s._groupNumber);
         info.AddValue("UseAllAvailableDataRows", s._useAllAvailableDataRows);
@@ -209,14 +209,14 @@ namespace Altaxo.Data
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
-    public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
+    /// <param name="ReportProxies">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
+    public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter ReportProxies)
     {
       using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
       {
-        Report(_dataTable, this, "DataTable");
-        Report(_xColumn, this, "XColumn");
-        Report(_yColumn, this, "YColumn");
+        ReportProxies(_dataTable, this, "DataTable");
+        ReportProxies(_xColumn, this, "XColumn");
+        ReportProxies(_yColumn, this, "YColumn");
         suspendToken.Resume();
       }
     }

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -125,17 +125,17 @@ namespace Altaxo.Graph.Gdi
 
 
     /// <inheritdoc />
-    public bool Equals(DashStyleEx? from)
+    public bool Equals(DashStyleEx? other)
     {
-      if (from is null)
+      if (other is null)
       {
         return false;
       }
       else
       {
-        if (this.IsKnownStyle && from.IsKnownStyle && this._knownStyle == from._knownStyle)
+        if (this.IsKnownStyle && other.IsKnownStyle && this._knownStyle == other._knownStyle)
           return true;
-        else if (this.IsCustomStyle && from.IsCustomStyle && IsEqual(this._customStyle, from._customStyle))
+        else if (this.IsCustomStyle && other.IsCustomStyle && IsEqual(this._customStyle, other._customStyle))
           return true;
         else
           return false;

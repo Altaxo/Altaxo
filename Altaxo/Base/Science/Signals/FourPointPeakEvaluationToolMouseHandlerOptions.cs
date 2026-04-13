@@ -57,9 +57,9 @@ namespace Altaxo.Science.Signals
     public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FourPointPeakEvaluationToolMouseHandlerOptions)obj;
+        var s = (FourPointPeakEvaluationToolMouseHandlerOptions)o;
 
         info.AddValue("ShowOptionsWhenToolIsActivated", s.ShowOptionsWhenToolIsActivated);
         info.AddValue("LinePen", s.LinePen);

@@ -62,11 +62,11 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Serializes the <see cref="LinearlySpacedIntervalByStartCountStep"/> object.
       /// </summary>
-      /// <param name="obj">The object to serialize.</param>
+      /// <param name="o">The object to serialize.</param>
       /// <param name="info">The serialization info.</param>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearlySpacedIntervalByStartCountStep)obj;
+        var s = (LinearlySpacedIntervalByStartCountStep)o;
         info.AddValue("Start", s.Start);
         info.AddValue("Count", s.Count);
         info.AddValue("Step", s.Step);

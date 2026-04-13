@@ -54,12 +54,12 @@ namespace Altaxo.Graph.Gdi
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirectAspectPreserving), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ItemLocationDirectAspectPreserving)obj;
+        var s = (ItemLocationDirectAspectPreserving)o;
         info.AddValue("OriginalSize", s._originalItemSize);
         info.AddEnum("AspectPreserving", s._aspectPreserving);
-        info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAspectPreserving).BaseType!);
+        info.AddBaseValueEmbedded(o, typeof(ItemLocationDirectAspectPreserving).BaseType!);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)

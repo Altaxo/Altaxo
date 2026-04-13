@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
@@ -40,7 +39,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Graph;
   using Altaxo.Main;
   using Data;
-  using Geometry;
   using Groups;
 
   /// <summary>
@@ -153,9 +151,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VectorCartesicPlotStyle)obj;
+        var s = (VectorCartesicPlotStyle)o;
 
         info.AddEnum("MeaningOfValues", s._meaningOfValues);
         info.AddValueOrNull("ColumnX", s._columnX);
@@ -328,15 +326,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <inheritdoc />
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
         return true;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
-      if (obj is VectorCartesicPlotStyle from)
+      if (from is VectorCartesicPlotStyle fromX)
       {
-        CopyFrom(from, copyWithDataReferences);
+        CopyFrom(fromX, copyWithDataReferences);
 
         EhSelfChanged();
         return true;

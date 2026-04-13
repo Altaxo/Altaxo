@@ -151,7 +151,7 @@ namespace Altaxo.Worksheet
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         /*
                 ColumnStyle s = (ColumnStyle)obj;
@@ -193,9 +193,9 @@ namespace Altaxo.Worksheet
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColumnStyle)obj;
+        var s = (ColumnStyle)o;
         info.AddEnum("Type", s._columnStyleType);
         info.AddValue("Size", (float)s._columnSize);
         info.AddValue("Alignment", Enum.GetName(typeof(System.Drawing.StringAlignment), s._textFormat.Alignment));

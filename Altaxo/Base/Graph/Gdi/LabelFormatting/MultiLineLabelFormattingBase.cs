@@ -44,9 +44,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiLineLabelFormattingBase), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MultiLineLabelFormattingBase)obj;
+        var s = (MultiLineLabelFormattingBase)o;
         info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
         info.AddValue("LineSpacing", s._relativeLineSpacing);
         info.AddEnum("BlockAlignment", s._textBlockAlignment);

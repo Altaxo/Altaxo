@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Workbench.Commands
   public class CloseAllWindows : SimpleCommand
   {
     /// <inheritdoc/>
-    public override void Execute(object? _)
+    public override void Execute(object? parameter)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
       workbench.CloseAllViews();

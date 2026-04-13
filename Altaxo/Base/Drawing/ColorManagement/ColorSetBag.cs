@@ -48,9 +48,9 @@ namespace Altaxo.Drawing.ColorManagement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSetBag), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColorSetBag)obj;
+        var s = (ColorSetBag)o;
 
         info.CreateArray("ColorSets", s._colorSets.Length);
 

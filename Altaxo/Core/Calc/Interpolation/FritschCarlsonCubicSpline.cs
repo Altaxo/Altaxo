@@ -123,19 +123,19 @@ namespace Altaxo.Calc.Interpolation
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         y1.Clear();
         y2.Clear();
@@ -143,8 +143,8 @@ namespace Altaxo.Calc.Interpolation
         return; // ok
       }
 
-      int hi = x.Count - 1;
-      int len = x.Count;
+      int hi = xvec.Count - 1;
+      int len = xvec.Count;
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vector already has the appropriate dimension.
@@ -155,27 +155,27 @@ namespace Altaxo.Calc.Interpolation
         y3 = CreateVector.Dense<double>(len);
       }
 
-      if (x.Count == 1)
+      if (xvec.Count == 1)
       {
         // default derivative is 0.0
         y1[0] = y2[0] = y3[0] = 0.0;
       }
-      else if (x.Count == 2)
+      else if (xvec.Count == 2)
       {
         // set derivatives for a line
-        y1[0] = y1[hi] = (y[hi] - y[0]) / (x[hi] - x[0]);
+        y1[0] = y1[hi] = (yvec[hi] - yvec[0]) / (xvec[hi] - xvec[0]);
         y2[0] = y2[hi] =
           y3[0] = y3[hi] = 0.0;
       }
       else
       { // three or more points
         // initial guess derivative vector
-        y1[0] = deriv1(x, y, 1, -1);
-        y1[hi] = deriv1(x, y, hi - 1, 1);
+        y1[0] = deriv1(xvec, yvec, 1, -1);
+        y1[hi] = deriv1(xvec, yvec, hi - 1, 1);
         for (int i = 1; i < hi; i++)
-          y1[i] = deriv2(x, y, i);
+          y1[i] = deriv2(xvec, yvec, i);
 
-        if (x.Count > 3)
+        if (xvec.Count > 3)
         {
           // adjust derivatives at boundaries
           if (y1[0] * y1[1] < 0)
@@ -184,11 +184,11 @@ namespace Altaxo.Calc.Interpolation
             y1[hi] = 0;
 
           // adjustment of cubic interpolant
-          fritsch(x, y, y1);
+          fritsch(xvec, yvec, y1);
         }
 
         // calculate remaining spline coefficients y2(i) and y3(i)
-        CubicSplineCoefficients(x, y, y1, y2, y3);
+        CubicSplineCoefficients(xvec, yvec, y1, y2, y3);
       }
     }
 
@@ -205,9 +205,9 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public double GetYOfX(double u)
+    public double GetYOfX(double x)
     {
-      return CubicSplineHorner(u, x, y, y1, y2, y3);
+      return CubicSplineHorner(x, base.x, y, y1, y2, y3);
     }
 
     /// <summary>

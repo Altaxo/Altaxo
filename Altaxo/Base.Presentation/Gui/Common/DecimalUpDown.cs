@@ -78,9 +78,9 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public object Convert(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        decimal val = (decimal)obj;
+        decimal val = (decimal)value;
 
         if (_parent is not null)
         {
@@ -94,15 +94,15 @@ namespace Altaxo.Gui.Common
       }
 
       /// <inheritdoc/>
-      public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
+      public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
-        return ConvertBack(obj, targetType, parameter, out var validationResult);
+        return ConvertBack(value, targetType, parameter, out var validationResult);
       }
 
       /// <inheritdoc/>
-      public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
+      public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
-        ConvertBack(obj, null, null, out var validationResult);
+        ConvertBack(value, null, null, out var validationResult);
         return validationResult;
       }
 

@@ -62,9 +62,9 @@ namespace Altaxo.Calc.FitFunctions
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FitFunctionDDWrapper)obj;
+        var s = (FitFunctionDDWrapper)o;
         info.AddValue("Function", s.FitFunction);
         info.AddArray("Parameters", s._parameters, s._parameters.Length);
       }

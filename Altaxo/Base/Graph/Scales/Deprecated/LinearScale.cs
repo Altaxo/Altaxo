@@ -82,9 +82,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearScale)obj;
+        var s = (LinearScale)o;
         info.AddValue("BaseOrg", s._baseOrg);
         info.AddValue("BaseEnd", s._baseEnd);
         info.AddValue("MajorSpan", s._majorSpan);
@@ -134,9 +134,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearScale)obj;
+        var s = (LinearScale)o;
         info.AddValue("BaseOrg", s._baseOrg);
         info.AddValue("BaseEnd", s._baseEnd);
         info.AddValue("MajorSpan", s._majorSpan);

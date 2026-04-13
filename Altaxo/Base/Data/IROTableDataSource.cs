@@ -229,9 +229,9 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public int GetRowCount(int columnIndex)
+    public int GetRowCount(int i)
     {
-      int originalRowCount = _wrappedTable[columnIndex].Count;
+      int originalRowCount = _wrappedTable[i].Count;
       return Math.Max(0, Math.Min(originalRowCount - _rangeMin, _rangeCount));
     }
 

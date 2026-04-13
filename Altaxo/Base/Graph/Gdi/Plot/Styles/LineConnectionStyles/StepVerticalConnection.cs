@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StepVerticalConnection), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 

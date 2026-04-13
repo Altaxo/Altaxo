@@ -116,9 +116,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RamanCalibrationDataSource)obj;
+        var s = (RamanCalibrationDataSource)o;
 
         info.AddValue("ImportOptions", s._importOptions);
 

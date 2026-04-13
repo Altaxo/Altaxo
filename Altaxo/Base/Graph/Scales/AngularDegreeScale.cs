@@ -43,10 +43,10 @@ namespace Altaxo.Graph.Scales
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        info.AddBaseValueEmbedded(obj, typeof(AngularScale));
-        var s = (AngularDegreeScale)obj;
+        info.AddBaseValueEmbedded(o, typeof(AngularScale));
+        var s = (AngularDegreeScale)o;
       }
 
       /// <inheritdoc />

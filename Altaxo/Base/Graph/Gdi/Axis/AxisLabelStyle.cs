@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
         /*
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
         /*
@@ -194,9 +194,9 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Axis.AxisLabelStyle", 3)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisLabelStyle)obj;
+        var s = (AxisLabelStyle)o;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
         info.AddValueOrNull("Background", s._backgroundStyle);
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Gdi.Axis
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Axis.AxisLabelStyle", 4)]
     private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Trying to serialize old version");
         /*
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       // 2012-03-30 new member _labelSide, _prefixText and _postfixText
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize outdated version");
         /*
@@ -364,9 +364,9 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       // 2012-05-28 _prefixText and _postfixText deprecated and moved to LabelFormattingBase
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (AxisLabelStyle)obj;
+        var s = (AxisLabelStyle)o;
         info.AddValue("Font", s._font);
         info.AddValue("Brush", s._brush);
         info.AddValueOrNull("Background", s._backgroundStyle);

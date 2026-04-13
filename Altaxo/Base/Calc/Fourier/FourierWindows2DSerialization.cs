@@ -39,9 +39,9 @@ namespace Altaxo.Calc.Fourier
     private class XmlSerializationSurrogateForEmptyClasses<T> : Altaxo.Serialization.Xml.IXmlSerializationSurrogate where T : new()
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        TypeSafeSerialize((T)obj, info);
+        TypeSafeSerialize((T)o, info);
       }
 
       protected virtual void TypeSafeSerialize(T s, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

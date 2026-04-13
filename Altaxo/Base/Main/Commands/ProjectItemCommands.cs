@@ -102,9 +102,9 @@ namespace Altaxo.Main.Commands
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
           /// <inheritdoc/>
-          public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+          public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (ProjectItemClipboardList)obj;
+          var s = (ProjectItemClipboardList)o;
 
           info.AddValue("IsBaseFolderNull", s.BaseFolder is null);
           if (s.BaseFolder is not null)
@@ -195,9 +195,9 @@ namespace Altaxo.Main.Commands
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
           /// <inheritdoc/>
-          public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+          public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (ProjectItemReferenceClipboardList)obj;
+          var s = (ProjectItemReferenceClipboardList)o;
 
           info.AddValue("IsBaseFolderNull", s.BaseFolder is null);
           if (s.BaseFolder is not null)

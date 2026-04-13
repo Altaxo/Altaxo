@@ -108,21 +108,21 @@ namespace Altaxo.Main.Services
       }
 
       /// <inheritdoc/>
-      public IProgressReporter GetSubTask(double fractionOfWork)
+      public IProgressReporter GetSubTask(double workAmount)
       {
-        return CreateSubTask(fractionOfWork, CancellationToken, CancellationTokenHard, TaskName);
+        return CreateSubTask(workAmount, CancellationToken, CancellationTokenHard, TaskName);
       }
 
       /// <summary>
       /// Creates a subtask with explicit cancellation tokens.
       /// </summary>
-      /// <param name="fractionOfWork">The fraction of work represented by the subtask.</param>
+      /// <param name="workAmount">The fraction of work represented by the subtask.</param>
       /// <param name="cancellationTokenSoft">The soft-cancellation token.</param>
       /// <param name="cancellationTokenHard">The hard-cancellation token.</param>
       /// <returns>A reporter for the created subtask.</returns>
-      public IProgressReporter GetSubTask(double fractionOfWork, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
+      public IProgressReporter GetSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
-        return CreateSubTask(fractionOfWork, cancellationTokenSoft, cancellationTokenHard, TaskName);
+        return CreateSubTask(workAmount, cancellationTokenSoft, cancellationTokenHard, TaskName);
       }
 
       /// <summary>
@@ -242,7 +242,7 @@ namespace Altaxo.Main.Services
       }
 
       /// <inheritdoc/>
-      public void Report(string text)
+      public void Report(string value)
       {
         double progress;
         OperationStatus statusNow;
@@ -254,11 +254,11 @@ namespace Altaxo.Main.Services
 
         if (Parent is { } p)
         {
-          p.EhSubTaskReport(this, Level, progress, text, statusNow);
+          p.EhSubTaskReport(this, Level, progress, value, statusNow);
         }
         else
         {
-          Root.EhSubTaskReport(this, Level, progress, text, statusNow);
+          Root.EhSubTaskReport(this, Level, progress, value, statusNow);
         }
       }
       /// <inheritdoc/>

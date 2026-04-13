@@ -48,9 +48,9 @@ namespace Altaxo.Worksheet
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (WorksheetLayoutCollection)obj;
+        var s = (WorksheetLayoutCollection)o;
 
         info.CreateArray("TableLayoutArray", s._items.Count);
         foreach (object style in s._items.Values)
@@ -199,25 +199,25 @@ namespace Altaxo.Worksheet
     #region Collection changing methods
 
     /// <inheritdoc />
-    public void Add(WorksheetLayout layout)
+    public void Add(WorksheetLayout item)
     {
-      if (layout is null)
+      if (item is null)
         throw new ArgumentNullException("layout");
 
       // Test if this Guid is already present
-      _items.TryGetValue(layout.Guid.ToString(), out var o);
+      _items.TryGetValue(item.Guid.ToString(), out var o);
       if (o is not null)
       {
-        if (object.ReferenceEquals(o, layout))
+        if (object.ReferenceEquals(o, item))
           return;
         else
-          layout.NewGuid();
+          item.NewGuid();
       }
 
-      layout.ParentObject = this;
-      layout.TunneledEvent += EhChildNodeTunneledEvent;
-      _items[layout.Guid.ToString()] = layout;
-      EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(layout));
+      item.ParentObject = this;
+      item.TunneledEvent += EhChildNodeTunneledEvent;
+      _items[item.Guid.ToString()] = item;
+      EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
     }
 
     /// <inheritdoc />

@@ -135,9 +135,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XToXLine)obj;
+        var s = (XToXLine)o;
         info.AddValue("X0", s._x0);
         info.AddValue("X1", s._x1);
       }

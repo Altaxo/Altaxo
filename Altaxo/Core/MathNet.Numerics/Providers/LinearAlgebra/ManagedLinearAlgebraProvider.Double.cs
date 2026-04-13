@@ -1170,20 +1170,20 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <summary>
     /// Computes the QR factorization of A.
     /// </summary>
-    /// <param name="r">On entry, it is the M by N A matrix to factor. On exit,
+    /// <param name="a">On entry, it is the M by N A matrix to factor. On exit,
     /// it is overwritten with the R matrix of the QR factorization. </param>
-    /// <param name="rowsR">The number of rows in the A matrix.</param>
-    /// <param name="columnsR">The number of columns in the A matrix.</param>
+    /// <param name="rowsA">The number of rows in the A matrix.</param>
+    /// <param name="columnsA">The number of columns in the A matrix.</param>
     /// <param name="q">On exit, A M by M matrix that holds the Q matrix of the
     /// QR factorization.</param>
     /// <param name="tau">A min(m,n) vector. On exit, contains additional information
     /// to be used by the QR solve routine.</param>
     /// <remarks>This is similar to the GEQRF and ORGQR LAPACK routines.</remarks>
-    public void QRFactor(double[] r, int rowsR, int columnsR, double[] q, double[] tau)
+    public void QRFactor(double[] a, int rowsA, int columnsA, double[] q, double[] tau)
     {
-      if (r == null)
+      if (a == null)
       {
-        throw new ArgumentNullException(nameof(r));
+        throw new ArgumentNullException(nameof(a));
       }
 
       if (q == null)
@@ -1191,40 +1191,40 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
         throw new ArgumentNullException(nameof(q));
       }
 
-      if (r.Length != rowsR * columnsR)
+      if (a.Length != rowsA * columnsA)
       {
-        throw new ArgumentException("The given array has the wrong length. Should be rowsR * columnsR.", nameof(r));
+        throw new ArgumentException("The given array has the wrong length. Should be rowsR * columnsR.", nameof(a));
       }
 
-      if (tau.Length < Math.Min(rowsR, columnsR))
+      if (tau.Length < Math.Min(rowsA, columnsA))
       {
         throw new ArgumentException("The given array is too small. It must be at least min(m,n) long.", nameof(tau));
       }
 
-      if (q.Length != rowsR * rowsR)
+      if (q.Length != rowsA * rowsA)
       {
         throw new ArgumentException("The given array has the wrong length. Should be rowsR * rowsR.", nameof(q));
       }
 
-      CommonParallel.For(0, rowsR, (a, b) =>
+      CommonParallel.For(0, rowsA, (a, b) =>
           {
             for (var i = a; i < b; i++)
             {
-              q[(i * rowsR) + i] = 1.0;
+              q[(i * rowsA) + i] = 1.0;
             }
           });
 
-      var work = columnsR > rowsR ? new double[rowsR * rowsR] : new double[rowsR * columnsR];
-      var minmn = Math.Min(rowsR, columnsR);
+      var work = columnsA > rowsA ? new double[rowsA * rowsA] : new double[rowsA * columnsA];
+      var minmn = Math.Min(rowsA, columnsA);
       for (var i = 0; i < minmn; i++)
       {
-        GenerateColumn(work, r, rowsR, i, i);
-        ComputeQR(work, i, r, i, rowsR, i + 1, columnsR, Control.MaxDegreeOfParallelism);
+        GenerateColumn(work, a, rowsA, i, i);
+        ComputeQR(work, i, a, i, rowsA, i + 1, columnsA, Control.MaxDegreeOfParallelism);
       }
 
       for (var i = minmn - 1; i >= 0; i--)
       {
-        ComputeQR(work, i, q, i, rowsR, i, rowsR, Control.MaxDegreeOfParallelism);
+        ComputeQR(work, i, q, i, rowsA, i, rowsA, Control.MaxDegreeOfParallelism);
       }
     }
 

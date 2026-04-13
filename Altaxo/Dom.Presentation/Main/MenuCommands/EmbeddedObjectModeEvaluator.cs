@@ -35,7 +35,7 @@ namespace Altaxo.Main.Commands
   public class EmbeddedObjectModeEvaluator : IConditionEvaluator
   {
     /// <inheritdoc/>
-    public bool IsValid(object caller, Condition condition)
+    public bool IsValid(object parameter, Condition condition)
     {
       string expectedValueS = condition.Properties["value"].ToLowerInvariant();
       bool expectedValue;

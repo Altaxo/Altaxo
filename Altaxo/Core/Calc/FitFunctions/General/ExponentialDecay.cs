@@ -49,9 +49,9 @@ namespace Altaxo.Calc.FitFunctions.General
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExponentialDecay)obj;
+        var s = (ExponentialDecay)o;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
@@ -223,30 +223,30 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      double sum = P[0];
-      for (int i = 1; i < P.Length; i += 2)
+      double sum = parameters[0];
+      for (int i = 1; i < parameters.Length; i += 2)
       {
-        sum += P[i] * Math.Exp(-X[0] / P[i + 1]);
+        sum += parameters[i] * Math.Exp(-independent[0] / parameters[i + 1]);
       }
-      Y[0] = sum;
+      dependent[0] = sum;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        double sum = P[0];
-        for (int i = 1; i < P.Count; i += 2)
+        double sum = parameters[0];
+        for (int i = 1; i < parameters.Count; i += 2)
         {
-          sum += P[i] * Math.Exp(-x / P[i + 1]);
+          sum += parameters[i] * Math.Exp(-x / parameters[i + 1]);
         }
-        FV[r] = sum;
+        dependent[r] = sum;
       }
     }
 
@@ -254,18 +254,18 @@ namespace Altaxo.Calc.FitFunctions.General
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
 
-        DY[r, 0] = 1;
-        for (int i = 1; i < P.Count; i += 2)
+        DF[r, 0] = 1;
+        for (int i = 1; i < parameters.Count; i += 2)
         {
-          DY[r, i] = Math.Exp(-x / P[i + 1]);
-          DY[r, i + 1] = P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
+          DF[r, i] = Math.Exp(-x / parameters[i + 1]);
+          DF[r, i + 1] = parameters[i] * Math.Exp(-x / parameters[i + 1]) * x / RMath.Pow2(parameters[i + 1]);
         }
       }
     }

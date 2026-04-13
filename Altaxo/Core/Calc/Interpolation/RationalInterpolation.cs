@@ -158,19 +158,19 @@ namespace Altaxo.Calc.Interpolation
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // check input parameters
 
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Count == 0)
+      if (xvec.Count == 0)
       {
         xr.Clear();
         yr.Clear();
@@ -179,19 +179,19 @@ namespace Altaxo.Calc.Interpolation
       }
 
       const int lo = 0;
-      int hi = x.Count - 1;
+      int hi = xvec.Count - 1;
 
-      if (xr.Count != x.Count)
+      if (xr.Count != xvec.Count)
       {
-        xr = CreateVector.Dense<double>(x.Count);
-        yr = CreateVector.Dense<double>(x.Count);
-        m = CreateVector.Dense<int>(x.Count);
+        xr = CreateVector.Dense<double>(xvec.Count);
+        yr = CreateVector.Dense<double>(xvec.Count);
+        m = CreateVector.Dense<int>(xvec.Count);
       }
 
       int i, j, j1, denom, nend;
       double xj, yj, x2, y2;
 
-      int n = x.Count - 1;
+      int n = xvec.Count - 1;
 
       if (n < 1)
         throw new ArgumentException(string.Format("less than two points where given ({0})", n + 1));
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.Interpolation
 
       for (i = lo; i < hi; i++)
         for (j = i + 1; j <= hi; j++)
-          if (x[i] == x[j])
+          if (xvec[i] == xvec[j])
             throw new ArgumentException(string.Format("two equal x values at ({0}) and ({1})",
               i, j));
 
@@ -216,8 +216,8 @@ namespace Altaxo.Calc.Interpolation
       var z = CreateVector.Dense<double>(hi);
 
       // copy original values
-      xr.SetValues(x);
-      yr.SetValues(y);
+      xr.SetValues(xvec);
+      yr.SetValues(yvec);
 
       // initialize M to 1
       m.FillWith(1);
@@ -295,8 +295,8 @@ namespace Altaxo.Calc.Interpolation
         y2 += Math.Abs(yr[i]);
       for (i = lo; i <= hi; i++)
       {
-        x2 = GetYOfU(x[i]);
-        if (Math.Abs(x2 - y[i]) > n * epsilon * y2)
+        x2 = GetYOfU(xvec[i]);
+        if (Math.Abs(x2 - yvec[i]) > n * epsilon * y2)
           throw new InvalidOperationException("Not all points have been used"); // not all points have been used
       }
 

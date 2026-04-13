@@ -51,9 +51,9 @@ namespace Altaxo.Main
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RelativeDocumentPath)obj;
+        var s = (RelativeDocumentPath)o;
 
         info.AddValue("LevelsDown", s._numberOfLevelsDown);
 

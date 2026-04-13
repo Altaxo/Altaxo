@@ -57,9 +57,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogisticDecreasing), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LogisticDecreasing)obj;
+        var s = (LogisticDecreasing)o;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -265,32 +265,32 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
       // evaluation of terms
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
       {
-        double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumTerms += P[j] / (1 + Math.Exp(x));
+        double x = (independent[0] - parameters[j + 1]) / parameters[j + 2];
+        sumTerms += parameters[j] / (1 + Math.Exp(x));
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
         int offset = 3 * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+        sumPolynomial = parameters[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
         {
-          sumPolynomial *= X[0];
-          sumPolynomial += P[i + offset];
+          sumPolynomial *= independent[0];
+          sumPolynomial += parameters[i + offset];
         }
       }
-      Y[0] = sumTerms + sumPolynomial;
+      dependent[0] = sumTerms + sumPolynomial;
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -301,22 +301,22 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          double arg = (x - P[j + 1]) / P[j + 2];
-          sumTerms += P[j] / (1 + Math.Exp(arg));
+          double arg = (x - parameters[j + 1]) / parameters[j + 2];
+          sumTerms += parameters[j] / (1 + Math.Exp(arg));
         }
 
         if (_orderOfBackgroundPolynomial >= 0)
         {
           int offset = 3 * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          sumPolynomial = parameters[_orderOfBackgroundPolynomial + offset];
           for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
-            sumPolynomial += P[i + offset];
+            sumPolynomial += parameters[i + offset];
           }
         }
-        FV[r] = sumTerms + sumPolynomial;
+        dependent[r] = sumTerms + sumPolynomial;
       }
     }
 
@@ -328,22 +328,22 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      var rowCount = X.RowCount;
+      var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = X[r, 0];
+        var x = independent[r, 0];
         // at first, the terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          var arg = (x - P[j + 1]) / P[j + 2];
+          var arg = (x - parameters[j + 1]) / parameters[j + 2];
           var eterm = Math.Exp(arg);
           var term = 1 / (1 + eterm);
           double dydxc;
-          DY[r, j + 0] = term;
-          DY[r, j + 1] = dydxc = term * term * eterm * P[j] / P[j + 2];
-          DY[r, j + 2] = dydxc * arg;
+          DF[r, j + 0] = term;
+          DF[r, j + 1] = dydxc = term * term * eterm * parameters[j] / parameters[j + 2];
+          DF[r, j + 2] = dydxc * arg;
         }
 
         // now, the background
@@ -352,7 +352,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
           double xn = 1;
           for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
           {
-            DY[r, j] = xn;
+            DF[r, j] = xn;
             xn *= x;
           }
         }

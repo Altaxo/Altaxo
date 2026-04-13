@@ -59,9 +59,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Log10Scale)obj;
+        var s = (Log10Scale)o;
         info.AddValue("Log10Org", s._log10Org);
         info.AddValue("Log10End", s._log10End);
         info.AddValue("DecadesPerMajor", s._decadesPerMajorTick);
@@ -100,9 +100,9 @@ namespace Altaxo.Graph.Scales.Deprecated
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Log10Scale)obj;
+        var s = (Log10Scale)o;
         info.AddValue("Log10Org", s._log10Org);
         info.AddValue("Log10End", s._log10End);
         info.AddValue("DecadesPerMajor", s._decadesPerMajorTick);

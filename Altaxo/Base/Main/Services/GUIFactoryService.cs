@@ -619,17 +619,17 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows a message box with an informational text.
     /// </summary>
-    /// <param name="infotxt">The info text.</param>
+    /// <param name="errortxt">The info text.</param>
     /// <param name="title">The title of the message box.</param>
-    public abstract void InfoMessageBox(string infotxt, string title);
+    public abstract void InfoMessageBox(string errortxt, string title);
 
     /// <summary>
     /// Shows a message box with an informational text.
     /// </summary>
-    /// <param name="infotxt">The info text.</param>
-    public void InfoMessageBox(string infotxt)
+    /// <param name="errortxt">The info text.</param>
+    public void InfoMessageBox(string errortxt)
     {
-      InfoMessageBox(infotxt, string.Empty);
+      InfoMessageBox(errortxt, string.Empty);
     }
 
     /// <summary>

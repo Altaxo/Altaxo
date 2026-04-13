@@ -322,30 +322,30 @@ namespace Altaxo.Drawing
     }
 
     /// <inheritdoc/>
-    public bool Equals(AxoColor from)
+    public bool Equals(AxoColor other)
     {
-      if (_isFromArgb && from._isFromArgb)
+      if (_isFromArgb && other._isFromArgb)
         return
-          _a == from._a &&
-          _b == from._b &&
-          _g == from._g &&
-          _r == from._r;
-      else if (!_isFromArgb && !from._isFromArgb)
+          _a == other._a &&
+          _b == other._b &&
+          _g == other._g &&
+          _r == other._r;
+      else if (!_isFromArgb && !other._isFromArgb)
         return
-          _scA == from._scA &&
-          _scB == from._scB &&
-          _scG == from._scG &&
-          _scR == from._scR;
+          _scA == other._scA &&
+          _scB == other._scB &&
+          _scG == other._scG &&
+          _scR == other._scR;
       else
         return
-          _a == from._a &&
-          _b == from._b &&
-          _g == from._g &&
-          _r == from._r &&
-          _scA == from._scA &&
-          _scB == from._scB &&
-          _scG == from._scG &&
-          _scR == from._scR;
+          _a == other._a &&
+          _b == other._b &&
+          _g == other._g &&
+          _r == other._r &&
+          _scA == other._scA &&
+          _scB == other._scB &&
+          _scG == other._scG &&
+          _scR == other._scR;
     }
 
     /// <inheritdoc/>

@@ -290,9 +290,9 @@ namespace Altaxo.Gui.Common
     #region ISingleChoiceViewEventSink Members
 
     /// <inheritdoc/>
-    public virtual void EhChoiceChanged(int val)
+    public virtual void EhChoiceChanged(int newchoice)
     {
-      _choiceTemp = val;
+      _choiceTemp = newchoice;
     }
 
     #endregion ISingleChoiceViewEventSink Members

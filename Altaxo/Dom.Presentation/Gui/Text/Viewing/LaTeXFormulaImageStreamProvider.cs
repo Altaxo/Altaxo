@@ -47,12 +47,12 @@ namespace Altaxo.Gui.Markdown
 
 
     /// <inheritdoc/>
-    public (Stream bitmapStream, string placement, int yoffset, int width96thInch, int height96thInch) Parse(string text, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File)
+    public (Stream bitmapStream, string placement, int yoffset, int width96thInch, int height96thInch) Parse(string formulaText, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File)
     {
       TexFormula formula = null;
       try
       {
-        formula = _formulaParser.Parse(text);
+        formula = _formulaParser.Parse(formulaText);
       }
       catch (Exception)
       {

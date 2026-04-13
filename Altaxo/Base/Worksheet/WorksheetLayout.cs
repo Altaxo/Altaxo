@@ -120,9 +120,9 @@ namespace Altaxo.Worksheet
       protected Main.AbsoluteDocumentPath? _pathToTable;
 
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (WorksheetLayout)obj;
+        var s = (WorksheetLayout)o;
 
         info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
         info.AddValueOrNull("Table", s._dataTable is null ? null : Main.AbsoluteDocumentPath.GetAbsolutePath(s._dataTable));

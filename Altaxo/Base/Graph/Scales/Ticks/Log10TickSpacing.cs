@@ -118,9 +118,9 @@ namespace Altaxo.Graph.Scales.Ticks
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (Log10TickSpacing)obj;
+        var s = (Log10TickSpacing)o;
 
         info.AddValue("OneLever", s._oneLever);
         info.AddValue("MinGrace", s._orgGrace);

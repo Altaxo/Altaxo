@@ -123,9 +123,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.PlotGroupStyleCollectionBase", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PlotGroupStyleCollectionBase)obj;
+        var s = (PlotGroupStyleCollectionBase)o;
 
         int savedStyles = 0; // for test of consistency
         info.CreateArray("Styles", s.Count);

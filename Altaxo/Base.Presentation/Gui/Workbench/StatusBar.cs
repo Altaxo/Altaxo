@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <inheritdoc/>
-    public void DisplayProgress(string taskName, double workDone, OperationStatus status)
+    public void DisplayProgress(string taskName, double progress, OperationStatus status)
     {
       //			Current.Log.Debug("DisplayProgress(\"" + taskName + "\", " + workDone + ", " + status + ")");
       if (!_statusProgressBarIsVisible)
@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Workbench
       }
 
       TaskbarItemProgressState taskbarProgressState;
-      if (double.IsNaN(workDone))
+      if (double.IsNaN(progress))
       {
         _statusProgressBar.IsIndeterminate = true;
         status = OperationStatus.Normal; // indeterminate doesn't support foreground color
@@ -175,7 +175,7 @@ namespace Altaxo.Gui.Workbench
       else
       {
         _statusProgressBar.IsIndeterminate = false;
-        _statusProgressBar.Value = workDone;
+        _statusProgressBar.Value = progress;
 
         if (status == OperationStatus.Error)
           taskbarProgressState = TaskbarItemProgressState.Error;
@@ -187,7 +187,7 @@ namespace Altaxo.Gui.Workbench
       if (taskbar is not null)
       {
         taskbar.ProgressState = taskbarProgressState;
-        taskbar.ProgressValue = workDone;
+        taskbar.ProgressValue = progress;
       }
 
       if (status != _currentProgressStatus)

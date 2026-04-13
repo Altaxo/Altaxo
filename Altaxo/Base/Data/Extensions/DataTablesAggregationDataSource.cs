@@ -131,9 +131,9 @@ namespace Altaxo.Data
     {
       /// <inheritdoc/>
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTablesAggregationDataSource)obj;
+        var s = (DataTablesAggregationDataSource)o;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);

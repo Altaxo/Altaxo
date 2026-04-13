@@ -57,9 +57,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       /// <inheritdoc/>
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionAndRegressionPredictionProcessData)obj;
+        var s = (DimensionReductionAndRegressionPredictionProcessData)o;
 
         info.AddValue("ModelTable", s.TableWithModel);
         info.AddValue("DataToPredict", s.DataToPredict);

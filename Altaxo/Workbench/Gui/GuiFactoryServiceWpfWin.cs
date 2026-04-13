@@ -280,9 +280,9 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     }
 
     /// <inheritdoc/>
-    public override void InfoMessageBox(string infotxt, string title)
+    public override void InfoMessageBox(string errortxt, string title)
     {
-      Current.Dispatcher.InvokeIfRequired(() => MessageBox_GuiContextOnly(infotxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information));
+      Current.Dispatcher.InvokeIfRequired(() => MessageBox_GuiContextOnly(errortxt, title ?? "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information));
     }
 
     /// <summary>
@@ -677,10 +677,10 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
     }
 
     /// <inheritdoc/>
-    public override void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool copy)
+    public override void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool value)
     {
       //System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy);
-      System.Windows.Clipboard.SetDataObject(((WpfClipSetDataWrapper)dataObject).DataObject, copy);
+      System.Windows.Clipboard.SetDataObject(((WpfClipSetDataWrapper)dataObject).DataObject, value);
     }
 
     #endregion Clipboard

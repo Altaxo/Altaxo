@@ -96,9 +96,9 @@ namespace Altaxo.Graph.Gdi.CS
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPolarCoordinateSystem), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (G2DPolarCoordinateSystem)obj;
+        var s = (G2DPolarCoordinateSystem)o;
 
         info.AddValue("Rotation", 0.0);
         info.AddValue("XYInterchanged", s._isXYInterchanged);

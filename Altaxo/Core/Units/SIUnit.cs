@@ -199,14 +199,14 @@ namespace Altaxo.Units
     }
 
     /// <summary>
-    /// Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> if both are equal.
+    /// Compares this unit with another unit <paramref name="other"/> and returns <c>true</c> if both are equal.
     /// To be equal, the other unit has to be (i) a SI unit, and (ii) the same name. Thus, J (Joule) and Nm (Newtonmeter) are not considered equal.
     /// </summary>
-    /// <param name="obj">The other unit.</param>
+    /// <param name="other">The other unit.</param>
     /// <returns><c>True</c> when both units are equal.</returns>
-    public bool Equals(IUnit? obj)
+    public bool Equals(IUnit? other)
     {
-      return obj is { } other ? GetType() == other.GetType() : false;
+      return other is { } otherI ? GetType() == otherI.GetType() : false;
     }
 
     /// <summary>

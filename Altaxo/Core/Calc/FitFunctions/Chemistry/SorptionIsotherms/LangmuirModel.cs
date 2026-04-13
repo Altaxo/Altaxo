@@ -51,9 +51,9 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LangmuirModel), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LangmuirModel)obj;
+        var s = (LangmuirModel)o;
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -143,17 +143,17 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
     }
 
     /// <inheritdoc/>
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = Evaluate(independent[i, 0], parameters[0], parameters[1], parameters[2]);
+        dependent[i] = Evaluate(independent[i, 0], parameters[0], parameters[1], parameters[2]);
       }
     }
 

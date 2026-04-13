@@ -104,7 +104,7 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushHolder", 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
@@ -157,7 +157,7 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.BrushX", 2)]
     private class XmlSerializationSurrogate1 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
@@ -272,7 +272,7 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.BrushX", 3)]
     private class XmlSerializationSurrogate3 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions is not supported");
         /*
@@ -388,9 +388,9 @@ namespace Altaxo.Drawing
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushX), 5)]
     private class XmlSerializationSurrogate4 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BrushX)obj;
+        var s = (BrushX)o;
         info.AddValue("Type", s._brushType);
         switch (s._brushType)
         {

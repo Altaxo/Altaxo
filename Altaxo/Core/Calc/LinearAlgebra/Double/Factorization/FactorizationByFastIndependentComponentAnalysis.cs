@@ -80,9 +80,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FactorizationByFastIndependentComponentAnalysis)obj;
+        var s = (FactorizationByFastIndependentComponentAnalysis)o;
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
         info.AddValue("Tolerance", s.Tolerance);
       }
@@ -328,13 +328,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     /// <inheritdoc/>
     /// <remarks>
-    /// This implementation centers the input matrix <paramref name="V"/> in-place.
+    /// This implementation centers the input matrix <paramref name="X"/> in-place.
     /// The returned factors therefore satisfy <c>X_centered ≈ W * H</c>.
     /// </remarks>
-    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> V, int rank)
+    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> X, int rank)
     {
-      int n = V.RowCount;
-      int m = V.ColumnCount;
+      int n = X.RowCount;
+      int m = X.ColumnCount;
 
       if (rank <= 0 || rank > Math.Min(n, m))
         throw new ArgumentOutOfRangeException(nameof(rank));
@@ -343,15 +343,15 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       // For consistency with ILowRankMatrixFactorization, we return factors such that
       // the centered matrix is approximated by W * H.
 
-      var X = V.Clone(); // work on a copy to avoid modifying the input
+      var XC = X.Clone(); // work on a copy to avoid modifying the input
 
       // 1. Center
-      var mean = X.ColumnSums() / n;
+      var mean = XC.ColumnSums() / n;
       for (int i = 0; i < n; i++)
-        X.SetRow(i, X.Row(i) - mean);
+        XC.SetRow(i, XC.Row(i) - mean);
 
       // 2. Whitening (with full/truncated SVD branching)
-      var (Xwhite, V_k, S_k) = WhiteningBySvd(X, rank); // Xwhite = X * V_k * diag(1/S_k)
+      var (Xwhite, V_k, S_k) = WhiteningBySvd(XC, rank); // Xwhite = X * V_k * diag(1/S_k)
 
       // 3. ICA on whitened data
       var Wica = Matrix<double>.Build.Random(rank, rank);

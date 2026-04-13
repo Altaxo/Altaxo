@@ -46,9 +46,9 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableMatrixProxyWithMultipleColumnHeaderColumns), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTableMatrixProxyWithMultipleColumnHeaderColumns)obj;
+        var s = (DataTableMatrixProxyWithMultipleColumnHeaderColumns)o;
         info.AddValueOrNull("Table", s._dataTable);
         info.AddValue("Group", s._groupNumber);
         info.AddValue("RowHeaderColumn", s._rowHeaderColumn);

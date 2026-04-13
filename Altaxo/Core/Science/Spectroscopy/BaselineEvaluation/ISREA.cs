@@ -40,9 +40,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ISREA)obj;
+        var s = (ISREA)o;
         info.AddValue("Interpolation", s.InterpolationFunctionOptions);
         info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
         info.AddValue("SmoothnessValue", s.SmoothnessValue);

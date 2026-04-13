@@ -45,9 +45,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SerializeSetV0((IScatterSymbol)obj, info);
+        SerializeSetV0((IScatterSymbol)o, info);
       }
 
       /// <inheritdoc/>

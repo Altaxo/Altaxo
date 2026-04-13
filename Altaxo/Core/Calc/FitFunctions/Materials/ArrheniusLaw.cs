@@ -84,9 +84,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLaw), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ArrheniusLaw)obj;
+        var s = (ArrheniusLaw)o;
         info.AddEnum("IndependentVariableUnit", s.IndependentVariableRepresentation);
         info.AddEnum("DependentVariableTransform", s.DependentVariableRepresentation);
         info.AddEnum("ParamEnergyUnit", s.ParameterEnergyRepresentation);

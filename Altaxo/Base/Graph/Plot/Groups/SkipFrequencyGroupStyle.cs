@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -47,9 +45,9 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipFrequencyGroupStyle), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SkipFrequencyGroupStyle)obj;
+        var s = (SkipFrequencyGroupStyle)o;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -104,11 +102,11 @@ namespace Altaxo.Graph.Plot.Groups
     #region IGroupStyle Members
 
     /// <inheritdoc/>
-    public void TransferFrom(IPlotGroupStyle fromb)
+    public void TransferFrom(IPlotGroupStyle from)
     {
-      var from = (SkipFrequencyGroupStyle)fromb;
-      _isInitialized = from._isInitialized;
-      _skipFrequency = from._skipFrequency;
+      var fromX = (SkipFrequencyGroupStyle)from;
+      _isInitialized = fromX._isInitialized;
+      _skipFrequency = fromX._skipFrequency;
     }
 
     /// <inheritdoc/>

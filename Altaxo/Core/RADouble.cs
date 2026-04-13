@@ -57,9 +57,9 @@ namespace Altaxo
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (RADouble)obj;
+        var s = (RADouble)o;
 
         info.AddValue("IsRelative", s._isRelative);
         info.AddValue("Value", s._value);
@@ -187,9 +187,9 @@ namespace Altaxo
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object? o)
+    public override bool Equals(object? obj)
     {
-      return o is RADouble other && _value == other._value && _isRelative == other._isRelative;
+      return obj is RADouble other && _value == other._value && _isRelative == other._isRelative;
     }
 
     /// <inheritdoc/>

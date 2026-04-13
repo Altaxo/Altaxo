@@ -115,16 +115,16 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Solvers
     /// <summary>
     /// Approximates the solution to the matrix equation <b>Ax = b</b>.
     /// </summary>
-    /// <param name="input">The right hand side vector b.</param>
-    /// <param name="result">The left hand side vector x.</param>
-    public void Approximate(Vector<Complex> input, Vector<Complex> result)
+    /// <param name="rhs">The right hand side vector b.</param>
+    /// <param name="lhs">The left hand side vector x.</param>
+    public void Approximate(Vector<Complex> rhs, Vector<Complex> lhs)
     {
       if (_alu == null)
       {
         throw new ArgumentException("The requested matrix does not exist.");
       }
 
-      if ((result.Count != input.Count) || (result.Count != _diag.Length))
+      if ((lhs.Count != rhs.Count) || (lhs.Count != _diag.Length))
       {
         throw new ArgumentException("All vectors must have the same dimensionality.");
       }
@@ -134,10 +134,10 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Solvers
       // Forward solve.
       for (int i = 0; i < n; i++)
       {
-        result[i] = input[i];
+        lhs[i] = rhs[i];
         for (int k = _jlu[i]; k < _diag[i]; k++)
         {
-          result[i] = result[i] - _alu[k] * result[_jlu[k]];
+          lhs[i] = lhs[i] - _alu[k] * lhs[_jlu[k]];
         }
       }
 
@@ -146,9 +146,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Solvers
       {
         for (int k = _diag[i]; k < _jlu[i + 1]; k++)
         {
-          result[i] = result[i] - _alu[k] * result[_jlu[k]];
+          lhs[i] = lhs[i] - _alu[k] * lhs[_jlu[k]];
         }
-        result[i] = _alu[i] * result[i];
+        lhs[i] = _alu[i] * lhs[i];
       }
     }
 

@@ -142,13 +142,13 @@ namespace Altaxo.Main.Services
     #region Property getters
 
     /// <inheritdoc />
-    public T GetValue<T>(string key, T defaultValue)
+    public T GetValue<T>(string property, T defaultValue)
     {
-      if (UserSettings.TryGetValue<T>(key, out var result))
+      if (UserSettings.TryGetValue<T>(property, out var result))
         return result;
-      else if (ApplicationSettings.TryGetValue<T>(key, out result))
+      else if (ApplicationSettings.TryGetValue<T>(property, out result))
         return result;
-      else if (BuiltinSettings.TryGetValue<T>(key, out result))
+      else if (BuiltinSettings.TryGetValue<T>(property, out result))
         return result;
       else
         return defaultValue;
@@ -205,10 +205,10 @@ namespace Altaxo.Main.Services
     #region Property setters
 
     /// <inheritdoc />
-    public void SetValue<T>(string key, T value)
+    public void SetValue<T>(string property, T value)
     {
-      UserSettings.SetValue<T>(key, value);
-      OnPropertyChanged(key);
+      UserSettings.SetValue<T>(property, value);
+      OnPropertyChanged(property);
     }
 
     /// <inheritdoc />

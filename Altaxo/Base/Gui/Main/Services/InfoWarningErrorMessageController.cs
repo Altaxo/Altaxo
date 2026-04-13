@@ -545,9 +545,9 @@ namespace Altaxo.Gui.Main.Services
       private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
         /// <inheritdoc/>
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
-          var s = (StateMemento)obj;
+          var s = (StateMemento)o;
 
           info.CreateArray("ColumnWidths", s.ColumnWidths.Length);
 

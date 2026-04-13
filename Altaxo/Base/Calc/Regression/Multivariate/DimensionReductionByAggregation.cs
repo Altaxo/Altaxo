@@ -53,9 +53,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionByAggregation)obj;
+        var s = (DimensionReductionByAggregation)o;
         info.CreateArray("AggregationKinds", s.AggregationKinds.Count);
         foreach (var v in s.AggregationKinds)
           info.AddEnum("e", v);

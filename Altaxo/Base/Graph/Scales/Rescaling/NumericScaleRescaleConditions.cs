@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
 
@@ -213,9 +213,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericScaleRescaleConditions), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NumericScaleRescaleConditions)obj;
+        var s = (NumericScaleRescaleConditions)o;
 
         // Cached values
         info.AddValue("DataBoundsOrg", s._dataBoundsOrg);

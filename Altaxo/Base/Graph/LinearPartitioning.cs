@@ -65,9 +65,9 @@ namespace Altaxo.Graph
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearPartitioning)obj;
+        var s = (LinearPartitioning)o;
 
         info.CreateArray("Partitioning", s.Count);
         foreach (var v in s)

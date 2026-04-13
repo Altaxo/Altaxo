@@ -50,9 +50,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedImageGraphic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EmbeddedImageGraphic)obj;
+        var s = (EmbeddedImageGraphic)o;
         info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!);
         info.AddValueOrNull("Image", s._imageProxy);
       }

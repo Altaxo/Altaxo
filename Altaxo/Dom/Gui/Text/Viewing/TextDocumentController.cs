@@ -315,9 +315,9 @@ namespace Altaxo.Gui.Text.Viewing
     }
 
     /// <inheritdoc/>
-    public void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedImageUrls)
+    public void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages)
     {
-      TextDocument.ReferencedImageUrls = referencedImageUrls;
+      TextDocument.ReferencedImageUrls = referencedLocalImages;
     }
 
     /// <inheritdoc/>

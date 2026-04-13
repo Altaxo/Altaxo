@@ -677,14 +677,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     }
 
     /// <inheritdoc/>
-    public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
+    public void SetHorizontalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize, double largeIncrement, double smallIncrement)
     {
       var controller = _controller;
       _controller = new WeakReference(null); // suppress scrollbar events
 
       _horizontalScrollBar.IsEnabled = isEnabled;
       _horizontalScrollBar.Maximum = maximum;
-      _horizontalScrollBar.ViewportSize = viewportSize;
+      _horizontalScrollBar.ViewportSize = portSize;
       _horizontalScrollBar.SmallChange = smallIncrement;
       _horizontalScrollBar.LargeChange = largeIncrement;
       _horizontalScrollBar.Value = value;
@@ -693,14 +693,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     }
 
     /// <inheritdoc/>
-    public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double viewportSize, double largeIncrement, double smallIncrement)
+    public void SetVerticalScrollbarParameter(bool isEnabled, double value, double maximum, double portSize, double largeIncrement, double smallIncrement)
     {
       var controller = _controller;
       _controller = new WeakReference(null); // suppress scrollbar events
 
       _verticalScrollBar.IsEnabled = isEnabled;
       _verticalScrollBar.Maximum = maximum;
-      _verticalScrollBar.ViewportSize = viewportSize;
+      _verticalScrollBar.ViewportSize = portSize;
       _verticalScrollBar.SmallChange = smallIncrement;
       _verticalScrollBar.LargeChange = largeIncrement;
       _verticalScrollBar.Value = value;
@@ -709,11 +709,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     }
 
     /// <inheritdoc/>
-    public void SetLayerStructure(NGTreeNode value, int[] currentLayerNumber)
+    public void SetLayerStructure(NGTreeNode structure, int[] currentLayerNumber)
     {
       _layerToolBar.Children.Clear();
 
-      foreach (var node in value.TakeFromHereToFirstLeaves())
+      foreach (var node in structure.TakeFromHereToFirstLeaves())
       {
         var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
         newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);

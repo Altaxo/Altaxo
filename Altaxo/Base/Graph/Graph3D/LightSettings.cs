@@ -71,9 +71,9 @@ namespace Altaxo.Graph.Graph3D
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LightSettings)obj;
+        var s = (LightSettings)o;
         info.AddValue("AmbientLight", s._ambientLight);
         info.AddValueOrNull("DiscreteLight0", s._discreteLight0);
         info.AddValueOrNull("DiscreteLight1", s._discreteLight1);

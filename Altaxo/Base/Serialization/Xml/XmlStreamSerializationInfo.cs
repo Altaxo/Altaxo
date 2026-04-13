@@ -288,14 +288,14 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <inheritdoc/>
-    public void AddValue(string name, System.IO.MemoryStream stream)
+    public void AddValue(string name, System.IO.MemoryStream val)
     {
       _writer.WriteStartElement(name);
-      if (stream is null)
+      if (val is null)
         _writer.WriteAttributeString("Length", XmlConvert.ToString(0));
       else
       {
-        byte[] buffer = stream.ToArray();
+        byte[] buffer = val.ToArray();
         _writer.WriteAttributeString("Length", XmlConvert.ToString(buffer.Length));
         _writer.WriteBase64(buffer, 0, buffer.Length);
       }

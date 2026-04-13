@@ -92,9 +92,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ColumnDrivenColorPlotStyle)obj;
+        var s = (ColumnDrivenColorPlotStyle)o;
 
         info.AddValue("DataColumn", s._dataColumnProxy);
         info.AddValue("Scale", s._scale);
@@ -187,19 +187,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Copies values from another instance.
     /// </summary>
-    /// <param name="obj">The source object.</param>
+    /// <param name="from">The source object.</param>
     /// <param name="copyWithDataReferences">If set to <c>true</c>, data references are copied.</param>
     /// <returns><c>true</c> if the copy succeeded; otherwise, <c>false</c>.</returns>
-    public bool CopyFrom(object obj, bool copyWithDataReferences)
+    public bool CopyFrom(object from, bool copyWithDataReferences)
     {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, from))
         return true;
 
-      if (obj is ColumnDrivenColorPlotStyle from)
+      if (from is ColumnDrivenColorPlotStyle fromX)
       {
         using (var suspendToken = SuspendGetToken())
         {
-          CopyFrom(from, copyWithDataReferences);
+          CopyFrom(fromX, copyWithDataReferences);
           suspendToken.ResumeSilently();
         }
         EhSelfChanged(EventArgs.Empty);
@@ -262,19 +262,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="column">The column.</param>
     protected void AdjustScaleTypeToColumnType(IReadableColumn column)
     {
-      if(column is null)
+      if (column is null)
       {
 
       }
-      else if(column is TextColumn && Scale is not TextScale)
+      else if (column is TextColumn && Scale is not TextScale)
       {
         InternalSetScale(new TextScale());
       }
-      else if(column is DateTimeColumn && (Scale is not DateTimeScale))
+      else if (column is DateTimeColumn && (Scale is not DateTimeScale))
       {
         InternalSetScale(new DateTimeScale());
       }
-      else if(column is INumericColumn && (Scale is not NumericalScale))
+      else if (column is INumericColumn && (Scale is not NumericalScale))
       {
         InternalSetScale(new LinearScale());
       }
@@ -430,7 +430,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var dataColumn = DataColumn;
       if (dataColumn is not null)
       {
-          return _colorProvider.GetColor(_scale.PhysicalVariantToNormal(dataColumn[idx]));
+        return _colorProvider.GetColor(_scale.PhysicalVariantToNormal(dataColumn[idx]));
       }
       else
       {

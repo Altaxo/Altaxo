@@ -69,9 +69,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (EmbeddedImageGraphic)obj;
+        var s = (EmbeddedImageGraphic)o;
         info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType!);
         info.AddValue("Image", s._imageProxy);
       }

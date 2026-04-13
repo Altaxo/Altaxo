@@ -128,9 +128,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContourDisc10Min), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ContourDisc10Min)obj;
+        var s = (ContourDisc10Min)o;
         info.AddValue("MinAbsoluteSize", s._minimumAbsoluteSize);
         info.AddValue("MinRelativeSize", s._minimumRelativeSize);
       }
