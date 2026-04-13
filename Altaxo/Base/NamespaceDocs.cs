@@ -24,17 +24,6 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Altaxo
-{
-  /// <summary>
-  /// Contains application-level infrastructure and shared types implemented in AltaxoBase.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
 namespace Altaxo.AddInItems
 {
   /// <summary>
@@ -57,82 +46,6 @@ namespace Altaxo.Analysis.Statistics.Histograms
   }
 }
 
-namespace Altaxo.Calc
-{
-  /// <summary>
-  /// Contains numerical helper types and scripting support implemented in AltaxoBase.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Calc.FitFunctions.Peaks
-{
-  /// <summary>
-  /// Contains peak-related fit functions implemented in AltaxoBase.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Calc.Fourier
-{
-  /// <summary>
-  /// Contains Fourier-related serialization helpers and supporting types.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Calc.LinearAlgebra
-{
-  /// <summary>
-  /// Contains linear-algebra wrappers and provider configuration helpers.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Calc.Regression.Multivariate
-{
-  /// <summary>
-  /// Contains multivariate regression workflows, data sources, and result types.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Calc.Regression.Nonlinear
-{
-  /// <summary>
-  /// Contains nonlinear fitting documents, parameter sets, and adapter types.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Collections
-{
-  /// <summary>
-  /// Contains collection types, tree structures, navigation helpers, and selection helpers.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
 
 namespace Altaxo.Data
 {
@@ -200,32 +113,10 @@ namespace Altaxo.Dom
   }
 }
 
-namespace Altaxo.Drawing
-{
-  /// <summary>
-  /// Contains drawing primitives, colors, pens, brushes, fonts, images, and style infrastructure.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
 namespace Altaxo.Drawing.ColorManagement
 {
   /// <summary>
   /// Contains color models, color sets, identifiers, and color-management helpers.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Drawing.D3D
-{
-  /// <summary>
-  /// Contains three-dimensional drawing primitives, geometry builders, and text helpers.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc
@@ -292,17 +183,6 @@ namespace Altaxo.Drawing.LineCaps
 {
   /// <summary>
   /// Contains two-dimensional line-cap implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Geometry
-{
-  /// <summary>
-  /// Contains geometry conversion helpers used by AltaxoBase.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc
@@ -1993,17 +1873,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
   }
 }
 
-namespace Altaxo.Main
-{
-  /// <summary>
-  /// Contains document-node infrastructure, project abstractions, events, and application services used by AltaxoBase.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
 namespace Altaxo.Main.Commands
 {
   /// <summary>
@@ -2103,72 +1972,6 @@ namespace Altaxo.Main.Services.ScriptCompilation
   }
 }
 
-namespace Altaxo.Science.Signals
-{
-  /// <summary>
-  /// Contains signal-analysis options, tools, and data sources.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Science.Spectroscopy
-{
-  /// <summary>
-  /// Contains spectroscopy commands, preprocessing documents, and shared spectroscopy infrastructure.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Science.Spectroscopy.Calibration
-{
-  /// <summary>
-  /// Contains spectroscopy calibration data-source abstractions and option documents.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
-{
-  /// <summary>
-  /// Contains option and data-source documents for coordinated peak fitting across multiple spectra.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Science.Spectroscopy.Raman
-{
-  /// <summary>
-  /// Contains Raman calibration data-source types.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Science.Thermorheology.MasterCurves
-{
-  /// <summary>
-  /// Contains master-curve creation data, options, and interpolation models.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
 namespace Altaxo.Scripting
 {
   /// <summary>
@@ -2180,32 +1983,11 @@ namespace Altaxo.Scripting
   }
 }
 
-namespace Altaxo.Serialization
-{
-  /// <summary>
-  /// Contains shared serialization helpers, parsers, and importer abstractions.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
 
 namespace Altaxo.Serialization.AltaxoProjects
 {
   /// <summary>
   /// Contains import support for Altaxo project files.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Ascii
-{
-  /// <summary>
-  /// Contains ASCII import and export options, data sources, and implementations.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc
@@ -2250,105 +2032,6 @@ namespace Altaxo.Serialization.Clipboard
 {
   /// <summary>
   /// Contains clipboard serialization infrastructure and clipboard data abstractions.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Galactic
-{
-  /// <summary>
-  /// Contains Galactic SPC import and export support.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Jcamp
-{
-  /// <summary>
-  /// Contains JCAMP import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Omnic
-{
-  /// <summary>
-  /// Contains OMNIC import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Origin
-{
-  /// <summary>
-  /// Contains Origin import options, data sources, wrappers, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.PrincetonInstruments
-{
-  /// <summary>
-  /// Contains Princeton Instruments import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Renishaw
-{
-  /// <summary>
-  /// Contains Renishaw import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.TA_Instruments
-{
-  /// <summary>
-  /// Contains TA Instruments import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.WITec
-{
-  /// <summary>
-  /// Contains WITec import options, data sources, and importer implementations.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Serialization.Xml
-{
-  /// <summary>
-  /// Contains XML serialization infrastructure, wrappers, streams, and surrogate support.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc
@@ -2459,17 +2142,6 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 {
   /// <summary>
   /// Contains inline renderers for MAML output.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Units
-{
-  /// <summary>
-  /// Contains unit-related extension helpers used by AltaxoBase.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc

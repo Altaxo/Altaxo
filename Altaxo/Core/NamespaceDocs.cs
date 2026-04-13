@@ -794,10 +794,21 @@ namespace Altaxo.Collections.Text
   }
 }
 
+namespace Altaxo.Drawing
+{
+  /// <summary>
+  /// Contains drawing primitives, colors, pens, brushes, fonts, images, and style infrastructure.
+  /// </summary>
+  [CompilerGenerated]
+  internal sealed class NamespaceDoc
+  {
+  }
+}
+
 namespace Altaxo.Drawing.D3D
 {
   /// <summary>
-  /// Contains 3D drawing support types used by AltaxoCore.
+  /// Contains three-dimensional drawing primitives, geometry builders, and text helpers.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc
@@ -852,7 +863,7 @@ namespace Altaxo.Geometry.Int64_2D
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Contains foundational application abstractions shared across Altaxo components.
+  /// Contains document-node infrastructure, project abstractions, events, and application services.
   /// </summary>
   [CompilerGenerated]
   internal sealed class NamespaceDoc

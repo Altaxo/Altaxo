@@ -123,28 +123,6 @@ namespace Altaxo.Gui.Text.Viewing
   }
 }
 
-namespace Altaxo.Main
-{
-  /// <summary>
-  /// Contains AltaxoDom-specific main application integrations, bindings, and descriptors.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
-namespace Altaxo.Main.Commands
-{
-  /// <summary>
-  /// Contains command handlers contributed by AltaxoDom.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
-
 namespace Altaxo.Main.Commands.ScriptEditorCommands
 {
   /// <summary>
@@ -255,13 +233,4 @@ namespace Altaxo.UnmanagedApi.User32
   }
 }
 
-namespace Altaxo.Worksheet.Commands
-{
-  /// <summary>
-  /// Contains worksheet-controller command helpers contributed by AltaxoDom.
-  /// </summary>
-  [CompilerGenerated]
-  internal sealed class NamespaceDoc
-  {
-  }
-}
+
