@@ -62,15 +62,15 @@ namespace Altaxo.Graph.Gdi
         _doc = graphdoc;
       }
 
-      public override string? Validate(string graphname)
+      public override string? Validate(string txt)
       {
-        var err = base.Validate(graphname);
+        var err = base.Validate(txt);
         if (!string.IsNullOrEmpty(err))
           return err;
 
-        if (_doc.Name == graphname)
+        if (_doc.Name == txt)
           return null;
-        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) is { } pc && pc.ContainsAnyName(graphname))
+        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) is { } pc && pc.ContainsAnyName(txt))
           return "This graph name already exists, please choose another name!";
         else
           return null;

@@ -45,6 +45,9 @@ namespace Altaxo.Calc.Interpolation
     private readonly double[] _y;
     private readonly Lazy<double[]> _indefiniteIntegral;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StepInterpolation"/> class.
+    /// </summary>
     /// <param name="x">Sample points (N), sorted ascending</param>
     /// <param name="sy">Samples values (N) of each segment starting at the corresponding sample point.</param>
     public StepInterpolation(double[] x, double[] sy)

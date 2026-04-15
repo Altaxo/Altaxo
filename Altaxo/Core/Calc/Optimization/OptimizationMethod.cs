@@ -99,26 +99,26 @@ namespace Altaxo.Calc.Optimization
       return ToString(null, null);
     }
 
-    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <summary>Returns a string representation of this <c>OptimizationMethod</c> using the specified format.</summary>
     /// <param name="format">A format specification.</param>
-    /// <returns>A string representation of this <c>OptimizationMethod</c>.</returns>
+    /// <returns>The formatted string representation of this <c>OptimizationMethod</c>.</returns>
     public string ToString(string format)
     {
       return ToString(format, null);
     }
 
-    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <summary>Returns the method name using the specified format provider.</summary>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns>A string representation of this <c>OptimizationMethod</c>.</returns>
+    /// <returns>The method name.</returns>
     public string ToString(IFormatProvider formatProvider)
     {
       return ToString(null, formatProvider);
     }
 
-    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <summary>Returns the method name using the specified format settings.</summary>
     /// <param name="format">A format specification.</param>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns>A string representation of this <c>OptimizationMethod</c>.</returns>
+    /// <returns>The method name.</returns>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
       return MethodName;

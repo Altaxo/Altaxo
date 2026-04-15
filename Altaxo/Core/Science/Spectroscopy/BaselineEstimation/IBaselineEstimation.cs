@@ -37,6 +37,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <param name="xArray">The x-values of the spectrum.</param>
     /// <param name="yArray">The y-values of the spectrum.</param>
     /// <param name="resultingBaseline">The destination to which the estimated baseline is written.</param>
-    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
+    public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
   }
 }

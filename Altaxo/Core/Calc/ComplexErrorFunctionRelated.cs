@@ -2083,7 +2083,6 @@ finish:
     /// <param name="sigma">The parameter sigma (of the Gaussian).</param>
     /// <param name="gamma">The parameter gamma (of the Lorentzian).</param>
     /// <returns>The half width at half maximum of the Voigt profile, see <see cref="Voigt(double, double, double)"/>.</returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
     /// <remarks>
     /// <para>References:</para>
     /// <para>[1] Olivero, Longbothum, Journal of Quantitative Spectroscopy and Radiative Transfer, 1977, 17:233</para>
@@ -2108,7 +2107,6 @@ finish:
     /// <param name="sigma">The parameter sigma (of the Gaussian).</param>
     /// <param name="gamma">The parameter gamma (of the Lorentzian).</param>
     /// <returns>The half width at half maximum of the Voigt profile, see <see cref="Voigt(double, double, double)"/>.</returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
     public static double VoigtHalfWidthHalfMaximum(double sigma, double gamma)
     {
       double HM;

@@ -110,7 +110,15 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the baseline estimation algorithm for the provided spectrum and returns the detrended result.
+    /// </summary>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <param name="regions">Optional regions to process separately.</param>
+    /// <returns>
+    /// A tuple containing the x-values, the detrended y-values, and the regions.
+    /// </returns>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var yBaseline = new double[y.Length];
@@ -133,12 +141,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Executes the algorithm for the provided spectrum and writes the estimated baseline into <paramref name="result"/>.
+    /// Executes the algorithm for the provided spectrum and writes the estimated baseline into <paramref name="resultingBaseline"/>.
     /// </summary>
     /// <param name="xArray">The x-values of the spectrum.</param>
     /// <param name="yArray">The y-values of the spectrum.</param>
-    /// <param name="result">The destination span to which the estimated baseline is written.</param>
-    public virtual void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
+    /// <param name="resultingBaseline">The destination span to which the estimated baseline is written.</param>
+    public virtual void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       var srcY = new double[yArray.Length];
       var tmpY = new double[yArray.Length];
@@ -148,7 +156,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       if (_isHalfWidthInXUnits && 0.5 * (stat.Max - stat.Min) / stat.Max > 1.0 / xArray.Length)
       {
         // if the interpoint distance is not uniform, we need to use the algorithm with locally calculated half width
-        EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, result);
+        EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, resultingBaseline);
         return;
       }
       else
@@ -166,7 +174,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
                          Math.Max(1, (int)Math.Floor(_halfWidth));
         }
 
-        EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, result);
+        EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, resultingBaseline);
       }
     }
 

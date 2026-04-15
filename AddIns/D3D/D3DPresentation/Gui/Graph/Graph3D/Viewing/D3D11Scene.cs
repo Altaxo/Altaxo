@@ -289,29 +289,29 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       Attach((Device)hostDevice, hostSize);
     }
     /// <summary>
-    /// Attaches the scene to the device specified in <paramref name="device"/>, and allocate resources specific to that device.
+    /// Attaches the scene to the device specified in <paramref name="hostDevice"/>, and allocate resources specific to that device.
     /// </summary>
-    /// <param name="device">The device to attach to.</param>
+    /// <param name="hostDevice">The device to attach to.</param>
     /// <param name="hostSize">The size of the device.</param>
-    public void Attach(Device device, PointD2D hostSize)
+    public void Attach(Device hostDevice, PointD2D hostSize)
     {
       if (_cachedDevice is not null)
         throw new InvalidOperationException("Try to attach to device without deattach former device!");
 
-      _cachedDevice = device ?? throw new ArgumentNullException(nameof(device));
+      _cachedDevice = hostDevice ?? throw new ArgumentNullException(nameof(hostDevice));
       _hostSize = hostSize;
 
-      _vertexShader_P = CreateVertexShader(device, "VS_P", out var bytes_VS_P);
-      _vertexShader_OVERLAY_PC = CreateVertexShader(device, "VS_OVERLAY_PC", out var bytes_VS_OVERLAY_PC);
-      _vertexShader_PT = CreateVertexShader(device, "VS_PT", out var bytes_VS_PT);
-      _vertexShader_PN = CreateVertexShader(device, "VS_PN", out var bytes_VS_PN);
-      _vertexShader_PNC = CreateVertexShader(device, "VS_PNC", out var bytes_VS_PNC);
-      _vertexShader_PNT = CreateVertexShader(device, "VS_PNT", out var bytes_VS_PNT);
-      _vertexShader_PNT1 = CreateVertexShader(device, "VS_PNT1", out var bytes_VS_PNT1);
+      _vertexShader_P = CreateVertexShader(hostDevice, "VS_P", out var bytes_VS_P);
+      _vertexShader_OVERLAY_PC = CreateVertexShader(hostDevice, "VS_OVERLAY_PC", out var bytes_VS_OVERLAY_PC);
+      _vertexShader_PT = CreateVertexShader(hostDevice, "VS_PT", out var bytes_VS_PT);
+      _vertexShader_PN = CreateVertexShader(hostDevice, "VS_PN", out var bytes_VS_PN);
+      _vertexShader_PNC = CreateVertexShader(hostDevice, "VS_PNC", out var bytes_VS_PNC);
+      _vertexShader_PNT = CreateVertexShader(hostDevice, "VS_PNT", out var bytes_VS_PNT);
+      _vertexShader_PNT1 = CreateVertexShader(hostDevice, "VS_PNT1", out var bytes_VS_PNT1);
 
-      _pixelShader = CreatePixelShader(device, "PS", out var bytes_PS);
-      _pixelShader_OVERLAY = CreatePixelShader(device, "PS_OVERLAY", out var bytes_PS_OVERLAY);
-      _pixelShader_T1 = CreatePixelShader(device, "PS_T1", out var bytes_PS_T1);
+      _pixelShader = CreatePixelShader(hostDevice, "PS", out var bytes_PS);
+      _pixelShader_OVERLAY = CreatePixelShader(hostDevice, "PS_OVERLAY", out var bytes_PS_OVERLAY);
+      _pixelShader_T1 = CreatePixelShader(hostDevice, "PS_T1", out var bytes_PS_T1);
 
       for (int i = 0; i < _layoutNames.Length; ++i)
       {
@@ -319,34 +319,34 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         switch (i)
         {
           case 0:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
                                           },
                                           bytes_VS_P);
             break;
           case 1:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                           new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
                                           },
                                           bytes_VS_OVERLAY_PC);
             break;
           case 2:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                           new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
                                           },
                                           bytes_VS_PT);
             break;
           case 3:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                           new InputElementDescription("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
                                           },
                                           bytes_VS_PN);
             break;
           case 4:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                           new InputElementDescription("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
                                           new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
@@ -354,7 +354,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
                                           bytes_VS_PNC);
             break;
           case 5:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                           new InputElementDescription("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
                                           new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
@@ -362,7 +362,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
                                           bytes_VS_PNT);
             break;
           case 6:
-            inputLayout = device.CreateInputLayout(new[] {
+            inputLayout = hostDevice.CreateInputLayout(new[] {
                                           new InputElementDescription("POSITION", 0, Format.R32G32B32_Float, 0, 0),
                                           new InputElementDescription("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
                                           new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
@@ -380,37 +380,37 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 
       // View transformation variables
-      _bufWorldViewProj = device.CreateBuffer(_worldViewProj, new BufferDescription((4 * 4) * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.WorldViewProj_RegisterNumber, _bufWorldViewProj);
+      _bufWorldViewProj = hostDevice.CreateBuffer(_worldViewProj, new BufferDescription((4 * 4) * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      hostDevice.ImmediateContext.VSSetConstantBuffer(LightingHlsl.WorldViewProj_RegisterNumber, _bufWorldViewProj);
 
-      _bufEyePosition = device.CreateBuffer(_eyePosition, new BufferDescription(4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.EyePosition_RegisterNumber, _bufEyePosition);
+      _bufEyePosition = hostDevice.CreateBuffer(_eyePosition, new BufferDescription(4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      hostDevice.ImmediateContext.PSSetConstantBuffer(LightingHlsl.EyePosition_RegisterNumber, _bufEyePosition);
 
       // Material
       _material.SpecularExponent = 4;
       _material.SpecularIntensity = 1;
       _material.MetalnessValue = 0.75f;
-      _bufMaterial = device.CreateBuffer(_material, new BufferDescription(8 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
+      _bufMaterial = hostDevice.CreateBuffer(_material, new BufferDescription(8 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      hostDevice.ImmediateContext.VSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
+      hostDevice.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
 
       // Lights
       _lights = new LightingHlsl.CbLights();
-      _bufLights = device.CreateBuffer(_lights, new BufferDescription((uint)Marshal.SizeOf(_lights), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Lights_RegisterNumber, _bufLights);
+      _bufLights = hostDevice.CreateBuffer(_lights, new BufferDescription((uint)Marshal.SizeOf(_lights), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      hostDevice.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Lights_RegisterNumber, _bufLights);
       // Lighting variables
       _lighting = new Lighting();
       _lighting.SetDefaultLighting();
       _lighting.AssembleLightsInto(ref _lights);
-      device.ImmediateContext.UpdateSubresource(_lights, _bufLights);
+      hostDevice.ImmediateContext.UpdateSubresource(_lights, _bufLights);
 
 
       // Color providers
-      BindTextureFor1DColorProviders(device.ImmediateContext);
+      BindTextureFor1DColorProviders(hostDevice.ImmediateContext);
 
       // Clip plane variables
-      _bufClipPlanes = device.CreateBuffer(_clipPlanes, new BufferDescription(6 * 4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.ClipPlanes_RegisterNumber, _bufClipPlanes);
+      _bufClipPlanes = hostDevice.CreateBuffer(_clipPlanes, new BufferDescription(6 * 4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      hostDevice.ImmediateContext.VSSetConstantBuffer(LightingHlsl.ClipPlanes_RegisterNumber, _bufClipPlanes);
 
 
 

@@ -617,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
     /// </summary>
-    /// <param name="styles"></param>
+    /// <param name="styles">The plot group styles to prepare and distribute.</param>
     /// <param name="layer">The plot layer.</param>
     protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
     {
@@ -656,7 +656,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
     /// </summary>
-    /// <param name="styles"></param>
+    /// <param name="styles">The plot group styles to apply and distribute.</param>
     protected void ApplyStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles)
     {
       if ( // transferToLocalStyles
@@ -801,7 +801,7 @@ namespace Altaxo.Graph.Gdi.Plot
         {
           pi.ApplyGroupStyles(_plotGroupStyles);
           _plotGroupStyles.Step(1);
-        }
+    }
       }
       // after application of PlotGroupStyles to all the plot items is done, announce the end of application,
       _plotGroupStyles.EndApply();
@@ -814,11 +814,11 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// Does nothing because a plot item collection doesn't distibute item styles from members of the outer group into it's own members.
+    /// Does nothing because a plot item collection does not distribute item styles from members of the outer group to its own members.
     /// </summary>
-    /// <param name="template">Ignored.</param>
-    /// <param name="strictness">Ignored.</param>
-    /// <inheritdoc />
+    /// <param name="template">The template plot item. This value is ignored.</param>
+    /// <param name="strictness">The plot-group strictness. This value is ignored.</param>
+    /// <remarks>Does nothing because a plot item collection does not distribute item styles from members of the outer group into its own members.</remarks>
     public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
     }
@@ -1458,7 +1458,7 @@ namespace Altaxo.Graph.Gdi.Plot
       private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
       {
         /// <inheritdoc />
-        public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           throw new NotImplementedException("This is deprecated stuff");
           /*

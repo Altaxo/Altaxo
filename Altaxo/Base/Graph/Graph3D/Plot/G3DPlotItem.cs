@@ -166,9 +166,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Prepares local and external group styles before painting.
     /// </summary>
-    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="styles">The external group styles.</param>
     /// <param name="layer">The plot layer.</param>
-    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
       var pdata = GetRangesAndPoints(layer);
 
@@ -179,14 +179,14 @@ namespace Altaxo.Graph.Graph3D.Plot
         _localGroups.Clear();
 
         // first add missing local group styles
-        _plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);
+        _plotStyles.CollectLocalGroupStyles(styles, _localGroups);
 
         // for the newly created group styles BeginPrepare must be called
         _localGroups.BeginPrepare();
 
         // now prepare the groups
         if (pdata is not null)
-          _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+          _plotStyles.PrepareGroupStyles(styles, _localGroups, layer, pdata);
 
         // for the group styles in the local group, PrepareStep and EndPrepare must be called,
         _localGroups.PrepareStep();
@@ -199,8 +199,8 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Applies the prepared group styles.
     /// </summary>
-    /// <param name="externalGroups">The external group styles.</param>
-    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
+    /// <param name="styles">The external group styles.</param>
+    public override void ApplyGroupStyles(PlotGroupStyleCollection styles)
     {
       if (_localGroups is null)
         throw new InvalidProgramException($"{nameof(_localGroups)} is null. Call {nameof(PrepareGroupStyles)} before!");
@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Graph3D.Plot
         // for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
         _localGroups.BeginApply();
 
-        _plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
+        _plotStyles.ApplyGroupStyles(styles, _localGroups);
 
         // for externalGroups, EndApply is called later in the PlotItemCollection, for localGroups it has to be called here
         _localGroups.EndApply();
@@ -258,12 +258,12 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     /// <inheritdoc/>
-    public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
+    public override void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       Processed3DPlotData? pdata = GetRangesAndPoints(layer);
       if (pdata is not null)
         Paint(g, layer, pdata,
-          (prevPlotItem is G3DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
+          (previousPlotItem is G3DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
           (nextPlotItem is G3DPlotItem nextPI) ? nextPI.GetPlotData(layer) : null
           );
     }

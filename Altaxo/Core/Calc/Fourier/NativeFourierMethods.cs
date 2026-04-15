@@ -262,7 +262,7 @@ namespace Altaxo.Calc.Fourier
     /// Performs a inline native fouriertransformation of real and imaginary part arrays.
     /// </summary>
     /// <param name="real">The real part of the array to transform.</param>
-    /// <param name="imag">The real part of the array to transform.</param>
+    /// <param name="imag">The imaginary part of the array to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
     public static void FourierTransformation(double[] real, double[] imag, FourierDirection direction)
     {
@@ -276,7 +276,7 @@ namespace Altaxo.Calc.Fourier
     /// Performs a native Fourier transformation of a complex value array.
     /// </summary>
     /// <param name="inputreal">The real part of the array to transform.</param>
-    /// <param name="inputimag">The real part of the array to transform.</param>
+    /// <param name="inputimag">The imaginary part of the array to transform.</param>
     /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
     /// <param name="resultimag">Used to store the imaginary part of the result of the transformation.  May be equal to the input array.</param>
     /// <param name="count">Number of points to transform.</param>

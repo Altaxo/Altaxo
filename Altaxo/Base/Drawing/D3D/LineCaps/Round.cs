@@ -117,7 +117,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
     }
 
     /// <inheritdoc/>
-    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[]? baseCrossSectionPositions, VectorD3D[]? baseCrossSectionNormals, ref object? temporaryStorageSpace)
+    public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D westVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[]? baseCrossSectionPositions, VectorD3D[]? baseCrossSectionNormals, ref object? temporaryStorageSpace)
     {
       Add(
         AddPositionAndNormal,
@@ -125,7 +125,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
         ref vertexIndexOffset,
         isStartCap,
         basePoint,
-        eastVector,
+        westVector,
         northVector,
         forwardVectorNormalized,
         lineCrossSection,

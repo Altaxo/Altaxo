@@ -205,7 +205,6 @@ namespace Altaxo.Gui.Common.MultiRename
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public override string GetContent(int originalListIndex, int currentSortIndex)
     {
       int val = _renameData.GetIntegerValueOfShortcut(_shortCut, originalListIndex, currentSortIndex);

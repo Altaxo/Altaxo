@@ -116,7 +116,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="rows">Number of rows.</param>
     /// <param name="columns">Number of columns.</param>
-    /// <returns></returns>
+    /// <returns>A matrix instance sized to the requested number of rows and columns.</returns>
     protected virtual IMatrix<double> DefaultMatrixGenerator(int rows, int columns)
     {
       return new JaggedArrayMatrix(rows, columns);
@@ -240,7 +240,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the indices of the data rows of the table that contribute to the matrix.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The indices of the data rows that participate in the generated matrix.</returns>
     [MemberNotNull(nameof(_participatingDataRows))]
     public IAscendingIntegerCollection GetParticipatingDataRows()
     {
@@ -649,7 +649,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="table">The table.</param>
     /// <param name="selectedColumns">The selected data columns of the provided table. You can provide <c>null</c> for this parameter. This is considered as if all columns of the table are selected.</param>
-    /// <returns></returns>
+    /// <returns>The indices of the data columns that can participate in the matrix.</returns>
     public static AscendingIntegerCollection GetParticipatingDataColumns(DataTable table, IAscendingIntegerCollection? selectedColumns)
     {
       var result = new Altaxo.Collections.AscendingIntegerCollection();

@@ -226,7 +226,7 @@ namespace Altaxo.Data
     /// from another column to this column
     /// ColumnName and ColumnNumber is not copied!
     /// </summary>
-    /// <param name="ano"></param>
+    /// <param name="ano">The source column whose header information should be copied.</param>
     public void CopyHeaderInformationFrom(DataColumn ano)
     {
     }
@@ -648,7 +648,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a wrapper that implements IVector with starting index = 0 and number of elements = Count.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A writable vector wrapper over the complete column.</returns>
     public virtual Altaxo.Calc.LinearAlgebra.IVector<double> ToVector()
     {
       return ToVector(0, Count);
@@ -657,7 +657,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a wrapper that implements IROVector with starting index = 0 and number of elements = Count.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A read-only vector wrapper over the complete column.</returns>
     public virtual IReadOnlyList<double> ToROVector()
     {
       return ToROVector(0, Count);

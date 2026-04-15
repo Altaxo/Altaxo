@@ -28,6 +28,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Base class for drawable graphic objects and their interaction helpers.
+  /// </summary>
   public abstract partial class GraphicBase
   {
     /// <summary>

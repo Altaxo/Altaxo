@@ -353,7 +353,12 @@ namespace Altaxo.Main.Services
     /// </remarks>
     Task InvokeAsync(Action callback);
 
-    /// <inheritdoc see="InvokeAsync(Action)"/>
+    /// <summary>
+    /// Invokes the specified callback on the message loop and returns its result.
+    /// </summary>
+    /// <typeparam name="T">The type of the result returned by <paramref name="callback"/>.</typeparam>
+    /// <param name="callback">The callback to execute.</param>
+    /// <returns>A task that completes with the value returned by <paramref name="callback"/>.</returns>
     Task<T> InvokeAsync<T>(Func<T> callback);
 
     #endregion InvokeAsync

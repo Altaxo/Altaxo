@@ -64,11 +64,11 @@ namespace Poly2Tri
     ///  d is outside B if orient2d(a,b,d) or orient2d(c,a,d) is CW
     ///  This preknowledge gives us a way to optimize the incircle test
     /// </summary>
-    /// <param name="pa">triangle point, opposite d</param>
-    /// <param name="pb">triangle point</param>
-    /// <param name="pc">triangle point</param>
-    /// <param name="pd">point opposite a</param>
-    /// <returns>true if d is inside circle, false if on circle edge</returns>
+    /// <param name="pa">The first triangle point, opposite <paramref name="pd"/>.</param>
+    /// <param name="pb">The second triangle point.</param>
+    /// <param name="pc">The third triangle point.</param>
+    /// <param name="pd">The point tested against the circumcircle of the triangle, opposite <paramref name="pa"/>.</param>
+    /// <returns><see langword="true"/> if <paramref name="pd"/> is inside the circle; otherwise, <see langword="false"/>.</returns>
     public static bool SmartIncircle(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
     {
       double pdx = pd.X;

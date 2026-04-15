@@ -242,13 +242,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+      dependent[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -313,20 +313,20 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] FV)
+    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      FV[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+      dependent[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
+    public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = independent[r, 0];
 
-        FV[r] = LogarithmicScaledTransition(x, P[0], P[1], P[2], P[3]);
+        dependent[r] = LogarithmicScaledTransition(x, parameters[0], parameters[1], parameters[2], parameters[3]);
 
       }
     }

@@ -113,7 +113,6 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <value>
     /// The number of terms.
     /// </value>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public int NumberOfTerms { get; }
 
     /// <summary>

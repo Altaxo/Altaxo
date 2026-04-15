@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
     /// <inheritdoc />
     protected override PointF[] GetStepPolylinePoints(
-    PointF[] allLinePoints,
+    PointF[] pdata,
     IPlotRange range,
     IPlotArea layer,
     bool connectCircular,
@@ -83,18 +83,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       int i, j;
       for (i = 0, j = range.LowerBound; j < end; i += numberOfPointsPerOriginalPoint, j++)
       {
-        subLinePoints[i] = allLinePoints[j];
-        subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j].Y);
-        subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[j + 1].X) / 2, allLinePoints[j + 1].Y);
+        subLinePoints[i] = pdata[j];
+        subLinePoints[i + 1] = new PointF((pdata[j].X + pdata[j + 1].X) / 2, pdata[j].Y);
+        subLinePoints[i + 2] = new PointF((pdata[j].X + pdata[j + 1].X) / 2, pdata[j + 1].Y);
       }
-      subLinePoints[i] = allLinePoints[j];
+      subLinePoints[i] = pdata[j];
       lastIndex = i;
 
       if (connectCircular)
       {
-        subLinePoints[i + 1] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[j].Y);
-        subLinePoints[i + 2] = new PointF((allLinePoints[j].X + allLinePoints[range.LowerBound].X) / 2, allLinePoints[range.LowerBound].Y);
-        subLinePoints[i + 3] = allLinePoints[range.LowerBound];
+        subLinePoints[i + 1] = new PointF((pdata[j].X + pdata[range.LowerBound].X) / 2, pdata[j].Y);
+        subLinePoints[i + 2] = new PointF((pdata[j].X + pdata[range.LowerBound].X) / 2, pdata[range.LowerBound].Y);
+        subLinePoints[i + 3] = pdata[range.LowerBound];
         lastIndex = i + 3;
       }
       return subLinePoints;

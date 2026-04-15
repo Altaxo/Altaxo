@@ -133,7 +133,7 @@ namespace Altaxo.Collections
     /// <param name="capacity">The initial capacity of the priority queue.</param>
     /// <param name="initialToken">The initial token.</param>
     /// <param name="GetNextToken">The function to generate new tokens. Argument is the old token. The return value should be a new token that was not generated before.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="capacity"/> is less than or equal to zero.</exception>
     public ConcurrentTokenizedPriorityQueue(int capacity, [AllowNull] TToken initialToken, Func<TToken, TToken>? GetNextToken)
     {
       if (capacity <= 0)

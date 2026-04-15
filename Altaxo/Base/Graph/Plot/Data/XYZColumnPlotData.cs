@@ -158,11 +158,11 @@ namespace Altaxo.Graph.Plot.Data
     protected class SerializationSurrogate1 : XYAndZColumn.XmlSerializationSurrogate0
     {
       /// <inheritdoc/>
-      public override void Serialize(object obj, IXmlSerializationInfo info)
+      public override void Serialize(object o, IXmlSerializationInfo info)
       {
-        base.Serialize(obj, info);
+        base.Serialize(o, info);
 
-        var s = (XYZColumnPlotData)obj;
+        var s = (XYZColumnPlotData)o;
         info.AddValueOrNull("XBoundaries", s._xBoundaries);
         info.AddValueOrNull("YBoundaries", s._yBoundaries);
         info.AddValueOrNull("ZBoundaries", s._zBoundaries);
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Plot.Data
 
 
       /// <inheritdoc/>
-      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         if (o is XYZColumnPlotData s)
           s.DeserializeSurrogate1(info);

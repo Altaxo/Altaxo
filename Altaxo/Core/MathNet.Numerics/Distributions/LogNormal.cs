@@ -340,9 +340,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the probability density of the distribution (PDF) at x, i.e. ∂P(X ≤ x)/∂x.
     /// </summary>
-    /// <param name="x">The location at which to compute the density.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
+    /// <param name="x">The location at which to compute the density.</param>
     /// <returns>the density at <paramref name="x"/>.</returns>
     /// <seealso cref="Density"/>
     /// <remarks>MATLAB: lognpdf</remarks>
@@ -365,9 +365,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the log probability density of the distribution (lnPDF) at x, i.e. ln(∂P(X ≤ x)/∂x).
     /// </summary>
-    /// <param name="x">The location at which to compute the density.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
+    /// <param name="x">The location at which to compute the density.</param>
     /// <returns>the log density at <paramref name="x"/>.</returns>
     /// <seealso cref="DensityLn"/>
     public static double PDFLn(double mu, double sigma, double x)
@@ -389,9 +389,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     /// <remarks>MATLAB: logncdf</remarks>
@@ -410,9 +410,9 @@ namespace Altaxo.Calc.Distributions
     /// Computes the inverse of the cumulative distribution function (InvCDF) for the distribution
     /// at the given probability. This is also known as the quantile or percent point function.
     /// </summary>
-    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
+    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <returns>the inverse cumulative density at <paramref name="p"/>.</returns>
     /// <seealso cref="InverseCumulativeDistribution"/>
     /// <remarks>MATLAB: logninv</remarks>
@@ -468,7 +468,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double mu, double sigma)
     {
       if (sigma < 0.0)
@@ -517,7 +516,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="mu">The log-scale (μ) of the distribution.</param>
     /// <param name="sigma">The shape (σ) of the distribution. Range: σ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double mu, double sigma)
     {
       if (sigma < 0.0)

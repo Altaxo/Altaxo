@@ -82,7 +82,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the baseline estimation for the specified data and returns the baseline-corrected y-values.
+    /// </summary>
+    /// <param name="x">The x-values of the data.</param>
+    /// <param name="y">The y-values of the data.</param>
+    /// <param name="regions">The optional regions that define contiguous data segments.</param>
+    /// <returns>The original x-values, the baseline-corrected y-values, and the regions.</returns>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var yBaseline = new double[y.Length];
@@ -105,7 +111,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the baseline estimation algorithm for a contiguous data segment.
+    /// </summary>
+    /// <param name="xArray">The x-values of the data segment.</param>
+    /// <param name="yArray">The y-values of the data segment.</param>
+    /// <param name="resultingBaseline">The span that receives the estimated baseline values.</param>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       double stopThreshold = 1E-4;
@@ -182,7 +193,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <param name="numberOfArrayPoints">The number of points in the spline curve.</param>
     /// <param name="meanXIncrement">Mean increment of the x-values of the spectrum.</param>
     /// <returns>The spline options with the smoothing value set according to the parameters.</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown when the smoothness specification or interpolation type is not supported.</exception>
     protected static IInterpolationFunctionOptions GetSpline(IInterpolationFunctionOptions interpolation, SmoothnessSpecification smoothnessSpecifiedBy, double smoothnessValue, double numberOfArrayPoints, double meanXIncrement)
     {
       switch (interpolation)

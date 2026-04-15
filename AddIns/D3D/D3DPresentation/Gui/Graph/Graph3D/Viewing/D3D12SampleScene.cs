@@ -140,12 +140,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Attaches the scene to a renderer and creates pipeline state and GPU resources.
     /// </summary>
-    /// <param name="renderer">Renderer that provides the D3D12 device and command list.</param>
-    public void Attach(ID3D12RenderContext renderer)
+    /// <param name="hostDevice">Renderer that provides the D3D12 device and command list.</param>
+    public void Attach(ID3D12RenderContext hostDevice)
     {
-      _renderer = renderer;
+      _renderer = hostDevice;
 
-      var device = renderer.Device;
+      var device = hostDevice.Device;
 
       using var vs1 = LoadShaderBytecode("Altaxo.CompiledShaders.SampleScene_VS1.cso");
       using var vs2 = LoadShaderBytecode("Altaxo.CompiledShaders.SampleScene_VS2.cso");

@@ -73,7 +73,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// of the fit function is used. Otherwise, this value overrides the original parameter name of the fit function.</summary>
     private string?[] _parameterNames = new string?[0];
 
-    /// <summary></summary>
+    /// <summary>
+    /// Gets or sets the prefix used when automatically generating parameter names.
+    /// </summary>
     private string _parameterNameStart = string.Empty;
 
     #region Serialization

@@ -648,7 +648,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="p">Dividend polynomial coefficients.</param>
     /// <param name="q">Quotient polynomial coefficients (output).</param>
     /// <param name="a">Remainder coefficient (output).</param>
-    /// <param name="b">Remainder coefficient (output).</param>
+    /// <param name="b">Second remainder coefficient (output).</param>
     private static void QuadSD_ak1(int NN, double u, double v, double[] p, double[] q, ref double a, ref double b)
     {
       // Divides p by the quadratic 1, u, v placing the quotient in q and the remainder in a, b
@@ -674,19 +674,19 @@ namespace Altaxo.Calc.RootFinding
     /// </summary>
     /// <param name="N">Degree (or effective order) of the current polynomial.</param>
     /// <param name="a">Remainder coefficient from synthetic division.</param>
-    /// <param name="b">Remainder coefficient from synthetic division.</param>
+    /// <param name="b">Second remainder coefficient from synthetic division.</param>
     /// <param name="a1">Scalar quantity (output).</param>
-    /// <param name="a3">Scalar quantity (output).</param>
-    /// <param name="a7">Scalar quantity (output).</param>
-    /// <param name="c">Remainder coefficient from synthetic division of K (output).</param>
-    /// <param name="d">Remainder coefficient from synthetic division of K (output).</param>
-    /// <param name="e">Scalar quantity (output).</param>
-    /// <param name="f">Scalar quantity (output).</param>
-    /// <param name="g">Scalar quantity (output).</param>
-    /// <param name="h">Scalar quantity (output).</param>
+    /// <param name="a3">Scalar quantity <c>a3</c> (output).</param>
+    /// <param name="a7">Scalar quantity <c>a7</c> (output).</param>
+    /// <param name="c">First remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="d">Second remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="e">Scalar quantity <c>e</c> (output).</param>
+    /// <param name="f">Scalar quantity <c>f</c> (output).</param>
+    /// <param name="g">Scalar quantity <c>g</c> (output).</param>
+    /// <param name="h">Scalar quantity <c>h</c> (output).</param>
     /// <param name="K">The K-polynomial coefficients.</param>
     /// <param name="u">Quadratic coefficient used for synthetic division.</param>
-    /// <param name="v">Quadratic coefficient used for synthetic division.</param>
+    /// <param name="v">Second quadratic coefficient used for synthetic division.</param>
     /// <param name="qk">Quotient of K divided by the quadratic (output).</param>
     /// <returns>
     /// An integer flag indicating how the calculations are normalized to avoid overflow.
@@ -747,10 +747,10 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="N">Degree (or effective order) of the current polynomial.</param>
     /// <param name="tFlag">Normalization mode flag returned by <see cref="calcSC_ak1"/>.</param>
     /// <param name="a">Remainder coefficient from synthetic division.</param>
-    /// <param name="b">Remainder coefficient from synthetic division.</param>
+    /// <param name="b">Second remainder coefficient from synthetic division.</param>
     /// <param name="a1">Scalar quantity.</param>
-    /// <param name="a3">Scalar quantity (input/output).</param>
-    /// <param name="a7">Scalar quantity (input/output).</param>
+    /// <param name="a3">Scalar quantity <c>a3</c> (input/output).</param>
+    /// <param name="a7">Scalar quantity <c>a7</c> (input/output).</param>
     /// <param name="K">The K-polynomial coefficients (input/output).</param>
     /// <param name="qk">Quotient of K divided by the quadratic.</param>
     /// <param name="qp">Quotient of p divided by the quadratic.</param>
@@ -820,14 +820,14 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="vv">Estimated quadratic <c>v</c> coefficient (output).</param>
     /// <param name="a">Remainder coefficient.</param>
     /// <param name="a1">Scalar quantity.</param>
-    /// <param name="a3">Scalar quantity.</param>
-    /// <param name="a7">Scalar quantity.</param>
-    /// <param name="b">Remainder coefficient.</param>
-    /// <param name="c">Remainder coefficient.</param>
-    /// <param name="d">Remainder coefficient.</param>
-    /// <param name="f">Scalar quantity.</param>
-    /// <param name="g">Scalar quantity.</param>
-    /// <param name="h">Scalar quantity.</param>
+    /// <param name="a3">Scalar quantity <c>a3</c>.</param>
+    /// <param name="a7">Scalar quantity <c>a7</c>.</param>
+    /// <param name="b">Second remainder coefficient.</param>
+    /// <param name="c">First remainder coefficient of the divided K-polynomial.</param>
+    /// <param name="d">Second remainder coefficient of the divided K-polynomial.</param>
+    /// <param name="f">Scalar quantity <c>f</c>.</param>
+    /// <param name="g">Scalar quantity <c>g</c>.</param>
+    /// <param name="h">Scalar quantity <c>h</c>.</param>
     /// <param name="u">Current estimate for the quadratic <c>u</c> coefficient.</param>
     /// <param name="v">Current estimate for the quadratic <c>v</c> coefficient.</param>
     /// <param name="K">The K-polynomial coefficients.</param>
@@ -896,18 +896,18 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="qp">Quotient polynomial coefficients (output).</param>
     /// <param name="NN">Polynomial coefficient count (<c>N + 1</c>).</param>
     /// <param name="a">Remainder coefficient (output).</param>
-    /// <param name="b">Remainder coefficient (output).</param>
+    /// <param name="b">Second remainder coefficient (output).</param>
     /// <param name="p">Current polynomial coefficients.</param>
     /// <param name="qk">Quotient of K divided by the quadratic.</param>
-    /// <param name="a1">Scalar quantity (output).</param>
-    /// <param name="a3">Scalar quantity (output).</param>
-    /// <param name="a7">Scalar quantity (output).</param>
-    /// <param name="c">Remainder coefficient from synthetic division of K (output).</param>
-    /// <param name="d">Remainder coefficient from synthetic division of K (output).</param>
-    /// <param name="e">Scalar quantity (output).</param>
-    /// <param name="f">Scalar quantity (output).</param>
-    /// <param name="g">Scalar quantity (output).</param>
-    /// <param name="h">Scalar quantity (output).</param>
+    /// <param name="a1">Scalar quantity <c>a1</c> (output).</param>
+    /// <param name="a3">Scalar quantity <c>a3</c> (output).</param>
+    /// <param name="a7">Scalar quantity <c>a7</c> (output).</param>
+    /// <param name="c">First remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="d">Second remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="e">Scalar quantity <c>e</c> (output).</param>
+    /// <param name="f">Scalar quantity <c>f</c> (output).</param>
+    /// <param name="g">Scalar quantity <c>g</c> (output).</param>
+    /// <param name="h">Scalar quantity <c>h</c> (output).</param>
     /// <param name="K">The K-polynomial coefficients (input/output).</param>
     private static void QuadIT_ak1(int N, ref int NZ, double uu, double vv, ref double szr, ref double szi, ref double lzr, ref double lzi, double[] qp, int NN,
     ref double a, ref double b, double[] p, double[] qk, ref double a1, ref double a3, ref double a7, ref double c, ref double d, ref double e,

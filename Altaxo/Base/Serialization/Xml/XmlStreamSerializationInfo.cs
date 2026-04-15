@@ -497,7 +497,14 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Adds an array of primitive values using the specified XML encoding.
+    /// </summary>
+    /// <param name="name">The element name.</param>
+    /// <param name="val">The array containing the values.</param>
+    /// <param name="count">The number of elements to write.</param>
+    /// <param name="sizeofelement">The size of each element in bytes.</param>
+    /// <param name="encoding">The XML array encoding to use.</param>
     public void AddArrayOfPrimitiveType(string name, System.Array val, int count, int sizeofelement, XmlArrayEncoding encoding)
     {
       switch (encoding)
@@ -590,7 +597,11 @@ namespace Altaxo.Serialization.Xml
       return o is null || _surrogateSelector.GetSurrogate(o.GetType()) is not null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Determines whether the specified type can be serialized by the current surrogate selector.
+    /// </summary>
+    /// <param name="type">The type to test.</param>
+    /// <returns><c>true</c> if the type is serializable; otherwise, <c>false</c>.</returns>
     public bool IsSerializableType(System.Type type)
     {
       return _surrogateSelector.GetSurrogate(type) is not null;

@@ -139,8 +139,8 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     /// <param name="x">The dependent variable. Usually water activity / relative humidity (0..1).</param>
     /// <param name="offset">The mass of the sample at x==0.</param>
     /// <param name="M0">The monolayer moisture content.</param>
-    /// <param name="C">Absorption constant.</param>
-    /// <param name="K">Absorption constant.</param>
+    /// <param name="C">The Guggenheim constant that characterizes sorption in the first layer.</param>
+    /// <param name="K">The correction factor for sorption in the multilayer phase.</param>
     /// <returns>The mass of the sample at x.</returns>
     public static double Evaluate(double x, double offset, double M0, double C, double K)
     {

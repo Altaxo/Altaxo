@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Graph3D.Axis
     /// </summary>
     /// <param name="newIdentifier">The new identifier.</param>
     /// <param name="GetNewAxisSideFromOldAxisSide">Functions that uses the old axis side as parameter1, and returns the corresponding axis side of the new coordinate system, or null if no such side could be found.</param>
-    /// <exception cref="System.ArgumentNullException"></exception>
+    /// <exception cref="System.ArgumentNullException"><paramref name="newIdentifier"/> is <see langword="null"/>.</exception>
     public void ChangeStyleIdentifier(CSLineID newIdentifier, Func<CSAxisSide, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
     {
       if (newIdentifier is null)

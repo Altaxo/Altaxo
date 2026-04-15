@@ -903,7 +903,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="center">The center.</param>
     /// <param name="right">The right.</param>
     /// <param name="sampling">The sampling.</param>
-    /// <returns></returns>
+    /// <returns>The x values used to represent the peak within the requested range.</returns>
     private static double[] GetXValuesForPeak(double[] originalXValues, double minimalX, double maximalX, double left, double center, double right, int sampling)
     {
       var xList = new HashSet<double>();

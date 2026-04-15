@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
       /// <summary>Get the text for column i</summary>
       /// <param name="i">Column index.</param>
-      /// <returns></returns>
+      /// <returns>The text to display for the specified column.</returns>
       public override string SubItemText(int i)
       {
         var fkt = _data.ColumnsOfObjectInformation[i].Value;

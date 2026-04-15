@@ -884,7 +884,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     /// <param name="toEyeVector">The To-Eye vector (vector from the target to the camera position).</param>
     /// <param name="cameraUpVector">The camera up vector.</param>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="cameraUpVector"/> is empty or parallel to <paramref name="toEyeVector"/>.</exception>
     public void ViewToRootLayerCenter(VectorD3D toEyeVector, VectorD3D cameraUpVector)
     {
       double aspectRatio = 1;
@@ -1252,7 +1252,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// Adjusts the zNear and zFar parameter of the camera to make sure that our scene is viewed appropriately, and nothing is cut away.
     /// </summary>
     /// <param name="cam">The cam.</param>
-    /// <returns></returns>
+    /// <returns>The camera with adjusted z-near and z-far values.</returns>
     public CameraBase AdjustZNearZFar(CameraBase cam)
     {
       var currentDistanceToRootLayerCenter = ((VectorD3D)(cam.EyePosition - 0.5 * Doc.RootLayer.Size)).Length;
@@ -1572,7 +1572,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     /// <param name="position">Mouse position. X and Y components are the current relative mouse coordinates, the Z component is the screen's aspect ratio.</param>
     /// <param name="e">MouseEventArgs.</param>
-    /// <param name="modifierKeys"></param>
+    /// <param name="modifierKeys">The keyboard modifiers that are active during the mouse event.</param>
     public virtual void EhView_GraphPanelMouseDown(PointD3D position, AltaxoMouseEventArgs e, AltaxoKeyboardModifierKeys modifierKeys)
     {
       bool isSHIFTpressed = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Shift);

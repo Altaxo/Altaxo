@@ -570,7 +570,7 @@ namespace Altaxo.Drawing
     /// Converts the color to the linear AHSB model, with alpha [0, 1], Hue [0, 1], Saturation [0, 1] and Brightness [0, 1].
     /// </summary>
     /// <returns>The alpha, hue, saturation, and brightness values.</returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <exception cref="System.InvalidProgramException">Thrown when the color cannot be converted to the AHSB model because an unexpected RGB state was encountered.</exception>
     public (float alpha, float hue, float saturation, float brightness) ToAhsb()
     {
       var (h, s, b) = HsbFromLinearRgb(ScR, ScG, ScB);
@@ -655,8 +655,8 @@ namespace Altaxo.Drawing
     /// <param name="r">The red component in linear RGB space.</param>
     /// <param name="g">The green component in linear RGB space.</param>
     /// <param name="b">The blue component in linear RGB space.</param>
-    /// <returns>The hue, saturation and brightness components (all in the range [0, 1].</returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <returns>The hue, saturation, and brightness components, all in the range [0, 1].</returns>
+    /// <exception cref="System.InvalidProgramException">Thrown when the RGB components cannot be classified into a valid hue sector.</exception>
     public static (float hue, float saturation, float brightness) HsbFromLinearRgb(float r, float g, float b)
     {
       float hue = 0, saturation = 0, brightness = 0;
@@ -703,8 +703,8 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Gets the hue value of the color.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <returns>The hue component in the range [0, 1].</returns>
+    /// <exception cref="System.InvalidProgramException">Thrown when the RGB components cannot be classified into a valid hue sector.</exception>
     public float GetHue()
     {
       float hue = 0;

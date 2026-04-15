@@ -425,25 +425,25 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Determines, which lines are the most fr
+    /// Determines which line composition occurs most frequently for the specified analysis option.
     /// </summary>
-    /// <param name="analysisOption"></param>
-    /// <param name="result"></param>
-    /// <param name="maxNumberOfEqualLines"></param>
-    /// <param name="bestLine"></param>
+    /// <param name="analysisOption">The line analysis option to evaluate.</param>
+    /// <param name="result">The analyzed lines to inspect.</param>
+    /// <param name="maxNumberOfEqualLines">On return, contains the number of lines that share the most frequent composition.</param>
+    /// <param name="bestLine">On return, contains the highest-scoring line composition among the most frequent compositions.</param>
     public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IReadOnlyList<AsciiLineAnalysis> result, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
     {
       CalculateScoreOfLineAnalysisOption(analysisOption, result, null, out maxNumberOfEqualLines, out bestLine);
     }
 
     /// <summary>
-    /// Determines, which lines are the most fr
+    /// Determines which line composition occurs most frequently for the specified analysis option.
     /// </summary>
-    /// <param name="analysisOption"></param>
-    /// <param name="lines"></param>
-    /// <param name="excludeLineStructureHashes"></param>
-    /// <param name="maxNumberOfEqualLines"></param>
-    /// <param name="bestLine"></param>
+    /// <param name="analysisOption">The line analysis option to evaluate.</param>
+    /// <param name="lines">The analyzed lines to inspect.</param>
+    /// <param name="excludeLineStructureHashes">The line compositions to ignore while searching for the most frequent composition.</param>
+    /// <param name="maxNumberOfEqualLines">On return, contains the number of lines that share the most frequent composition.</param>
+    /// <param name="bestLine">On return, contains the highest-scoring line composition among the most frequent compositions.</param>
     public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IReadOnlyList<AsciiLineAnalysis> lines, HashSet<AsciiLineComposition>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
     {
       // Dictionary, Key is the line composition, Value is the number of lines that have this composition

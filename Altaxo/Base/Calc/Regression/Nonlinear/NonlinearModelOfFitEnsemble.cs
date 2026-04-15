@@ -448,8 +448,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Returns the array of indices of dependent variables that are currently in use (i.e. associated with a data column).
     /// </summary>
-    /// <param name="idxFitElement"></param>
-    /// <returns></returns>
+    /// <param name="idxFitElement">The index of the fit element whose dependent variables should be returned.</param>
+    /// <returns>An array containing the indices of dependent variables that are currently used by the specified fit element.</returns>
     public int[] GetDependentVariablesInUse(int idxFitElement)
     {
       return (int[])_cachedFitElementInfo[idxFitElement].DependentVariablesInUse.Clone();

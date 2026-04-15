@@ -778,7 +778,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
     #region I3DPlotItem Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this style provides color information to group styles.
+    /// </summary>
     public bool IsColorProvider
     {
       get
@@ -787,13 +789,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this style receives color information from group styles.
+    /// </summary>
     public bool IsColorReceiver
     {
       get { return !_independentColor; }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this style provides symbol-size information to group styles.
+    /// </summary>
     public bool IsSymbolSizeProvider
     {
       get
@@ -802,7 +808,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this style receives symbol-size information from group styles.
+    /// </summary>
     public bool IsSymbolSizeReceiver
     {
       get

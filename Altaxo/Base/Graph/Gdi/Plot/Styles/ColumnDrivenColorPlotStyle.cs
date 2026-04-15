@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Sets the data column proxy and creates the necessary event links.
     /// </summary>
-    /// <param name="proxy"></param>
+    /// <param name="proxy">The readable column proxy to assign.</param>
     [MemberNotNull(nameof(_dataColumnProxy))]
     protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
     {
@@ -366,7 +366,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Sets the scale and create the necessary event links.
     /// </summary>
-    /// <param name="scale"></param>
+    /// <param name="scale">The scale to assign.</param>
     [MemberNotNull(nameof(_scale))]
     protected void InternalSetScale(Scale scale)
     {

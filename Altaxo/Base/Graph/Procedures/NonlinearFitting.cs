@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Procedures
     /// </summary>
     /// <param name="xyPlotItem">The xy plot item.</param>
     /// <param name="ctrl">The control.</param>
-    /// <returns></returns>
+    /// <returns>A tuple containing an error message or the fit document together with its identifier and active layer.</returns>
     /// <exception cref="ArgumentNullException">xyPlotItem</exception>
     private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) GetNewFitDocumentFor(XYColumnPlotItem xyPlotItem, Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {

@@ -84,6 +84,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
       #endregion Set Dependencies
     }
 
+    /// <summary>
+    /// Executes the Radau5 implicit Runge-Kutta solver for a stiff ODE system.
+    /// </summary>
     /// <param name="N">
     /// DIMENSION OF THE SYSTEM
     ///</param>
@@ -98,6 +101,8 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// <param name="X">
     /// INITIAL X-VALUE
     ///</param>
+    /// <param name="Y">Initial values on entry and the computed solution vector on return.</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
     /// <param name="XEND">
     /// FINAL X-VALUE (XEND-X MAY BE POSITIVE OR NEGATIVE)
     ///</param>
@@ -108,6 +113,10 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// THIS CHOICE IS NOT VERY IMPORTANT, THE STEP SIZE IS
     /// QUICKLY ADAPTED. (IF H=0.D0, THE CODE PUTS H=1.D-6).
     ///</param>
+    /// <param name="RTOL">Relative tolerance array or scalar storage.</param>
+    /// <param name="offset_rtol">The starting offset in <paramref name="RTOL"/>.</param>
+    /// <param name="ATOL">Absolute tolerance array or scalar storage.</param>
+    /// <param name="offset_atol">The starting offset in <paramref name="ATOL"/>.</param>
     /// <param name="ITOL">
     /// SWITCH FOR RTOL AND ATOL:
     /// ITOL=0: BOTH RTOL AND ATOL ARE SCALARS.
@@ -257,6 +266,7 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// WHERE IN THE DEFINITIONS OF LJAC, LMAS AND LE THE
     /// NUMBER N CAN BE REPLACED BY N-M1.
     ///</param>
+    /// <param name="offset_work">The starting offset in <paramref name="WORK"/>.</param>
     /// <param name="LWORK">
     /// DECLARED LENGTH OF ARRAY "WORK".
     ///</param>
@@ -268,9 +278,14 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// IWORK(21),...,IWORK(LIWORK) SERVE AS WORKING AREA.
     /// "LIWORK" MUST BE AT LEAST 3*N+20.
     ///</param>
+    /// <param name="offset_iwork">The starting offset in <paramref name="IWORK"/>.</param>
     /// <param name="LIWORK">
     /// DECLARED LENGTH OF ARRAY "IWORK".
     ///</param>
+    /// <param name="RPAR">User-defined real parameter array passed to callback routines.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">User-defined integer parameter array passed to callback routines.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     /// <param name="IDID">
     /// REPORTS ON SUCCESSFULNESS UPON RETURN:
     /// IDID= 1  COMPUTATION SUCCESSFUL,
@@ -280,18 +295,6 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// IDID=-3  STEP SIZE BECOMES TOO SMALL,
     /// IDID=-4  MATRIX IS REPEATEDLY SINGULAR.
     ///</param>
-    ///<param name="ATOL"></param>
-    ///<param name="IPAR"></param>
-    ///<param name="offset_atol"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_iwork"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="offset_rtol"></param>
-    ///<param name="offset_work"></param>
-    ///<param name="offset_y"></param>
-    ///<param name="RPAR"></param>
-    ///<param name="RTOL"></param>
-    ///<param name="Y"></param>
     public void Run(int N, IFVPOL FCN, ref double X, ref double[] Y, int offset_y, double XEND, ref double H
                      , ref double[] RTOL, int offset_rtol, ref double[] ATOL, int offset_atol, int ITOL, IJVPOL JAC, int IJAC, ref int MLJAC
                      , ref int MUJAC, IBBAMPL MAS, int IMAS, int MLMAS, ref int MUMAS, ISOLOUTR SOLOUT

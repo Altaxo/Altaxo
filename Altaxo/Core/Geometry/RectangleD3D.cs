@@ -511,7 +511,6 @@ namespace Altaxo.Geometry
     /// Expands this rectangle, so that it contains the point p.
     /// </summary>
     /// <param name="p">The point that should be contained in this rectangle.</param>
-    /// <returns>The new rectangle that now contains the point p.</returns>
     private void ExpandToInclude(PointD3D p)
     {
       if (!(Contains(p)))

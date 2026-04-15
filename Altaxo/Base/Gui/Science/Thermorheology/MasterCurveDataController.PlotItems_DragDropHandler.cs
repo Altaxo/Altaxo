@@ -35,6 +35,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// Provides drag-and-drop support for plot items in the master-curve data controller.
+  /// </summary>
   public partial class MasterCurveDataController
   {
     /// <summary>

@@ -61,17 +61,17 @@ namespace Altaxo.Data
         _table = table;
       }
 
-      public override string? Validate(string wksname)
+      public override string? Validate(string txt)
       {
-        string? err = base.Validate(wksname);
+        string? err = base.Validate(txt);
         if (err is not null)
           return err;
 
-        if (_table.Name == wksname)
+        if (_table.Name == txt)
           return null;
         else if (!(Data.DataTableCollection.GetParentDataTableCollectionOf(_table) is { } parentColl))
           return null; // if there is no parent data set we can enter anything
-        else if (parentColl.ContainsAnyName(wksname))
+        else if (parentColl.ContainsAnyName(txt))
           return "This worksheet name already exists, please choose another name!";
         else
           return null;

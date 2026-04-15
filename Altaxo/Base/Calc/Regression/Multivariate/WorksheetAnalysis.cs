@@ -1601,9 +1601,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="tableWithSpectraToPredict">Table holding the specta to predict values for.</param>
     /// <param name="selectedColumns">Columns selected in the source table.</param>
     /// <param name="selectedRows">Rows selected in the source table.</param>
-    /// <param name="destTable">The table to store the prediction result.</param>
-    /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
     /// <param name="numberOfFactors">Number of factors used to predict the values.</param>
+    /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
+    /// <param name="destTable">The table to store the prediction result.</param>
     public virtual void PredictValues(
       DataTable tableWithSpectraToPredict,
       IAscendingIntegerCollection selectedColumns,
@@ -1626,9 +1626,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
     /// </summary>
     /// <param name="proxy">Data proxy holding the spectra to predict values for.</param>
-    /// <param name="destTable">The table to store the prediction result.</param>
-    /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
     /// <param name="numberOfFactors">Number of factors used to predict the values.</param>
+    /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
+    /// <param name="destTable">The table to store the prediction result.</param>
     public virtual void PredictValues(
       DataTableMatrixProxyWithMultipleColumnHeaderColumns proxy,
       int numberOfFactors,
@@ -1768,7 +1768,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="selectedPropertyColumns">The selected property column(s).</param>
     /// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
     /// <param name="options">Provides information about how to preprocess the spectra.</param>
-    /// <returns></returns>
+    /// <returns>The name of the destination table that stores the analysis result, or an error message if the analysis could not be completed.</returns>
     public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       Altaxo.Data.DataTable srctable,
@@ -1803,7 +1803,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// are stored in the column header columns of the proxy.</param>
     /// <param name="options">Provides information about the regression and preprocessing options.</param>
     /// <param name="destinationTable">Destination table to store the results into.</param>
-    /// <returns></returns>
+    /// <returns><see langword="null"/> if the analysis succeeded; otherwise an error message describing why the analysis could not be completed.</returns>
     public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       DataTableMatrixProxyWithMultipleColumnHeaderColumns data,
@@ -1855,7 +1855,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="options">Provides information about how to preprocess the spectra.</param>
     /// <param name="destinationTable">Destination table to store the results into.</param>
     /// <param name="regressionResult">Receives the regression result.</param>
-    /// <returns></returns>
+    /// <returns><see langword="null"/> if the analysis succeeded; otherwise an error message describing why the analysis could not be completed.</returns>
     public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       DataTableMatrixProxyWithMultipleColumnHeaderColumns srcData,

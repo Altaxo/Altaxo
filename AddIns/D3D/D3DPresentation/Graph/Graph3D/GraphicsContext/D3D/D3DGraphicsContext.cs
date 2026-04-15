@@ -305,9 +305,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     /// <summary>
     /// Prepends a translation transform.
     /// </summary>
-    public override void TranslateTransform(VectorD3D translation)
+    public override void TranslateTransform(VectorD3D diff)
     {
-      _transformation.TranslatePrepend(translation.X, translation.Y, translation.Z);
+      _transformation.TranslatePrepend(diff.X, diff.Y, diff.Z);
       // no change to the inverse transform
     }
 

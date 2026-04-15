@@ -14,6 +14,9 @@ using System;
 
 namespace Altaxo.Calc.Ode
 {
+  /// <summary>
+  /// Base type for explicit Runge-Kutta methods with shared stepping and interpolation support.
+  /// </summary>
   public abstract partial class RungeKuttaExplicitBase
   {
 

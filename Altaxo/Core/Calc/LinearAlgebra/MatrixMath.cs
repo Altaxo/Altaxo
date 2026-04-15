@@ -235,7 +235,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
-    /// <returns></returns>
+    /// <returns>A matrix wrapper over <paramref name="x"/> that exposes the rows through `IBottomExtensibleMatrix{T}`.</returns>
     public static IBottomExtensibleMatrix<T> ToROMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(x);
@@ -246,7 +246,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <typeparam name="T">The element type of the matrix.</typeparam>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
-    /// <returns></returns>
+    /// <returns>A writable matrix wrapper over <paramref name="x"/> that exposes the rows through `IBottomExtensibleMatrix{T}`.</returns>
     public static IBottomExtensibleMatrix<T> ToMatrixFromLeftSpineJaggedArray<T>(T[][] x) where T : struct
     {
       return new LeftSpineJaggedArrayMatrix<T>(x);
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="vector">The vector to wrap.</param>
     /// <param name="vectoroffset">The index of the vector that is the first matrix element(0,0).</param>
     /// <param name="matrixdimensions">The number of rows = number of columns of the diagonal matrix.</param>
-    /// <returns></returns>
+    /// <returns>A read-only diagonal matrix view over the specified vector segment.</returns>
     public static IROMatrix<T> ToRODiagonalMatrix<T>(IReadOnlyList<T> vector, int vectoroffset, int matrixdimensions) where T : struct
     {
       return new RODiagonalMatrixVectorWrapper<T>(vector, vectoroffset, matrixdimensions);
@@ -1878,7 +1878,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">The first matrix.</param>
     /// <param name="b">The second matrix. Basis for calculation of threshold.</param>
     /// <param name="accuracy">The accuracy.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if both matrices are equal within the specified relative accuracy; otherwise, <see langword="false"/>.</returns>
     public static bool IsEqual(IROMatrix<double> a, IROMatrix<double> b, double accuracy)
     {
       // Presumtion:
@@ -2015,11 +2015,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    ///     Norms the matrix.
+    /// Calculates the requested norm of the matrix.
     /// </summary>
     /// <param name="a">The matrix.</param>
     /// <param name="ntype">Type of the norm.</param>
-    /// <returns></returns>
+    /// <returns>The norm value selected by <paramref name="ntype"/>.</returns>
     public static double Norm(this IROMatrix<double> a, MatrixNorm ntype)
     {
       if (a is null)

@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Sets the data column proxy and creates the necessary event links.
     /// </summary>
-    /// <param name="proxy"></param>
+    /// <param name="proxy">The readable column proxy to assign.</param>
     [MemberNotNull(nameof(_dataColumnProxy))]
     protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
     {
@@ -378,7 +378,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Sets the scale and create the necessary event links.
     /// </summary>
-    /// <param name="scale"></param>
+    /// <param name="scale">The scale to assign.</param>
     [MemberNotNull(nameof(_scale))]
     protected void InternalSetScale(NumericalScale scale)
     {
@@ -506,8 +506,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Gets the symbol size for the index idx.
     /// </summary>
-    /// <param name="idx"></param>
-    /// <returns></returns>
+    /// <param name="idx">The plot-point index.</param>
+    /// <returns>The symbol size for the specified plot-point index.</returns>
     private double GetSymbolSize(int idx)
     {
       var dataColumn = DataColumn;

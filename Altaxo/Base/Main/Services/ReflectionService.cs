@@ -59,8 +59,8 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Called when a new assembly is loaded into our current application domain.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The application domain that raised the event.</param>
+    /// <param name="e">The assembly load event arguments.</param>
     private static void EhAssemblyLoaded(object? sender, AssemblyLoadEventArgs e)
     {
       if (e.LoadedAssembly is { } loadedAssembly) // do include only non-null values for assembly
@@ -121,7 +121,7 @@ namespace Altaxo.Main.Services
     /// implements basetype.
     /// </summary>
     /// <param name="basetype">The basetype.</param>
-    /// <returns></returns>
+    /// <returns>An array containing all subclasses of <paramref name="basetype"/>.</returns>
     public static System.Type[] GetSubclassesOf(System.Type basetype)
     {
       return GetSubclassesOf(new Type[] { basetype });
@@ -132,7 +132,7 @@ namespace Altaxo.Main.Services
     /// implements basetypes[i].
     /// </summary>
     /// <param name="basetypes">The basetypes.</param>
-    /// <returns></returns>
+    /// <returns>An array containing all types that satisfy every type in <paramref name="basetypes"/>.</returns>
     public static System.Type[] GetSubclassesOf(System.Type[] basetypes)
     {
       SubClassTypeList tlist = _subClassTypeListCollection[basetypes];
@@ -146,7 +146,7 @@ namespace Altaxo.Main.Services
     /// implements basetype.
     /// </summary>
     /// <param name="basetype">The basetype.</param>
-    /// <returns></returns>
+    /// <returns>An array containing all non-abstract subclasses of <paramref name="basetype"/>.</returns>
     public static System.Type[] GetNonAbstractSubclassesOf(System.Type basetype)
     {
       return GetNonAbstractSubclassesOf(new System.Type[] { basetype });
@@ -157,7 +157,7 @@ namespace Altaxo.Main.Services
     /// implements basetype.
     /// </summary>
     /// <param name="basetypes">The basetype.</param>
-    /// <returns></returns>
+    /// <returns>An array containing all non-abstract subclasses or implementations of the supplied base types.</returns>
     public static System.Type[] GetNonAbstractSubclassesOf(System.Type[] basetypes)
     {
       SubClassTypeList tlist = _subClassTypeListCollection[basetypes];

@@ -30,6 +30,9 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     {
     }
 
+    /// <summary>
+    /// Factors a dense real matrix using partial pivoting.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
@@ -39,13 +42,13 @@ namespace Altaxo.Calc.Ode.Obsolete.Radau5
     /// <param name="A">
     /// = MATRIX TO BE TRIANGULARIZED.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
+    /// <param name="IP">Pivot index array.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="IP"></param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -174,6 +177,9 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Solves a dense real linear system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
@@ -183,15 +189,15 @@ LABEL80:
     /// <param name="A">
     /// = TRIANGULARIZED MATRIX OBTAINED FROM DEC.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="B">
     /// = RIGHT HAND SIDE VECTOR.
     ///</param>
+    /// <param name="offset_b">The starting offset in <paramref name="B"/>.</param>
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
-    ///<param name="offset_ip"></param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_b"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] A, int offset_a, ref double[] B, int offset_b, int[] IP, int offset_ip)
     {
       #region Variables
@@ -288,6 +294,9 @@ LABEL50:
     {
     }
 
+    /// <summary>
+    /// Factors a real Hessenberg matrix with lower bandwidth information.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX A.
     ///</param>
@@ -297,16 +306,16 @@ LABEL50:
     /// <param name="A">
     /// = MATRIX TO BE TRIANGULARIZED.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="LB">
     /// = LOWER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED, LB.GE.1).
     ///</param>
+    /// <param name="IP">Pivot index array.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="IP"></param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, int LB, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -440,6 +449,9 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Solves a real Hessenberg system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX A.
     ///</param>
@@ -449,18 +461,18 @@ LABEL80:
     /// <param name="A">
     /// = TRIANGULARIZED MATRIX OBTAINED FROM DECH.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="LB">
     /// = LOWER BANDWIDTH OF A.
     ///</param>
     /// <param name="B">
     /// = RIGHT HAND SIDE VECTOR.
     ///</param>
+    /// <param name="offset_b">The starting offset in <paramref name="B"/>.</param>
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_b"></param>
-    ///<param name="offset_ip"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] A, int offset_a, int LB, ref double[] B, int offset_b, int[] IP, int offset_ip)
     {
       #region Variables
@@ -559,22 +571,25 @@ LABEL50:
     {
     }
 
+    /// <summary>
+    /// Factors a dense complex matrix represented by separate real and imaginary parts.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
     /// <param name="NDIM">
     /// = DECLARED DIMENSION OF ARRAYS  AR AND AI .
     ///</param>
+    /// <param name="AR">Real part of the matrix to factor.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the matrix to factor.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
+    /// <param name="IP">Pivot index array.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="AI"></param>
-    ///<param name="offset_ip"></param>
-    ///<param name="IP"></param>
-    ///<param name="AR"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="offset_ar"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, ref int[] IP, int offset_ip, ref int IER)
     {
       #region Variables
@@ -771,24 +786,27 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Solves a dense complex linear system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
     /// <param name="NDIM">
     /// = DECLARED DIMENSION OF ARRAYS  AR AND AI.
     ///</param>
+    /// <param name="AR">Real part of the factored matrix.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the factored matrix.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
+    /// <param name="BR">Real part of the right-hand side vector.</param>
+    /// <param name="offset_br">The starting offset in <paramref name="BR"/>.</param>
+    /// <param name="BI">Imaginary part of the right-hand side vector.</param>
+    /// <param name="offset_bi">The starting offset in <paramref name="BI"/>.</param>
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
-    ///<param name="offset_ar"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="AR"></param>
-    ///<param name="offset_ip"></param>
-    ///<param name="AI"></param>
-    ///<param name="BI"></param>
-    ///<param name="BR"></param>
-    ///<param name="offset_bi"></param>
-    ///<param name="offset_br"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, ref double[] BR, int offset_br, ref double[] BI, int offset_bi
                      , int[] IP, int offset_ip)
     {
@@ -922,25 +940,28 @@ LABEL50:
     {
     }
 
+    /// <summary>
+    /// Factors a complex Hessenberg matrix represented by separate real and imaginary parts.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
     /// <param name="NDIM">
     /// = DECLARED DIMENSION OF ARRAYS  AR AND AI .
     ///</param>
+    /// <param name="AR">Real part of the matrix to factor.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the matrix to factor.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
     /// <param name="LB">
     /// = LOWER BANDWIDTH OF A (DIAGONAL NOT COUNTED), LB.GE.1.
     ///</param>
+    /// <param name="IP">Pivot index array.</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="AI"></param>
-    ///<param name="AR"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="offset_ar"></param>
-    ///<param name="IP"></param>
-    ///<param name="offset_ip"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, int LB, ref int[] IP, int offset_ip
                      , ref int IER)
     {
@@ -1143,27 +1164,30 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Solves a complex Hessenberg system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// = ORDER OF MATRIX.
     ///</param>
     /// <param name="NDIM">
     /// = DECLARED DIMENSION OF ARRAYS  AR AND AI.
     ///</param>
+    /// <param name="AR">Real part of the factored matrix.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the factored matrix.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
     /// <param name="LB">
     /// = LOWER BANDWIDTH OF A.
     ///</param>
+    /// <param name="BR">Real part of the right-hand side vector.</param>
+    /// <param name="offset_br">The starting offset in <paramref name="BR"/>.</param>
+    /// <param name="BI">Imaginary part of the right-hand side vector.</param>
+    /// <param name="offset_bi">The starting offset in <paramref name="BI"/>.</param>
     /// <param name="IP">
     /// = PIVOT VECTOR OBTAINED FROM DEC.
     ///</param>
-    ///<param name="offset_br"></param>
-    ///<param name="offset_bi"></param>
-    ///<param name="BR"></param>
-    ///<param name="BI"></param>
-    ///<param name="AI"></param>
-    ///<param name="offset_ip"></param>
-    ///<param name="AR"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="offset_ar"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, int LB, ref double[] BR, int offset_br
                      , ref double[] BI, int offset_bi, int[] IP, int offset_ip)
     {
@@ -1301,6 +1325,9 @@ LABEL50:
     {
     }
 
+    /// <summary>
+    /// Factors a banded matrix for the obsolete RADAU5 solver.
+    /// </summary>
     /// <param name="N">
     /// ORDER OF THE ORIGINAL MATRIX A.
     ///</param>
@@ -1313,6 +1340,7 @@ LABEL50:
     /// THE DIAGONALS OF THE MATRIX ARE STORED IN ROWS
     /// ML+1 THROUGH 2*ML+MU+1 OF  A.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="ML">
     /// LOWER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED).
     ///</param>
@@ -1322,12 +1350,11 @@ LABEL50:
     /// <param name="IP">
     /// INDEX VECTOR OF PIVOT INDICES.
     ///</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR  = K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="offset_ip"></param>
-    ///<param name="offset_a"></param>
     public void Run(int N, int NDIM, ref double[] A, int offset_a, int ML, int MU, ref int[] IP, int offset_ip
                      , ref int IER)
     {
@@ -1505,6 +1532,12 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Factors a real band matrix using partial pivoting.
+    /// </summary>
+    /// <summary>
+    /// Solves a real banded linear system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// ORDER OF MATRIX A.
     ///</param>
@@ -1514,6 +1547,7 @@ LABEL80:
     /// <param name="A">
     /// TRIANGULARIZED MATRIX OBTAINED FROM DECB.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="ML">
     /// LOWER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED).
     ///</param>
@@ -1523,12 +1557,11 @@ LABEL80:
     /// <param name="B">
     /// RIGHT HAND SIDE VECTOR.
     ///</param>
+    /// <param name="offset_b">The starting offset in <paramref name="B"/>.</param>
     /// <param name="IP">
     /// PIVOT VECTOR OBTAINED FROM DECB.
     ///</param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_ip"></param>
-    ///<param name="offset_b"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] A, int offset_a, int ML, int MU, ref double[] B, int offset_b
                      , int[] IP, int offset_ip)
     {
@@ -1646,12 +1679,19 @@ LABEL50:
     {
     }
 
+    /// <summary>
+    /// Factors a complex band matrix represented by separate real and imaginary parts.
+    /// </summary>
     /// <param name="N">
     /// ORDER OF THE ORIGINAL MATRIX A.
     ///</param>
     /// <param name="NDIM">
     /// DECLARED DIMENSION OF ARRAY  A.
     ///</param>
+    /// <param name="AR">Real part of the matrix to factor.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the matrix to factor.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
     /// <param name="ML">
     /// LOWER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED).
     ///</param>
@@ -1661,15 +1701,11 @@ LABEL50:
     /// <param name="IP">
     /// INDEX VECTOR OF PIVOT INDICES.
     ///</param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     /// <param name="IER">
     /// = 0 IF MATRIX A IS NONSINGULAR, OR  = K IF FOUND TO BE
     /// SINGULAR AT STAGE K.
     ///</param>
-    ///<param name="offset_ip"></param>
-    ///<param name="offset_ar"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="AR"></param>
-    ///<param name="AI"></param>
     public void Run(int N, int NDIM, ref double[] AR, int offset_ar, ref double[] AI, int offset_ai, int ML, int MU
                      , ref int[] IP, int offset_ip, ref int IER)
     {
@@ -1900,30 +1936,33 @@ LABEL80:
     {
     }
 
+    /// <summary>
+    /// Solves a complex banded linear system using a previously computed factorization.
+    /// </summary>
     /// <param name="N">
     /// ORDER OF MATRIX A.
     ///</param>
     /// <param name="NDIM">
     /// DECLARED DIMENSION OF ARRAY  A .
     ///</param>
+    /// <param name="AR">Real part of the factored matrix.</param>
+    /// <param name="offset_ar">The starting offset in <paramref name="AR"/>.</param>
+    /// <param name="AI">Imaginary part of the factored matrix.</param>
+    /// <param name="offset_ai">The starting offset in <paramref name="AI"/>.</param>
     /// <param name="ML">
     /// LOWER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED).
     ///</param>
     /// <param name="MU">
     /// UPPER BANDWIDTH OF A (DIAGONAL IS NOT COUNTED).
     ///</param>
+    /// <param name="BR">Real part of the right-hand side vector.</param>
+    /// <param name="offset_br">The starting offset in <paramref name="BR"/>.</param>
+    /// <param name="BI">Imaginary part of the right-hand side vector.</param>
+    /// <param name="offset_bi">The starting offset in <paramref name="BI"/>.</param>
     /// <param name="IP">
     /// PIVOT VECTOR OBTAINED FROM DECBC.
     ///</param>
-    ///<param name="offset_ip"></param>
-    ///<param name="offset_ar"></param>
-    ///<param name="offset_ai"></param>
-    ///<param name="AI"></param>
-    ///<param name="AR"></param>
-    ///<param name="BI"></param>
-    ///<param name="BR"></param>
-    ///<param name="offset_bi"></param>
-    ///<param name="offset_br"></param>
+    /// <param name="offset_ip">The starting offset in <paramref name="IP"/>.</param>
     public void Run(int N, int NDIM, double[] AR, int offset_ar, double[] AI, int offset_ai, int ML, int MU
                      , ref double[] BR, int offset_br, ref double[] BI, int offset_bi, int[] IP, int offset_ip)
     {
@@ -2074,6 +2113,9 @@ LABEL50:
     /// array parameters as declared in the calling program
     /// dimension statement;
     ///</param>
+    /// <summary>
+    /// Reduces a matrix to upper Hessenberg form for the Radau5 helpers.
+    /// </summary>
     /// <param name="N">
     /// is the order of the matrix;
     ///</param>
@@ -2082,17 +2124,19 @@ LABEL50:
     /// subroutine  balanc.      if  balanc  has not been used,
     /// set low=1, igh=n;
     ///</param>
+    /// <param name="IGH">
+    /// Upper index of the balanced submatrix.
+    ///</param>
     /// <param name="A">
     /// contains the input matrix.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="INT">
     /// contains information on the rows and columns
     /// interchanged in the reduction.
     /// only elements low through igh are used.
     ///</param>
-    ///<param name="IGH"></param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_int"></param>
+    /// <param name="offset_int">The starting offset in <paramref name="INT"/>.</param>
     public void Run(int NM, int N, int LOW, int IGH, ref double[] A, int offset_a, ref int[] INT, int offset_int)
     {
       #region Variables

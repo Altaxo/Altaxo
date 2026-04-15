@@ -533,7 +533,7 @@ namespace Altaxo.Graph.Scales.Rescaling
     /// <summary>
     /// Gets the mean value of the data bounds. We use the 'scale' mean, i.e. the physical value of the scale where its logical value is 0.5.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The mean of the current data bounds in scale coordinates.</returns>
     protected virtual long GetDataBoundsScaleMean()
     {
       return (_dataBoundsOrg + _dataBoundsEnd) / 2;

@@ -369,7 +369,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <summary>
     /// Sets the position of the object without causing a Changed event.
     /// </summary>
-    /// <param name="newPosition"></param>
+    /// <param name="newPosition">The new position of the object's pivot point.</param>
     public virtual void SilentSetPosition(PointD3D newPosition)
     {
       SetPosition(newPosition, Main.EventFiring.Suppressed);

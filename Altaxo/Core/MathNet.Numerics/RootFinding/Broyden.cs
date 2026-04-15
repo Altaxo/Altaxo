@@ -46,7 +46,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="maxIterations">Maximum number of iterations. Default 100.</param>
     /// <param name="jacobianStepSize">Relative step size for calculating the Jacobian matrix at first step. Default 1.0e-4</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the algorithm fails to converge within the allowed number of iterations or no root is found within the provided bounds.</exception>
     public static double[] FindRoot(Func<double[], double[]> f, double[] initialGuess, double accuracy = 1e-8, int maxIterations = 100, double jacobianStepSize = 1.0e-4)
     {
       if (TryFindRootWithJacobianStep(f, initialGuess, accuracy, maxIterations, jacobianStepSize, out var root))

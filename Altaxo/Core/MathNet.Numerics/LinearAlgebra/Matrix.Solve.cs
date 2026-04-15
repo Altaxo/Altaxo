@@ -33,9 +33,9 @@ using Altaxo.Calc.LinearAlgebra.Solvers;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
+  /// <content>
   /// Defines the base class for <c>Matrix</c> classes.
-  /// </summary>
+  /// </content>
   public abstract partial class Matrix<T>
   {
 
@@ -223,8 +223,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="input">The solution vector <c>b</c>.</param>
     /// <param name="result">The result vector <c>x</c>.</param>
     /// <param name="solver">The iterative solver to use.</param>
-    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Vector<T> input, Vector<T> result, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {
@@ -238,8 +238,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="input">The solution matrix <c>B</c>.</param>
     /// <param name="result">The result matrix <c>X</c></param>
     /// <param name="solver">The iterative solver to use.</param>
-    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <returns>The final iteration status.</returns>
     public IterationStatus TrySolveIterative(Matrix<T> input, Matrix<T> result, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {
@@ -314,8 +314,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="input">The solution vector <c>b</c>.</param>
     /// <param name="solver">The iterative solver to use.</param>
-    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <returns>The result vector <c>x</c>.</returns>
     public Vector<T> SolveIterative(Vector<T> input, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {
@@ -329,8 +329,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="input">The solution matrix <c>B</c>.</param>
     /// <param name="solver">The iterative solver to use.</param>
-    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
+    /// <param name="stopCriteria">Criteria to control when to stop iterating.</param>
     /// <returns>The result matrix <c>X</c>.</returns>
     public Matrix<T> SolveIterative(Matrix<T> input, IIterativeSolver<T> solver, IPreconditioner<T> preconditioner, params IIterationStopCriterion<T>[] stopCriteria)
     {

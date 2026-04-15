@@ -32,6 +32,9 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides numerically stable special-function helpers.
+  /// </summary>
   public partial class SpecialFunctions
   {
     /// <summary>

@@ -318,7 +318,9 @@ namespace Altaxo
       }
     }
 
-    /// <inheritdoc see="IInfoWarningErrorTextMessageService"/>
+    /// <summary>
+    /// Gets the service used to display informational, warning, and error text messages.
+    /// </summary>
     public static IInfoWarningErrorTextMessageService InfoTextMessageService
     {
       get
@@ -327,13 +329,17 @@ namespace Altaxo
       }
     }
 
-    /// <inheritdoc see="IAnalyticsMonitor"/>
+    /// <summary>
+    /// Gets the analytics monitor service.
+    /// </summary>
     public static IAnalyticsMonitor AnalyticsMonitor
     {
       get { return GetRequiredService<IAnalyticsMonitor>(); }
     }
 
-    /// <inheritdoc see="IAddInTree"/>
+    /// <summary>
+    /// Gets the add-in tree service.
+    /// </summary>
     public static AddInItems.IAddInTree AddInTree
     {
       get { return _addInTree ??= GetRequiredService<AddInItems.IAddInTree>(); }

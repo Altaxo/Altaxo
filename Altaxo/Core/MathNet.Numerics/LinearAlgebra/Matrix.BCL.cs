@@ -35,6 +35,9 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <content>
+  /// Defines the base class for <c>Matrix</c> classes.
+  /// </content>
   [DebuggerDisplay("Matrix {RowCount}x{ColumnCount}")]
 
   public abstract partial class Matrix<T>

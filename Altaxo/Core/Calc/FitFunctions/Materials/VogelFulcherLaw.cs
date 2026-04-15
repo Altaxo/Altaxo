@@ -77,10 +77,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] X, double[] P, double[] Y)
+    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      var y = base.Evaluate(X[0], P);
-      Y[0] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
+      var y = base.Evaluate(independent[0], parameters);
+      dependent[0] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
     }
 
     /// <summary>

@@ -337,7 +337,11 @@ namespace Altaxo.Calc.Distributions
       return res - AdjustAddend(scale, skew, p);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Computes the inverse cumulative distribution function for the current distribution.
+    /// </summary>
+    /// <param name="p">The cumulative probability.</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public double InverseCumulativeDistribution(double p)
     {
       return InvCDF(Location, Scale, Skew, P, p);
@@ -448,7 +452,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">Parameter that controls kurtosis. Range: p > 0</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double location, double scale, double skew, double p)
     {
       if (!IsValidParameterSet(location, scale, skew, p))
@@ -503,7 +506,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">Parameter that controls kurtosis. Range: p > 0</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double location, double scale, double skew, double p)
     {
       if (!IsValidParameterSet(location, scale, skew, p))

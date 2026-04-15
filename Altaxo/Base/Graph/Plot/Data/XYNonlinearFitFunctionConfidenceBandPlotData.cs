@@ -546,7 +546,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <param name="parameters">The fit parameters.</param>
-    /// <returns></returns>
+    /// <returns>The evaluated fit function value, or <see cref="double.NaN"/> if no cached fit function is available.</returns>
     private double EvaluateFitFunctionValue(double x, double[] parameters)
     {
       if (_cachedFitFunction is { } fitFunction)
@@ -651,7 +651,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Evaluates the function value at the specified independent variable value x.
     /// </summary>
     /// <param name="x">The value x of the independent variable.</param>
-    /// <returns></returns>
+    /// <returns>The evaluated lower or upper confidence-band value at <paramref name="x"/>.</returns>
     public override double Evaluate(double x)
     {
       if (_independentVariableTransformation is not null)

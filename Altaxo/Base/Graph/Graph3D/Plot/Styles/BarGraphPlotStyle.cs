@@ -274,7 +274,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public object Clone()
     {
       return new BarGraphPlotStyle(this, true);

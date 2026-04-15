@@ -324,7 +324,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Gets the bending energy of the interpolation.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The bending energy of the current interpolation result.</returns>
     public double GetBendingEnergy()
     {
       if (_mtx_v is null || _mtx_orig_k is null)

@@ -105,47 +105,47 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override void RemoveRows(int nDelFirstRow, int nDelCount)
+    public override void RemoveRows(int nFirstRow, int nCount)
     {
-      if (nDelFirstRow < 0)
-        throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
+      if (nFirstRow < 0)
+        throw new ArgumentException("Row number must be greater or equal 0, but was " + nFirstRow.ToString(), "nDelFirstRow");
 
-      if (nDelCount <= 0)
+      if (nCount <= 0)
         return; // nothing to do here, but we dont catch it
 
       // we must be careful, since the range to delete can be
       // above the range this column actually holds, but
       // we must handle this the right way
       int i, j;
-      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < _count; i++, j++)
+      for (i = nFirstRow, j = nFirstRow + nCount; j < _count; i++, j++)
         _data[i] = _data[j];
 
       int prevCount = _count;
       _count = i < _count ? i : _count; // m_Count can only decrease
 
       if (_count != prevCount) // raise a event only if something really changed
-        EhSelfChanged(nDelFirstRow, prevCount, true);
+        EhSelfChanged(nFirstRow, prevCount, true);
     }
 
     /// <inheritdoc />
-    public override void InsertRows(int nInsBeforeColumn, int nInsCount)
+    public override void InsertRows(int nBeforeRow, int nCount)
     {
-      if (nInsCount <= 0 || nInsBeforeColumn >= Count)
+      if (nCount <= 0 || nBeforeRow >= Count)
         return; // nothing to do
 
-      int newlen = _count + nInsCount;
+      int newlen = _count + nCount;
       if (newlen > _capacity)
         Realloc(newlen);
 
       // copy values from m_Count downto nBeforeColumn
-      for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
+      for (int i = _count - 1, j = newlen - 1; i >= nBeforeRow; i--, j--)
         _data[j] = _data[i];
 
-      for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
+      for (int i = nBeforeRow + nCount - 1; i >= nBeforeRow; i--)
         _data[i] = NullValue;
 
       _count = newlen;
-      EhSelfChanged(nInsBeforeColumn, _count, false);
+      EhSelfChanged(nBeforeRow, _count, false);
     }
 
     /// <inheritdoc />
@@ -750,40 +750,40 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Addition(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Addition(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this + (Altaxo.Data.DoubleColumn)c2;
+        b = this + (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Addition_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Addition_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      return vop_Addition(c2, out c3);
+      return vop_Addition(a, out b);
     }
 
     /// <inheritdoc />
-    public override bool vop_Addition(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Addition(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this + c22;
+        double c22 = a;
+        b = this + c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Addition_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Addition_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      return vop_Addition(c2, out c3);
+      return vop_Addition(a, out b);
     }
 
     // --------------------- Operator Subtract -------------------------------------
@@ -843,52 +843,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this - (Altaxo.Data.DoubleColumn)c2;
+        b = this - (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 - this;
+        b = (Altaxo.Data.DoubleColumn)a - this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this - c22;
+        double c22 = a;
+        b = this - c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 - this;
+        double c22 = a;
+        b = c22 - this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1004,40 +1004,40 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Multiplication(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Multiplication(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this * (Altaxo.Data.DoubleColumn)c2;
+        b = this * (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Multiplication_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Multiplication_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      return vop_Multiplication(c2, out c3);
+      return vop_Multiplication(a, out b);
     }
 
     /// <inheritdoc />
-    public override bool vop_Multiplication(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Multiplication(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this * c22;
+        double c22 = a;
+        b = this * c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Multiplication_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Multiplication_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      return vop_Multiplication(c2, out c3);
+      return vop_Multiplication(a, out b);
     }
 
     // ------------------------ Division operator --------------------------------
@@ -1097,52 +1097,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Division(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Division(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this / (Altaxo.Data.DoubleColumn)c2;
+        b = this / (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Division_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Division_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 / this;
+        b = (Altaxo.Data.DoubleColumn)a / this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Division(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Division(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this / c22;
+        double c22 = a;
+        b = this / c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Division_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Division_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 / this;
+        double c22 = a;
+        b = c22 / this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1202,52 +1202,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Modulo(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Modulo(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this % (Altaxo.Data.DoubleColumn)c2;
+        b = this % (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Modulo_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Modulo_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 % this;
+        b = (Altaxo.Data.DoubleColumn)a % this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Modulo(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Modulo(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this % c22;
+        double c22 = a;
+        b = this % c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Modulo_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Modulo_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 % this;
+        double c22 = a;
+        b = c22 % this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1305,52 +1305,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_And(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_And(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this & (Altaxo.Data.DoubleColumn)c2;
+        b = this & (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_And_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_And_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 & this;
+        b = (Altaxo.Data.DoubleColumn)a & this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_And(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_And(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this & c22;
+        double c22 = a;
+        b = this & c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_And_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_And_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 & this;
+        double c22 = a;
+        b = c22 & this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1408,52 +1408,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Or(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Or(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this | (Altaxo.Data.DoubleColumn)c2;
+        b = this | (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Or_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Or_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 | this;
+        b = (Altaxo.Data.DoubleColumn)a | this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Or(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Or(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this | c22;
+        double c22 = a;
+        b = this | c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Or_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Or_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 | this;
+        double c22 = a;
+        b = c22 | this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1511,52 +1511,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Xor(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Xor(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this ^ (Altaxo.Data.DoubleColumn)c2;
+        b = this ^ (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Xor_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Xor_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 ^ this;
+        b = (Altaxo.Data.DoubleColumn)a ^ this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Xor(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Xor(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this ^ c22;
+        double c22 = a;
+        b = this ^ c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Xor_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Xor_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 ^ this;
+        double c22 = a;
+        b = c22 ^ this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1579,77 +1579,77 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftLeft(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftLeft(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
         Altaxo.Data.DoubleColumn c1 = this;
-        var c22 = (DoubleColumn)c2;
-        int len = c1.Count < c2.Count ? c1.Count : c2.Count;
+        var c22 = (DoubleColumn)a;
+        int len = c1.Count < a.Count ? c1.Count : a.Count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
         for (int i = 0; i < len; i++)
         {
           c33._data[i] = ((long)c1._data[i]) << ((int)c22._data[i]);
         }
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftLeft_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftLeft_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
         Altaxo.Data.DoubleColumn c1 = this;
-        var c22 = (DoubleColumn)c2;
+        var c22 = (DoubleColumn)a;
 
-        int len = c1.Count < c2.Count ? c1.Count : c2.Count;
+        int len = c1.Count < a.Count ? c1.Count : a.Count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
         for (int i = 0; i < len; i++)
         {
           c33._data[i] = ((long)c22._data[i]) << ((int)c1._data[i]);
         }
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftLeft(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftLeft(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        int c22 = (int)(double)c2;
-        c3 = this << c22;
+        int c22 = (int)(double)a;
+        b = this << c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftLeft_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftLeft_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1 = this;
         int len = c1._count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
-        long c22 = (long)(double)c2;
+        long c22 = (long)(double)a;
         for (int i = 0; i < len; i++)
           c33._data[i] = c22 << ((int)c1._data[i]);
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1672,82 +1672,82 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftRight(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftRight(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
         DoubleColumn c1 = this;
-        var c22 = (DoubleColumn)c2;
-        int len = c1.Count < c2.Count ? c1.Count : c2.Count;
+        var c22 = (DoubleColumn)a;
+        int len = c1.Count < a.Count ? c1.Count : a.Count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
         for (int i = 0; i < len; i++)
         {
           c33._data[i] = ((long)c1._data[i]) >> ((int)c22._data[i]);
         }
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftRight_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftRight_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
         Altaxo.Data.DoubleColumn c1 = this;
-        var c22 = (DoubleColumn)c2;
-        int len = c1.Count < c2.Count ? c1.Count : c2.Count;
+        var c22 = (DoubleColumn)a;
+        int len = c1.Count < a.Count ? c1.Count : a.Count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
         for (int i = 0; i < len; i++)
         {
           c33._data[i] = ((long)c22._data[i]) >> ((int)c1._data[i]);
         }
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftRight(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftRight(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1 = this;
         int len = c1._count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
-        int c22 = (int)(double)c2;
+        int c22 = (int)(double)a;
         for (int i = 0; i < len; i++)
           c33._data[i] = ((long)c1._data[i]) >> c22;
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_ShiftRight_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_ShiftRight_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1 = this;
         int len = c1._count;
         var c33 = new Altaxo.Data.DoubleColumn(len);
-        long c22 = (long)(double)c2;
+        long c22 = (long)(double)a;
         for (int i = 0; i < len; i++)
           c33._data[i] = c22 >> ((int)c1._data[i]);
         c33._count = len;
-        c3 = c33;
+        b = c33;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1803,52 +1803,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Lesser(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Lesser(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this < (Altaxo.Data.DoubleColumn)c2;
+        b = this < (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Lesser_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Lesser_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 < this;
+        b = (Altaxo.Data.DoubleColumn)a < this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Lesser(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Lesser(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this < c22;
+        double c22 = a;
+        b = this < c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Lesser_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Lesser_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 < this;
+        double c22 = a;
+        b = c22 < this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -1904,52 +1904,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Greater(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Greater(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this > (Altaxo.Data.DoubleColumn)c2;
+        b = this > (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Greater_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Greater_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 > this;
+        b = (Altaxo.Data.DoubleColumn)a > this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Greater(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Greater(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this > c22;
+        double c22 = a;
+        b = this > c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Greater_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Greater_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 > this;
+        double c22 = a;
+        b = c22 > this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -2005,52 +2005,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_LesserOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_LesserOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this <= (Altaxo.Data.DoubleColumn)c2;
+        b = this <= (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_LesserOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_LesserOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 <= this;
+        b = (Altaxo.Data.DoubleColumn)a <= this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_LesserOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_LesserOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this <= c22;
+        double c22 = a;
+        b = this <= c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_LesserOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_LesserOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 <= this;
+        double c22 = a;
+        b = c22 <= this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -2106,52 +2106,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_GreaterOrEqual(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_GreaterOrEqual(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = this >= (Altaxo.Data.DoubleColumn)c2;
+        b = this >= (Altaxo.Data.DoubleColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_GreaterOrEqual_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_GreaterOrEqual_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DoubleColumn)
+      if (a is Altaxo.Data.DoubleColumn)
       {
-        c3 = (Altaxo.Data.DoubleColumn)c2 >= this;
+        b = (Altaxo.Data.DoubleColumn)a >= this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_GreaterOrEqual(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_GreaterOrEqual(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = this >= c22;
+        double c22 = a;
+        b = this >= c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_GreaterOrEqual_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_GreaterOrEqual_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDouble))
+      if (a.IsType(AltaxoVariant.Content.VDouble))
       {
-        double c22 = c2;
-        c3 = c22 >= this;
+        double c22 = a;
+        b = c22 >= this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
@@ -2174,9 +2174,9 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Plus(out DataColumn c3)
+    public override bool vop_Plus(out DataColumn b)
     {
-      c3 = +this;
+      b = +this;
       return true;
     }
 
@@ -2199,9 +2199,9 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Minus(out DataColumn c3)
+    public override bool vop_Minus(out DataColumn b)
     {
-      c3 = -this;
+      b = -this;
       return true;
     }
 
@@ -2224,9 +2224,9 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Not(out DataColumn c3)
+    public override bool vop_Not(out DataColumn b)
     {
-      c3 = !this;
+      b = !this;
       return true;
     }
 
@@ -2249,9 +2249,9 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Complement(out DataColumn c3)
+    public override bool vop_Complement(out DataColumn b)
     {
-      c3 = ~this;
+      b = ~this;
       return true;
     }
 
@@ -2274,7 +2274,7 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Increment(out DataColumn c3)
+    public override bool vop_Increment(out DataColumn b)
     {
       int len = _count;
       var c33 = new Altaxo.Data.DoubleColumn(len);
@@ -2283,7 +2283,7 @@ namespace Altaxo.Data
         c33._data[i] = _data[i] + 1;
       }
       c33._count = len;
-      c3 = c33;
+      b = c33;
       return true;
     }
 
@@ -2306,7 +2306,7 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Decrement(out DataColumn c3)
+    public override bool vop_Decrement(out DataColumn b)
     {
       int len = _count;
       var c33 = new Altaxo.Data.DoubleColumn(len);
@@ -2315,7 +2315,7 @@ namespace Altaxo.Data
         c33._data[i] = _data[i] - 1;
       }
       c33._count = len;
-      c3 = c33;
+      b = c33;
       return true;
     }
 

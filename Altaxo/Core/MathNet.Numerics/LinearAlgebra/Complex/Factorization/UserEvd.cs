@@ -254,7 +254,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     /// Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
     /// Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
     /// Fortran subroutine in EISPACK.</remarks>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the eigendecomposition iteration does not converge within the allowed number of iterations.</exception>
     private static void SymmetricDiagonalize(Matrix<Complex> eigenVectors, double[] d, double[] e, int order)
     {
       const int maxiter = 1000;

@@ -149,9 +149,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     /// <inheritdoc/>
-    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
-      var result = base.HitTest(parentHitData);
+      var result = base.HitTest(hitData);
       if (result is not null)
       {
         result.DoubleClick = EhHitDoubleClick;

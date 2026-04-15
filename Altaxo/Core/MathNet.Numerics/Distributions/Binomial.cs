@@ -261,9 +261,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the probability mass (PMF) at k, i.e. P(X = k).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <returns>the probability mass at location <paramref name="k"/>.</returns>
     public static double PMF(double p, int n, int k)
     {
@@ -293,9 +293,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the log probability mass (lnPMF) at k, i.e. ln(P(X = k)).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <returns>the log probability mass at location <paramref name="k"/>.</returns>
     public static double PMFLn(double p, int n, int k)
     {
@@ -325,9 +325,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double p, int n, double x)
@@ -464,7 +464,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
-    /// <returns>a sequence of successes in <paramref name="n"/> trials.</returns>
     public static void Samples(System.Random rnd, int[] values, double p, int n)
     {
       if (!(p >= 0.0 && p <= 1.0 && n >= 0))
@@ -513,7 +512,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="p">The success probability (p) in each trial. Range: 0 ≤ p ≤ 1.</param>
     /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
-    /// <returns>a sequence of successes in <paramref name="n"/> trials.</returns>
     public static void Samples(int[] values, double p, int n)
     {
       if (!(p >= 0.0 && p <= 1.0 && n >= 0))

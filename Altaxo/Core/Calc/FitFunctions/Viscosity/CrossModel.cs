@@ -108,7 +108,15 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the Cross viscosity model.
+    /// </summary>
+    /// <param name="gammadot">The shear rate.</param>
+    /// <param name="eta0">The zero-shear viscosity.</param>
+    /// <param name="etaInf">The infinite-shear viscosity.</param>
+    /// <param name="lambda">The characteristic time constant.</param>
+    /// <param name="a">The dimensionless model exponent.</param>
+    /// <returns>The viscosity predicted by the model.</returns>
     public static double Evaluate(double gammadot, double eta0, double etaInf, double lambda, double a)
     {
       return etaInf + (eta0 - etaInf) / (1 + Math.Pow(lambda * gammadot, a));

@@ -821,10 +821,10 @@ namespace Altaxo.Collections
     }
 
     /// <inheritdoc />
-    protected override void OnPropertyChanged(string name)
+    protected override void OnPropertyChanged(string propertyName)
     {
-      base.OnPropertyChanged(name);
-      if (_imageIndex != _selectedImageIndex && name == "IsSelected")
+      base.OnPropertyChanged(propertyName);
+      if (_imageIndex != _selectedImageIndex && propertyName == "IsSelected")
         base.OnPropertyChanged("ImageIndex");
     }
   }

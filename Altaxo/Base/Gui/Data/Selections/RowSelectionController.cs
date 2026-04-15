@@ -190,7 +190,7 @@ namespace Altaxo.Gui.Data.Selections
     /// Applies all controllers, and stores the updated row selection entries in the list. But the document tree is not build here.
     /// </summary>
     /// <param name="disposeController">if set to <c>true</c> [dispose controller].</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if all controllers were applied successfully; otherwise, <c>false</c>.</returns>
     private bool ApplyAllControllers(bool disposeController)
     {
       for (int i = 0; i < _rowSelections.Count; ++i)

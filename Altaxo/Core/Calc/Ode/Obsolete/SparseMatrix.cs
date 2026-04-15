@@ -177,7 +177,7 @@ namespace Altaxo.Calc.Ode.Obsolete
 
     /// <summary>Matrix multiplication</summary>
     /// <param name="v">Vector</param>
-    /// <returns></returns>
+    /// <returns>The product of this matrix and <paramref name="v"/>.</returns>
     public Vector times(Vector v)
     {
       double[] vv = v;
@@ -199,7 +199,7 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <summary>Matrix multiplication</summary>
     /// <param name="m">First factor</param>
     /// <param name="v">Second factor</param>
-    /// <returns></returns>
+    /// <returns>The product of <paramref name="m"/> and <paramref name="v"/>.</returns>
     public static Vector operator *(SparseMatrix m, Vector v)
     {
       if (m is null)
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <summary>Matrix multiplication</summary>
     /// <param name="v">Vector</param>
     /// <param name="m">2nd factor</param>
-    /// <returns></returns>
+    /// <returns>The product of <paramref name="v"/> and <paramref name="m"/>.</returns>
     public static Vector operator *(Vector v, SparseMatrix m)
     {
       if (m is null)
@@ -474,8 +474,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     public Vector SolveGE(Vector b) { return Gauss.SolveCore(Copy(), b); }
 
     /// <summary>Forward substitution routine for solving Lx = b, where L is a lower-triangular matrix</summary>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="b">The right-hand side vector.</param>
+    /// <returns>The solution vector of the lower triangular system.</returns>
     public Vector SolveLower(Vector b)
     {
       var x = Vector.Zeros(m);

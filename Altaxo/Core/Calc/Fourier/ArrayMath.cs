@@ -69,8 +69,8 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="src1real">Real part of the first input array. Must be at least of length n.</param>
     /// <param name="src1imag">Imaginary part of the first input array. Must be at least of length n.</param>
-    /// <param name="src2real">Real part of the first input array. Must be at least of length n.</param>
-    /// <param name="src2imag">Imaginary part of the first input array. Must be at least of length n.</param>
+    /// <param name="src2real">Real part of the second input array. Must be at least of length n.</param>
+    /// <param name="src2imag">Imaginary part of the second input array. Must be at least of length n.</param>
     /// <param name="destreal">Real part of the resulting array. Must be at least of length n.</param>
     /// <param name="destimag">Imaginary part of the resulting array. Must be at least of length n.</param>
     /// <param name="n">Normally, the size of the arrays. The multiplication is done from index 0 to n-1.</param>
@@ -97,8 +97,8 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="src1real">Real part of the first input array. Must be at least of length n.</param>
     /// <param name="src1imag">Imaginary part of the first input array. Must be at least of length n.</param>
-    /// <param name="src2real">Real part of the first input array. Must be at least of length n.</param>
-    /// <param name="src2imag">Imaginary part of the first input array. Must be at least of length n.</param>
+    /// <param name="src2real">Real part of the second input array. Must be at least of length n.</param>
+    /// <param name="src2imag">Imaginary part of the second input array. Must be at least of length n.</param>
     /// <param name="destreal">Real part of the resulting array. Must be at least of length n.</param>
     /// <param name="destimag">Imaginary part of the resulting array. Must be at least of length n.</param>
     /// <param name="n">Normally, the size of the arrays. The multiplication is done from index 0 to n-1. See remarks for details.</param>

@@ -38,6 +38,9 @@ namespace Altaxo.Graph.Gdi
   using Plot;
   using Shapes;
 
+  /// <summary>
+  /// Represents a two-dimensional plot layer.
+  /// </summary>
   public partial class XYPlotLayer
     :
     HostLayer,
@@ -319,7 +322,7 @@ namespace Altaxo.Graph.Gdi
     private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       /// <inheritdoc/>
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
         /*

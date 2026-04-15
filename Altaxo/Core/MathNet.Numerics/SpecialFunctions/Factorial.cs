@@ -33,6 +33,9 @@ using BigInteger = System.Numerics.BigInteger;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides factorial-related special functions.
+  /// </summary>
   public partial class SpecialFunctions
   {
     private static readonly double[] _factorialCache = new double[]

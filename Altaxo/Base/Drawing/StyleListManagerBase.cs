@@ -40,7 +40,7 @@ namespace Altaxo.Drawing
   /// Entry for the StyleListManagerBase that bundles the list and its definition level.
   /// </summary>
   /// <typeparam name="TList">The type of the list.</typeparam>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The type of the list items.</typeparam>
   /// <seealso cref="Altaxo.Main.IImmutable" />
   public class StyleListManagerBaseEntryValue<TList, T> : Main.IImmutable where TList : IStyleList<T> where T : Main.IImmutable
   {

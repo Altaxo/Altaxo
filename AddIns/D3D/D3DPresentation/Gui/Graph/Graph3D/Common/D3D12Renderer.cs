@@ -256,22 +256,22 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <summary>
     /// Renders one frame for the specified host window and size.
     /// </summary>
-    /// <param name="hWnd">Host window handle.</param>
+    /// <param name="hwnd">Host window handle.</param>
     /// <param name="width">Target width in pixels.</param>
     /// <param name="height">Target height in pixels.</param>
-    public void Render(IntPtr hWnd, PointD2D size)
+    public void Render(IntPtr hwnd, PointD2D targetSize)
     {
-      if (hWnd == IntPtr.Zero)
+      if (hwnd == IntPtr.Zero)
       {
         return;
       }
 
-      int width = Math.Max((int)size.X, 1);
-      int height = Math.Max((int)size.Y, 1);
+      int width = Math.Max((int)targetSize.X, 1);
+      int height = Math.Max((int)targetSize.Y, 1);
 
-      if (hWnd != _hwnd)
+      if (hwnd != _hwnd)
       {
-        Initialize(hWnd, width, height);
+        Initialize(hwnd, width, height);
         _timeBeginRendering = DateTime.UtcNow;
       }
       else if (_width != width || _height != height)

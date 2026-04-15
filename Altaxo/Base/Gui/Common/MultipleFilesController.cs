@@ -189,12 +189,6 @@ namespace Altaxo.Gui.Common
     private (string Filter, string Description)[] _fileFilters = new[] { ("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)"), ("*.*", "All files (*.*)") };
 
     /// <summary>
-    /// Set the file filters.
-    /// </summary>
-    /// <summary>
-    /// Gets or sets the file filters.
-    /// </summary>
-    /// <summary>
     /// Gets or sets the file filters.
     /// </summary>
     public IEnumerable<(string Filter, string Description)> FileFilters

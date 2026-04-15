@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// This will return the object itself, i.e. the object which corresponds to the selection path.
     /// </summary>
-    /// <returns></returns>
+    /// <value>The hit-tested object that corresponds to the selection path.</value>
     object HittedObject { get; set; }
 
     /// <summary>

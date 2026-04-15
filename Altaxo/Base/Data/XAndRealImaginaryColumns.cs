@@ -44,15 +44,15 @@ namespace Altaxo.Data
     protected class SerializationSurrogate0 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
       /// <inheritdoc/>
-      public override void Serialize(object obj, IXmlSerializationInfo info)
+      public override void Serialize(object o, IXmlSerializationInfo info)
       {
-        var s = (XAndRealImaginaryColumns)obj;
+        var s = (XAndRealImaginaryColumns)o;
         info.AddValue("IndependentColumnName", s._independentColumnName);
-        base.Serialize(obj, info);
+        base.Serialize(o, info);
       }
 
       /// <inheritdoc/>
-      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         var independentColumnName = info.GetString("IndependentColumnName");
         if (o is XAndRealImaginaryColumns s)

@@ -86,15 +86,15 @@ namespace Altaxo.Serialization.Bitmaps
     /// <summary>
     /// Imports an image to a table.
     /// </summary>
-    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="fileNames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
-    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="importOptions">The import options object.</param>
     /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource)
+    public override string? Import(IReadOnlyList<string> fileNames, Altaxo.Data.DataTable table, object importOptions, bool attachDataSource)
     {
-      var importOptions = (BitmapImportOptions)importOptionsObj;
+      var importOptionsX = (BitmapImportOptions)importOptions;
       Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -108,48 +108,48 @@ namespace Altaxo.Serialization.Bitmaps
       }
 
       DataColumn? colPixelsC = null, colPixelsR = null;
-      if (importOptions.IncludePixelNumberColumns)
+      if (importOptionsX.IncludePixelNumberColumns)
       {
-        var xy = importOptions.ImportTransposed ? "Y" : "X";
+        var xy = importOptionsX.ImportTransposed ? "Y" : "X";
         colPixelsC = table.PropCols.EnsureExistence($"PixelNumber{xy}", typeof(DoubleColumn), ColumnKind.V, 0);
       }
 
       DataColumn? colDimC = null, colDimR = null;
-      if (importOptions.IncludeDimensionColumns)
+      if (importOptionsX.IncludeDimensionColumns)
       {
-        var xy = importOptions.ImportTransposed ? "Y" : "X";
+        var xy = importOptionsX.ImportTransposed ? "Y" : "X";
         colDimC = table.PropCols.EnsureExistence($"Dimension{xy}", typeof(DoubleColumn), ColumnKind.V, 0);
       }
 
       DataColumn? colPath = null;
-      if (importOptions.IncludeFilePathAsProperty && filenames.Count > 1)
+      if (importOptionsX.IncludeFilePathAsProperty && fileNames.Count > 1)
       {
         colPath = table.PropCols.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.V, 0);
       }
 
-      var yColumnNameBase = importOptions.NeutralColumnName ?? string.Empty;
+      var yColumnNameBase = importOptionsX.NeutralColumnName ?? string.Empty;
 
       int idxFile = -1;
-      foreach (string filename in filenames)
+      foreach (string filename in fileNames)
       {
         ++idxFile;
         var img = (Bitmap)Bitmap.FromFile(filename);
 
-        if (importOptions.IncludePixelNumberColumns)
+        if (importOptionsX.IncludePixelNumberColumns)
         {
-          var xy = importOptions.ImportTransposed ? "X" : "Y";
-          var columnName = filenames.Count > 1 ? $"PixelNumber{xy}{idxFile}" : $"PixelNumber{xy}";
+          var xy = importOptionsX.ImportTransposed ? "X" : "Y";
+          var columnName = fileNames.Count > 1 ? $"PixelNumber{xy}{idxFile}" : $"PixelNumber{xy}";
           colPixelsR = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.X, idxFile);
         }
 
-        if (importOptions.IncludeDimensionColumns)
+        if (importOptionsX.IncludeDimensionColumns)
         {
-          var xy = importOptions.ImportTransposed ? "X" : "Y";
-          var columnName = filenames.Count > 1 ? $"Dimension{xy}{idxFile}" : $"Dimension{xy}";
+          var xy = importOptionsX.ImportTransposed ? "X" : "Y";
+          var columnName = fileNames.Count > 1 ? $"Dimension{xy}{idxFile}" : $"Dimension{xy}";
           colDimR = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, idxFile);
         }
 
-        if (importOptions.ImportTransposed)
+        if (importOptionsX.ImportTransposed)
         {
           for (int iy = 0; iy < img.Height; ++iy)
           {
@@ -165,7 +165,7 @@ namespace Altaxo.Serialization.Bitmaps
 
           for (int ix = 0; ix < img.Width; ix++)
           {
-            var columnName = filenames.Count > 1 ? $"{yColumnNameBase}{idxFile}_{ix}" : $"{yColumnNameBase}{ix}";
+            var columnName = fileNames.Count > 1 ? $"{yColumnNameBase}{idxFile}_{ix}" : $"{yColumnNameBase}{ix}";
             var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, idxFile);
             var ycolNumber = table.DataColumns.GetColumnNumber(ycol);
             if (colPixelsC is not null)
@@ -183,7 +183,7 @@ namespace Altaxo.Serialization.Bitmaps
 
             for (int iy = 0; iy < img.Height; iy++)
             {
-              ycol[iy] = GetPixelValue(img.GetPixel(ix, iy), importOptions.ColorChannel);
+              ycol[iy] = GetPixelValue(img.GetPixel(ix, iy), importOptionsX.ColorChannel);
             }
           }
         }
@@ -203,7 +203,7 @@ namespace Altaxo.Serialization.Bitmaps
 
           for (int iy = 0; iy < img.Height; iy++)
           {
-            var columnName = filenames.Count > 1 ? $"{yColumnNameBase}{idxFile}_{iy}" : $"{yColumnNameBase}{iy}";
+            var columnName = fileNames.Count > 1 ? $"{yColumnNameBase}{idxFile}_{iy}" : $"{yColumnNameBase}{iy}";
             var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, idxFile);
             var ycolNumber = table.DataColumns.GetColumnNumber(ycol);
             if (colPixelsC is not null)
@@ -221,7 +221,7 @@ namespace Altaxo.Serialization.Bitmaps
 
             for (int ix = 0; ix < img.Width; ix++)
             {
-              ycol[ix] = GetPixelValue(img.GetPixel(ix, iy), importOptions.ColorChannel);
+              ycol[ix] = GetPixelValue(img.GetPixel(ix, iy), importOptionsX.ColorChannel);
             }
           }
         }
@@ -233,7 +233,7 @@ namespace Altaxo.Serialization.Bitmaps
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(filenames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

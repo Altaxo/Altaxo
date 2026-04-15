@@ -437,7 +437,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override void Paint(System.Drawing.Graphics g, IPaintContext paintContext)
+    public override void Paint(System.Drawing.Graphics g, IPaintContext context)
     {
       if (_cachedArea is null)
         return;
@@ -514,7 +514,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         g.Restore(graphicsState2); // make our tricks undone here
       }
-      _axisStyles.Paint(g, paintContext, _cachedArea);
+      _axisStyles.Paint(g, context, _cachedArea);
 
       g.Restore(graphicsState);
     }
@@ -533,9 +533,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
-      var myHitTestData = htd.NewFromAdditionalTransformation(_transformation);
+      var myHitTestData = hitData.NewFromAdditionalTransformation(_transformation);
 
       IHitTestObject? result = null;
       foreach (var axstyle in _axisStyles)
@@ -548,7 +548,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      result = base.HitTest(htd);
+      result = base.HitTest(hitData);
       if (result is not null)
         result.DoubleClick = EhDoubleClick;
 

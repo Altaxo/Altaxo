@@ -1236,9 +1236,6 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <param name="state">The initial state array.</param>
     /// <param name="zeros">How zeros are handled during the fold.</param>
     /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
-    /// <summary>
-    /// Folds each row into a target state array without validation.
-    /// </summary>
     internal virtual void FoldByRowUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       for (int i = 0; i < RowCount; i++)
@@ -1295,9 +1292,6 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     /// <param name="state">The initial state array.</param>
     /// <param name="zeros">How zeros are handled during the fold.</param>
     /// <remarks>The state array will not be modified, unless it is the same instance as the target array (which is allowed).</remarks>
-    /// <summary>
-    /// Folds each column into a target state array without validation.
-    /// </summary>
     internal virtual void FoldByColumnUnchecked<TU>(TU[] target, Func<TU, T, TU> f, Func<TU, int, TU> finalize, TU[] state, Zeros zeros)
     {
       for (int j = 0; j < ColumnCount; j++)

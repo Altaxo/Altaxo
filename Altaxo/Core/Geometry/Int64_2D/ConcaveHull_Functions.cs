@@ -28,6 +28,9 @@ using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
+  /// <summary>
+  /// Provides helpers for constructing concave hulls in 64-bit integer 2D space.
+  /// </summary>
   public partial class ConcaveHull
   {
     /// <summary>

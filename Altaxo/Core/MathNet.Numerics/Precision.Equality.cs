@@ -34,6 +34,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides equality helpers for numeric precision operations.
+  /// </summary>
   public static partial class Precision
   {
     /// <summary>

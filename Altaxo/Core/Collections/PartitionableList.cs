@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -153,11 +151,11 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Creates the partial view that consisist of elements of type M that fullfil a given condition.
+    /// Creates the partial view that consists of elements of type M that fulfill a given condition.
     /// </summary>
     /// <typeparam name="M">Type of the elements of the partial view.</typeparam>
-    /// <param name="selectionCriterium">The selection criterium.</param>
-    /// <returns></returns>
+    /// <param name="selectionCriterium">The selection criterion.</param>
+    /// <returns>The created partial view.</returns>
     public IObservableList<M> CreatePartialViewOfType<M>(Func<M, bool> selectionCriterium) where M : T
     {
       var result = new PartialView<M>(this, x => (x is M mx) && selectionCriterium(mx));
@@ -166,13 +164,13 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Creates the partial view that consisist of elements of type M that fullfil a condition provided by the argument <paramref name="selectionCriterium"/>.
+    /// Creates the partial view that consists of elements of type M that fulfill a condition provided by the argument <paramref name="selectionCriterium"/>.
     /// </summary>
     /// <typeparam name="M">Type of the elements of the partial view.</typeparam>
-    /// <param name="selectionCriterium">The selection criterium. If this function applied to an element returns <c>true</c>, this element is included into the partial view.</param>
+    /// <param name="selectionCriterium">The selection criterion. If this function applied to an element returns <c>true</c>, this element is included into the partial view.</param>
     /// <param name="actionBeforeInsertion">Action that is called before elements are included into the partial view. Note that this action is executed only if items are directly added into the partial view,
-    /// but it is not executed if items are indirectly included into the partial view by adding items that fullfil the selection criterium to the parent list.</param>
-    /// <returns></returns>
+    /// but it is not executed if items are indirectly included into the partial view by adding items that fulfill the selection criterion to the parent list.</param>
+    /// <returns>The created partial view.</returns>
     public IObservableList<M> CreatePartialViewOfType<M>(Func<M, bool> selectionCriterium, Action<M> actionBeforeInsertion) where M : T
     {
       var result = new PartialView<M>(this, x => (x is M mx) && selectionCriterium(mx), actionBeforeInsertion);
@@ -205,7 +203,9 @@ namespace Altaxo.Collections
       return _eventState.Disable();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Reenables collection change notifications and raises any pending event.
+    /// </summary>
     protected virtual void OnReenableEvents()
     {
       if (_pendingEvent is not null)
@@ -546,9 +546,9 @@ namespace Altaxo.Collections
           Dispose();
         }
 
-      /// <summary>
+        /// <summary>
         /// Disarms this SuppressToken so that it can not raise the resume event anymore.
-      /// </summary>
+        /// </summary>
         public void ResumeSilently()
         {
           var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);

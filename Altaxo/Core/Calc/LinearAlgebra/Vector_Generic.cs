@@ -34,7 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// Base class of the vector classes. Implements non-arithmetic stuff common to all vectors.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">The element type stored in the vector.</typeparam>
   public class GenericVector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
   {
     private static readonly T[] _emptyArray = new T[0];

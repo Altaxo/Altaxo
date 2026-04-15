@@ -88,9 +88,9 @@ namespace Altaxo.Serialization.OpenXml.Excel
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExcelImportOptions)obj;
+        var s = (ExcelImportOptions)o;
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);

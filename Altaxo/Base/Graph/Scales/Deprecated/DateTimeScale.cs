@@ -648,7 +648,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       /// </summary>
       /// <param name="i">The number to round up.</param>
       /// <param name="n">The rounding step.</param>
-      /// <returns></returns>
+      /// <returns>The smallest multiple of <paramref name="n"/> that is greater than or equal to <paramref name="i"/>.</returns>
       public static int RoundUp(int i, int n)
       {
         n = Math.Abs(n);
@@ -661,7 +661,7 @@ namespace Altaxo.Graph.Scales.Deprecated
       /// </summary>
       /// <param name="i">The number to round down.</param>
       /// <param name="n">The rounding step.</param>
-      /// <returns></returns>
+      /// <returns>The greatest multiple of <paramref name="n"/> that is less than or equal to <paramref name="i"/>.</returns>
       public static int RoundDown(int i, int n)
       {
         n = Math.Abs(n);

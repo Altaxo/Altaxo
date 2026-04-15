@@ -241,7 +241,6 @@ namespace Altaxo.Settings
     }
 
     /// <summary>Assembles the members of this instance to a resulting culture.</summary>
-    /// <returns>A culture info which contains the values of the member variables.</returns>
     public virtual void SetCachedCultureInfo()
     {
       CultureInfo result;

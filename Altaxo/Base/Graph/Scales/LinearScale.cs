@@ -330,8 +330,8 @@ namespace Altaxo.Graph.Scales
     /// <summary>
     /// Returns the default axis boundaries when no valid data are entered into.
     /// </summary>
-    /// <param name="org"></param>
-    /// <param name="end"></param>
+    /// <param name="org">Receives the default axis origin.</param>
+    /// <param name="end">Receives the default axis end.</param>
     public void GetDefaultAxisBoundaries(out double org, out double end)
     {
       org = 0;

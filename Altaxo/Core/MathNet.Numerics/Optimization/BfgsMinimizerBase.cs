@@ -38,10 +38,13 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public abstract class BfgsMinimizerBase : MinimizerBase
   {
-    /// <inheritdoc />
     /// <summary>
     /// Creates a base class for BFGS minimization
     /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient.</param>
+    /// <param name="parameterTolerance">The stopping threshold for parameter changes.</param>
+    /// <param name="functionProgressTolerance">The stopping threshold for function value progress.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     protected BfgsMinimizerBase(double gradientTolerance, double parameterTolerance, double functionProgressTolerance, int maximumIterations) : base(gradientTolerance, parameterTolerance, functionProgressTolerance, maximumIterations)
     {
     }

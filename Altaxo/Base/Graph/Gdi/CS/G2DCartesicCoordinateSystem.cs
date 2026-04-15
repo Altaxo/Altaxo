@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
@@ -55,20 +54,20 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
-    /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <param name="from">The coordinate system to copy from.</param>
     /// <inheritdoc />
-    public override void CopyFrom(G2DCoordinateSystem fromb)
+    public override void CopyFrom(G2DCoordinateSystem from)
     {
-      if (ReferenceEquals(this, fromb))
+      if (ReferenceEquals(this, from))
         return;
 
-      base.CopyFrom(fromb);
-      if (fromb is G2DCartesicCoordinateSystem)
+      base.CopyFrom(from);
+      if (from is G2DCartesicCoordinateSystem)
       {
-        var from = (G2DCartesicCoordinateSystem)fromb;
-        _isXYInterchanged = from._isXYInterchanged;
-        _isXreverse = from._isXreverse;
-        _isYreverse = from._isYreverse;
+        var fromX = (G2DCartesicCoordinateSystem)from;
+        _isXYInterchanged = fromX._isXYInterchanged;
+        _isXreverse = fromX._isXreverse;
+        _isYreverse = fromX._isYreverse;
       }
     }
 
@@ -522,11 +521,11 @@ namespace Altaxo.Graph.Gdi.CS
     }
 
     /// <inheritdoc />
-    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
+    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1)
     {
       if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
       {
-        g.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
+        path.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
       }
     }
 

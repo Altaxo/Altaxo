@@ -154,7 +154,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Determines whether a column name can be divided into a base name, and a sequence of digits.
     /// </summary>
     /// <param name="nameOfColumn">The name of column.</param>
-    /// <returns></returns>
+    /// <returns>A tuple indicating whether a base name exists and, if so, the extracted base name.</returns>
     /// <example>
     /// For example,
     /// the name 'Yabs05423' has a base name 'Yabs'. The name 'Yabs.05423' has the same base name 'Yabs' (dots will be ignored).
@@ -182,7 +182,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="processOptions">The options for master curve creation.</param>
     /// <param name="destinationTable">The destination table that accommodates the results.</param>
     /// <param name="reporter">The object to report the progress.</param>
-    /// <exception cref="System.NotImplementedException"></exception>
     public static void Execute(MasterCurveData processData, MasterCurveCreationOptions processOptions, DataTable destinationTable, IProgressReporter reporter)
     {
       // Test the data

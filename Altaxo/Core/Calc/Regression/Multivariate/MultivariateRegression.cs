@@ -55,7 +55,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixXPre">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
     /// <param name="matrixYPre">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
     /// <param name="maximalNumberOfFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights necessary for further calculations.</returns>
     protected abstract void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixXPre, IROMatrix<double> matrixYPre, int maximalNumberOfFactors);
 
     /// <summary>
@@ -225,10 +224,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
     /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
     /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
-    /// <param name="auxDataX">Contains data from the ensemble preprocessing that is needed later on for preprocessing spectra for prediction.</param>
+    /// <param name="matrixYRaw">Matrix of target variables. Each measurement (belonging to a spectrum) represents one row.</param>
     /// <param name="xOfXPre">On return, contains the x-values of the preprocessed spectra.</param>
     /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
-    /// <param name="matrixYRaw">Matrix of target variables. Each measurement (belonging to a spectrum) represents one row.</param>
+    /// <param name="auxDataX">Contains data from the ensemble preprocessing that is needed later on for preprocessing spectra for prediction.</param>
     /// <param name="matrixYPre">On return, contains the matrix of preprocessed target variables. Same dimensions as <paramref name="matrixYRaw"/>.</param>
     /// <param name="meanY">On return, contains the mean value of the target variables (mean of all measurements).</param>
     /// <param name="scaleY">On return, contains the scaling factor for the target variables.</param>
@@ -274,8 +273,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// This calculates from the predicted (but still centered) y values the raw y values.
     /// </summary>
-    /// <param name="matrixY">Matrix of (centered) y values. On return, contains the uncentered y values.</param>
     /// <param name="calib">Contains the calibration data (mean y and scale y).</param>
+    /// <param name="matrixY">Matrix of (centered) y values. On return, contains the uncentered y values.</param>
     public static void PostprocessTargetVariablesInline(IMultivariatePreprocessingModel calib, IMatrix<double> matrixY)
     {
       PostprocessTargetVariablesInline(matrixY, calib.YMean, calib.YScale);
@@ -291,7 +290,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixXPre">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
     /// <param name="matrixYPre">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
     /// <param name="maximalNumberOfFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights necessary for further calculations.</returns>
     public void AnalyzeFromPreprocessed(IROMatrix<double> matrixXPre, IROMatrix<double> matrixYPre, int maximalNumberOfFactors)
     {
       Reset();

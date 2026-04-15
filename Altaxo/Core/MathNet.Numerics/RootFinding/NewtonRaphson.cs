@@ -46,7 +46,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="accuracy">Desired accuracy. The root will be refined until the accuracy or the maximum number of iterations is reached. Default 1e-8. Must be greater than 0.</param>
     /// <param name="maxIterations">Maximum number of iterations. Default 100.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the algorithm fails to converge within the allowed number of iterations or no root is found within the provided bounds.</exception>
     public static double FindRoot(Func<double, double> f, Func<double, double> df, double lowerBound, double upperBound, double accuracy = 1e-8, int maxIterations = 100)
     {
       if (TryFindRoot(f, df, 0.5 * (lowerBound + upperBound), lowerBound, upperBound, accuracy, maxIterations, out var root))
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="accuracy">Desired accuracy. The root will be refined until the accuracy or the maximum number of iterations is reached. Default 1e-8. Must be greater than 0.</param>
     /// <param name="maxIterations">Maximum number of iterations. Default 100.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the algorithm fails to converge within the allowed number of iterations or no root is found within the provided bounds.</exception>
     public static double FindRootNearGuess(Func<double, double> f, Func<double, double> df, double initialGuess, double lowerBound = double.MinValue, double upperBound = double.MaxValue, double accuracy = 1e-8, int maxIterations = 100)
     {
       if (TryFindRoot(f, df, initialGuess, lowerBound, upperBound, accuracy, maxIterations, out var root))

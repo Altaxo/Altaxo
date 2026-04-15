@@ -224,7 +224,7 @@ namespace Altaxo.Main.Services
     /// Throws an <see cref="InvalidOperationException"/> if a directory name could not be retrieved.
     /// </summary>
     /// <param name="fullFileName">Full name of the file.</param>
-    /// <returns></returns>
+    /// <returns>The directory name extracted from <paramref name="fullFileName"/>.</returns>
     /// <exception cref="InvalidOperationException">Unable to get directory name from file name '{fullFileName}'</exception>
     public static string GetDirectoryName(string fullFileName)
     {

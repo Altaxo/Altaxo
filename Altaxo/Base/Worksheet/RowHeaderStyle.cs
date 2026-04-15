@@ -135,9 +135,6 @@ namespace Altaxo.Worksheet
     /// <summary>
     /// Gets the registered paint methods for specific drawing contexts.
     /// </summary>
-    /// <summary>
-    /// Gets the registered paint methods for specific drawing contexts.
-    /// </summary>
     public static Dictionary<System.Type, Action<RowHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<RowHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
     /// <inheritdoc />

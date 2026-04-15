@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Probability
@@ -394,7 +392,7 @@ namespace Altaxo.Calc.Probability
         x = -x;
         gamma = -gamma;
         // note: aga remains invariant
-    }
+      }
       if (!(x > 0))
         return double.NaN;
 
@@ -1231,13 +1229,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Calculation of the PDF if alpha is inbetween 0.0 and 0.1.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The x value at which the probability density function is evaluated.</param>
+    /// <param name="alpha">The stability parameter in the interval from 0.0 to 0.1.</param>
+    /// <param name="gamma">The skewness parameter of the distribution.</param>
+    /// <param name="aga">Precomputed helper value derived from <paramref name="alpha"/> and <paramref name="gamma"/>.</param>
+    /// <param name="tempStorage">Temporary storage reused by the integral evaluation path.</param>
+    /// <param name="precision">Requested numerical precision for the integral evaluation.</param>
+    /// <returns>The value of the probability density function.</returns>
     public static double PDFAlphaBetween0And01(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double smallestexp = GetLog10BoundaryForOneTermOfSeriesExpansionSmall(alpha, DoubleConstants.DBL_EPSILON);
@@ -1254,13 +1252,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Calculation of the PDF if alpha is inbetween 0.1 and 0.2. For small x (1E-16), the accuracy at alpha=0.1 is only 1E-7.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The x value at which the probability density function is evaluated.</param>
+    /// <param name="alpha">The stability parameter in the interval from 0.1 to 0.2.</param>
+    /// <param name="gamma">The skewness parameter of the distribution.</param>
+    /// <param name="aga">Precomputed helper value derived from <paramref name="alpha"/> and <paramref name="gamma"/>.</param>
+    /// <param name="tempStorage">Temporary storage reused by the integral evaluation path.</param>
+    /// <param name="precision">Requested numerical precision for the integral evaluation.</param>
+    /// <returns>The value of the probability density function.</returns>
     public static double PDFAlphaBetween01And02(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double a15 = alpha * Math.Sqrt(alpha);
@@ -1279,13 +1277,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Calculation of the PDF if alpha is inbetween 0.2 and 0.99. For small x (1E-8), the accuracy at alpha=0.2 is only 1E-7.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The x value at which the probability density function is evaluated.</param>
+    /// <param name="alpha">The stability parameter in the interval from 0.2 to 0.99.</param>
+    /// <param name="gamma">The skewness parameter of the distribution.</param>
+    /// <param name="aga">Precomputed helper value derived from <paramref name="alpha"/> and <paramref name="gamma"/>.</param>
+    /// <param name="tempStorage">Temporary storage reused by the integral evaluation path.</param>
+    /// <param name="precision">Requested numerical precision for the integral evaluation.</param>
+    /// <returns>The value of the probability density function.</returns>
     public static double PDFAlphaBetween02And099(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       double smallestexp;
@@ -1308,13 +1306,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Calculation of the PDF if alpha is inbetween 0.99 and 1.01.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="gamma"></param>
-    /// <param name="aga"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The x value at which the probability density function is evaluated.</param>
+    /// <param name="alpha">The stability parameter in the interval from 0.99 to 1.01.</param>
+    /// <param name="gamma">The skewness parameter of the distribution.</param>
+    /// <param name="aga">Precomputed helper value derived from <paramref name="alpha"/> and <paramref name="gamma"/>.</param>
+    /// <param name="tempStorage">Temporary storage reused by the integral evaluation path.</param>
+    /// <param name="precision">Requested numerical precision for the integral evaluation.</param>
+    /// <returns>The value of the probability density function.</returns>
     public static double PDFAlphaBetween099And101(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (alpha == 1)

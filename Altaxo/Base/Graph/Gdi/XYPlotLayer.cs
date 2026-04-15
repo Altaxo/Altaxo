@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="from">The instance to copy from.</param>
     public XYPlotLayer(XYPlotLayer from)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable
       : base(from)
     {
     }
@@ -115,22 +115,21 @@ namespace Altaxo.Graph.Gdi
     /// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
     /// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
     /// </summary>
-    /// <param name="obj">The object (layer) from which to copy.</param>
+    /// <param name="from">The object (layer) from which to copy.</param>
     /// <param name="options">Copy options.</param>
-    protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
+    protected override void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
     {
-      base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
+      base.InternalCopyFrom(from, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
-      var from = obj as XYPlotLayer;
-      if (from is null)
+      if (from is not XYPlotLayer fromX)
         return;
 
       if (0 != (options & GraphCopyOptions.CopyLayerScales))
       {
-        CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
+        CoordinateSystem = (G2DCoordinateSystem)fromX.CoordinateSystem.Clone();
 
-        Scales = from._scales.Clone();
-        _dataClipping = from._dataClipping;
+        Scales = fromX._scales.Clone();
+        _dataClipping = fromX._dataClipping;
       }
 
       // Coordinate Systems size must be updated in any case
@@ -138,25 +137,25 @@ namespace Altaxo.Graph.Gdi
 
       if (0 != (options & GraphCopyOptions.CopyLayerGrid))
       {
-        GridPlanes = from._gridPlanes.Clone();
+        GridPlanes = fromX._gridPlanes.Clone();
       }
 
       // Styles
 
       if (0 != (options & GraphCopyOptions.CopyLayerAxes))
       {
-        AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+        AxisStyles = (AxisStyleCollection)fromX._axisStyles.Clone();
       }
 
       // Plot items
       if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
       {
-        PlotItems = new PlotItemCollection(this, from._plotItems);
+        PlotItems = new PlotItemCollection(this, fromX._plotItems);
       }
       else if (0 != (options & GraphCopyOptions.CopyLayerPlotStyles))
       {
-        // TODO apply the styles from from._plotItems to the PlotItems here
-        PlotItems.CopyFrom(from._plotItems, options);
+        // TODO apply the styles from fromX._plotItems to the PlotItems here
+        PlotItems.CopyFrom(fromX._plotItems, options);
       }
     }
 
@@ -195,7 +194,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="info">The deserialization information.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable
       : base(info)
     {
       CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
@@ -315,7 +314,10 @@ namespace Altaxo.Graph.Gdi
     /// <inheritdoc />
     public bool Is3D { get { return false; } }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets the z axis.
+    /// </summary>
+    /// <value><see langword="null"/>, because this plot layer is two-dimensional.</value>
     public Scale? ZAxis { get { return null; } }
 
     /// <summary>
@@ -1001,13 +1003,13 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <inheritdoc />
-    protected override void PaintInternal(Graphics g, IPaintContext paintContext)
+    protected override void PaintInternal(Graphics g, IPaintContext context)
     {
       // paint the background very first
       _gridPlanes.PaintBackground(g, this);
 
       // then paint the graph items
-      base.PaintInternal(g, paintContext);
+      base.PaintInternal(g, context);
     }
 
     /// <summary>
@@ -1023,12 +1025,12 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData parentHitTestData, bool plotItemsOnly)
+    public override IHitTestObject? HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
     {
       IHitTestObject? hit;
 
       // first test the items in the child layers, since they are plotted on top of our own items
-      if ((hit = base.HitTest(parentHitTestData, plotItemsOnly)) is not null)
+      if ((hit = base.HitTest(parentCoord, plotItemsOnly)) is not null)
         return hit;
 
       /*
@@ -1050,7 +1052,7 @@ namespace Altaxo.Graph.Gdi
 
       if (plotItemsOnly)
       {
-        HitTestPointData localCoord = parentHitTestData.NewFromAdditionalTransformation(_transformation);
+        HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(_transformation);
 
         // hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
         for (int i = _graphObjects.Count - 1; i >= 0; --i)
@@ -1728,8 +1730,8 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       /// Return the axis style with the given id. If this style is not present, the return value is null.
       /// </summary>
-      /// <param name="id"></param>
-      /// <returns></returns>
+      /// <param name="id">The identifier of the axis style to get.</param>
+      /// <returns>The matching axis style, or <see langword="null"/> if no matching style exists.</returns>
       public AxisStyle? AxisStyle(CSLineID id)
       {
         ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
@@ -1739,8 +1741,8 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       /// This will return an axis style with the given id. If not present, this axis style will be created, added to the collection, and returned.
       /// </summary>
-      /// <param name="id"></param>
-      /// <returns></returns>
+      /// <param name="id">The identifier of the axis style to get or create.</param>
+      /// <returns>The existing or newly created axis style.</returns>
       public AxisStyle AxisStyleEnsured(CSLineID id)
       {
         ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
@@ -1909,7 +1911,7 @@ namespace Altaxo.Graph.Gdi
       /// <summary>
       /// Gets the axis style this place holder substitutes.
       /// </summary>
-      /// <returns></returns>
+      /// <returns>The substituted axis style, or <see langword="null"/> if no matching axis style is available.</returns>
       protected AxisStyle? GetAxisStyle()
       {
         var layer = ParentObject as XYPlotLayer;
@@ -1958,7 +1960,7 @@ namespace Altaxo.Graph.Gdi
         return r;
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null && Index >= 0 && Index < layer._axisStyles.Count)
@@ -2097,7 +2099,7 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null)
@@ -2191,7 +2193,7 @@ namespace Altaxo.Graph.Gdi
         return base.HitTest(hitData);
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null)
@@ -2321,13 +2323,13 @@ namespace Altaxo.Graph.Gdi
         return false;
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null)
         {
           if (Index >= 0 && Index < layer._axisStyles.Count)
-            layer._axisStyles.ItemAt(Index).PaintTitle(g, paintContext, layer);
+            layer._axisStyles.ItemAt(Index).PaintTitle(g, context, layer);
         }
       }
 
@@ -2376,7 +2378,7 @@ namespace Altaxo.Graph.Gdi
         return string.Format("Grid plane(s)");
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null)
@@ -2458,7 +2460,7 @@ namespace Altaxo.Graph.Gdi
         return "Plot item";
       }
 
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         var layer = ParentObject as XYPlotLayer;
         if (layer is not null)
@@ -2475,11 +2477,11 @@ namespace Altaxo.Graph.Gdi
               throw new InvalidOperationException("The member _plotItems is null on this layer!");
             }
 
-            layer._plotItems.Paint(g, paintContext, layer, null, null);
+            layer._plotItems.Paint(g, context, layer, null, null);
           }
           else
           {
-            PlotItemParent.PaintChild(g, paintContext, layer, PlotItemIndex);
+            PlotItemParent.PaintChild(g, context, layer, PlotItemIndex);
           }
 
           if (layer.ClipDataToFrame == LayerDataClipping.StrictToCS)

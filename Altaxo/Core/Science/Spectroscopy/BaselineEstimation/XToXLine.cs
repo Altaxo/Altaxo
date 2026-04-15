@@ -65,7 +65,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the baseline estimation for the specified data and returns the baseline-corrected y-values.
+    /// </summary>
+    /// <param name="x">The x-values of the data.</param>
+    /// <param name="y">The y-values of the data.</param>
+    /// <param name="regions">The optional regions that define contiguous data segments.</param>
+    /// <returns>The original x-values, the baseline-corrected y-values, and the regions.</returns>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var yBaseline = new double[y.Length];

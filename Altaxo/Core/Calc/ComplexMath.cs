@@ -1143,9 +1143,9 @@ namespace Altaxo.Calc
     /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
     /// This algorithm can also be used with negative n.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="n"></param>
-    /// <returns></returns>
+    /// <param name="x">The complex base value.</param>
+    /// <param name="n">The integral exponent.</param>
+    /// <returns>The value of <paramref name="x"/> raised to the power <paramref name="n"/>.</returns>
     public static Complex64 Pow(Complex64 x, int n)
     {
       Complex64 value = 1.0;
@@ -1200,9 +1200,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Calculate the power of a complex number
     /// </summary>
-    /// <param name="c"></param>
-    /// <param name="exponent"></param>
-    /// <returns></returns>
+    /// <param name="c">The complex base value.</param>
+    /// <param name="exponent">The exponent.</param>
+    /// <returns>The value of <paramref name="c"/> raised to the power <paramref name="exponent"/>.</returns>
     public static Complex32 Pow(Complex32 c, double exponent)
     {
       double x = c.Real;

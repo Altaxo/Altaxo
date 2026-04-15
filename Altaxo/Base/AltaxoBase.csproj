@@ -13,7 +13,7 @@
 
   <!-- Enable StyleCop Analyzers for detecting more XML documentation issues 
   <ItemGroup Condition="'$(StyleCopEnabled)' == 'true'">
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+    <PackageReference Include="StyleCop.Analyzers" Version="*-*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -26,7 +26,7 @@
   <!-- Enforce XML documentation and treat specific warnings as errors    -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <WarningsAsErrors>CS1570;CS1571;CS1572;CS1573;CS1574;CS1580;CS1581;CS1584;CS1587;CS1589;CS1590;CS1591;CS1592;CS1598;CS1599;CS1711</WarningsAsErrors>
+    <WarningsAsErrors>CS1570;CS1571;CS1572;CS1573;CS1574;CS1580;CS1581;CS1584;CS1587;CS1589;CS1590;CS1591;CS1592;CS1598;CS1599;CS1710;CS1711;CS1725</WarningsAsErrors>
     <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
 

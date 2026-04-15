@@ -46,7 +46,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="maxIterations">Maximum number of iterations. Default 100.</param>
     /// <param name="subdivision">How many parts an interval should be split into for zero crossing scanning in case of lacking bracketing. Default 20.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the algorithm fails to converge within the allowed number of iterations or no root is found within the provided bounds.</exception>
     public static double FindRoot(Func<double, double> f, Func<double, double> df, double lowerBound, double upperBound, double accuracy = 1e-8, int maxIterations = 100, int subdivision = 20)
     {
       if (TryFindRoot(f, df, lowerBound, upperBound, accuracy, maxIterations, subdivision, out var root))

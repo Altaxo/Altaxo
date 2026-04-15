@@ -105,9 +105,9 @@ namespace Altaxo.Calc
     /// for all allowed values of <c>l1</c>, with the other parameters held fixed.
     /// </summary>
     /// <param name="l2">Parameter in the 3j symbol.</param>
-    /// <param name="l3">Parameter in the 3j symbol.</param>
-    /// <param name="m2">Parameter in the 3j symbol.</param>
-    /// <param name="m3">Parameter in the 3j symbol.</param>
+    /// <param name="l3">Third angular-momentum parameter in the 3j symbol.</param>
+    /// <param name="m2">Magnetic quantum number associated with <paramref name="l2"/>.</param>
+    /// <param name="m3">Magnetic quantum number associated with <paramref name="l3"/>.</param>
     /// <param name="l1min">Smallest allowable <c>l1</c> in the 3j symbol.</param>
     /// <param name="l1max">Largest allowable <c>l1</c> in the 3j symbol.</param>
     /// <param name="thrcof">
@@ -536,9 +536,9 @@ L250:
     /// for all allowed values of <c>m2</c>, with the other parameters held fixed.
     /// </summary>
     /// <param name="l1">Parameter in the 3j symbol.</param>
-    /// <param name="l2">Parameter in the 3j symbol.</param>
-    /// <param name="l3">Parameter in the 3j symbol.</param>
-    /// <param name="m1">Parameter in the 3j symbol.</param>
+    /// <param name="l2">Second angular-momentum parameter in the 3j symbol.</param>
+    /// <param name="l3">Third angular-momentum parameter in the 3j symbol.</param>
+    /// <param name="m1">Magnetic quantum number associated with <paramref name="l1"/>.</param>
     /// <param name="m2min">Smallest allowable <c>m2</c> in the 3j symbol.</param>
     /// <param name="m2max">Largest allowable <c>m2</c> in the 3j symbol.</param>
     /// <param name="thrcof">
@@ -964,10 +964,10 @@ L250:
     /// for all allowed values of <c>l1</c>, with the other parameters held fixed.
     /// </summary>
     /// <param name="l2">Parameter in the 6j symbol.</param>
-    /// <param name="l3">Parameter in the 6j symbol.</param>
-    /// <param name="l4">Parameter in the 6j symbol.</param>
-    /// <param name="l5">Parameter in the 6j symbol.</param>
-    /// <param name="l6">Parameter in the 6j symbol.</param>
+    /// <param name="l3">Third angular-momentum parameter in the 6j symbol.</param>
+    /// <param name="l4">Fourth angular-momentum parameter in the 6j symbol.</param>
+    /// <param name="l5">Fifth angular-momentum parameter in the 6j symbol.</param>
+    /// <param name="l6">Sixth angular-momentum parameter in the 6j symbol.</param>
     /// <param name="l1min">Smallest allowable <c>l1</c> in the 6j symbol.</param>
     /// <param name="l1max">Largest allowable <c>l1</c> in the 6j symbol.</param>
     /// <param name="sixcof">
@@ -1423,11 +1423,11 @@ L250:
     /// </code>
     /// </summary>
     /// <param name="l1">Parameter in the 3j symbol.</param>
-    /// <param name="m1">Parameter in the 3j symbol.</param>
-    /// <param name="l2">Parameter in the 3j symbol.</param>
-    /// <param name="m2">Parameter in the 3j symbol.</param>
-    /// <param name="l3">Parameter in the 3j symbol.</param>
-    /// <param name="m3">Parameter in the 3j symbol.</param>
+    /// <param name="m1">Magnetic quantum number associated with <paramref name="l1"/>.</param>
+    /// <param name="l2">Second angular-momentum parameter in the 3j symbol.</param>
+    /// <param name="m2">Magnetic quantum number associated with <paramref name="l2"/>.</param>
+    /// <param name="l3">Third angular-momentum parameter in the 3j symbol.</param>
+    /// <param name="m3">Magnetic quantum number associated with <paramref name="l3"/>.</param>
     /// <param name="errflag">
     /// Error flag.
     /// <para><c>errflag=0</c> No errors.</para>

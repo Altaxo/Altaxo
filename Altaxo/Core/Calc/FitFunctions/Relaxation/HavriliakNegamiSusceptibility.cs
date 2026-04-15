@@ -759,7 +759,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         }
       }
     }
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the gradient of the model with respect to its parameters.
+    /// </summary>
+    /// <param name="X">The independent variables.</param>
+    /// <param name="P">The model parameters.</param>
+    /// <param name="DY">The array that receives the parameter derivatives.</param>
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
       throw new NotImplementedException();

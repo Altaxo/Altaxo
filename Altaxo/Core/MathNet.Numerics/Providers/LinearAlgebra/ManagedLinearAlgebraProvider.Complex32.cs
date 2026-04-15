@@ -2633,7 +2633,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
     /// Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
     /// Fortran subroutine in EISPACK.</remarks>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the symmetric diagonalization does not converge within the maximum number of iterations.</exception>
     internal static void SymmetricDiagonalize(Complex32[] dataEv, float[] d, float[] e, int order)
     {
       const int maxiter = 1000;

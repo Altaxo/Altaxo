@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     public override void FillOneRange(
     GraphicsPath gp,
       Processed2DPlotData pdata,
-      IPlotRange rangeRaw,
+      IPlotRange range,
       IPlotArea layer,
       CSPlaneID fillDirection,
       bool ignoreMissingDataPoints,

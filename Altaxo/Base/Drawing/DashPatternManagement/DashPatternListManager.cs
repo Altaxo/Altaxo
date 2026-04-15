@@ -142,9 +142,9 @@ namespace Altaxo.Drawing.DashPatternManagement
     }
 
     /// <inheritdoc/>
-    public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
+    public override DashPatternList CreateNewList(string listName, IEnumerable<IDashPattern> listItems)
     {
-      return new DashPatternList(name, symbols);
+      return new DashPatternList(listName, listItems);
     }
 
     /// <inheritdoc/>

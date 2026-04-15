@@ -43,6 +43,9 @@ namespace Altaxo.Calc.Interpolation
     private readonly double[] _y;
     private readonly double[] _w;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Barycentric"/> class.
+    /// </summary>
     /// <param name="x">Sample points (N), sorted ascendingly.</param>
     /// <param name="y">Sample values (N), sorted ascendingly by x.</param>
     /// <param name="w">Barycentric weights (N), sorted ascendingly by x.</param>

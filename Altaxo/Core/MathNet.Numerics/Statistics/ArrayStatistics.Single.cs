@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.Statistics
 {
+  /// <summary>
+  /// Provides array-based statistical operations for single-precision samples.
+  /// </summary>
   public static partial class ArrayStatistics
   {
     /// <summary>

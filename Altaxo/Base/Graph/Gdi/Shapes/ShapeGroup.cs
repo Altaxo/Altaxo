@@ -223,14 +223,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Paint the shape group in the graphic context.
     /// </summary>
     /// <param name="g">Graphic context.</param>
-    /// <param name="paintContext">The paint context.</param>
-    public override void Paint(Graphics g, IPaintContext paintContext)
+    /// <param name="context">The paint context.</param>
+    public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();
       TransformGraphics(g);
 
       foreach (GraphicBase graphics in _groupedObjects)
-        graphics.Paint(g, paintContext);
+        graphics.Paint(g, context);
 
       g.Restore(gs);
     }
@@ -256,9 +256,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
-      var result = base.HitTest(htd);
+      var result = base.HitTest(hitData);
       if (result is not null)
         result.DoubleClick = EhHitDoubleClick;
       return result;

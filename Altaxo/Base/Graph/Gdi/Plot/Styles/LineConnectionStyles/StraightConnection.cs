@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
     /// <param name="range">The plot range to use.</param>
     /// <param name="layer">Graphics layer.</param>
-    /// <param name="linePen">The pen to draw the line.</param>
+    /// <param name="pen">The pen to draw the line.</param>
     /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
     /// This function is null if no symbol gap is required.</param>
     /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       PointF[] allLinePoints,
       IPlotRange range,
       IPlotArea layer,
-      PenCacheGdi.GdiPen linePen,
+      PenCacheGdi.GdiPen pen,
       Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
           if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
           {
             // use the whole circular arry to draw a closed polygon without any gaps
-            g.DrawPolygon(linePen, circularLinePoints);
+            g.DrawPolygon(pen, circularLinePoints);
           }
           else if (segmentRange.Length == 1) // special case only one line segment
           {
@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
               var stopx = circularLinePoints[plotIndexAtEnd].X - relAtEnd * xdiff;
               var stopy = circularLinePoints[plotIndexAtEnd].Y - relAtEnd * ydiff;
 
-              g.DrawLine(linePen, startx, starty, stopx, stopy);
+              g.DrawLine(pen, startx, starty, stopx, stopy);
             }
           }
           else
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             var shortenedPolyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
             if (shortenedPolyline is not null)
-              g.DrawLines(linePen, shortenedPolyline);
+              g.DrawLines(pen, shortenedPolyline);
           }
         } // end for
       }
@@ -154,17 +154,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       {
         if (connectCircular) // array was already copied from original array
         {
-          g.DrawPolygon(linePen, circularLinePoints);
+          g.DrawPolygon(pen, circularLinePoints);
         }
         else if (indexBasePlotPoints == 0 && range.Length == circularLinePoints.Length) // can use original array directly
         {
-          g.DrawLines(linePen, circularLinePoints);
+          g.DrawLines(pen, circularLinePoints);
         }
         else
         {
           circularLinePoints = new PointF[range.Length];
           Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length);
-          g.DrawLines(linePen, circularLinePoints);
+          g.DrawLines(pen, circularLinePoints);
         }
       }
     }
@@ -178,13 +178,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       CSPlaneID fillDirection,
       bool ignoreMissingDataPoints,
       bool connectCircular,
-      PointF[] allLinePoints,
+      PointF[] allLinePointsShiftedAlready,
       double logicalShiftX,
       double logicalShiftY
     )
     {
       var circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
-      Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
+      Array.Copy(allLinePointsShiftedAlready, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
       if (connectCircular)
         circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
 

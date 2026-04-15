@@ -32,9 +32,9 @@ using System.Linq;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
-  /// Defines the base class for <c>Matrix</c> classes.
-  /// </summary>
+  /// <content>
+  /// Defines arithmetic operations for <c>Matrix</c> classes.
+  /// </content>
   public abstract partial class Matrix<T>
   {
     /// <summary>
@@ -1725,7 +1725,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="f">Function which takes two matrices, modifies the second in place and returns void</param>
     /// <param name="other">The other matrix to be passed to the function as argument. It is not modified</param>
     /// <param name="result">The matrix to store the result.</param>
-    /// <returns>The resulting matrix</returns>
     /// <exception cref="ArgumentException">If this matrix and <paramref name="other"/> are not the same dimension.</exception>
     protected void PointwiseBinary(Action<Matrix<T>, Matrix<T>> f, Matrix<T> other, Matrix<T> result)
     {

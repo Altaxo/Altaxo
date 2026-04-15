@@ -960,7 +960,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets the maximum row count of the data columns in the data column collection <see cref="_dataColumns"/>.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The maximum row count among all currently resolved data columns.</returns>
     private int GetMaximumRowCountNow()
     {
       return _dataColumns.Select(p => p.Document()).MaxOrDefault(d => d?.Count ?? 0, 0);

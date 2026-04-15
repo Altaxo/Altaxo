@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
     /// <param name="rootNode">The root node of the color tree.</param>
     /// <param name="showPlotColorsOnly">if set to <c>true</c>, the tree will show plot colors only.</param>
     /// <param name="currentSelectedObject">The current selected object. Can either be a <see cref="IColorSet"/> or a <see cref="NamedColor"/>.</param>
-    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <exception cref="System.InvalidProgramException">Thrown if a color set has an unsupported definition level.</exception>
     public static void UpdateColorTreeViewTreeNodes(NGTreeNode rootNode, bool showPlotColorsOnly, object currentSelectedObject)
     {
       var manager = ColorSetManager.Instance;

@@ -413,7 +413,7 @@ namespace Altaxo.Graph
     /// Gets the two planes parallel to the provided axis that are oriented to the main coordinate system axes.
     /// </summary>
     /// <param name="id">The line  identifier.</param>
-    /// <returns></returns>
+    /// <returns>The planes parallel to the axis represented by <paramref name="id"/>.</returns>
     public static IEnumerable<CSPlaneID> GetPlanesParallelToAxis3D(CSLineID id)
     {
       switch (id.ParallelAxisNumber)

@@ -116,7 +116,7 @@ namespace Altaxo.Data
     /// Simply returns the value i.
     /// </summary>
     /// <param name="i">The index i.</param>
-    /// <returns>The index i.</returns>
+    /// <returns>The constant column value.</returns>
     public double this[int i]
     {
       get

@@ -769,8 +769,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// or greater than or equal to the number of columns.</exception>
     /// <exception cref="ArgumentException">If the size of <paramref name="column"/> does not
     /// equal the number of rows of this <strong>Matrix</strong>.</exception>
-    /// <exception cref="ArgumentException">If the size of <paramref name="column"/> does not
-    /// equal the number of rows of this <strong>Matrix</strong>.</exception>
     public void SetColumn(int columnIndex, T[] column)
     {
       if (column == null)

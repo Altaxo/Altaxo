@@ -382,8 +382,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or <see cref="double.NaN"/> if the series does not converge.</returns>
     /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
     /// the return value here is positive!.</remarks>
     public static double Im2(double beta, double z)
@@ -615,8 +614,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Returns (approximately) the maximum value of the imaginary part of the Fourier transformed Kohlrausch function.
     /// </summary>
-    /// <param name="beta"></param>
-    /// <returns></returns>
+    /// <param name="beta">The beta parameter of the Kohlrausch function.</param>
+    /// <returns>The approximate maximum value of the imaginary part of the Fourier-transformed Kohlrausch function.</returns>
     public static double GetMaximumImaginaryPart(double beta)
     {
       double pie = Math.PI / Math.E;

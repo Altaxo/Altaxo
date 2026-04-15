@@ -115,7 +115,6 @@ namespace Altaxo.Calc.Random
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
     /// <param name="values">The array to fill with random samples.</param>
     /// <param name="seed">The seed value used to initialize the generator.</param>
-    /// <returns>Nothing. The provided array is populated with random values.</returns>
     public static void Doubles(double[] values, int seed)
     {
       if (seed == 0)

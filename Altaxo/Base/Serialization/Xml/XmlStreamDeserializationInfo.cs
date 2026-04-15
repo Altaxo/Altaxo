@@ -818,7 +818,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="parent">The parent object.</param>
     /// <param name="returnValueIsOuterXml">If set to <c>true</c>, the return value is a string containing the outer XML node.</param>
     /// <returns>The deserialized value (if <paramref name="returnValueIsOuterXml"/> is false), or the outer XML node (if <paramref name="returnValueIsOuterXml"/> is true).</returns>
-    /// <exception cref="ApplicationException"></exception>
+    /// <exception cref="ApplicationException">Thrown when the current XML element cannot be deserialized because required type information is missing or unsupported.</exception>
     /// <inheritdoc />
     public object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml)
     {

@@ -188,7 +188,7 @@ namespace Altaxo.Main.Services
       /// <summary>
       /// This will get all builtin fit functions.
       /// </summary>
-      /// <returns></returns>
+      /// <returns>An array containing all built-in fit functions.</returns>
       public BuiltinFitFunctionInformation[] GetFitFunctions()
       {
         if (_fitFunctions is null)
@@ -364,7 +364,7 @@ namespace Altaxo.Main.Services
       /// <summary>
       /// This will get all user defined fit functions.
       /// </summary>
-      /// <returns></returns>
+      /// <returns>An array containing all user-defined fit functions.</returns>
       public FileBasedFitFunctionInformation[] GetFitFunctions()
       {
         if (_userDefinedFunctions is null)

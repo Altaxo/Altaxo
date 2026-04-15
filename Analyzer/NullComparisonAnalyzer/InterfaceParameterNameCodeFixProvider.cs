@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 
 namespace NullComparisonAnalyzer
@@ -26,49 +27,59 @@ namespace NullComparisonAnalyzer
           .GetSyntaxRootAsync(context.CancellationToken)
           .ConfigureAwait(false);
 
-      var diagnostic = context.Diagnostics[0];
-      var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-      // Find the parameter identifier that was flagged
-      var parameterIdentifier = root
-          ?.FindToken(diagnosticSpan.Start);
-
-      if (parameterIdentifier is null)
+      if (root is null)
         return;
 
-      // Extract expected name from the diagnostic message arguments
-      var expectedName = diagnostic.Properties.TryGetValue("expectedName", out var name)
-          ? name
-          : null;
+      var diagnostic = context.Diagnostics[0];
 
-      if (expectedName is null)
+      // Retrieve the expected name that was stored in the diagnostic properties
+      if (!diagnostic.Properties.TryGetValue(InterfaceParameterNameAnalyzer.ExpectedNameKey, out var expectedName)
+          || expectedName is null)
+        return;
+
+      // Find the parameter syntax node that was flagged
+      var parameterSyntax = root
+          .FindNode(diagnostic.Location.SourceSpan)
+          .FirstAncestorOrSelf<ParameterSyntax>();
+
+      if (parameterSyntax is null)
         return;
 
       context.RegisterCodeFix(
           CodeAction.Create(
               title: $"Rename to '{expectedName}'",
               createChangedSolution: ct =>
-                  RenameParameterAsync(context.Document, parameterIdentifier.Value, expectedName, ct),
+                  RenameParameterAsync(context.Document, parameterSyntax, expectedName, ct),
               equivalenceKey: "RenameToMatchInterface"
           ),
           diagnostic
       );
     }
 
-    private async Task<Solution> RenameParameterAsync(
-        Microsoft.CodeAnalysis.Document document,
-        SyntaxToken identifier,
+    private static async Task<Solution> RenameParameterAsync(
+        Document document,
+        ParameterSyntax parameterSyntax,
         string newName,
         CancellationToken ct)
     {
-      var semanticModel = await document.GetSemanticModelAsync(ct).ConfigureAwait(false);
-      var symbol = semanticModel?.GetDeclaredSymbol(identifier.Parent!, ct);
+      var semanticModel = await document
+          .GetSemanticModelAsync(ct)
+          .ConfigureAwait(false);
 
-      if (symbol is null)
+      if (semanticModel is null)
+        return document.Project.Solution;
+
+      // Get the parameter symbol — this also covers all usages inside the method body
+      if (semanticModel.GetDeclaredSymbol(parameterSyntax, ct) is not IParameterSymbol parameterSymbol)
         return document.Project.Solution;
 
       return await Renamer
-          .RenameSymbolAsync(document.Project.Solution, symbol, new SymbolRenameOptions(), newName, ct)
+          .RenameSymbolAsync(
+              document.Project.Solution,
+              parameterSymbol,
+              new SymbolRenameOptions(),
+              newName,
+              ct)
           .ConfigureAwait(false);
     }
   }

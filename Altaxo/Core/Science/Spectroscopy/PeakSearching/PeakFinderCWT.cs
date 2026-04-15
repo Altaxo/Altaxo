@@ -123,8 +123,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <param name="axis">The axis which is iterated over. 0: for each column, the maxima of the row values will be evaluated.
     /// 1: for each row, the maxima of the column values will be evaluated.</param>
     /// <param name="order">The number of points to compare to the left and right of the considered point Must be &gt;=1.</param>
-    /// <returns></returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <returns>A boolean matrix with the same dimensions as <paramref name="data"/>, where relative extrema positions are set to <see langword="true"/>.</returns>
+    /// <exception cref="System.NotImplementedException">Thrown when <paramref name="axis"/> is neither 0 nor 1.</exception>
     public static bool[,] GetRelativeExtrema(
       IROMatrix<double> data,
       Func<double, double, bool> comparator,

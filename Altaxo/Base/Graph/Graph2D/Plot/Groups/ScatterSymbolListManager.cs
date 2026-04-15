@@ -298,9 +298,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
     }
 
     /// <inheritdoc/>
-    public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
+    public override ScatterSymbolList CreateNewList(string listName, IEnumerable<IScatterSymbol> listItems)
     {
-      return new ScatterSymbolList(name, symbols);
+      return new ScatterSymbolList(listName, listItems);
     }
 
     #region User defined lists

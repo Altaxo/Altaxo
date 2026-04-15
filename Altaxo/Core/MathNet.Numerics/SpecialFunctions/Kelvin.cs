@@ -151,7 +151,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="nu">The order of the Kelvin function.</param>
     /// <param name="x">The value to calculate the kelvin function of,</param>
-    /// <returns></returns>
+    /// <returns>The Kelvin function of the second kind evaluated at the specified order and value.</returns>
     public static Complex KelvinKe(double nu, double x)
     {
       Complex PiIOver2 = new Complex(0.0, Constants.PiOver2); // pi * I / 2

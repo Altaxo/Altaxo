@@ -46,6 +46,9 @@ namespace Altaxo.Calc.Interpolation
     private readonly double[] _c3;
     private readonly Lazy<double[]> _indefiniteIntegral;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CubicSpline"/> class.
+    /// </summary>
     /// <param name="x">sample points (N+1), sorted ascending</param>
     /// <param name="c0">Zero order spline coefficients (N)</param>
     /// <param name="c1">First order spline coefficients (N)</param>

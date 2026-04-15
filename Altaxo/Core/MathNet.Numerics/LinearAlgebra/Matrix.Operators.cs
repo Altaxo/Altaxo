@@ -32,9 +32,9 @@ using System.Runtime.CompilerServices;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
+  /// <content>
   /// Defines the base class for <c>Matrix</c> classes.
-  /// </summary>
+  /// </content>
   public abstract partial class Matrix<T>
   {
     /// <summary>

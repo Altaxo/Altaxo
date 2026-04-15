@@ -436,7 +436,7 @@ namespace Altaxo.Graph.Scales.Deprecated
     }
 
     /// <inheritdoc />
-    public override void ProcessDataBounds(double xorg, bool xorgfixed, double xend, bool xendfixed)
+    public override void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed)
     {
       if (IsLinked)
         return;
@@ -446,21 +446,21 @@ namespace Altaxo.Graph.Scales.Deprecated
       double oldMajorSpan = _majorSpan;
       int oldMinorTicks = _minorTicks;
 
-      _baseOrg = xorg;
-      _baseEnd = xend;
+      _baseOrg = org;
+      _baseEnd = end;
 
-      if (!(xorgfixed && xendfixed))
+      if (!(orgfixed && endfixed))
       {
-        CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
-        CalculateActualLimits(xorg, xorgfixed, xend, xendfixed, _majorSpan, _minorTicks, out var orgByMajor, out var endByMajor);
-        xorg = orgByMajor * _majorSpan;
-        xend = endByMajor * _majorSpan;
+        CalculateTicks(org, end, out _majorSpan, out _minorTicks);
+        CalculateActualLimits(org, orgfixed, end, endfixed, _majorSpan, _minorTicks, out var orgByMajor, out var endByMajor);
+        org = orgByMajor * _majorSpan;
+        end = endByMajor * _majorSpan;
       }
 
-      CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
+      CalculateTicks(org, end, out _majorSpan, out _minorTicks);
 
-      _axisOrgByMajor = xorg / _majorSpan;
-      _axisEndByMajor = xend / _majorSpan;
+      _axisOrgByMajor = org / _majorSpan;
+      _axisEndByMajor = end / _majorSpan;
 
       /*
             if (xend == xorg)

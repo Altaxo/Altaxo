@@ -185,7 +185,6 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
     {
       IEnumerable<double> GetXPoints()

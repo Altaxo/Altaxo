@@ -383,26 +383,26 @@ namespace Altaxo.Calc.Optimization
       return ToString(null, null);
     }
 
-    /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
+    /// <summary>Formats this <c>EndCriteria</c> instance using the specified format string.</summary>
     /// <param name="format">A format specification.</param>
-    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
+    /// <returns>The formatted string representation of this <c>EndCriteria</c> instance.</returns>
     public string ToString(string format)
     {
       return ToString(format, null);
     }
 
-    /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
+    /// <summary>Formats this <c>EndCriteria</c> instance using the specified format provider.</summary>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
+    /// <returns>The formatted string representation of this <c>EndCriteria</c> instance.</returns>
     public string ToString(IFormatProvider formatProvider)
     {
       return ToString(null, formatProvider);
     }
 
-    /// <summary>A string representation of this <c>EndCriteria</c>.</summary>
+    /// <summary>Formats this <c>EndCriteria</c> instance using the specified format string and format provider.</summary>
     /// <param name="format">A format specification.</param>
     /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns>A string representation of this <c>EndCriteria</c>.</returns>
+    /// <returns>The formatted string representation of this <c>EndCriteria</c> instance.</returns>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
       if (endCriteria == CriteriaType.MaximumFunctionEvaluation)

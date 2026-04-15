@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
-using Altaxo.Serialization.PrincetonInstruments;
 
 namespace Altaxo.Serialization.Omnic
 {
@@ -109,14 +108,14 @@ namespace Altaxo.Serialization.Omnic
     /// Imports a couple of Omnic SPG files into a table. The spectra are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
     /// </summary>
-    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="fileNames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
-    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="importOptions">The import options object.</param>
     /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, Altaxo.Data.DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (OmnicSPGImportOptions)importOptionsObj;
+      var importOptionsX = (OmnicSPGImportOptions)importOptions;
       DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -130,7 +129,7 @@ namespace Altaxo.Serialization.Omnic
       }
 
       int idxYColumn = 0;
-      foreach (string filename in filenames)
+      foreach (string filename in fileNames)
       {
         OmnicSPGReader reader;
         using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -141,7 +140,7 @@ namespace Altaxo.Serialization.Omnic
           }
           catch (Exception ex)
           {
-                errorList.AppendLine($"Error reading file {filename} with the {typeof(OmnicSPGReader)}: {ex.Message}");
+            errorList.AppendLine($"Error reading file {filename} with the {typeof(OmnicSPGReader)}: {ex.Message}");
             continue;
           }
         }
@@ -186,20 +185,20 @@ namespace Altaxo.Serialization.Omnic
 
         for (int idxSpectrum = 0; idxSpectrum < reader.NumberOfSpectra; idxSpectrum++)
         {
-          if (importOptions.IndicesOfImportedSpectra.Count > 0 && !importOptions.IndicesOfImportedSpectra.Contains(idxSpectrum))
+          if (importOptionsX.IndicesOfImportedSpectra.Count > 0 && !importOptionsX.IndicesOfImportedSpectra.Contains(idxSpectrum))
             continue;
           var yvalues = reader.Y[idxSpectrum];
 
 
-          string columnName = importOptions.UseNeutralColumnName ?
-              $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
+          string columnName = importOptionsX.UseNeutralColumnName ?
+              $"{(string.IsNullOrEmpty(importOptionsX.NeutralColumnName) ? "Y" : importOptionsX.NeutralColumnName)}{idxYColumn}" :
               reader.SpectrumTitles[idxSpectrum];
           columnName = table.DataColumns.FindUniqueColumnName(columnName);
           var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
           ++idxYColumn;
           ycol.CopyDataFrom(yvalues);
 
-          if (importOptions.IncludeFilePathAsProperty)
+          if (importOptionsX.IncludeFilePathAsProperty)
           {
             // add also a property column named "FilePath" if not existing so far
             if (!table.PropCols.ContainsColumn("FilePath"))
@@ -228,15 +227,15 @@ namespace Altaxo.Serialization.Omnic
 
       // Make also a note from where it was imported
       {
-        if (filenames.Count == 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
-        else if (filenames.Count > 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+        if (fileNames.Count == 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} at {DateTimeOffset.Now}");
+        else if (fileNames.Count > 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} and more ({fileNames.Count} files) at {DateTimeOffset.Now}");
       }
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(filenames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

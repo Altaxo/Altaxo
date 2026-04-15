@@ -378,7 +378,7 @@ namespace Altaxo.Dom
     /// <summary>
     /// Internal routine to save a project under a given name.
     /// </summary>
-    /// <param name="filename"></param>
+    /// <param name="filename">The file or folder name to save the project to.</param>
     protected virtual void InternalSave(PathName filename)
     {
       if (_currentProject is null)
@@ -492,7 +492,7 @@ namespace Altaxo.Dom
     /// <summary>
     /// Opens a Altaxo project from a project file (without asking the user). The old project is closed without asking the user.
     /// </summary>
-    /// <param name="filename"></param>
+    /// <param name="filename">The file or folder name from which to load the project.</param>
     /// <param name="showUserInteraction">If true, and the file is read-only, a dialog box is asking the user whether to open the file in read-only mode.
     /// If false, and the file is read-only, the file will be opened in read-only-mode.</param>
     protected virtual void LoadProjectFromFileOrFolder(PathName filename, bool showUserInteraction = true)
@@ -523,7 +523,7 @@ namespace Altaxo.Dom
     /// Enumerates the registered types for a manager that implements <see cref="IFileBasedProjectArchiveManager"/> and searches for the type that can handle the provided file or folder.
     /// </summary>
     /// <param name="fileOrFolderName">Name of the file or folder.</param>
-    /// <returns></returns>
+    /// <returns>The project archive manager that can handle <paramref name="fileOrFolderName"/>.</returns>
     protected abstract IProjectArchiveManager InternalCreateProjectArchiveManagerFromFileOrFolderLocation(PathName fileOrFolderName);
 
     /// <inheritdoc/>

@@ -404,7 +404,6 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// </summary>
     /// <param name="scalar">The scalar to multiply.</param>
     /// <param name="result">The vector to store the result of the multiplication.</param>
-    /// <remarks></remarks>
     protected override void DoMultiply(Complex32 scalar, Vector<Complex32> result)
     {
       if (result is DenseVector denseResult)
@@ -653,7 +652,6 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     /// </summary>
     /// <param name="divisor">The vector to pointwise divide this one by.</param>
     /// <param name="result">The vector to store the result of the pointwise division.</param>
-    /// <remarks></remarks>
     protected override void DoPointwiseDivide(Vector<Complex32> divisor, Vector<Complex32> result)
     {
       if (divisor is DenseVector denseOther && result is DenseVector denseResult)

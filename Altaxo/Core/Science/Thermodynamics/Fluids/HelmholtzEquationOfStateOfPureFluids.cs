@@ -224,7 +224,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="pressure">The pressure in Pa. Must be greater than or equal the triple point pressure and less than or equal to the critical point pressure.</param>
     /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns>Tuple with liquid mole density (mol/m³), vapor mole density (mol/m³) and temperature (K).</returns>
-    /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double temperature) SaturatedLiquidAndVaporMoleDensitiesAndTemperature_FromPressure(double pressure, double relativeAccuracy = 1E-6)
     {
       double temperatureGuess = SaturatedVaporTemperature_FromPressure(pressure);
@@ -354,7 +353,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="vaporMoleDensity">Starting value for the vapor mole density (mol/m³) for the iteration.</param>
     /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns>A tuple consisting of the liquid mole density (mol/m³), the vapor mole density (mol/m³), and the pressure in Pa.</returns>
-    /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double pressure) SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(double temperature, double liquidMoleDensity, double vaporMoleDensity, double relativeAccuracy = 1E-6)
     {
       // now we have some initial values, we can begin to iterate ...

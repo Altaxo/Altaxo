@@ -34,6 +34,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
+  /// <summary>
+  /// Provides drag support for available items in the X/Y plot layer contents controller.
+  /// </summary>
   public partial class XYPlotLayerContentsController
   {
     /// <summary>

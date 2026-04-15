@@ -345,7 +345,6 @@ namespace Altaxo.Serialization.HDF5.Nexus
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();

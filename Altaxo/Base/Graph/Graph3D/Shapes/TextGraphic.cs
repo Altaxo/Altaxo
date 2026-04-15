@@ -536,9 +536,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     /// <inheritdoc/>
-    public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext)
+    public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context)
     {
-      Paint(g, paintContext, false);
+      Paint(g, context, false);
     }
 
     /// <summary>
@@ -622,14 +622,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
     public static DoubleClickHandler? TextGraphicsEditorMethod;
 
     /// <inheritdoc/>
-    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       //			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
-      var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+      var localHitData = hitData.NewFromAdditionalTransformation(_transformation);
 
       if (localHitData.IsHit(Bounds, out var z))
       {
-        var result = GetNewHitTestObject(parentHitData.WorldTransformation);
+        var result = GetNewHitTestObject(hitData.WorldTransformation);
         result.DoubleClick = TextGraphicsEditorMethod;
         return result;
       }

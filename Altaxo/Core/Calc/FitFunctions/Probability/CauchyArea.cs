@@ -149,7 +149,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    /// <inheritdoc/>
     private CauchyArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       return this with { OrderOfBaselinePolynomial = orderOfBaselinePolynomial };
@@ -169,7 +168,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    /// <inheritdoc/>
     private CauchyArea WithNumberOfTerms(int numberOfTerms)
     {
       return this with { NumberOfTerms = numberOfTerms };
@@ -178,7 +176,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
     private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets parameter boundaries suitable for fitting positive peaks.
+    /// </summary>
+    /// <param name="minimalPosition">The optional minimum peak position.</param>
+    /// <param name="maximalPosition">The optional maximum peak position.</param>
+    /// <param name="minimalFWHM">The optional minimum full width at half maximum.</param>
+    /// <param name="maximalFWHM">The optional maximum full width at half maximum.</param>
+    /// <returns>The lower and upper parameter boundaries for the fit.</returns>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];

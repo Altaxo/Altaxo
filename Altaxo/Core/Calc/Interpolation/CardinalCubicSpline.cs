@@ -74,61 +74,61 @@ namespace Altaxo.Calc.Interpolation
   public class CardinalCubicSpline : CurveBase
   {
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // verify index range
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new System.ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
     }
 
     //----------------------------------------------------------------------------//
 
     /// <inheritdoc/>
-    public override double GetXOfU(double t)
+    public override double GetXOfU(double u)
     {
       const int lo = 0;
       int hi = x.Count - 1;
-      int i = FindInterval(t, x);
+      int i = FindInterval(u, x);
 
       if (i < lo || i >= hi || hi - lo == 1)
       {
         // linear extrapolation and interpolation for 2 points
-        return t;
+        return u;
       }
       else if (i == lo)
       {
         i = lo;
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (-1.0 + u * (u - 1.0) / 2.0),
-          c2 = u * (1.0 + u * (1.0 - u)),
-          c3 = u2 * (u - 1.0) / 2.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (-1.0 + t * (t - 1.0) / 2.0),
+          c2 = t * (1.0 + t * (1.0 - t)),
+          c3 = t2 * (t - 1.0) / 2.0;
         return c1 * x[i] + c2 * x[i + 1] + c3 * x[i + 2];
       }
       else if (i == hi - 1)
       {
         i = hi - 1;
-        double u = (x[i + 1] - t) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (-1.0 + u * (u - 1.0) / 2.0),
-          c2 = u * (1.0 + u * (1.0 - u)),
-          c3 = u2 * (u - 1.0) / 2.0;
+        double t = (x[i + 1] - u) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (-1.0 + t * (t - 1.0) / 2.0),
+          c2 = t * (1.0 + t * (1.0 - t)),
+          c3 = t2 * (t - 1.0) / 2.0;
         return c1 * x[i + 1] + c2 * x[i] + c3 * x[i - 1];
       }
       else
       {
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          u3 = 1.0 - u,
-          u4 = u3 * u3,
-          c1 = -u4 * u / 2.0,
-          c2 = 1.0 + u2 * (3.0 * u - 5.0) / 2.0,
-          c3 = u * (1.0 + u * (4.0 - 3.0 * u)) / 2.0,
-          c4 = -u2 * u3 / 2.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          t3 = 1.0 - t,
+          t4 = t3 * t3,
+          c1 = -t4 * t / 2.0,
+          c2 = 1.0 + t2 * (3.0 * t - 5.0) / 2.0,
+          c3 = t * (1.0 + t * (4.0 - 3.0 * t)) / 2.0,
+          c4 = -t2 * t3 / 2.0;
         return c1 * x[i - 1] + c2 * x[i] + c3 * x[i + 1] + c4 * x[i + 2];
       }
     }

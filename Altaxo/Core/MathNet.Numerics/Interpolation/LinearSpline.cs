@@ -44,6 +44,9 @@ namespace Altaxo.Calc.Interpolation
     private readonly double[] _c1;
     private readonly Lazy<double[]> _indefiniteIntegral;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearSpline"/> class.
+    /// </summary>
     /// <param name="x">Sample points (N+1), sorted ascending</param>
     /// <param name="c0">Sample values (N or N+1) at the corresponding points; intercept, zero order coefficients</param>
     /// <param name="c1">Slopes (N) at the sample points (first order coefficients): N</param>

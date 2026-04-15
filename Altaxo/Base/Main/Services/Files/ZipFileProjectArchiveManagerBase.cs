@@ -100,7 +100,7 @@ namespace Altaxo.Main.Services
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
     /// <param name="showUserInteraction">If true, and the file is read-only, a dialog box is asking the user whether to open the file in read-only mode.
     /// If false, and the file is read-only, the file will be opened in read-only-mode.</param>
-    /// <exception cref="ObjectDisposedException"></exception>
+    /// <exception cref="ObjectDisposedException">Thrown when this archive manager has already been disposed.</exception>
     public void LoadFromFile(FileName fileName, RestoreProjectAndWindowsState restoreProjectAndWindowsState, bool showUserInteraction = true)
     {
       if (_isDisposed) throw new ObjectDisposedException(this.GetType().Name);
@@ -199,7 +199,7 @@ namespace Altaxo.Main.Services
     /// Saves the specified save project and windows state to the same file or folder that was used to open the project.
     /// </summary>
     /// <param name="saveProjectAndWindowsState">State of the save project and windows.</param>
-    /// <exception cref="ObjectDisposedException"></exception>
+    /// <exception cref="ObjectDisposedException">Thrown when this archive manager has already been disposed.</exception>
     /// <exception cref="InvalidOperationException">Save is not possible because no file name was given up to now</exception>
     public void Save(SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
@@ -217,7 +217,7 @@ namespace Altaxo.Main.Services
     /// <param name="fileName">Name of the destination file.</param>
     /// <param name="saveProjectAndWindowsState">Delegate to store the project document and the windows state into an <see cref="IProjectArchive"/>.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
-    /// <exception cref="ObjectDisposedException"></exception>
+    /// <exception cref="ObjectDisposedException">Thrown when this archive manager has already been disposed.</exception>
     public IDictionary<string, IProjectItem> SaveAs(FileName fileName, SaveProjectAndWindowsStateDelegate saveProjectAndWindowsState)
     {
 #nullable disable

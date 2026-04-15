@@ -74,11 +74,11 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] X, double[] P, double[] Y)
+    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
 
-      base.EvaluateConversionRate(X, P, Y);
-      Y[0] *= P[1];
+      base.EvaluateConversionRate(independent, parameters, dependent);
+      dependent[0] *= parameters[1];
 
     }
 

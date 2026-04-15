@@ -25,9 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Geometry;
 
 namespace Altaxo.Drawing.D3D
@@ -91,7 +88,9 @@ namespace Altaxo.Drawing.D3D
       return _points[idx];
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the points that define the sweep path.
+    /// </summary>
     public IList<PointD3D> Points
     {
       get

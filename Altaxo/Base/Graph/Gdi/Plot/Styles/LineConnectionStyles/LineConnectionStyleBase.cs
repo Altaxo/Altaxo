@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="connectCircular">If true, the line is connected circular, and the area is the polygon inside of that circular connection.</param>
     /// <param name="allLinePointsShiftedAlready">The plot positions, already shifted when a logical shift needed to be applied. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
     /// <param name="logicalShiftX">The logical shift in x-direction.</param>
-    /// <param name="logicalShiftY">The logical shift in x-direction.</param>
+    /// <param name="logicalShiftY">The logical shift in y-direction.</param>
     public abstract void FillOneRange(
       GraphicsPath gp,
       Processed2DPlotData pdata,
@@ -139,9 +139,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       /// </summary>
       public double GapAtSubRangeEnd;
 
-      /// <summary>
-      /// Gets the length of the segment range.
-      /// </summary>
       /// <summary>
       /// Gets the length of the segment range.
       /// </summary>

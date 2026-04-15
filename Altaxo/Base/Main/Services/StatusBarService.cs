@@ -59,7 +59,9 @@ namespace Altaxo.Main.Services
       _statusBarView = statusBar ?? throw new ArgumentNullException(nameof(statusBar));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets a value indicating whether the status bar is visible.
+    /// </summary>
     public bool IsVisible
     {
       get
@@ -81,7 +83,12 @@ namespace Altaxo.Main.Services
         view.ModeStatusBarPanelContent = text;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Updates the status bar with the current caret position.
+    /// </summary>
+    /// <param name="x">The current column number.</param>
+    /// <param name="y">The current line number.</param>
+    /// <param name="charOffset">The current character offset.</param>
     public virtual void SetCaretPosition(int x, int y, int charOffset)
     {
       if (_statusBarView is { } view)
@@ -95,7 +102,10 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Updates the status bar for a single continuous selection.
+    /// </summary>
+    /// <param name="length">The selection length.</param>
     public void SetSelectionSingle(int length)
     {
       if (_statusBarView is { } view)
@@ -113,7 +123,11 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Updates the status bar for a rectangular multi-cell selection.
+    /// </summary>
+    /// <param name="rows">The number of selected rows.</param>
+    /// <param name="cols">The number of selected columns.</param>
     public void SetSelectionMulti(int rows, int cols)
     {
       if (_statusBarView is { } view)
@@ -133,7 +147,10 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Updates the status bar to show the current insert mode.
+    /// </summary>
+    /// <param name="insertMode"><see langword="true"/> to show insert mode; otherwise overwrite mode.</param>
     public void SetInsertMode(bool insertMode)
     {
       if (_statusBarView is { } view)

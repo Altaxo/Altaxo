@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Scripting
     /// <summary>
     /// Gets the most current script text (if a view is present, it returns the script text of the view).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The current script text.</returns>
     public string GetCurrentScriptText()
     {
       if (_view is not null)

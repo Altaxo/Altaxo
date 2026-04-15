@@ -303,6 +303,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
     /// <param name="minValue">The minimum value.</param>
     /// <param name="maxValue">The maximum value.</param>
     /// <exception cref="InvalidOperationException">
+    /// Thrown if the calculated bin count exceeds the supported range, or if the calculated lower bin index is smaller than <see cref="int.MinValue"/>.
     /// </exception>
     private void SetCountFromValueMinimumMaximum(double minValue, double maxValue)
     {

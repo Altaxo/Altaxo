@@ -198,7 +198,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// The copy constructor.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The instance to copy.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     public XYZPlotLayer(XYZPlotLayer from)
@@ -211,44 +211,44 @@ namespace Altaxo.Graph.Graph3D
     /// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
     /// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
     /// </summary>
-    /// <param name="obj">The object (layer) from which to copy.</param>
+    /// <param name="from">The object (layer) from which to copy.</param>
     /// <param name="options">Copy options.</param>
-    protected override void InternalCopyFrom(HostLayer obj, Gdi.GraphCopyOptions options)
+    protected override void InternalCopyFrom(HostLayer from, Gdi.GraphCopyOptions options)
     {
-      base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
+      base.InternalCopyFrom(from, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
-      if (!(obj is XYZPlotLayer from))
+      if (from is not XYZPlotLayer fromX)
         return;
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerScales))
       {
-        CoordinateSystem = from.CoordinateSystem; // immutable
+        CoordinateSystem = fromX.CoordinateSystem; // immutable
 
-        Scales = from._scales.Clone();
-        _dataClipping = from._dataClipping;
+        Scales = fromX._scales.Clone();
+        _dataClipping = fromX._dataClipping;
       }
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerGrid))
       {
-        GridPlanes = from._gridPlanes.Clone();
+        GridPlanes = fromX._gridPlanes.Clone();
       }
 
       // Styles
 
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerAxes))
       {
-        AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+        AxisStyles = (AxisStyleCollection)fromX._axisStyles.Clone();
       }
 
       // Plot items
       if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotItems))
       {
-        PlotItems = new PlotItemCollection(this, from._plotItems, true);
+        PlotItems = new PlotItemCollection(this, fromX._plotItems, true);
       }
       else if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotStyles))
       {
-        // TODO apply the styles from from._plotItems to the PlotItems here
-        PlotItems.CopyFrom(from._plotItems, options);
+        // TODO apply the styles from fromX._plotItems to the PlotItems here
+        PlotItems.CopyFrom(fromX._plotItems, options);
       }
     }
 
@@ -956,17 +956,17 @@ namespace Altaxo.Graph.Graph3D
 
 
     /// <inheritdoc />
-    protected override void PaintInternal(IGraphicsContext3D g, IPaintContext paintContext)
+    protected override void PaintInternal(IGraphicsContext3D g, IPaintContext context)
     {
       // paint the background very first
       _gridPlanes.Paint(g, this);
 
-      _axisStyles.Paint(g, paintContext, this);
+      _axisStyles.Paint(g, context, this);
 
-      _plotItems.Paint(g, paintContext, this, null, null);
+      _plotItems.Paint(g, context, this, null, null);
 
       // then paint the graph items
-      base.PaintInternal(g, paintContext);
+      base.PaintInternal(g, context);
     }
 
     /// <summary>

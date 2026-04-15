@@ -362,7 +362,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="itemList">The enumeration that can contain both project items and project folders.</param>
     /// <returns>A hashset that contains the project items of the provided <paramref name="itemList"/> plus all project items of the folders and its subfolders, that are also contained in the <paramref name="itemList"/>.</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown when <paramref name="itemList"/> contains an element that is neither an <see cref="IProjectItem"/> nor a <see cref="ProjectFolder"/>.</exception>
     public HashSet<IProjectItem> GetExpandedProjectItemSet(IEnumerable<object> itemList)
     {
       var result = new HashSet<IProjectItem>();
@@ -596,7 +596,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Adds this directory as well as all parent directories.
     /// </summary>
-    /// <param name="dir"></param>
+    /// <param name="dir">The directory to add together with all of its parent directories.</param>
     private void DirectoryAdded(string dir)
     {
       if (!_directories.ContainsKey(dir))
@@ -737,16 +737,16 @@ namespace Altaxo.Main
       }
 
       /// <inheritdoc/>
-      public override string? Validate(string name)
+      public override string? Validate(string txt)
       {
-        string? err = base.Validate(name);
+        string? err = base.Validate(txt);
         if (err is not null)
           return err;
 
-        if (!name.EndsWith(ProjectFolder.DirectorySeparatorString))
-          name += ProjectFolder.DirectorySeparatorString;
+        if (!txt.EndsWith(ProjectFolder.DirectorySeparatorString))
+          txt += ProjectFolder.DirectorySeparatorString;
 
-        return Current.IProjectService.CurrentProject.Folders.ContainsFolder(name) ? "The folder name already exists! Please enter a name of a new folder." : null;
+        return Current.IProjectService.CurrentProject.Folders.ContainsFolder(txt) ? "The folder name already exists! Please enter a name of a new folder." : null;
       }
     }
 

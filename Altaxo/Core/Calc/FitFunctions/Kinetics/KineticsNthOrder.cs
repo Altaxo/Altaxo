@@ -252,10 +252,10 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// </summary>
     /// <param name="t">Time.</param>
     /// <param name="p0">Volume fraction of aggregating species at time t=0, which is free (i.e. which is at this time not contained inside an aggragate).</param>
-    /// <param name="pSample">Total volume fraction of aggregating species in the sample.</param>
-    /// <param name="pInsideAggregate">Aggregates are assumed to contain a constant volume fraction of aggregating species. This parameter represents this constant.</param>
     /// <param name="k">Kinetic constant.</param>
     /// <param name="order">Order of the kinetics. Has to be equal or greater than 0.</param>
+    /// <param name="pSample">Total volume fraction of aggregating species in the sample.</param>
+    /// <param name="pInsideAggregate">Aggregates are assumed to contain a constant volume fraction of aggregating species. This parameter represents this constant.</param>
     /// <returns>The volume fraction of aggregates at time t. At time t=0, this value is <c>(pSample-p0)/pInsideAggregate</c>. For t going to infinity,
     /// this value tends to <c>pSample/pInsideAggregate</c>.</returns>
     /// <remarks>
@@ -273,10 +273,10 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// </summary>
     /// <param name="t">Time.</param>
     /// <param name="pA0">Volume fraction of aggregates at time t=0.</param>
-    /// <param name="pSample">Total volume fraction of aggregating species in the sample.</param>
     /// <param name="pAInf">Volume fraction of aggregates at time t=Infinity.</param>
     /// <param name="k">Kinetic constant.</param>
     /// <param name="order">Order of the kinetics. Has to be equal or greater than 0.</param>
+    /// <param name="pSample">Total volume fraction of aggregating species in the sample.</param>
     /// <returns>The volume fraction of aggregates at time t. At time t=0, this value is <c>pA0</c>. For t going to infinity,
     /// this value tends to <c>pAInf</c>.</returns>
     /// <remarks>The provided volume fraction of aggregating species <c>pSample</c>is influencing only the rate. It is important only

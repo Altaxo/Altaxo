@@ -472,9 +472,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     /// <remarks>MATLAB: normcdf</remarks>
@@ -492,9 +492,9 @@ namespace Altaxo.Calc.Distributions
     /// Computes the inverse of the cumulative distribution function (InvCDF) for the distribution
     /// at the given probability. This is also known as the quantile or percent point function.
     /// </summary>
-    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
+    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <returns>the inverse cumulative density at <paramref name="p"/>.</returns>
     /// <seealso cref="InverseCumulativeDistribution"/>
     /// <remarks>MATLAB: norminv</remarks>
@@ -549,7 +549,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double mean, double stddev)
     {
       if (stddev < 0.0)
@@ -598,7 +597,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double mean, double stddev)
     {
       if (stddev < 0.0)

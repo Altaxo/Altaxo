@@ -138,10 +138,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     /// </summary>
     /// <param name="x">The dependent variable. Usually water activity / relative humidity (0..1).</param>
     /// <param name="offset">The mass of the sample at x==0.</param>
-    /// <param name="C1">Absorption constant.</param>
-    /// <param name="C2">Absorption constant.</param>
-    /// <param name="C3">Exponent. Usually less than 1.</param>
-    /// <param name="C4">Exponent. Usually greater than 1.</param>
+    /// <param name="C1">The coefficient of the first Peleg term.</param>
+    /// <param name="C2">The coefficient of the second Peleg term.</param>
+    /// <param name="C3">The exponent applied to the first Peleg term. It is usually less than 1.</param>
+    /// <param name="C4">The exponent applied to the second Peleg term. It is usually greater than 1.</param>
     /// <returns>The mass of the sample at the water activity x.</returns>
     public static double Evaluate(double x, double offset, double C1, double C2, double C3, double C4)
     {

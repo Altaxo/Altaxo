@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="connectCircular">if set to <c>true</c> [connect circular].</param>
     /// <param name="numberOfPointsPerOriginalPoint">The number of points per original point. For most step styles one additional point is inserted, thus the return value is 2. For some connection styles, two points are inserted inbetween two original points, thus the return value will be 3.</param>
     /// <param name="lastIndex">The last index.</param>
-    /// <returns></returns>
+    /// <returns>The polyline points representing the requested step connection.</returns>
     protected abstract PointF[] GetStepPolylinePoints(
     PointF[] pdata,
     IPlotRange range,
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
     /// <param name="range">The plot range to use.</param>
     /// <param name="layer">Graphics layer.</param>
-    /// <param name="linePen">The pen to draw the line.</param>
+    /// <param name="pen">The pen to draw the line.</param>
     /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
     /// This function is null if no symbol gap is required.</param>
     /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       PointF[] allLinePoints,
       IPlotRange range,
       IPlotArea layer,
-      PenCacheGdi.GdiPen linePen,
+      PenCacheGdi.GdiPen pen,
       Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
           if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
           {
             // use the whole circular arry to draw a closed polygon without any gaps
-            g.DrawPolygon(linePen, stepPolylinePoints);
+            g.DrawPolygon(pen, stepPolylinePoints);
           }
           else
           {
@@ -99,16 +99,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             var shortenedPolyline = stepPolylinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
             if (shortenedPolyline is not null)
-              g.DrawLines(linePen, shortenedPolyline);
+              g.DrawLines(pen, shortenedPolyline);
           }
         }
       }
       else
       {
         if (connectCircular)
-          g.DrawPolygon(linePen, stepPolylinePoints);
+          g.DrawPolygon(pen, stepPolylinePoints);
         else
-          g.DrawLines(linePen, stepPolylinePoints);
+          g.DrawLines(pen, stepPolylinePoints);
       }
     }
 
@@ -121,15 +121,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       CSPlaneID fillDirection,
       bool ignoreMissingDataPoints,
       bool connectCircular,
-      PointF[] allLinePoints,
+      PointF[] allLinePointsShiftedAlready,
       double logicalShiftX,
       double logicalShiftY
     )
     {
       if (range.Length < 2)
         return;
-      PointF[] linepts = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out var numberOfPointsPerOriginalPoint, out var lastIdx);
-      FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular, allLinePoints, logicalShiftX, logicalShiftY);
+      PointF[] linepts = GetStepPolylinePoints(allLinePointsShiftedAlready, range, layer, connectCircular, out var numberOfPointsPerOriginalPoint, out var lastIdx);
+      FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular, allLinePointsShiftedAlready, logicalShiftX, logicalShiftY);
     }
 
     /// <summary>

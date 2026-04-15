@@ -104,7 +104,6 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <param name="layer">The plot layer.</param>
     /// <param name="previousPlotItem">Previous plot item.</param>
     /// <param name="nextPlotItem">Next plot item. Can be null.</param>
-    /// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
     void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem);
 
     /// <summary>

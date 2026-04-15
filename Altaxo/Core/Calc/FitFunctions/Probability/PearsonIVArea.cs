@@ -455,7 +455,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <param name="w">The w parameter.</param>
     /// <param name="m">The m parameter.</param>
     /// <param name="v">The v parameter.</param>
-    /// <returns></returns>
+    /// <returns>The Pearson IV function value for the specified parameters.</returns>
     public static double GetYOfOneTerm(double x, double area, double loc, double w, double m, double v)
     {
       // prefactor without w

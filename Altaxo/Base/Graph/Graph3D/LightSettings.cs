@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Graph3D
     /// </summary>
     /// <param name="ambientLight">The new value for <see cref="LightSettings"/>.</param>
     /// <returns>New instance of <see cref="LightSettings"/> with the provided value for <see cref="AmbientLight"/></returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="ambientLight"/> is <see langword="null"/>.</exception>
     public LightSettings WithAmbientLight(HemisphericAmbientLight ambientLight)
     {
       if (ambientLight is null)
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Graph3D
     /// Gets the discrete light with index <paramref name="idx"/> (0..3).
     /// </summary>
     /// <param name="idx">The index of the discrete light (0..3).</param>
-    /// <returns></returns>
+    /// <returns>The discrete light at the specified index, or <see langword="null"/> if that slot is empty.</returns>
     /// <exception cref="ArgumentOutOfRangeException">If index is not in the range 0..3.</exception>
     public IDiscreteLight? GetDiscreteLight(int idx)
     {

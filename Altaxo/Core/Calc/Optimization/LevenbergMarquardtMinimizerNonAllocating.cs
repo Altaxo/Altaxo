@@ -683,8 +683,8 @@ namespace Altaxo.Calc.Optimization
     /// <param name="gradient">The negative gradient. If <c>wasModified</c> is <see langword="true"/>, this vector was modified during the call.</param>
     /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus <c>mu</c>. If <c>wasModified</c> is <see langword="true"/>, this vector was modified during the call.</param>
     /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If <c>wasModified</c> is <see langword="true"/>, this array was modified during the call.</param>
-    /// <param name="savedGradient">If <paramref name="wasHessianAndGradientSaved"/> is <see langword="true"/>, this parameter contains the unmodified gradient.</param>
     /// <param name="savedHessian">If <paramref name="wasHessianAndGradientSaved"/> is <see langword="true"/>, this parameter contains the unmodified Hessian.</param>
+    /// <param name="savedGradient">If <paramref name="wasHessianAndGradientSaved"/> is <see langword="true"/>, this parameter contains the unmodified gradient.</param>
     /// <param name="wasHessianAndGradientSaved">Indicates whether the original gradient and Hessian were saved before modification (see <paramref name="savedGradient"/> and <paramref name="savedHessian"/>).</param>
     /// <returns>
     /// A tuple where <c>wasModified</c> indicates if the Hessian and gradient were modified; additionally, <c>numberOfFreeParameters</c>

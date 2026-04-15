@@ -288,7 +288,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The object outline path in object world coordinates.</returns>
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
       return GetPath();
@@ -308,31 +308,31 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The closed spline path in object world coordinates.</returns>
     protected GraphicsPath GetPath()
     {
       return InternalGetPath(_location.AbsoluteVectorPivotToLeftUpper);
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
-      if (_fillBrush.IsVisible && gp.IsVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi()))
+      if (_fillBrush.IsVisible && gp.IsVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi()))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
-      else if (_linePen.IsVisible && gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new ClosedCardinalSplineHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
-        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
+        gp.Transform(hitData.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(hitData.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new ClosedCardinalSplineHitTestObject(this);
         }

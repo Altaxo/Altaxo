@@ -379,9 +379,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the probability mass (PMF) at k, i.e. P(X = k).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <param name="probabilityMass">An array of nonnegative ratios: this array does not need to be normalized
     /// as this is often impossible using floating point arithmetic.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <returns>the probability mass at location <paramref name="k"/>.</returns>
     public static double PMF(double[] probabilityMass, int k)
     {
@@ -406,9 +406,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the log probability mass (lnPMF) at k, i.e. ln(P(X = k)).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <param name="probabilityMass">An array of nonnegative ratios: this array does not need to be normalized
     /// as this is often impossible using floating point arithmetic.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <returns>the log probability mass at location <paramref name="k"/>.</returns>
     public static double PMFLn(double[] probabilityMass, int k)
     {
@@ -418,9 +418,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="probabilityMass">An array of nonnegative ratios: this array does not need to be normalized
     /// as this is often impossible using floating point arithmetic.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double[] probabilityMass, double x)
@@ -658,7 +658,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="probabilityMass">An array of nonnegative ratios. Not assumed to be normalized.</param>
-    /// <returns>random integers between 0 and the size of the categorical (exclusive).</returns>
     public static void Samples(System.Random rnd, int[] values, double[] probabilityMass)
     {
       if (Control.CheckDistributionParameters && !IsValidProbabilityMass(probabilityMass))
@@ -707,7 +706,6 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="probabilityMass">An array of nonnegative ratios. Not assumed to be normalized.</param>
-    /// <returns>random integers between 0 and the size of the categorical (exclusive).</returns>
     public static void Samples(int[] values, double[] probabilityMass)
     {
       if (Control.CheckDistributionParameters && !IsValidProbabilityMass(probabilityMass))
@@ -757,7 +755,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="cdfUnnormalized">An array of the cumulative distribution. Not assumed to be normalized.</param>
-    /// <returns>random integers between 0 and the size of the categorical (exclusive).</returns>
     public static void SamplesWithCumulativeDistribution(System.Random rnd, int[] values, double[] cdfUnnormalized)
     {
       if (Control.CheckDistributionParameters && !IsValidCumulativeDistribution(cdfUnnormalized))
@@ -803,7 +800,6 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="cdfUnnormalized">An array of the cumulative distribution. Not assumed to be normalized.</param>
-    /// <returns>random integers between 0 and the size of the categorical (exclusive).</returns>
     public static void SamplesWithCumulativeDistribution(int[] values, double[] cdfUnnormalized)
     {
       if (Control.CheckDistributionParameters && !IsValidCumulativeDistribution(cdfUnnormalized))

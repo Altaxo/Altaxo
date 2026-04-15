@@ -414,7 +414,7 @@ namespace Altaxo.Graph.Graph3D.CS
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns>Axis line vector (untransformed, i.e. only for a regular G3DCoordinateSystem without reversing or exchanging of axes).</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown if the axis identifier refers to an unsupported axis.</exception>
     public static VectorD3D GetUntransformedAxisLineVector(CSLineID id)
     {
       switch (id.ParallelAxisNumber)
@@ -473,8 +473,7 @@ namespace Altaxo.Graph.Graph3D.CS
     /// <param name="id">The axis identifier.</param>
     /// <param name="side">The side identifier.</param>
     /// <returns>The vector corresponding to the axis side.</returns>
-    /// <exception cref="System.NotImplementedException">
-    /// </exception>
+    /// <exception cref="System.NotImplementedException">Thrown if the axis identifier or axis side is not supported.</exception>
     private static VectorD3D GetUntransformedAxisSideVector(CSLineID id, CSAxisSide side)
     {
       VectorD3D r = VectorD3D.Empty;
@@ -571,8 +570,7 @@ namespace Altaxo.Graph.Graph3D.CS
     /// <param name="id">The axis identifier.</param>
     /// <param name="side">The side identifier.</param>
     /// <returns>The vector corresponding to the axis side.</returns>
-    /// <exception cref="System.NotImplementedException">
-    /// </exception>
+    /// <exception cref="System.NotImplementedException">Thrown if the axis identifier or axis side is not supported.</exception>
     private VectorD3D GetTransformedAxisSideVector(CSLineID id, CSAxisSide side)
     {
       return VectorTransformation.Transform(GetUntransformedAxisSideVector(id, side));
@@ -585,8 +583,8 @@ namespace Altaxo.Graph.Graph3D.CS
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <param name="v">The vector that describes the axis side.</param>
-    /// <returns></returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <returns>The axis side that corresponds to the provided vector.</returns>
+    /// <exception cref="System.NotImplementedException">Thrown if the axis identifier is not supported.</exception>
     private static CSAxisSide GetAxisSide(CSLineID id, VectorD3D v)
     {
       switch (id.ParallelAxisNumber)

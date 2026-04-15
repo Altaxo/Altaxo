@@ -98,26 +98,26 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource)
     {
-      var importOptions = (AsciiImportOptions)importOptionsObj;
+      var importOptionsX = (AsciiImportOptions)importOptions;
 
-      if (filenames.Count == 1)
+      if (fileNames.Count == 1)
       {
-        AsciiImporter.ImportFromAsciiFile(table, filenames[0], out var options);
+        AsciiImporter.ImportFromAsciiFile(table, fileNames[0], out var options);
         if (attachDataSource && !(table.DataSource is AsciiImportDataSource))
         {
-          table.DataSource = CreateTableDataSource(filenames, options);
+          table.DataSource = CreateTableDataSource(fileNames, options);
         }
         return null;
       }
       else
       {
         var options = importOptions ?? new AsciiImportOptions();
-        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(table, filenames, true, options, out var errors);
+        AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(table, fileNames, true, importOptionsX, out var errors);
         if (attachDataSource && !(table.DataSource is AsciiImportDataSource))
         {
-          table.DataSource = CreateTableDataSource(filenames, options);
+          table.DataSource = CreateTableDataSource(fileNames, options);
         }
         return errors;
       }

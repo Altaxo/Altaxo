@@ -754,9 +754,6 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
@@ -787,9 +784,6 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
     /// <inheritdoc/>
     protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
@@ -896,11 +890,6 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
-    /// <inheritdoc/>
     /// <inheritdoc/>
     public override Complex64T GetFrequencyResponse(double fdt)
     {
@@ -1276,8 +1265,8 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
     /// </summary>
+    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is necessary.</param>
     /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
-    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
     public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
     {
       double[] y = new double[_numY * _ySpacing];

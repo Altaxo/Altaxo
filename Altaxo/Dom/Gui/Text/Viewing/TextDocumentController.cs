@@ -25,9 +25,6 @@
 #nullable disable warnings
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Drawing;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
@@ -265,7 +262,10 @@ namespace Altaxo.Gui.Text.Viewing
       return TextDocument.AddImage(imageProxy);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Inserts the source text at caret position.
+    /// </summary>
+    /// <param name="text">The text.</param>
     public void InsertSourceTextAtCaretPosition(string text)
     {
       if (_view is not null)

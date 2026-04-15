@@ -386,7 +386,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// The copy constructor.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The layer to copy from.</param>
     public HostLayer(HostLayer from)
     {
       Grid = new GridPartitioning();

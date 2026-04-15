@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Creates the scalar and initializes it with the value val.
       /// </summary>
-      /// <param name="val"></param>
+      /// <param name="val">The scalar value to expose as a 1x1 matrix.</param>
       public ScalarAsMatrix(T val)
       {
         _value = val;
@@ -1079,7 +1079,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// </summary>
       /// <param name="array">The linear array in column major order.</param>
       /// <param name="nRows">The number of rows of the matrix. The number of columns are calculated from the length of the array and the number of rows.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <exception cref="System.ArgumentException">Thrown when the array length is not an integer multiple of <paramref name="nRows"/>.</exception>
       public ROMatrixFromColumnMajorLinearArray(T[] array, int nRows)
       {
         if (array.Length % nRows != 0)
@@ -1141,7 +1141,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// </summary>
       /// <param name="array">The linear array in column major order.</param>
       /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <exception cref="System.ArgumentException">Thrown when the array length is not an integer multiple of <paramref name="nRows"/>.</exception>
       public MatrixFromColumnMajorLinearArray(T[] array, int nRows)
         : base(array, nRows)
       {
@@ -1204,7 +1204,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// </summary>
       /// <param name="array">The linear array in column major order.</param>
       /// <param name="nColumns">The number of columns of the matrix. The number of rows are calculated from the length of the array and the number of columns.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <exception cref="System.ArgumentException">Thrown when the array length is not an integer multiple of <paramref name="nColumns"/>.</exception>
       public ROMatrixFromRowMajorLinearArray(T[] array, int nColumns)
       {
         if (array.Length % nColumns != 0)
@@ -1262,11 +1262,11 @@ namespace Altaxo.Calc.LinearAlgebra
     public class MatrixFromRowMajorLinearArray<T> : ROMatrixFromRowMajorLinearArray<T>, IMatrix<T> where T : struct
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
+      /// Initializes a new instance of the <see cref="MatrixFromRowMajorLinearArray{T}"/> class.
       /// </summary>
-      /// <param name="array">The linear array in column major order.</param>
-      /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <param name="array">The linear array in row-major order.</param>
+      /// <param name="nRows">The number of rows of the matrix. The number of columns are calculated from the length of the array and the number of rows.</param>
+      /// <exception cref="System.ArgumentException">Thrown when the array length is not an integer multiple of <paramref name="nRows"/>.</exception>
       public MatrixFromRowMajorLinearArray(T[] array, int nRows)
         : base(array, nRows)
       {
@@ -1318,8 +1318,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Initializes a new instance of the <see cref="ROMatrixFrom2DArray{T}"/> class.
       /// </summary>
-      /// <param name="array">The linear array in column major order.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <param name="array">The two-dimensional array to expose as a read-only matrix.</param>
       public ROMatrixFrom2DArray(T[,] array)
       {
         _array = array;
@@ -1370,8 +1369,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Initializes a new instance of the <see cref="ROMatrixFrom2DArray{T}"/> class.
       /// </summary>
-      /// <param name="array">The linear array in column major order.</param>
-      /// <exception cref="System.ArgumentException"></exception>
+      /// <param name="array">The two-dimensional array to expose as a writable matrix.</param>
       public RWMatrixFrom2DArray(T[,] array)
       {
         _array = array;
@@ -1642,7 +1640,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
       /// the columns (!) of the matrix. The data is not copied.
       /// </summary>
-      /// <param name="from"></param>
+      /// <param name="from">The column vectors that provide the matrix storage without copying.</param>
       public TopSpineJaggedArrayMatrix(T[][] from)
       {
         _columns = from.Length;

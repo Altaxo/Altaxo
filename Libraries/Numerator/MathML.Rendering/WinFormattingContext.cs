@@ -1,4 +1,4 @@
-//This file is part of MathML.Rendering, a library for displaying mathml
+﻿//This file is part of MathML.Rendering, a library for displaying mathml
 //Copyright (C) 2003, Andy Somogyi
 //
 //This library is free software; you can redistribute it and/or
@@ -249,9 +249,9 @@ namespace MathML.Rendering
       return _fontFactory.GetFont(this, fontName, altFontName);
     }
 
-    public IFontHandle CreateFont(float emHeightInPixels, bool italic, int weight, String fontName)
+    public IFontHandle CreateFont(float emHeight, bool italic, int weight, String fontName)
     {
-      return _fontFactory.CreateFont(_graphics, emHeightInPixels, italic, weight, fontName);
+      return _fontFactory.CreateFont(_graphics, emHeight, italic, weight, fontName);
     }
 
 		/// <summary>

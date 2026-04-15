@@ -141,7 +141,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   [UserControllerForObject(typeof(AxisCreationArguments))]
   public class AxisCreationController : MVCANControllerEditOriginalDocBase<AxisCreationArguments, IAxisCreationView>
   {
-    /// <inheritdoc />
     /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -252,7 +251,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     #endregion
 
-    /// <inheritdoc />
     /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {

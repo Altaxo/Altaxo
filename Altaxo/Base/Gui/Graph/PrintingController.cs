@@ -469,7 +469,6 @@ namespace Altaxo.Gui.Graph
     #endregion
 
     /// <inheritdoc />
-    /// <inheritdoc />
     protected override void Initialize(bool initData)
     {
       if (initData)

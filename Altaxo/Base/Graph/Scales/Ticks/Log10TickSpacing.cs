@@ -746,7 +746,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// the number of minor ticks per major tick interval. The function filles the <see cref="_majorTicks"/> collection with the major tick values.</summary>
     /// <param name="lg10Org">The Log10() value of the scale origin.</param>
     /// <param name="lg10End">The Log10() value of the scale end.</param>
-    /// <param name="cachedMajorMinor"></param>
+    /// <param name="cachedMajorMinor">Cached information about the major-tick and minor-tick spacing.</param>
     private void InternalCalculateMajorTicks(double lg10Org, double lg10End, CachedMajorMinor cachedMajorMinor)
     {
       _majorTicks.Clear();
@@ -792,7 +792,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// the number of minor ticks per major tick interval. The function filles the <see cref="_minorTicks"/> collection with the minor tick values.</summary>
     /// <param name="lg10Org">The Log10() value of the scale origin.</param>
     /// <param name="lg10End">The Log10() value of the scale end.</param>
-    /// <param name="cachedMajorMinor"></param>
+    /// <param name="cachedMajorMinor">Cached information about the major-tick and minor-tick spacing.</param>
     private void InternalCalculateMinorTicks(double lg10Org, double lg10End, CachedMajorMinor cachedMajorMinor)
     {
       _minorTicks.Clear();

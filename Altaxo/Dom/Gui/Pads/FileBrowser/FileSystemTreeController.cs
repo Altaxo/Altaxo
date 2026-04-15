@@ -24,10 +24,7 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Main.Services;
 
@@ -85,10 +82,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
       }
 
       /// <inheritdoc/>
-      protected override void OnPropertyChanged(string name)
+      protected override void OnPropertyChanged(string propertyName)
       {
-        base.OnPropertyChanged(name);
-        if (name == "IsSelected" && _imageIndex != _selectedImageIndex)
+        base.OnPropertyChanged(propertyName);
+        if (propertyName == "IsSelected" && _imageIndex != _selectedImageIndex)
           base.OnPropertyChanged("ImageIndex");
       }
 

@@ -102,7 +102,7 @@ namespace Altaxo.Main
     /// <param name="sender">The sender of the change notification (currently unused).</param>
     /// <param name="e">The change event args can provide details of the change (currently unused).</param>
     /// <exception cref="ArgumentNullException"><paramref name="e"/> is <c>null</c>.</exception>
-    /// <exception cref="System.ArgumentException"></exception>
+    /// <exception cref="System.ArgumentException">Thrown when <paramref name="e"/> is not of type <typeparamref name="T"/>.</exception>
     protected override void AccumulateChangeData(object? sender, EventArgs e)
     {
       if (e is null)

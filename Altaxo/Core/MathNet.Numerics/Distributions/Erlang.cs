@@ -433,9 +433,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (λ) of the Erlang distribution. Range: λ ≥ 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(int shape, double rate, double x)
@@ -489,7 +489,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (λ) of the Erlang distribution. Range: λ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, int shape, double rate)
     {
       Gamma.Samples(rnd, values, shape, rate);
@@ -523,7 +522,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="shape">The shape (k) of the Erlang distribution. Range: k ≥ 0.</param>
     /// <param name="rate">The rate or inverse scale (λ) of the Erlang distribution. Range: λ ≥ 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, int shape, double rate)
     {
       Gamma.Samples(values, shape, rate);

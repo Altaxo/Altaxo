@@ -30,6 +30,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Geometry.Double_2D
 {
+  /// <summary>
+  /// Provides helpers for constructing concave hulls in double-precision 2D space.
+  /// </summary>
   public partial class ConcaveHull
   {
     /// <summary>

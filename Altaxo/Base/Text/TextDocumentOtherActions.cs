@@ -68,17 +68,17 @@ namespace Altaxo.Text
       }
 
       /// <inheritdoc />
-      public override string? Validate(string name)
+      public override string? Validate(string txt)
       {
-        var err = base.Validate(name);
+        var err = base.Validate(txt);
         if (err is not null)
           return err;
 
-        if (_doc.Name == name)
+        if (_doc.Name == txt)
           return null;
         else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc) is null)
           return null; // if there is no parent data set we can enter anything
-        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc)?.ContainsAnyName(name) ?? false)
+        else if (TextDocumentCollection.GetParentTextDocumentCollectionOf(_doc)?.ContainsAnyName(txt) ?? false)
           return "This text document name already exists, please choose another name!";
         else
           return null;

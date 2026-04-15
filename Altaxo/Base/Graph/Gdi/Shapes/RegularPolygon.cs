@@ -364,25 +364,25 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
 
-      if (_fillBrush.IsVisible && gp.IsVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi()))
+      if (_fillBrush.IsVisible && gp.IsVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi()))
       {
         result = new GraphicBaseHitTestObject(this);
       }
-      else if (_linePen.IsVisible && gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new GraphicBaseHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
-        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
+        gp.Transform(hitData.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(hitData.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new GraphicBaseHitTestObject(this);
         }
@@ -395,7 +395,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override void Paint(Graphics g, IPaintContext paintContext)
+    public override void Paint(Graphics g, IPaintContext context)
     {
       var path = GetPath();
       var bounds = Bounds;

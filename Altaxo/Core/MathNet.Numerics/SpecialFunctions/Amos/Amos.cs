@@ -4,8 +4,9 @@ using Complex = System.Numerics.Complex;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
-  // References:
-  // [1] https://github.com/scipy/scipy/blob/master/scipy/special/amos_wrappers.c
+  /// <summary>
+  /// Provides AMOS-based implementations of special functions.
+  /// </summary>
   public static partial class SpecialFunctions
   {
     private static class Amos

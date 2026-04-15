@@ -85,15 +85,15 @@ namespace Altaxo.Serialization.TA_Instruments
     /// Imports a couple of Q800 files into a table. The data are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
     /// </summary>
-    /// <param name="filenames">An array of filenames to import. Typically, only one file is imported.</param>
+    /// <param name="fileNames">An array of filenames to import. Typically, only one file is imported.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
-    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="importOptions">The import options object.</param>
     /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (Q800ImportOptions)importOptionsObj;
+      var importOptionsX = (Q800ImportOptions)importOptions;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
@@ -109,10 +109,10 @@ namespace Altaxo.Serialization.TA_Instruments
 
       int idxYColumn = 0;
       int idxFile = -1;
-      bool multipleFiles = filenames.Count > 1;
+      bool multipleFiles = fileNames.Count > 1;
       var pcolUnit = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
-      var readers = new Q800FileReader[filenames.Count];
-      foreach (string filename in filenames)
+      var readers = new Q800FileReader[fileNames.Count];
+      foreach (string filename in fileNames)
       {
         idxFile++;
         Q800FileReader imported;
@@ -120,7 +120,7 @@ namespace Altaxo.Serialization.TA_Instruments
         {
           using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
           {
-            imported = Q800FileReader.FromStream(stream, importOptions.ConvertUnitsToSIUnits);
+            imported = Q800FileReader.FromStream(stream, importOptionsX.ConvertUnitsToSIUnits);
           }
         }
         catch (Exception ex)
@@ -152,15 +152,15 @@ namespace Altaxo.Serialization.TA_Instruments
 
       // Make also a note from where it was imported
       {
-        if (filenames.Count == 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
-        else if (filenames.Count > 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+        if (fileNames.Count == 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} at {DateTimeOffset.Now}");
+        else if (fileNames.Count > 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} and more ({fileNames.Count} files) at {DateTimeOffset.Now}");
       }
 
-      if (importOptions.HeaderLinesDestination != MetadataDestination.Ignore)
+      if (importOptionsX.HeaderLinesDestination != MetadataDestination.Ignore)
       {
-        if (importOptions.HeaderLinesDestination == MetadataDestination.Notes)
+        if (importOptionsX.HeaderLinesDestination == MetadataDestination.Notes)
         {
           // Add the header lines to the table notes
           foreach (var reader in readers)
@@ -168,7 +168,7 @@ namespace Altaxo.Serialization.TA_Instruments
             table.Notes.WriteLine(reader.Notes);
           }
         }
-        if (importOptions.HeaderLinesDestination == MetadataDestination.PropertyColumn)
+        if (importOptionsX.HeaderLinesDestination == MetadataDestination.PropertyColumn)
         {
           var pcol = table.PropCols.EnsureExistence("Header", typeof(TextColumn), ColumnKind.V, 0);
           // Add the header lines to the column properties
@@ -188,7 +188,7 @@ namespace Altaxo.Serialization.TA_Instruments
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(filenames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

@@ -515,11 +515,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc/>
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       if (_axisStyle.Title is not null)
       {
-        var titleResult = _axisStyle.Title.HitTest(htd);
+        var titleResult = _axisStyle.Title.HitTest(hitData);
         if (titleResult is not null)
         {
           titleResult.Remove = EhTitleRemove;
@@ -527,7 +527,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      var pt = htd.GetHittedPointInWorldCoord();
+      var pt = hitData.GetHittedPointInWorldCoord();
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetSelectionPath();
       if (gp.IsVisible(pt.ToGdi()))
@@ -558,17 +558,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc/>
-    public override void Paint(Graphics g, IPaintContext paintContext)
+    public override void Paint(Graphics g, IPaintContext context)
     {
       if (_cachedLayerSegment is null) // _privLayer should be set before in FixupInternalDataStructures
       {
-        PaintErrorInvalidLayerType(g, paintContext);
+        PaintErrorInvalidLayerType(g, context);
         return;
       }
 
       if (_background is null)
       {
-        _axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
+        _axisStyle.Paint(g, context, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
       }
       else
       {
@@ -578,7 +578,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           using (var gg = Graphics.FromImage(bmp))
           {
-            _axisStyle.Paint(gg, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
+            _axisStyle.Paint(gg, context, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
           }
         }
       }
@@ -617,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         {
           bounds1.Value.Expand(_backgroundPadding);
           _background.Draw(g, bounds1.Value);
-          _axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
+          _axisStyle.Paint(g, context, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
         }
       }
     }

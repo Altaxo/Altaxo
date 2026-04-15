@@ -1351,7 +1351,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// </summary>
     /// <param name="newlyCreatedColumn">Instance of an OtherAvailableColumn.</param>
     /// <param name="wasEdited">If set to <c>true</c>, the column was edited.</param>
-    /// <returns></returns>
+    /// <returns>The resulting readable column after the edit operation.</returns>
     private static IReadableColumn EditOtherAvailableColumn(IReadableColumn newlyCreatedColumn, out bool wasEdited)
     {
       wasEdited = false;

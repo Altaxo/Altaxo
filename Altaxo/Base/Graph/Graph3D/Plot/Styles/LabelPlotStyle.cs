@@ -1073,11 +1073,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <summary>
     /// Paints one label.
     /// </summary>
-    /// <param name="g"></param>
-    /// <param name="label"></param>
+    /// <param name="g">The graphics context used to paint the label.</param>
+    /// <param name="label">The text of the label to paint.</param>
     /// <param name="symbolSize">The symbol size used to calculate the offset.</param>
     /// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_material"/> is used instead.</param>
-    /// <param name="variableBackBrush"></param>
+    /// <param name="variableBackBrush">The background brush to use for the label, or <see langword="null"/> to use the configured background style.</param>
     public void Paint(IGraphicsContext3D g, string label, double symbolSize, IMaterial variableTextBrush, IMaterial? variableBackBrush)
     {
       var fontSize = _font.Size;

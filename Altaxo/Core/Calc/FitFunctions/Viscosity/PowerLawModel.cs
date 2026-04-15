@@ -103,7 +103,13 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the power-law viscosity model.
+    /// </summary>
+    /// <param name="gammadot">The shear rate.</param>
+    /// <param name="K">The consistency index.</param>
+    /// <param name="n">The flow behavior index.</param>
+    /// <returns>The viscosity predicted by the model.</returns>
     public static double Evaluate(double gammadot, double K, double n)
     {
       return K * Math.Pow(gammadot, n - 1);

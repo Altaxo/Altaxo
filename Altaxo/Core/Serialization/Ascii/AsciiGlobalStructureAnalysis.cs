@@ -55,7 +55,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     private List<int>? _fixedBoundaries;
 
+    /// <summary>
     /// If a fixed column width structure was recognized, this element contains the recognized tab size.
+    /// </summary>
     private int _recognizedTabSize = 1;
 
     /// <summary>True if any of the lines contains a tabulator char.</summary>
@@ -97,7 +99,9 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    /// If a fixed column width structure was recognized, this element contains the recognized tab size. Otherwise it is 1.
+    /// <summary>
+    /// Gets the recognized tab size for a fixed column width structure. Otherwise, the value is 1.
+    /// </summary>
     public int RecognizedTabSize
     {
       get
@@ -336,8 +340,8 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Return the maximal tabbed line length of the provided list of tabbed word bounds.
     /// </summary>
-    /// <param name="listOfTabbedWordBounds"></param>
-    /// <returns></returns>
+    /// <param name="listOfTabbedWordBounds">The tabbed word-boundary lists to inspect.</param>
+    /// <returns>The maximum tabbed line length found in <paramref name="listOfTabbedWordBounds"/>.</returns>
     private int MaxTabbedLineLength(List<List<int>> listOfTabbedWordBounds)
     {
       int maxlength = 0;
@@ -432,9 +436,9 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Gets the tabbed position for the start and end of all words in a line, assuming a certain tab width.
     /// </summary>
-    /// <param name="sLine">Line to analyse.</param>
-    /// <param name="stringPositions"></param>
-    /// <param name="tabSize"></param>
+    /// <param name="sLine">The line to analyze.</param>
+    /// <param name="stringPositions">The start and end positions of the words in the original string.</param>
+    /// <param name="tabSize">The tab width to use when converting string positions into tabbed positions.</param>
     /// <returns>List of positions of the word starts and ends (ends=next position after the word). The list therefore always has
     /// an even number of members. If there is a word, the list starts always with the start position of the word, followed by the position of the first character after this word.</returns>
     public List<int> GetTabbedWordBounds(string sLine, List<int> stringPositions, int tabSize)

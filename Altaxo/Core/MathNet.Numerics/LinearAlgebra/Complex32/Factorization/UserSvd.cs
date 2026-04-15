@@ -57,7 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
     /// <returns>The computed singular value decomposition.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the singular value decomposition iteration does not converge.</exception>
     public static UserSvd Create(Matrix<Complex32> matrix, bool computeVectors)
     {
       var nm = Math.Min(matrix.RowCount + 1, matrix.ColumnCount);

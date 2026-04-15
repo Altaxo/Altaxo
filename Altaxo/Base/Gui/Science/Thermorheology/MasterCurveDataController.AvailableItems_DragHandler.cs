@@ -31,6 +31,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
+  /// <summary>
+  /// Provides drag support for available items in the master-curve data controller.
+  /// </summary>
   public partial class MasterCurveDataController
   {
     /// <summary>

@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       /// <inheritdoc />
-      public override void Paint(Graphics g, IPaintContext paintContext)
+      public override void Paint(Graphics g, IPaintContext context)
       {
         throw new NotImplementedException();
       }
@@ -286,7 +286,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The outline path in object world coordinates.</returns>
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
       return GetPath();
@@ -295,7 +295,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Gets the path of the object in object world coordinates.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The line path in object world coordinates.</returns>
     protected GraphicsPath GetPath()
     {
       var gp = new GraphicsPath();
@@ -305,20 +305,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
       using (var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen))
       {
-        if (gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
+        if (gp.IsOutlineVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
         {
           result = new LineShapeHitTestObject(this);
         }
         else
         {
-          gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
-          if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
+          gp.Transform(hitData.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+          if (gp.IsOutlineVisible(hitData.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
           {
             result = new LineShapeHitTestObject(this);
           }
@@ -340,7 +340,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override void Paint(Graphics g, IPaintContext paintContext)
+    public override void Paint(Graphics g, IPaintContext context)
     {
       GraphicsState gs = g.Save();
       TransformGraphics(g);

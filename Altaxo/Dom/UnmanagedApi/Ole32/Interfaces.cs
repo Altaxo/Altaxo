@@ -611,8 +611,8 @@ namespace Altaxo.UnmanagedApi.Ole32
     /// </summary>
     /// <param name="pwcsName">The name of the stream to create.</param>
     /// <param name="grfMode">The storage mode flags.</param>
-    /// <param name="reserved1">Reserved. Must be zero.</param>
-    /// <param name="reserved2">Reserved. Must be zero.</param>
+    /// <param name="reserved1">Reserved for future use. Pass 0.</param>
+    /// <param name="reserved2">Additional reserved value. Pass 0.</param>
     /// <returns>The created stream object.</returns>
     [return: MarshalAs(UnmanagedType.Interface)]
     IStream CreateStream([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved1, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
@@ -623,7 +623,7 @@ namespace Altaxo.UnmanagedApi.Ole32
     /// <param name="pwcsName">The name of the stream to open.</param>
     /// <param name="reserved1">Reserved. Must be <see cref="IntPtr.Zero"/>.</param>
     /// <param name="grfMode">The storage mode flags.</param>
-    /// <param name="reserved2">Reserved. Must be zero.</param>
+    /// <param name="reserved2">Reserved numeric value. Pass 0.</param>
     /// <returns>The opened stream object.</returns>
     [return: MarshalAs(UnmanagedType.Interface)]
     IStream OpenStream([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, IntPtr reserved1, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
@@ -633,8 +633,8 @@ namespace Altaxo.UnmanagedApi.Ole32
     /// </summary>
     /// <param name="pwcsName">The name of the storage to create.</param>
     /// <param name="grfMode">The storage mode flags.</param>
-    /// <param name="reserved1">Reserved. Must be zero.</param>
-    /// <param name="reserved2">Reserved. Must be zero.</param>
+    /// <param name="reserved1">Reserved for future use. Pass 0.</param>
+    /// <param name="reserved2">Additional reserved value. Pass 0.</param>
     /// <returns>The created storage object.</returns>
     [return: MarshalAs(UnmanagedType.Interface)]
     IStorage CreateStorage([In, MarshalAs(UnmanagedType.BStr)] string pwcsName, [In, MarshalAs(UnmanagedType.U4)] int grfMode, [In, MarshalAs(UnmanagedType.U4)] int reserved1, [In, MarshalAs(UnmanagedType.U4)] int reserved2);
@@ -683,9 +683,9 @@ namespace Altaxo.UnmanagedApi.Ole32
     /// <summary>
     /// Enumerates the elements in the storage object.
     /// </summary>
-    /// <param name="reserved1">Reserved. Must be zero.</param>
-    /// <param name="reserved2">Reserved. Must be <see cref="IntPtr.Zero"/>.</param>
-    /// <param name="reserved3">Reserved. Must be zero.</param>
+    /// <param name="reserved1">Reserved element index. Pass 0.</param>
+    /// <param name="reserved2">Reserved pointer parameter. Pass <see cref="IntPtr.Zero"/>.</param>
+    /// <param name="reserved3">Reserved flags value. Pass 0.</param>
     /// <param name="ppVal">When this method returns, contains the element enumerator.</param>
     void EnumElements([In, MarshalAs(UnmanagedType.U4)] int reserved1, IntPtr reserved2, [In, MarshalAs(UnmanagedType.U4)] int reserved3, [MarshalAs(UnmanagedType.Interface)] out object ppVal);
 

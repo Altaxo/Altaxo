@@ -79,15 +79,15 @@ namespace Altaxo.Data
         _parent = parent;
       }
 
-      public override string? Validate(string name)
+      public override string? Validate(string txt)
       {
-        var err = base.Validate(name);
+        var err = base.Validate(txt);
         if (!string.IsNullOrEmpty(err))
           return err;
 
-        if (_col.Name == name)
+        if (_col.Name == txt)
           return null;
-        else if (_parent.ContainsColumn(name))
+        else if (_parent.ContainsColumn(txt))
           return "This column name already exists, please choose another name!";
         else
           return null;

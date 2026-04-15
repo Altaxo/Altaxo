@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Try renaming the item. Returns <c>true</c> if the renaming was successful.
     /// </summary>
     /// <param name="name">The new name.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the item was renamed successfully; otherwise, <see langword="false"/>.</returns>
     private bool TryRenaming(string name)
     {
       string newShortName = name;
@@ -499,7 +499,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Try renaming the item. Returns <c>true</c> if the renaming was successful.
     /// </summary>
     /// <param name="name">The new name.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the item was renamed successfully; otherwise, <see langword="false"/>.</returns>
     private bool TryRenaming(string name)
     {
       // if the text has changed, test if this is because the item was renamed or has to be renamed

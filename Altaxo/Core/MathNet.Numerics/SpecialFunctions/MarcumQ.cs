@@ -145,11 +145,11 @@ namespace Altaxo.Calc
       /// The aimed relative accuracy is close to 1.0e-11 in the previous parameter domain.
       /// </para>
       /// </remarks>
-      /// <param name="mu">argument of the functions</param>
-      /// <param name="x">argument of the functions</param>
-      /// <param name="y">argument of the functions</param>
-      /// <param name="p">function P_mu(a,x)</param>
-      /// <param name="q">function Q_mu(a,x)</param>
+      /// <param name="mu">The order parameter of the functions.</param>
+      /// <param name="x">The first function argument.</param>
+      /// <param name="y">The second function argument.</param>
+      /// <param name="p">When this method returns, contains the value of P_mu(x, y).</param>
+      /// <param name="q">When this method returns, contains the value of Q_mu(x, y).</param>
       /// <param name="ierr">error flag
       /// <para>0: Computation succesful</para>
       /// <para>1: Underflow problems. The function values are set to zero and one.</para>
@@ -4584,11 +4584,11 @@ namespace Altaxo.Calc
         /// <summary>
         /// Calculation of the incomplete gamma functions ratios P(a,x) and Q(a,x).
         /// </summary>
-        /// <param name="a">argument of the functions</param>
-        /// <param name="x">argument of the functions</param>
-        /// <param name="p">function P(a,x)</param>
-        /// <param name="q">function Q(a,x)</param>
-        /// <param name="ierr">error flag</param>
+        /// <param name="a">The shape parameter of the incomplete gamma functions.</param>
+        /// <param name="x">The evaluation point.</param>
+        /// <param name="p">When this method returns, contains the value of P(a, x).</param>
+        /// <param name="q">When this method returns, contains the value of Q(a, x).</param>
+        /// <param name="ierr">The error flag.</param>
         internal static void Incgam(double a, double x, out double p, out double q, out int ierr)
         {
           ierr = 0;
@@ -5015,10 +5015,10 @@ namespace Altaxo.Calc
         /// <summary>
         /// dompart is approx. of  x^a * exp(-x) / gamma(a+1)
         /// </summary>
-        /// <param name="a">argument of the functions</param>
-        /// <param name="x">argument of the functions</param>
-        /// <param name="qt">argument of the functions</param>
-        /// <returns></returns>
+        /// <param name="a">The exponent parameter.</param>
+        /// <param name="x">The evaluation point.</param>
+        /// <param name="qt">If set to <see langword="true"/>, evaluates the complementary quantity variant.</param>
+        /// <returns>An approximation of <c>x^a * exp(-x) / gamma(a + 1)</c>.</returns>
         internal static double Dompart(double a, double x, bool qt)
         {
           double dompart;
@@ -5181,8 +5181,8 @@ namespace Altaxo.Calc
         /// <summary>
         /// Computation of ln(gamma(x)), x>0
         /// </summary>
-        /// <param name="x">argument of the functions</param>
-        /// <returns></returns>
+        /// <param name="x">The positive argument.</param>
+        /// <returns>The natural logarithm of <c>Gamma(x)</c>.</returns>
         internal static double Loggam(double x)
         {
           //return SpecialFunctions.GammaLn(x);

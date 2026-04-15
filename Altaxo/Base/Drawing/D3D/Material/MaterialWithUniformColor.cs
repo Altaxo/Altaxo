@@ -23,11 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Altaxo.Drawing.D3D.Material
 {
   /// <summary>
@@ -184,18 +179,17 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     ///<inheritdoc/>
-    public override bool Equals(IMaterial? obj)
+    public override bool Equals(IMaterial? other)
     {
       // this material is considered to be equal to another material, if this material has exactly
-      var other = obj as MaterialWithUniformColor;
-      if (other is not null)
+      if (other is MaterialWithUniformColor otherX)
       {
         return
-          _color == other._color &&
+          _color == otherX._color &&
 
-          _smoothness == other._smoothness &&
-          _metalness == other._metalness &&
-          _indexOfRefraction == other._indexOfRefraction;
+          _smoothness == otherX._smoothness &&
+          _metalness == otherX._metalness &&
+          _indexOfRefraction == otherX._indexOfRefraction;
       }
 
       return false;

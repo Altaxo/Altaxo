@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
     /// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
     /// <param name="range">The plot range to use.</param>
     /// <param name="layer">Graphics layer.</param>
-    /// <param name="linePen">The pen to draw the line.</param>
+    /// <param name="pen">The pen to draw the line.</param>
     /// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
     /// This function is null if no symbol gap is required.</param>
     /// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
       PointF[] allLinePoints,
       IPlotRange range,
       IPlotArea layer,
-      PenCacheGdi.GdiPen linePen,
+      PenCacheGdi.GdiPen pen,
       Func<int, double>? symbolGap,
       int skipFrequency,
       bool connectCircular,
@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
             {
               // use the whole circular arry to draw a closed polygon without any gaps
-              g.DrawClosedCurve(linePen, subLinePoints);
+              g.DrawClosedCurve(pen, subLinePoints);
             }
             else
             {
@@ -132,14 +132,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
               if (shortenedBezierSegments is not null)
               {
-                g.DrawBeziers(linePen, shortenedBezierSegments);
+                g.DrawBeziers(pen, shortenedBezierSegments);
               }
             }
           }
         }
         else
         {
-          g.DrawClosedCurve(linePen, subLinePoints);
+          g.DrawClosedCurve(pen, subLinePoints);
         }
       }
       else // not circular
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
             if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
             {
               // use the whole circular arry to draw a closed polygon without any gaps
-              g.DrawCurve(linePen, subLinePoints);
+              g.DrawCurve(pen, subLinePoints);
             }
             else
             {
@@ -168,14 +168,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
               if (shortenedBezierSegments is not null)
               {
-                g.DrawBeziers(linePen, shortenedBezierSegments);
+                g.DrawBeziers(pen, shortenedBezierSegments);
               }
             }
           }
         }
         else
         {
-          g.DrawCurve(linePen, subLinePoints);
+          g.DrawCurve(pen, subLinePoints);
         }
       }
     }

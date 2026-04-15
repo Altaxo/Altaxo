@@ -111,7 +111,7 @@ namespace Altaxo.Main
     /// <summary>
     /// For deserialization purposes only.
     /// </summary>
-    /// <param name="info"></param>
+    /// <param name="info">The XML deserialization information.</param>
     protected DocNodeProxy2ndLevel(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
       : base(info)
     {

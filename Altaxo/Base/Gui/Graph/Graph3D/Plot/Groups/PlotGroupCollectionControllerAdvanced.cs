@@ -391,9 +391,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     /// Comparison of plot group styles. Primarily they are sorted by the flag <see cref="IPlotGroupStyle.CanCarryOver"/>, so that items that can not have childs appear
     /// later in the list. Secondly, the items that can step appear earlier in the list.  Thirdly, the items are sorted by their parent-child relationship, and finally, by their name.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
+    /// <param name="x">The first plot group style to compare.</param>
+    /// <param name="y">The second plot group style to compare.</param>
+    /// <returns>A value indicating the relative sort order of the compared plot group styles.</returns>
     private int ComparePlotGroupStyles(IPlotGroupStyle x, IPlotGroupStyle y)
     {
       if (x.CanCarryOver != y.CanCarryOver)

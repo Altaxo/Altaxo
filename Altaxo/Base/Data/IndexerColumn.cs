@@ -74,10 +74,10 @@ namespace Altaxo.Data
     public Type ItemType { get { return typeof(double); } }
 
     /// <summary>
-    /// Simply returns the value i.
+    /// Gets the numeric value represented by the specified index.
     /// </summary>
-    /// <param name="i">The index i.</param>
-    /// <returns>The index i.</returns>
+    /// <param name="i">The zero-based index.</param>
+    /// <returns>The specified index value as a <see cref="double"/>.</returns>
     public double this[int i]
     {
       get

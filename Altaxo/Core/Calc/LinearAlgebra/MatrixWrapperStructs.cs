@@ -116,9 +116,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -138,9 +135,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -246,9 +240,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -268,9 +259,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -369,9 +357,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -391,9 +376,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -492,9 +474,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>
@@ -514,9 +493,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </value>
     /// <param name="row">The row index.</param>
     /// <param name="col">The column index.</param>
-    /// <returns>
-    /// The element at the specified row and column.
-    /// </returns>
     /// <exception cref="IndexOutOfRangeException">
     /// Thrown when the row or column index is out of range.
     /// </exception>

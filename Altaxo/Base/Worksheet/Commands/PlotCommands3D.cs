@@ -260,7 +260,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="context">The context.</param>
     /// <param name="isStacked">If set to <c>true</c>, the bar should be stacked.</param>
-    /// <returns></returns>
+    /// <returns>A plot style collection configured for a bar graph.</returns>
     public static G3DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context, bool isStacked)
     {
       var result = new G3DPlotStyleCollection();

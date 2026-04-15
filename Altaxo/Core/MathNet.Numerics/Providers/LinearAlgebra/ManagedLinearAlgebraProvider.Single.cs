@@ -2735,7 +2735,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
     /// Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
     /// Fortran subroutine in EISPACK.</remarks>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the symmetric diagonalization does not converge within the maximum number of iterations.</exception>
     internal static void SymmetricDiagonalize(float[] a, float[] d, float[] e, int order)
     {
       const int maxiter = 1000;
@@ -3008,7 +3008,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// by Martin and Wilkinson, Handbook for Auto. Comp.,
     /// Vol.ii-Linear Algebra, and the corresponding
     /// Fortran subroutine in EISPACK.</remarks>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the Hessenberg reduction does not converge within the maximum number of iterations.</exception>
     internal static void NonsymmetricReduceHessenberToRealSchur(float[] a, float[] matrixH, float[] d, float[] e, int order)
     {
       // Initialize

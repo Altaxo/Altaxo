@@ -56,9 +56,6 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <summary>
     /// Gets the color of the light.
     /// </summary>
-    /// <summary>
-    /// Gets the color of the light.
-    /// </summary>
     NamedColor Color { get; }
   }
 }

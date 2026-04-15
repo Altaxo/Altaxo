@@ -350,9 +350,9 @@ namespace Altaxo.Main
     /// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
     /// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="source"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The object that raised the tunneled event.</param>
+    /// <param name="source">The original source of the tunneled event.</param>
+    /// <param name="e">The tunneled event arguments.</param>
     private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
     {
       if (IsDisposeInProgress)
@@ -424,8 +424,8 @@ namespace Altaxo.Main
     /// Event handler that is called when the document node has changed. Because the path to the node can have changed too,
     /// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     private void EhDocNode_Changed(object? sender, EventArgs e)
     {
       if (IsDisposeInProgress)
@@ -487,9 +487,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Event handler that is called when the watched node or a parent node below has disposed or its name changed. We then try to resolve the path again.
     /// </summary>
-    /// <param name="sender"></param>
+    /// <param name="sender">The object that raised the tunneled event.</param>
     /// <param name="source">Source of the tunneled event.</param>
-    /// <param name="e"></param>
+    /// <param name="e">The tunneled event arguments.</param>
     private void EhWatchedNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
     {
       if (IsDisposeInProgress)
@@ -548,8 +548,8 @@ namespace Altaxo.Main
     /// Event handler that is called when the watched node (a node that is not the document node) has changed. Maybe this watched node had now created a parent node, and our
     /// document path can resolved now. That's why we try to resolve our document path now.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">The event arguments.</param>
     private void EhWatchedNode_Changed(object? sender, EventArgs e)
     {
       if (IsDisposeInProgress)

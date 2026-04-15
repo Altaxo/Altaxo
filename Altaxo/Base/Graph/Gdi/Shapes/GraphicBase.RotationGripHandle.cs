@@ -31,6 +31,9 @@ using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  /// <summary>
+  /// Provides base functionality for graphic shapes.
+  /// </summary>
   public abstract partial class GraphicBase
   {
     /// <summary>

@@ -57,6 +57,9 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Solvers
     // Pointer to the diagonal elements in MSR storage (for faster LU solving).
     private int[] _diag;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MILU0Preconditioner"/> class.
+    /// </summary>
     /// <param name="modified">Use modified or standard ILU(0)</param>
     public MILU0Preconditioner(bool modified = true)
     {

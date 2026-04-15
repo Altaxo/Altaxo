@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo
 {
+  /// <summary>
+  /// Provides access to the current document-model related services and objects.
+  /// </summary>
   public partial class Current
   {
     /// <summary>

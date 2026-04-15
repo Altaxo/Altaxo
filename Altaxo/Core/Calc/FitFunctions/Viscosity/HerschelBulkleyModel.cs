@@ -105,7 +105,14 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the Herschel-Bulkley viscosity model.
+    /// </summary>
+    /// <param name="gammadot">The shear rate.</param>
+    /// <param name="tau0">The yield stress.</param>
+    /// <param name="K">The consistency index.</param>
+    /// <param name="n">The flow behavior index.</param>
+    /// <returns>The viscosity predicted by the model.</returns>
     public static double Evaluate(double gammadot, double tau0, double K, double n)
     {
       return tau0 / gammadot + K * Math.Pow(gammadot, n - 1);

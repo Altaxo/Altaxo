@@ -32,6 +32,9 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra.Storage
 {
   // ReSharper disable UnusedParameter.Global
+  /// <content>
+  /// Provides validation helpers for <see cref="VectorStorage{T}"/> operations.
+  /// </content>
   public partial class VectorStorage<T>
   {
     private void ValidateRange(int index)

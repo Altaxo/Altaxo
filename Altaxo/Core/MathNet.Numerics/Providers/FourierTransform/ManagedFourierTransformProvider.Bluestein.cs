@@ -32,6 +32,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
+  /// <summary>
+  /// Provides Bluestein-based Fourier transform helpers.
+  /// </summary>
   public partial class ManagedFourierTransformProvider
   {
     /// <summary>

@@ -29,6 +29,9 @@ using System.Threading;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Provides monitoring support for externally driven background operations.
+  /// </summary>
   public partial class ExternalDrivenBackgroundMonitor
   {
     /// <summary>

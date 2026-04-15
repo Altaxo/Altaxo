@@ -155,7 +155,6 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
-    /// <inheritdoc/>
     /// <inheritdoc />
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {

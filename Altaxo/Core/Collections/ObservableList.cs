@@ -27,8 +27,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -83,7 +81,10 @@ namespace Altaxo.Collections
       CollectionChanged?.Invoke(this, e);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
     {
       PropertyChanged?.Invoke(this, e);

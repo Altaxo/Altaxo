@@ -796,7 +796,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Adds a column by choosing a new unused name for that column automatically.
     /// </summary>
-    /// <param name="datac"></param>
+    /// <param name="datac">The column to add.</param>
     public void Add(Altaxo.Data.DataColumn datac)
     {
       if (datac.TryGetName(out var name))
@@ -885,7 +885,7 @@ namespace Altaxo.Data
     /// <param name="columnname">The column name.</param>
     /// <param name="expectedcolumntype">Expected type of the column.</param>
     /// <param name="kind">Only used when a new column is created.</param>
-    /// <param name="groupNumber">Only used when a new column is created.</param>
+    /// <param name="groupNumber">The group number to assign if a new column must be created.</param>
     /// <returns>Either an existing column of name <c>columnname</c> and type <c>expectedtype</c>. If this is
     /// not the case, a new column with a similar name and the <c>expectedtype</c> is created and added to the collection. The new column is returned then.</returns>
     public DataColumn EnsureExistence(string columnname, System.Type expectedcolumntype, ColumnKind kind, int groupNumber)

@@ -38,13 +38,13 @@ namespace Altaxo.Graph.Gdi.LineCaps
     public override Type ExtendsType => typeof(Altaxo.Drawing.LineCaps.RightBarLineCap);
 
     /// <inheritdoc />
-    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool startCap)
+    protected override CustomLineCap GetCustomLineCap(Pen pen, float size, bool isEndCap)
     {
       float endPoint;
 
       endPoint = pen.Width == 0 ? 1 : size / pen.Width;
 
-      if (startCap)
+      if (isEndCap)
         endPoint = -endPoint;
 
       var hPath = new GraphicsPath();

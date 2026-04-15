@@ -387,47 +387,47 @@ namespace Altaxo.Data
     } // end indexer
 
     /// <inheritdoc />
-    public override void InsertRows(int nInsBeforeColumn, int nInsCount)
+    public override void InsertRows(int nBeforeRow, int nCount)
     {
-      if (nInsCount <= 0 || nInsBeforeColumn >= Count)
+      if (nCount <= 0 || nBeforeRow >= Count)
         return; // nothing to do
 
-      int newlen = _count + nInsCount;
+      int newlen = _count + nCount;
       if (newlen > _capacity)
         Realloc(newlen);
 
       // copy values from m_Count downto nBeforeColumn
-      for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
+      for (int i = _count - 1, j = newlen - 1; i >= nBeforeRow; i--, j--)
         _data[j] = _data[i];
 
-      for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
+      for (int i = nBeforeRow + nCount - 1; i >= nBeforeRow; i--)
         _data[i] = NullValue;
 
       _count = newlen;
-      EhSelfChanged(nInsBeforeColumn, _count, false);
+      EhSelfChanged(nBeforeRow, _count, false);
     }
 
     /// <inheritdoc />
-    public override void RemoveRows(int nDelFirstRow, int nDelCount)
+    public override void RemoveRows(int nFirstRow, int nCount)
     {
-      if (nDelFirstRow < 0)
-        throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
+      if (nFirstRow < 0)
+        throw new ArgumentException("Row number must be greater or equal 0, but was " + nFirstRow.ToString(), "nDelFirstRow");
 
-      if (nDelCount <= 0)
+      if (nCount <= 0)
         return; // nothing to do here, but we dont catch it
 
       // we must be careful, since the range to delete can be
       // above the range this column actually holds, but
       // we must handle this the right way
       int i, j;
-      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < _count; i++, j++)
+      for (i = nFirstRow, j = nFirstRow + nCount; j < _count; i++, j++)
         _data[i] = _data[j];
 
       int prevCount = _count;
       _count = i < _count ? i : _count; // m_Count can only decrease
 
       if (_count != prevCount) // raise a event only if something really changed
-        EhSelfChanged(nDelFirstRow, prevCount, true);
+        EhSelfChanged(nFirstRow, prevCount, true);
     }
 
     #region "Operators"
@@ -553,52 +553,52 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DateTimeColumn)
+      if (a is Altaxo.Data.DateTimeColumn)
       {
-        c3 = this - (Altaxo.Data.DateTimeColumn)c2;
+        b = this - (Altaxo.Data.DateTimeColumn)a;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction_Rev(DataColumn c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction_Rev(DataColumn a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2 is Altaxo.Data.DateTimeColumn)
+      if (a is Altaxo.Data.DateTimeColumn)
       {
-        c3 = (Altaxo.Data.DateTimeColumn)c2 - this;
+        b = (Altaxo.Data.DateTimeColumn)a - this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDateTime))
+      if (a.IsType(AltaxoVariant.Content.VDateTime))
       {
-        var c22 = (DateTime)c2;
-        c3 = this - c22;
+        var c22 = (DateTime)a;
+        b = this - c22;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 
     /// <inheritdoc />
-    public override bool vop_Subtraction_Rev(AltaxoVariant c2, [MaybeNullWhen(false)] out DataColumn c3)
+    public override bool vop_Subtraction_Rev(AltaxoVariant a, [MaybeNullWhen(false)] out DataColumn b)
     {
-      if (c2.IsType(AltaxoVariant.Content.VDateTime))
+      if (a.IsType(AltaxoVariant.Content.VDateTime))
       {
-        var c22 = (DateTime)c2;
-        c3 = c22 - this;
+        var c22 = (DateTime)a;
+        b = c22 - this;
         return true;
       }
-      c3 = null;
+      b = null;
       return false;
     }
 

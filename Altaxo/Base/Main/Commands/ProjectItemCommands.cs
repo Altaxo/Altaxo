@@ -388,13 +388,13 @@ namespace Altaxo.Main.Commands
       }
 
       /// <inheritdoc/>
-      public override string? Validate(string projectItemName)
+      public override string? Validate(string txt)
       {
-        var err = base.Validate(projectItemName);
+        var err = base.Validate(txt);
         if (err is not null)
           return err;
 
-        if (_projectItem.Name == projectItemName)
+        if (_projectItem.Name == txt)
           return null; // name is the same => thus no renaming neccessary
 
         var collection = (IProjectItemCollection?)Main.AbsoluteDocumentPath.GetRootNodeImplementing(_projectItem, typeof(IProjectItemCollection));
@@ -402,7 +402,7 @@ namespace Altaxo.Main.Commands
         if (collection is null)
           return null; // if there is no parent data set we can enter anything
 
-        if (collection.ContainsAnyName(projectItemName))
+        if (collection.ContainsAnyName(txt))
           return string.Format("This {0} name already exists, please choose another name!", _projectItemTypeName);
         else
           return null;

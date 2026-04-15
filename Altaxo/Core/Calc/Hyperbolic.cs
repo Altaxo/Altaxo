@@ -61,10 +61,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Hyperbolic area sine.
+    /// Returns the inverse hyperbolic sine of a value.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>Hyperbolic area sine.</returns>
+    /// <returns>The inverse hyperbolic sine of <paramref name="x"/>.</returns>
     public static double Asinh(double x) => RMath.Asinh(x);
 
     /// <summary>
@@ -78,10 +78,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Hyperbolic area cosine.
+    /// Returns the inverse hyperbolic cosine of a value.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>Hyperbolic area cosine.</returns>
+    /// <returns>The inverse hyperbolic cosine of <paramref name="x"/>.</returns>
     public static double Acosh(double x) => RMath.Acosh(x);
 
 
@@ -96,10 +96,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Hyperbolic area tangent.
+    /// Returns the inverse hyperbolic tangent of a value.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>Hyperbolic area tangent.</returns>
+    /// <returns>The inverse hyperbolic tangent of <paramref name="x"/>.</returns>
     public static double Atanh(double x) => RMath.Atanh(x);
 
 

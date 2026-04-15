@@ -32,6 +32,9 @@ namespace Altaxo.Graph.Gdi.Shapes
   using Altaxo.Drawing;
   using Altaxo.Main.PegParser;
 
+  /// <summary>
+  /// Represents a graphic text object.
+  /// </summary>
   public partial class TextGraphic : GraphicBase
   {
     #region Regex expressions

@@ -37,6 +37,9 @@ using System.Linq;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides generalized hypergeometric special functions.
+  /// </summary>
   public static partial class SpecialFunctions
   {
     //Rising and falling factorials - reference here:

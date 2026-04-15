@@ -87,9 +87,9 @@ namespace Altaxo.Graph.Scales.Boundaries
     }
 
     /// <inheritdoc />
-    public override bool Add(Altaxo.Data.AltaxoVariant val)
+    public override bool Add(Altaxo.Data.AltaxoVariant item)
     {
-      return Add(val.ToDouble());
+      return Add(item.ToDouble());
     }
 
     /// <summary>

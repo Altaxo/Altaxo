@@ -382,7 +382,6 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// </summary>
     /// <param name="combinedNeonPeakMatchings">The combined neon peak matchings (sorted by Nist wavelength).</param>
     /// <returns>A list, in which the Nist wavelengths are unique.</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
     private List<(double NistWL, double MeasWL, double MeasWLStdDev)> CombineSameNeonPeaksIntoOne(List<(double NistWL, double MeasWL, double MeasWLStdDev)> combinedNeonPeakMatchings)
     {
       var result = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>(combinedNeonPeakMatchings.Count);

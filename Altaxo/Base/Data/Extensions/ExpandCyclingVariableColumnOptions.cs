@@ -172,7 +172,11 @@ namespace Altaxo.Data
       return new ExpandCyclingVariableColumnOptions(this);
     }
 
-    /// <inheritdoc />
+        /// <summary>
+    /// Copies the settings from another instance.
+    /// </summary>
+    /// <param name="obj">The instance to copy from.</param>
+    /// <returns><c>true</c> if the settings were copied; otherwise, <c>false</c>.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

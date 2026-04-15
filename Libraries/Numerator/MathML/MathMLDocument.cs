@@ -1,4 +1,4 @@
-//This file is part of the gNumerator MathML DOM library, a complete 
+﻿//This file is part of the gNumerator MathML DOM library, a complete 
 //implementation of the w3c mathml dom specification
 //Copyright (C) 2003, Andy Somogyi
 //
@@ -116,109 +116,109 @@ namespace MathML
 		/// Create a XmlElement. This is typically called by the base class when creating a DOM tree
 		/// </summary>
 		/// <param name="prefix"></param>
-		/// <param name="localname"></param>
-		/// <param name="nsURI"></param>
+		/// <param name="localName"></param>
+		/// <param name="namespaceURI"></param>
 		/// <returns></returns>
-		public override XmlElement CreateElement(string prefix, string localname, string nsURI)
+		public override XmlElement CreateElement(string prefix, string localName, string namespaceURI)
 		{
 			XmlElement result = null;
-			switch(localname)
+			switch(localName)
 			{
 				case "math":
-					result = new MathMLMathElement(prefix, localname, nsURI, this);
+					result = new MathMLMathElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mi":
 				case "mn":
 				case "mtext":
-					result = new MathMLPresentationToken(prefix, localname, nsURI, this);
+					result = new MathMLPresentationToken(prefix, localName, namespaceURI, this);
 					break;
 				case "mo":			
-					result = new MathMLOperatorElement(prefix, localname, nsURI, this);
+					result = new MathMLOperatorElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mspace":			
-					result = new MathMLSpaceElement(prefix, localname, nsURI, this);
+					result = new MathMLSpaceElement(prefix, localName, namespaceURI, this);
 					break;
 				case "ms":			
-					result = new MathMLStringLitElement(prefix, localname, nsURI, this);
+					result = new MathMLStringLitElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mglyph":			
-					result = new MathMLGlyphElement(prefix, localname, nsURI, this);
+					result = new MathMLGlyphElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mrow":
 				case "merror":
 				case "mphantom":			
-					result = new MathMLPresentationContainer(prefix, localname, nsURI, this);
+					result = new MathMLPresentationContainer(prefix, localName, namespaceURI, this);
 					break;
 				case "mfrac":			
-					result = new MathMLFractionElement(prefix, localname, nsURI, this);
+					result = new MathMLFractionElement(prefix, localName, namespaceURI, this);
 					break;
 				case "msqrt":			
 				case "mroot":			
-					result = new MathMLRadicalElement(prefix, localname, nsURI, this);
+					result = new MathMLRadicalElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mstyle":			
-					result = new MathMLStyleElement(prefix, localname, nsURI, this);
+					result = new MathMLStyleElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mpadded":			
-					result = new MathMLPaddedElement(prefix, localname, nsURI, this);
+					result = new MathMLPaddedElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mfenced":			
-					result = new MathMLFencedElement(prefix, localname, nsURI, this);
+					result = new MathMLFencedElement(prefix, localName, namespaceURI, this);
 					break;
 				case "menclose":			
-					result = new MathMLEncloseElement(prefix, localname, nsURI, this);
+					result = new MathMLEncloseElement(prefix, localName, namespaceURI, this);
 					break;
 				case "msub":
 				case "msup":
 				case "msubsup":			
-					result = new MathMLScriptElement(prefix, localname, nsURI, this);
+					result = new MathMLScriptElement(prefix, localName, namespaceURI, this);
 					break;
 				case "munder":			
 				case "mover":			
 				case "munderover":			
-					result = new MathMLUnderOverElement(prefix, localname, nsURI, this);
+					result = new MathMLUnderOverElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mmultiscripts":			
-					result = new MathMLMultiScriptsElement(prefix, localname, nsURI, this);
+					result = new MathMLMultiScriptsElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mtable":			
-					result = new MathMLTableElement(prefix, localname, nsURI, this);
+					result = new MathMLTableElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mlabeledtr":			
-					result = new MathMLLabeledRowElement(prefix, localname, nsURI, this);
+					result = new MathMLLabeledRowElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mtr":			
-					result = new MathMLTableRowElement(prefix, localname, nsURI, this);
+					result = new MathMLTableRowElement(prefix, localName, namespaceURI, this);
 					break;
 				case "mtd":			
-					result = new MathMLTableCellElement(prefix, localname, nsURI, this);
+					result = new MathMLTableCellElement(prefix, localName, namespaceURI, this);
 					break;
 				case "maligngroup":			
-					result = new MathMLAlignGroupElement(prefix, localname, nsURI, this);
+					result = new MathMLAlignGroupElement(prefix, localName, namespaceURI, this);
 					break;
 				case "malignmark":			
-					result = new MathMLAlignMarkElement(prefix, localname, nsURI, this);
+					result = new MathMLAlignMarkElement(prefix, localName, namespaceURI, this);
 					break;
 				case "maction":			
-					result = new MathMLActionElement(prefix, localname, nsURI, this);
+					result = new MathMLActionElement(prefix, localName, namespaceURI, this);
 					break;
 				case "cn":			
-					result = new MathMLCnElement(prefix, localname, nsURI, this);
+					result = new MathMLCnElement(prefix, localName, namespaceURI, this);
 					break;
 				case "ci":			
-					result = new MathMLCiElement(prefix, localname, nsURI, this);
+					result = new MathMLCiElement(prefix, localName, namespaceURI, this);
 					break;
 				case "csymbol":			
-					result = new MathMLCsymbolElement(prefix, localname, nsURI, this);
+					result = new MathMLCsymbolElement(prefix, localName, namespaceURI, this);
 					break;
 				case "apply":			
-					result = new MathMLApplyElement(prefix, localname, nsURI, this);
+					result = new MathMLApplyElement(prefix, localName, namespaceURI, this);
 					break;
 				case "fn":			
-					result = new MathMLFnElement(prefix, localname, nsURI, this);
+					result = new MathMLFnElement(prefix, localName, namespaceURI, this);
 					break;
 				case "interval":			
-					result = new MathMLIntervalElement(prefix, localname, nsURI, this);
+					result = new MathMLIntervalElement(prefix, localName, namespaceURI, this);
 					break;
 				case "inverse":			
 				case "compose":	
@@ -338,22 +338,22 @@ namespace MathML
 				case "pi":			
 				case "eulergamma":			
 				case "infinity":			
-					result = new MathMLPredefinedSymbol(prefix, localname, nsURI, this);
+					result = new MathMLPredefinedSymbol(prefix, localName, namespaceURI, this);
 					break;
 				case "condition":			
-					result = new MathMLConditionElement(prefix, localname, nsURI, this);
+					result = new MathMLConditionElement(prefix, localName, namespaceURI, this);
 					break;
 				case "declare":			
-					result = new MathMLDeclareElement(prefix, localname, nsURI, this);
+					result = new MathMLDeclareElement(prefix, localName, namespaceURI, this);
 					break;
 				case "lambda":			
-					result = new MathMLLambdaElement(prefix, localname, nsURI, this);
+					result = new MathMLLambdaElement(prefix, localName, namespaceURI, this);
 					break;
 				case "piecewise":			
-					result = new MathMLPiecewiseElement(prefix, localname, nsURI, this);
+					result = new MathMLPiecewiseElement(prefix, localName, namespaceURI, this);
 					break;
 				case "piecev":			
-					result = new MathMLCaseElement(prefix, localname, nsURI, this);
+					result = new MathMLCaseElement(prefix, localName, namespaceURI, this);
 					break;
 				case "reln":
 				case "domainofapplication":	
@@ -363,43 +363,43 @@ namespace MathML
 				case "degree":	
 				case "momentabout":		
 				case "logbase": // TODO is this correct, 'logbase' not specified in mathml docs????
-					result = new MathMLContentContainer(prefix, localname, nsURI, this);
+					result = new MathMLContentContainer(prefix, localName, namespaceURI, this);
 					break;
 				case "bvar":			
-					result = new MathMLBvarElement(prefix, localname, nsURI, this);
+					result = new MathMLBvarElement(prefix, localName, namespaceURI, this);
 					break;
 				case "set":			
-					result = new MathMLSetElement(prefix, localname, nsURI, this);
+					result = new MathMLSetElement(prefix, localName, namespaceURI, this);
 					break;
 				case "list":			
-					result = new MathMLListElement(prefix, localname, nsURI, this);
+					result = new MathMLListElement(prefix, localName, namespaceURI, this);
 					break;				
 				case "vector":			
-					result = new MathMLVectorElement(prefix, localname, nsURI, this);
+					result = new MathMLVectorElement(prefix, localName, namespaceURI, this);
 					break;
 				case "matrix":			
-					result = new MathMLMatrixElement(prefix, localname, nsURI, this);
+					result = new MathMLMatrixElement(prefix, localName, namespaceURI, this);
 					break;
 				case "matrixrow":			
-					result = new MathMLMatrixRowElement(prefix, localname, nsURI, this);
+					result = new MathMLMatrixRowElement(prefix, localName, namespaceURI, this);
 					break;
 				case "annotation":			
-					result = new MathMLAnnotationElement(prefix, localname, nsURI, this);
+					result = new MathMLAnnotationElement(prefix, localName, namespaceURI, this);
 					break;
 				case "semantics":			
-					result = new MathMLSemanticsElement(prefix, localname, nsURI, this);
+					result = new MathMLSemanticsElement(prefix, localName, namespaceURI, this);
 					break;
 				case "annotation-xml":			
-					result = new MathMLXMLAnnotationElement(prefix, localname, nsURI, this);
+					result = new MathMLXMLAnnotationElement(prefix, localName, namespaceURI, this);
 					break;
 				case "sep":
-					result = new MathMLSeparator(prefix, localname, nsURI, this);
+					result = new MathMLSeparator(prefix, localName, namespaceURI, this);
 					break;
 				case "placeholder":
-					result = new MathMLPlaceholderElement(prefix, localname, nsURI, this);
+					result = new MathMLPlaceholderElement(prefix, localName, namespaceURI, this);
 					break;
 				default:
-					result = base.CreateElement(prefix, localname, nsURI);
+					result = base.CreateElement(prefix, localName, namespaceURI);
 					break;
 			}
 			return result;

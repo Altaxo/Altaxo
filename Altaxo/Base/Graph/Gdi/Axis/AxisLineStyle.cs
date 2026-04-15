@@ -579,7 +579,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Gives the path which encloses the axis line only.
     /// </summary>
-    /// <param name="layer"></param>
+    /// <param name="layer">The plot layer that provides the axis geometry.</param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <returns>The graphics path of the axis line.</returns>
     public virtual GraphicsPath GetObjectPath(IPlotArea layer, bool withTicks)
@@ -590,7 +590,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Gives the path where the hit test is successfull.
     /// </summary>
-    /// <param name="layer"></param>
+    /// <param name="layer">The plot layer that provides the axis geometry.</param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <returns>The graphics path of the selection rectangle.</returns>
     public virtual GraphicsPath GetSelectionPath(IPlotArea layer, bool withTicks)
@@ -601,7 +601,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Gives the path where the hit test is successfull.
     /// </summary>
-    /// <param name="layer"></param>
+    /// <param name="layer">The plot layer that provides the axis geometry.</param>
     /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
     /// <param name="inflateby">Value in points, that the calculated path is inflated.</param>
     /// <returns>The graphics path of the selection rectangle.</returns>

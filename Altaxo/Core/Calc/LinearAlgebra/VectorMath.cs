@@ -373,10 +373,6 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       /// <summary>
-      /// Returns a non-generic enumerator that iterates through the subvector.
-      /// </summary>
-      /// <returns>A non-generic enumerator for the subvector.</returns>
-      /// <summary>
       /// Gets a non-generic enumerator that iterates through the subvector.
       /// </summary>
       /// <returns>A non-generic enumerator for the subvector.</returns>

@@ -216,7 +216,7 @@ namespace Altaxo.Main
     }
 
     /// <inheritdoc/>
-    protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive projectArchive)
+    protected override void InternalLoadProjectAndWindowsStateFromArchive(IProjectArchive archive)
     {
       var exceptions = new List<Exception>();
 
@@ -249,7 +249,7 @@ namespace Altaxo.Main
 
       // Now open new project
 
-      OnProjectChanged(new ProjectEventArgs(null, projectArchive.FileName, ProjectEventKind.ProjectOpening));
+      OnProjectChanged(new ProjectEventArgs(null, archive.FileName, ProjectEventKind.ProjectOpening));
 
       AltaxoDocument newdocument;
       Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
@@ -259,7 +259,7 @@ namespace Altaxo.Main
         newdocument = new AltaxoDocument();
         SetCurrentProject(newdocument, asUnnamedProject: false);
         info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-        if (projectArchive is FileSystemFolderAsProjectArchive)
+        if (archive is FileSystemFolderAsProjectArchive)
           info.PropertyDictionary.Add(Altaxo.Serialization.Xml.XmlStreamSerializationInfo.UseXmlIndentation, new object());
       }
       catch (Exception exc)
@@ -272,7 +272,7 @@ namespace Altaxo.Main
       {
         using (var suspendToken = newdocument.SuspendGetToken())
         {
-          newdocument.RestoreFromZippedFile(projectArchive, info);
+          newdocument.RestoreFromZippedFile(archive, info);
         }
       }
       catch (Exception exc)
@@ -282,14 +282,14 @@ namespace Altaxo.Main
 
       try
       {
-        RestoreWindowStateFromZippedFile(projectArchive, info, newdocument);
+        RestoreWindowStateFromZippedFile(archive, info, newdocument);
         info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 
         CurrentOpenProject.IsDirty = false;
 
         info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
 
-        OnProjectChanged(new ProjectEventArgs(CurrentOpenProject, projectArchive.FileName, ProjectEventKind.ProjectOpened));
+        OnProjectChanged(new ProjectEventArgs(CurrentOpenProject, archive.FileName, ProjectEventKind.ProjectOpened));
       }
       catch (Exception exc)
       {

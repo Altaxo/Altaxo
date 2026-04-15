@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Drawing.DashPatterns
 {
@@ -151,16 +150,16 @@ namespace Altaxo.Drawing.DashPatterns
     }
 
     /// <inheritdoc/>
-    public override bool Equals(IDashPattern? obj)
+    public override bool Equals(IDashPattern? other)
     {
-      if (!(obj is Custom other))
+      if (!(other is Custom otherX))
         return false;
 
-      if (this.DashOffset != other.DashOffset || this.Count != other.Count)
+      if (this.DashOffset != otherX.DashOffset || this.Count != otherX.Count)
         return false;
 
       for (int i = 0; i < Count; ++i)
-        if (_customDashPattern[i] != other._customDashPattern[i])
+        if (_customDashPattern[i] != otherX._customDashPattern[i])
           return false;
 
       return true;

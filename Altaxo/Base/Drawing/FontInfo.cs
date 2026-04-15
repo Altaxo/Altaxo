@@ -49,11 +49,12 @@ namespace Altaxo.Drawing
     /// <summary>
     /// Gets the cached descent value of the font.
     /// </summary>
-    public double cyDescent { get; private set; } /// cached descent value of the font
+    public double cyDescent { get; private set; } // cached descent value of the font
 
     /// <summary>
     /// Gets the font size.
     /// </summary>
+    /// <value>The font size.</value>
     public double Size { get; private set; }
 
     /// <summary>

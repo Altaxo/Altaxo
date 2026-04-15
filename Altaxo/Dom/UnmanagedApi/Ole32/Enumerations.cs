@@ -48,16 +48,16 @@ namespace Altaxo.UnmanagedApi.Ole32
   [Flags]
   public enum COINIT : uint
   {
-    /// Initializes the thread for multi-threaded object concurrency.
+    /// <summary>Initializes the thread for multi-threaded object concurrency.</summary>
     COINIT_MULTITHREADED = 0x0,
 
-    /// Initializes the thread for apartment-threaded object concurrency.
+    /// <summary>Initializes the thread for apartment-threaded object concurrency.</summary>
     COINIT_APARTMENTTHREADED = 0x2,
 
-    /// Disables DDE for Ole1 support.
+    /// <summary>Disables DDE for Ole1 support.</summary>
     COINIT_DISABLE_OLE1DDE = 0x4,
 
-    /// Trades memory for speed.
+    /// <summary>Trades memory for speed.</summary>
     COINIT_SPEED_OVER_MEMORY = 0x8
   }
 

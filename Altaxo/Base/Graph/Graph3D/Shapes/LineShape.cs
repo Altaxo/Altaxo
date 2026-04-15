@@ -169,13 +169,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     /// <inheritdoc/>
-    public override IHitTestObject? HitTest(HitTestPointData parentHitData)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       IHitTestObject? result = null;
-      var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+      var localHitData = hitData.NewFromAdditionalTransformation(_transformation);
       if (localHitData.IsHit(new LineD3D(Bounds.Location, Bounds.LocationPlusSize), _linePen.Thickness1, _linePen.Thickness2))
       {
-        result = GetNewHitTestObject(parentHitData.WorldTransformation);
+        result = GetNewHitTestObject(hitData.WorldTransformation);
       }
 
       if (result is not null)

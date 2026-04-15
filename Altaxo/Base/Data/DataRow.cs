@@ -81,7 +81,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Accesses one field of the row.
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">The name of the column to access.</param>
     /// <returns>Element at column[name] and the wrapped row index.</returns>
     public AltaxoVariant this[string name]
     {

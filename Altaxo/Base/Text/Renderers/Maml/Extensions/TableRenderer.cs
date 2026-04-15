@@ -34,12 +34,12 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
   public class TableRenderer : MamlObjectRenderer<Table>
   {
     /// <inheritdoc />
-    protected override void Write(MamlRenderer renderer, Table table)
+    protected override void Write(MamlRenderer renderer, Table obj)
     {
       renderer.Push(MamlElements.table);
       renderer.Push(MamlElements.tableHeader);
 
-      foreach (TableRow row in table)
+      foreach (TableRow row in obj)
       {
         if (row.IsHeader)
         {
@@ -58,7 +58,7 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
       renderer.PopTo(MamlElements.tableHeader);
 
-      foreach (TableRow row in table)
+      foreach (TableRow row in obj)
       {
         if (!row.IsHeader)
         {

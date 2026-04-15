@@ -499,11 +499,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// <summary>
     /// Builds layer toolbar buttons from the layer tree.
     /// </summary>
-    public void SetLayerStructure(NGTreeNode value, int[] currentLayerNumber)
+    public void SetLayerStructure(NGTreeNode structure, int[] currentLayerNumber)
     {
       _layerToolBar.Children.Clear();
 
-      foreach (var node in value.TakeFromHereToFirstLeaves())
+      foreach (var node in structure.TakeFromHereToFirstLeaves())
       {
         var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
         newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);

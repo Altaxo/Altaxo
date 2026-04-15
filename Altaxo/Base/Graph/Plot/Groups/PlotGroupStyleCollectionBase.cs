@@ -183,10 +183,10 @@ namespace Altaxo.Graph.Plot.Groups
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 1)]
     private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
     {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        base.Serialize(obj, info);
-        var s = (PlotGroupStyleCollectionBase)obj;
+        base.Serialize(o, info);
+        var s = (PlotGroupStyleCollectionBase)o;
         info.AddValue("InheritFromParent", s._inheritFromParentGroups);
         info.AddValue("DistributeToChilds", s._distributeToChildGroups);
       }

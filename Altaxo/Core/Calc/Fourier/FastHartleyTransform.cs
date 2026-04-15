@@ -362,7 +362,6 @@ namespace Altaxo.Calc.Fourier
     0.99999999999999999999999999999999999628746745013398
   });
 
-
     //----------------------------------------------------------------------------//
     // table containing sin[pi/(2^n)], n=0,1,2,...[
     // with 50 digits precision generated with Mathematica
@@ -995,9 +994,9 @@ namespace Altaxo.Calc.Fourier
     ///      Does an in-place inverse fourier transform of 'n' points of the 'real'
     ///      and 'imag' arrays.
     /// </summary>
-    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
     /// <param name="real">The array holding the real part of the values.</param>
     /// <param name="imag">The array holding the imaginary part of the values.</param>
+    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
     public static void IFFT(double[] real, double[] imag, int n)
     {
       for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
@@ -1024,8 +1023,8 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     ///      Does the inverse of a real-valued fourier transform of 'n' points.
     /// </summary>
-    /// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
     /// <param name="real">The array holding the fourier transform values, which will be transformed back.</param>
+    /// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
     public static void RealIFFT(double[] real, int n)
     {
       for (int i = 1, j = n - 1, k = n / 2; i < k; i++, j--)
@@ -1046,8 +1045,8 @@ namespace Altaxo.Calc.Fourier
     ///      up in the first half of the array and the imaginary part of the
     ///      transform ends up in the second half of the array.
     /// </summary>
-    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
     /// <param name="real">The array holding the real values to transform.</param>
+    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
     public static void RealFFT(double[] real, int n)
     {
       FHT(real, n);
@@ -1098,8 +1097,8 @@ namespace Altaxo.Calc.Fourier
     /// transform ends up in the second half of the array. On backward transform, real and imaginary part
     /// have to be located in the same way like the result of the forward transform.
     /// </summary>
-    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
     /// <param name="real">The array holding the real values to transform.</param>
+    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
     /// <param name="direction">The direction of the Fourier transform.</param>
     public static void RealFFT(double[] real, int n, FourierDirection direction)
     {
@@ -1259,7 +1258,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
     /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
     /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array for the imaginary part. It must be at least of length n. If null is provided here, a new scratch array will be allocated.</param>
     /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
     public static void CyclicConvolution(
       double[] src1real, double[] src1imag,
@@ -1346,7 +1345,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
     /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
     /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array for the imaginary part. It must be at least of length n. If null is provided here, a new scratch array will be allocated.</param>
     public static void CyclicCorrelation(
       double[] src1real, double[] src1imag,
       double[] src2real, double[] src2imag,

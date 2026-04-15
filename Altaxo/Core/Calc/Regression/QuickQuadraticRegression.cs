@@ -332,10 +332,10 @@ namespace Altaxo.Calc.Regression
     /// Gets the confidence band of the prediction at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
+    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
     /// <param name="covarianceMatrix">
     /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
     /// </param>
-    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
     /// <returns>
     /// The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.
     /// </returns>

@@ -285,9 +285,9 @@ namespace Altaxo.Graph.Gdi
     /// otherwise rx0,rx1 is used. The other parameter pair is not used.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
+    /// <param name="id">The axis to end the isoline.</param>
     /// <param name="r0">Logical coordinate of the start point.</param>
     /// <param name="r1">Logical coordinate of the end point.</param>
-    /// <param name="id">The axis to end the isoline.</param>
     public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, Logical3D r0, Logical3D r1)
     {
       if (id.PerpendicularAxisNumber == 0)

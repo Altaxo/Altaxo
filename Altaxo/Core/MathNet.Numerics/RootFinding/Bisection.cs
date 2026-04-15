@@ -45,7 +45,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="expandFactor">Factor at which to expand the bounds, if needed. Default 1.6.</param>
     /// <param name="maxExpandIteratons">Maximum number of expand iterations. Default 100.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when a root cannot be bracketed or refined within the allowed number of iterations.</exception>
     public static double FindRootExpand(Func<double, double> f, double guessLowerBound, double guessUpperBound, double accuracy = 1e-8, int maxIterations = 100, double expandFactor = 1.6, int maxExpandIteratons = 100)
     {
       ZeroCrossingBracketing.ExpandReduce(f, ref guessLowerBound, ref guessUpperBound, expandFactor, maxExpandIteratons, maxExpandIteratons * 10);
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.RootFinding
     /// <param name="accuracy">Desired accuracy. The root will be refined until the accuracy or the maximum number of iterations is reached. Default 1e-8. Must be greater than 0.</param>
     /// <param name="maxIterations">Maximum number of iterations. Default 100.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the bisection method does not converge within the allowed number of iterations.</exception>
     public static double FindRoot(Func<double, double> f, double lowerBound, double upperBound, double accuracy = 1e-14, int maxIterations = 100)
     {
       double root;

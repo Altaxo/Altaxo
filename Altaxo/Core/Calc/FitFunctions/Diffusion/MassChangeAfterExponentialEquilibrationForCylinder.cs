@@ -276,7 +276,17 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       return EvaluateUnitStepWrtReducedVariables(D * t / (r * r), D * tau / (r * r));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the mass change for a cylinder after an exponential equilibration step.
+    /// </summary>
+    /// <param name="t">The time at which the response is evaluated.</param>
+    /// <param name="r">The cylinder radius.</param>
+    /// <param name="t0">The start time of the equilibration step.</param>
+    /// <param name="M0">The initial mass change offset.</param>
+    /// <param name="ΔM">The mass change amplitude.</param>
+    /// <param name="D">The diffusion constant.</param>
+    /// <param name="tau">The time constant of the concentration change.</param>
+    /// <returns>The mass change at time <paramref name="t"/>.</returns>
     public static double Evaluate(double t, double r, double t0, double M0, double ΔM, double D, double tau)
     {
       return M0 + ΔM * EvaluateUnitStepWrtReducedVariables(D * (t - t0) / (r * r), D * tau / (r * r));

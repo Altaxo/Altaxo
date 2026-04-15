@@ -59,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// Creates an NNDSVDa initialization for NMF by replacing zeros with a data-dependent small value.
     /// </summary>
     /// <param name="X">The non-negative input matrix to be factorized.</param>
-    /// <param name="r">The target factorization rank.</param>
+    /// <param name="rank">The target factorization rank.</param>
     /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a reasonable value (see remarks!).</returns>
     /// <remarks>In the paper Boutsidis and Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
     /// the zero elements are overwritten with the mean of matrix X.
@@ -67,10 +67,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// Therefore, for example, if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would then be replaced with a scale of 1E20 again.
     /// Thus, I decided not to use X, but to overwrite the zeros with the average values of W and H, respectively.
     /// This also avoids peculiarities if the average of X is zero.</remarks>
-    public override (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
+    public override (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int rank)
     {
       // First, create the standard NNDSVD initialization
-      var (W0, H0) = base.GetInitialFactors(X, r);
+      var (W0, H0) = base.GetInitialFactors(X, rank);
 
       var avgW0 = MatrixMath.Average(W0);
       var avgH0 = MatrixMath.Average(H0);

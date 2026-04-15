@@ -531,7 +531,6 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="slice">The slice.</param>
     /// <param name="softEscape">Only escape &lt; and &amp;</param>
-    /// <returns>This instance</returns>
     public void WriteEscape(StringSlice slice, bool softEscape = false)
     {
       WriteEscape(ref slice, softEscape);
@@ -542,7 +541,6 @@ namespace Altaxo.Text.Renderers
     /// </summary>
     /// <param name="slice">The slice.</param>
     /// <param name="softEscape">Only escape &lt; and &amp;</param>
-    /// <returns>This instance</returns>
     public void WriteEscape(ref StringSlice slice, bool softEscape = false)
     {
       if (slice.Start > slice.End)
@@ -634,7 +632,6 @@ namespace Altaxo.Text.Renderers
     /// <param name="writeEndOfLines">if set to <c>true</c> write end of lines.</param>
     /// <param name="escape">if set to <c>true</c> escape the content for XAML</param>
     /// <param name="softEscape">Only escape &lt; and &amp;</param>
-    /// <returns>This instance</returns>
     public void WriteLeafRawLines(LeafBlock leafBlock, bool writeEndOfLines, bool escape, bool softEscape = false)
     {
       if (leafBlock is null)

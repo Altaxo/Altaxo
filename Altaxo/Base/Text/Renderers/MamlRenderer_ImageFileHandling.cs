@@ -31,6 +31,9 @@ using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
 {
+  /// <summary>
+  /// Provides image file handling helpers for the <see cref="MamlRenderer"/>.
+  /// </summary>
   public partial class MamlRenderer : TextRendererBase<MamlRenderer>
   {
     /// <summary>

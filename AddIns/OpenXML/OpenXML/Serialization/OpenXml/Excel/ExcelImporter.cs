@@ -166,21 +166,21 @@ namespace Altaxo.Serialization.OpenXml.Excel
     }
 
     /// <inheritdoc/>
-    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (ExcelImportOptions)importOptionsObj;
+      var importOptionsX = (ExcelImportOptions)importOptions;
 
       var columnNameDictionary = new Dictionary<string, int>(); // dictionary to track how often a columnName is already used. Key is the column name, Value is the number of columns with that name.
       int groupNumber = 0;
 
       foreach (var fileName in fileNames)
       {
-        ImportOneFile(fileName, table, importOptions, columnNameDictionary, ref groupNumber);
+        ImportOneFile(fileName, table, importOptionsX, columnNameDictionary, ref groupNumber);
       }
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(fileNames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptionsX);
       }
 
       return null;

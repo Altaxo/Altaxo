@@ -33,6 +33,9 @@ using Altaxo.Graph.Gdi.LineCaps;
 
 namespace Altaxo.Graph.Gdi
 {
+  /// <summary>
+  /// Provides cached GDI pen instances and wrappers for their managed lifetime.
+  /// </summary>
   public partial class PenCacheGdi
   {
     /// <summary>
@@ -41,7 +44,7 @@ namespace Altaxo.Graph.Gdi
     public class GdiPen : IDisposable
     {
       /// <summary>
-      /// Gets the <see cref="BrushX"/> together with its environment, that is used to create the native Gdi <see cref="System.Drawing.Brush"/>.
+      /// Gets the <see cref="PenX"/> together with its environment, that is used to create the native Gdi <see cref="System.Drawing.Brush"/>.
       /// </summary>
       public PenXEnv Key { get; }
 

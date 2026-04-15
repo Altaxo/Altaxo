@@ -524,7 +524,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Sets the position of the object without causing a Changed event.
     /// </summary>
-    /// <param name="newPosition"></param>
+    /// <param name="newPosition">The new position of the object's pivot point in parent coordinates.</param>
     public virtual void SilentSetPosition(PointD2D newPosition)
     {
       SetPosition(newPosition, Main.EventFiring.Suppressed);
@@ -1343,8 +1343,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
     /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+    /// <param name="outVec">A vector in page coordinates pointing outwards from the object.</param>
     /// <param name="pageCoord">Location of point rel in page coordinates.</param>
-    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
     private void GetOutVector(PointD2D rel, IHitTestObject hitTest, out PointD2D outVec, out PointD2D pageCoord)
     {
       // we distinguish between points at the edge and points at the corners of the rectangle
@@ -1376,8 +1376,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
     /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+    /// <param name="outVec">A vector in page coordinates pointing outwards from the object.</param>
     /// <param name="pageCoord">Location of point rel in page coordinates.</param>
-    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
     protected void GetCornerOutVector(PointD2D rel, IHitTestObject hitTest, out PointD2D outVec, out PointD2D pageCoord)
     {
       PointD2D pt1 = rel;
@@ -1405,8 +1405,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
     /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+    /// <param name="outVec">A vector in page coordinates pointing outwards from the object.</param>
     /// <param name="pageCoord">Location of point rel in page coordinates.</param>
-    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
     private void GetEdgeOutVector(PointD2D rel, IHitTestObject hitTest, out PointD2D outVec, out PointD2D pageCoord)
     {
       // calculate the location of the middle point
@@ -1438,8 +1438,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="rel">Relative point. Should be located at an edge or corner.</param>
     /// <param name="hitTest">Hit test object used to transform to page coordinates.</param>
+    /// <param name="outVec">A vector in page coordinates pointing outwards from the object.</param>
     /// <param name="pageCoord">Location of point rel in page coordinates.</param>
-    /// <param name="outVec">An vector in page coordinates pointing outwards of the object.</param>
     private void GetMiddleRayOutVector(PointD2D rel, IHitTestObject hitTest, out PointD2D outVec, out PointD2D pageCoord)
     {
       // calculate the location of the middle point

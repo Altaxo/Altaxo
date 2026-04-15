@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     /// <summary>
-    ///
+    /// XML serialization surrogate that also persists the color set.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.ColorGroupStyle", 1)] // 2011-05-11 adding ColorSet
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

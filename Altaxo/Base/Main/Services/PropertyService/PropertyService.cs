@@ -222,7 +222,10 @@ namespace Altaxo.Main.Services
 
     #region Property removers
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Removes the property with the specified key from the user settings.
+    /// </summary>
+    /// <param name="key">The property key.</param>
     public void Remove(string key)
     {
       UserSettings.RemoveValue(key);

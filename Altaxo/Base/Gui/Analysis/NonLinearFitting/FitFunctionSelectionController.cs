@@ -572,7 +572,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IMVCController Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the associated view object.
+    /// </summary>
     public object ViewObject
     {
       get
@@ -593,7 +595,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the current model object.
+    /// </summary>
     public object ModelObject
     {
       get
@@ -602,7 +606,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Releases resources used by this controller.
+    /// </summary>
     public void Dispose()
     {
     }

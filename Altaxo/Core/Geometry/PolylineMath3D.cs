@@ -570,7 +570,7 @@ namespace Altaxo.Geometry
     /// <param name="startCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
     /// <param name="startCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between start cap and the rest of the polyline. This joining segment is returned in the enumeration. It has the same position as the start of the returned polyline, but the forward, west and north vectors of the start cap.</param>
     /// <param name="startCapCOS">Position, forward, west and north vectors of the start cap. This information will be filled in during the enumeration.</param>
-    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
+    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the end cap were already calculated (but not west and north vector).</param>
     /// <param name="endCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between the end of the polyline and the end cap. This joining segment is returned in the enumeration. It has the same position as the end of the polyline, but the forward, west and north vectors of the end cap.</param>
     /// <param name="endCapCOS">Position, forward, west and north vectors of the end cap. This information will be filled in during the enumeration, and will be valid only after the enumeration has finished.</param>
     /// <returns>Enumeration of that part of the original polyline, that is described by the start and end index.</returns>
@@ -602,8 +602,8 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets a part of an polyline by providing start end end indices. The indices are allowed to be real values (for instance the start index 0.5 means that the
-    /// start point of the returned polyline is excactly in the middle between the first point (index 0) and the second point (index 1) of the original polyline.
+    /// Gets a part of a polyline by providing start and end indices. The indices are allowed to be real values (for instance, the start index 0.5 means that the
+    /// start point of the returned polyline is exactly in the middle between the first point (index 0) and the second point (index 1) of the original polyline.
     /// </summary>
     /// <param name="originalPolyline">The original polyline.</param>
     /// <param name="startIndex">The start index. Must be greater than or equal to zero.</param>
@@ -611,7 +611,7 @@ namespace Altaxo.Geometry
     /// <param name="startCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
     /// <param name="startCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between start cap and the rest of the polyline. This joining segment is returned in the enumeration. It has the same position as the start of the returned polyline, but the forward, west and north vectors of the start cap.</param>
     /// <param name="startCapCOS">Position, forward, west and north vectors of the start cap. This information will be filled in during the enumeration.</param>
-    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
+    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the end cap were already calculated (but not west and north vector).</param>
     /// <param name="endCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between the end of the polyline and the end cap. This joining segment is returned in the enumeration. It has the same position as the end of the polyline, but the forward, west and north vectors of the end cap.</param>
     /// <param name="endCapCOS">Position, forward, west and north vectors of the end cap. This information will be filled in during the enumeration, and will be valid only after the enumeration has finished.</param>
     /// <returns>Enumeration of that part of the original polyline, that is described by the start and end index.</returns>
@@ -638,8 +638,8 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets a part of an polyline by providing start end end indices. The indices are allowed to be real values (for instance the start index 0.5 means that the
-    /// start point of the returned polyline is excactly in the middle between the first point (index 0) and the second point (index 1) of the original polyline.
+    /// Gets a part of a polyline by providing start and end indices. The indices are allowed to be real values (for instance, the start index 0.5 means that the
+    /// start point of the returned polyline is exactly in the middle between the first point (index 0) and the second point (index 1) of the original polyline.
     /// </summary>
     /// <param name="originalPolylineEnumerator">The enumerator for the points of the original polyline.</param>
     /// <param name="startIndex">The start index. Must be greater than or equal to zero.</param>
@@ -647,7 +647,7 @@ namespace Altaxo.Geometry
     /// <param name="startCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
     /// <param name="startCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between start cap and the rest of the polyline. This joining segment is returned in the enumeration. It has the same position as the start of the returned polyline, but the forward, west and north vectors of the start cap.</param>
     /// <param name="startCapCOS">Position, forward, west and north vectors of the start cap. This information will be filled in during the enumeration.</param>
-    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
+    /// <param name="endCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the end cap were already calculated (but not west and north vector).</param>
     /// <param name="endCapNeedsJoiningSegment">If set to <c>true</c>, there is need for a joining segment between the end of the polyline and the end cap. This joining segment is returned in the enumeration. It has the same position as the end of the polyline, but the forward, west and north vectors of the end cap.</param>
     /// <param name="endCapCOS">Position, forward, west and north vectors of the end cap. This information will be filled in during the enumeration, and will be valid only after the enumeration has finished.</param>
     /// <returns>Enumeration of that part of the original polyline, that is described by the start and end index.</returns>
@@ -777,9 +777,8 @@ namespace Altaxo.Geometry
     /// <param name="endCapNeedsJoiningSegment">If true, the end cap needs a joining segment to merge seamlessly with the first segment. This joining segment is provided by the enumeration. It is a segment of length zero, i.e. has the same position as the previous point, but with an orientation as the end cap has.</param>
     /// <param name="endCapCOS">Data to be filled out be the procedure that describes position and orientation of the end cap.</param>
     /// <returns>Enumeration of polylines. The first item of the returned tuples is the list with the polyline points, the second item is the west vector for the first polyline point, and the third item is the north vector for the first polyline point.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">
-    /// </exception>
-    /// <exception cref="System.ArgumentException"></exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the requested start or end index lies outside the available polyline points.</exception>
+    /// <exception cref="System.ArgumentException">Thrown when the dash pattern arguments are inconsistent.</exception>
     public static IEnumerable<List<PolylinePointD3D>> DissectPolylineWithDashPattern(
       IEnumerable<PointD3D> linePoints,
       double startIndex, double endIndex,

@@ -272,7 +272,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return result.Select(l => l.Descriptions).ToList();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Fits peaks in groups for the specified spectrum.
+    /// </summary>
+    /// <param name="xArray">The x-values of the spectrum.</param>
+    /// <param name="yArray">The y-values of the spectrum.</param>
+    /// <param name="peakDescriptions">The peak descriptions to fit.</param>
+    /// <param name="cancellationToken">A token that can cancel the operation.</param>
+    /// <returns>The fitted peak descriptions.</returns>
     public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       var result = new List<PeakDescription>();

@@ -1102,7 +1102,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// </summary>
     /// <param name="majorSpan">Major span value.</param>
     /// <param name="targetNumberOfMinorTicks">Target number of minor ticks.</param>
-    /// <returns></returns>
+    /// <returns>The number of minor tick intervals to use for the specified major span.</returns>
     public static int CalculateNumberOfMinorTicks(double majorSpan, int targetNumberOfMinorTicks)
     {
       if (targetNumberOfMinorTicks <= 0)

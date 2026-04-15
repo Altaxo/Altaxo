@@ -497,6 +497,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// This array is passed as the Y argument in all calls to
     /// F and JAC.
     ///</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
     /// <param name="T">
     /// = The independent variable.  In the input, T is used only on
     /// the first call, as the initial point of the integration.
@@ -535,6 +536,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// an array of length NEQ.  See description below under ATOL.
     /// Input only.
     ///</param>
+    /// <param name="offset_rtol">The starting offset in <paramref name="RTOL"/>.</param>
     /// <param name="ATOL">
     /// = An absolute error tolerance parameter, either a scalar or
     /// an array of length NEQ.  Input only.
@@ -572,6 +574,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// components of RTOL and ATOL (i.e. of EWT) should be scaled
     /// down uniformly.
     ///</param>
+    /// <param name="offset_atol">The starting offset in <paramref name="ATOL"/>.</param>
     /// <param name="ITASK">
     /// = An index specifying the task to be performed.
     /// Input only.  ITASK has the following values and meanings.
@@ -715,6 +718,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// is not to overshoot.  Required if ITASK is
     /// 4 or 5, and ignored otherwise.  (See ITASK.)
     ///</param>
+    /// <param name="offset_rwork">The starting offset in <paramref name="RWORK"/>.</param>
     /// <param name="LRW">
     /// = The length of the array RWORK, as declared by the user.
     /// (This will be checked by the solver.)
@@ -738,6 +742,7 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// the band parameters for a matrix to which
     /// df/dy is only approximately equal.
     ///</param>
+    /// <param name="offset_iwork">The starting offset in <paramref name="IWORK"/>.</param>
     /// <param name="LIW">
     /// = the length of the array IWORK, as declared by the user.
     /// (This will be checked by the solver.)
@@ -820,17 +825,12 @@ namespace Altaxo.Calc.Ode.Obsolete.DVode
     /// is unused or it is a scalar, then it need not be
     /// dimensioned.
     ///</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
     /// <param name="IPAR">
     /// User-specified array used to communicate integer parameter
     /// to user-supplied subroutines.  The comments on dimensioning
     /// RPAR apply to IPAR.
     ///</param>
-    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
-    /// <param name="offset_rtol">The starting offset in <paramref name="RTOL"/>.</param>
-    /// <param name="offset_atol">The starting offset in <paramref name="ATOL"/>.</param>
-    /// <param name="offset_rwork">The starting offset in <paramref name="RWORK"/>.</param>
-    /// <param name="offset_iwork">The starting offset in <paramref name="IWORK"/>.</param>
-    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
     /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(IFEX F, int NEQ, ref double[] Y, int offset_y, ref double T, double TOUT, int ITOL
                      , double[] RTOL, int offset_rtol, double[] ATOL, int offset_atol, int ITASK, ref int ISTATE, int IOPT, ref double[] RWORK, int offset_rwork
@@ -2833,6 +2833,9 @@ LABEL800:
       #endregion Data Initialization
     }
 
+    /// <summary>
+    /// Estimates a suitable initial step size for the DVODE integration.
+    /// </summary>
     /// <param name="N">
     /// = Size of ODE system, input.
     ///</param>
@@ -2842,18 +2845,33 @@ LABEL800:
     /// <param name="Y0">
     /// = Vector of initial conditions, input.
     ///</param>
+    /// <param name="offset_y0">The starting offset in <paramref name="Y0"/>.</param>
     /// <param name="YDOT">
     /// = Vector of initial first derivatives, input.
     ///</param>
+    /// <param name="offset_ydot">The starting offset in <paramref name="YDOT"/>.</param>
     /// <param name="F">
     /// = Name of subroutine for right-hand side f(t,y), input.
     ///</param>
+    /// <param name="RPAR">User-defined real parameter array passed to <paramref name="F"/>.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">User-defined integer parameter array passed to <paramref name="F"/>.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     /// <param name="TOUT">
     /// = First output value of independent variable
     ///</param>
     /// <param name="UROUND">
     /// = Machine unit roundoff
     ///</param>
+    /// <param name="EWT">Error weight vector used to scale the initial derivative estimates.</param>
+    /// <param name="offset_ewt">The starting offset in <paramref name="EWT"/>.</param>
+    /// <param name="ITOL">Indicator describing the scalar or vector tolerance layout.</param>
+    /// <param name="ATOL">Absolute tolerance array or scalar storage.</param>
+    /// <param name="offset_atol">The starting offset in <paramref name="ATOL"/>.</param>
+    /// <param name="Y">Workspace receiving the initial scaled solution values.</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
+    /// <param name="TEMP">Temporary workspace used while estimating the step size.</param>
+    /// <param name="offset_temp">The starting offset in <paramref name="TEMP"/>.</param>
     /// <param name="H0">
     /// = Step size to be attempted, output.
     ///</param>
@@ -2866,21 +2884,6 @@ LABEL800:
     /// IER = 0  if no trouble occurred, or
     /// IER = -1 if TOUT and T0 are considered too close to proceed.
     ///</param>
-    ///<param name="offset_y"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_atol"></param>
-    ///<param name="ATOL"></param>
-    ///<param name="EWT"></param>
-    ///<param name="IPAR"></param>
-    ///<param name="ITOL"></param>
-    ///<param name="offset_ewt"></param>
-    ///<param name="offset_temp"></param>
-    ///<param name="offset_y0"></param>
-    ///<param name="offset_ydot"></param>
-    ///<param name="RPAR"></param>
-    ///<param name="TEMP"></param>
-    ///<param name="Y"></param>
     public void Run(int N, double T0, double[] Y0, int offset_y0, double[] YDOT, int offset_ydot, IFEX F, double[] RPAR, int offset_rpar
                      , int[] IPAR, int offset_ipar, double TOUT, double UROUND, double[] EWT, int offset_ewt, int ITOL, double[] ATOL, int offset_atol
                      , ref double[] Y, int offset_y, ref double[] TEMP, int offset_temp, ref double H0, ref int NITER, ref int IER)
@@ -3416,16 +3419,19 @@ LABEL100:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Evaluates the interpolating polynomial derived from the Nordsieck history array.
+    /// </summary>
+    /// <param name="T">The interpolation point.</param>
+    /// <param name="K">The derivative order to evaluate.</param>
+    /// <param name="YH">The Nordsieck history array.</param>
+    /// <param name="offset_yh">The starting offset in <paramref name="YH"/>.</param>
+    /// <param name="LDYH">The leading dimension of <paramref name="YH"/>.</param>
+    /// <param name="DKY">Workspace receiving the evaluated derivative values.</param>
+    /// <param name="offset_dky">The starting offset in <paramref name="DKY"/>.</param>
     /// <param name="IFLAG">
     /// is returned negative if either K or T is out of bounds.
     ///</param>
-    ///<param name="DKY"></param>
-    ///<param name="K"></param>
-    ///<param name="LDYH"></param>
-    ///<param name="offset_dky"></param>
-    ///<param name="offset_yh"></param>
-    ///<param name="T"></param>
-    ///<param name="YH"></param>
     public void Run(double T, int K, double[] YH, int offset_yh, int LDYH, ref double[] DKY, int offset_dky, ref int IFLAG)
     {
       #region Variables
@@ -4021,9 +4027,13 @@ LABEL90:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Advances the DVODE state by one step using the configured nonlinear solver.
+    /// </summary>
     /// <param name="Y">
     /// = An array of length N used for the dependent variable vector.
     ///</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
     /// <param name="YH">
     /// = An LDYH by LMAX array containing the dependent variables
     /// and their approximate scaled derivatives, where
@@ -4032,6 +4042,7 @@ LABEL90:
     /// (j = 0,1,...,NQ).  On entry for the first step, the first
     /// two columns of YH must be set from the initial values.
     ///</param>
+    /// <param name="offset_yh">The starting offset in <paramref name="YH"/>.</param>
     /// <param name="LDYH">
     /// = A constant integer .ge. N, the first dimension of YH.
     /// N is the number of ODEs in the system.
@@ -4039,24 +4050,33 @@ LABEL90:
     /// <param name="YH1">
     /// = A one-dimensional array occupying the same space as YH.
     ///</param>
+    /// <param name="offset_yh1">The starting offset in <paramref name="YH1"/>.</param>
     /// <param name="EWT">
     /// = An array of length N containing multiplicative weights
     /// for local error measurements.  Local errors in y(i) are
     /// compared to 1.0/EWT(i) in various error tests.
     ///</param>
+    /// <param name="offset_ewt">The starting offset in <paramref name="EWT"/>.</param>
     /// <param name="SAVF">
     /// = An array of working storage, of length N.
     /// also used for input of YH(*,MAXORD+2) when JSTART = -1
     /// and MAXORD .lt. the current order NQ.
     ///</param>
+    /// <param name="offset_savf">The starting offset in <paramref name="SAVF"/>.</param>
     /// <param name="VSAV">
     /// = A work array of length N passed to subroutine VNLS.
     ///</param>
+    /// <param name="offset_vsav">The starting offset in <paramref name="VSAV"/>.</param>
     /// <param name="ACOR">
     /// = A work array of length N, used for the accumulated
     /// corrections.  On a successful return, ACOR(i) contains
     /// the estimated one-step local error in y(i).
     ///</param>
+    /// <param name="offset_acor">The starting offset in <paramref name="ACOR"/>.</param>
+    /// <param name="WM">Real work space for matrix data.</param>
+    /// <param name="offset_wm">The starting offset in <paramref name="WM"/>.</param>
+    /// <param name="IWM">Integer work space for matrix data.</param>
+    /// <param name="offset_iwm">The starting offset in <paramref name="IWM"/>.</param>
     /// <param name="F">
     /// = Dummy name for the user supplied subroutine for f.
     ///</param>
@@ -4071,21 +4091,10 @@ LABEL90:
     /// = Dummy name for the nonlinear system solving subroutine,
     /// whose real name is dependent on the method used.
     ///</param>
-    ///<param name="offset_yh"></param>
-    ///<param name="RPAR"></param>
-    ///<param name="IPAR"></param>
-    ///<param name="IWM"></param>
-    ///<param name="offset_acor"></param>
-    ///<param name="offset_ewt"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_iwm"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="offset_savf"></param>
-    ///<param name="offset_vsav"></param>
-    ///<param name="offset_wm"></param>
-    ///<param name="offset_y"></param>
-    ///<param name="offset_yh1"></param>
-    ///<param name="WM"></param>
+    /// <param name="RPAR">User-defined real parameter array passed to callback routines.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">User-defined integer parameter array passed to callback routines.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(ref double[] Y, int offset_y, ref double[] YH, int offset_yh, int LDYH, ref double[] YH1, int offset_yh1, double[] EWT, int offset_ewt, ref double[] SAVF, int offset_savf
                      , double[] VSAV, int offset_vsav, ref double[] ACOR, int offset_acor, ref double[] WM, int offset_wm, ref int[] IWM, int offset_iwm, IFEX F, IJEX JAC
                      , IFEX PSOL, IDVNLSD VNLS, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar)
@@ -5447,13 +5456,16 @@ LABEL300:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Adjusts the Nordsieck history array after an order change in the BDF method.
+    /// </summary>
+    /// <param name="YH">The Nordsieck history array to update.</param>
+    /// <param name="offset_yh">The starting offset in <paramref name="YH"/>.</param>
+    /// <param name="LDYH">The leading dimension of <paramref name="YH"/>.</param>
     /// <param name="IORD">
     /// = An integer flag used when METH = 2 to indicate an order
     /// increase (IORD = +1) or an order decrease (IORD = -1).
     ///</param>
-    ///<param name="LDYH"></param>
-    ///<param name="offset_yh"></param>
-    ///<param name="YH"></param>
     public void Run(ref double[] YH, int offset_yh, int LDYH, int IORD)
     {
       #region Variables
@@ -6069,29 +6081,42 @@ LABEL340:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the DVODE nonlinear corrector system for a single integration step.
+    /// </summary>
     /// <param name="Y">
     /// = The dependent variable, a vector of length N, input.
     ///</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
     /// <param name="YH">
     /// = The Nordsieck (Taylor) array, LDYH by LMAX, input
     /// and output.  On input, it contains predicted values.
     ///</param>
+    /// <param name="offset_yh">The starting offset in <paramref name="YH"/>.</param>
     /// <param name="LDYH">
     /// = A constant .ge. N, the first dimension of YH, input.
     ///</param>
     /// <param name="VSAV">
     /// = Unused work array.
     ///</param>
+    /// <param name="offset_vsav">The starting offset in <paramref name="VSAV"/>.</param>
     /// <param name="SAVF">
     /// = A work array of length N.
     ///</param>
+    /// <param name="offset_savf">The starting offset in <paramref name="SAVF"/>.</param>
     /// <param name="EWT">
     /// = An error weight vector of length N, input.
     ///</param>
+    /// <param name="offset_ewt">The starting offset in <paramref name="EWT"/>.</param>
     /// <param name="ACOR">
     /// = A work array of length N, used for the accumulated
     /// corrections to the predicted y vector.
     ///</param>
+    /// <param name="offset_acor">The starting offset in <paramref name="ACOR"/>.</param>
+    /// <param name="IWM">Integer work space for the linear solver.</param>
+    /// <param name="offset_iwm">The starting offset in <paramref name="IWM"/>.</param>
+    /// <param name="WM">Real work space for the linear solver.</param>
+    /// <param name="offset_wm">The starting offset in <paramref name="WM"/>.</param>
     /// <param name="F">
     /// = Dummy name for user supplied routine for f.
     ///</param>
@@ -6116,20 +6141,10 @@ LABEL340:
     /// -3 unrecoverable error in solution (cannot occur
     /// here).
     ///</param>
-    ///<param name="offset_yh"></param>
-    ///<param name="WM"></param>
-    ///<param name="offset_y"></param>
-    ///<param name="offset_wm"></param>
-    ///<param name="offset_vsav"></param>
-    ///<param name="offset_savf"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="IPAR"></param>
-    ///<param name="IWM"></param>
-    ///<param name="offset_acor"></param>
-    ///<param name="offset_ewt"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_iwm"></param>
-    ///<param name="RPAR"></param>
+    /// <param name="RPAR">User-defined real parameter array passed to callback routines.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">User-defined integer parameter array passed to callback routines.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
     public void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] VSAV, int offset_vsav, ref double[] SAVF, int offset_savf, double[] EWT, int offset_ewt
                      , ref double[] ACOR, int offset_acor, ref int[] IWM, int offset_iwm, ref double[] WM, int offset_wm, IFEX F, IJEX JAC, IFEX PDUM
                      , ref int NFLAG, double[] RPAR, int offset_rpar, int[] IPAR, int offset_ipar)
@@ -6779,21 +6794,30 @@ LABEL450:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Prepares or updates the linear system matrix used in the DVODE corrector iteration.
+    /// </summary>
     /// <param name="Y">
     /// = Vector containing predicted values on entry.
     ///</param>
+    /// <param name="offset_y">The starting offset in <paramref name="Y"/>.</param>
     /// <param name="YH">
     /// = The Nordsieck array, an LDYH by LMAX array, input.
     ///</param>
+    /// <param name="offset_yh">The starting offset in <paramref name="YH"/>.</param>
     /// <param name="LDYH">
     /// = A constant .ge. N, the first dimension of YH, input.
     ///</param>
     /// <param name="EWT">
     /// = An error weight vector of length N.
     ///</param>
+    /// <param name="offset_ewt">The starting offset in <paramref name="EWT"/>.</param>
+    /// <param name="FTEM">Temporary storage for function evaluations.</param>
+    /// <param name="offset_ftem">The starting offset in <paramref name="FTEM"/>.</param>
     /// <param name="SAVF">
     /// = Array containing f evaluated at predicted y, input.
     ///</param>
+    /// <param name="offset_savf">The starting offset in <paramref name="SAVF"/>.</param>
     /// <param name="WM">
     /// = Real work space for matrices.  In the output, it containS
     /// the inverse diagonal matrix if MITER = 3 and the LU
@@ -6804,12 +6828,14 @@ LABEL450:
     /// WM(1) = SQRT(UROUND), used in numerical Jacobian step.
     /// WM(2) = H*RL1, saved for later use if MITER = 3.
     ///</param>
+    /// <param name="offset_wm">The starting offset in <paramref name="WM"/>.</param>
     /// <param name="IWM">
     /// = Integer work space containing pivot information,
     /// starting at IWM(31), if MITER is 1, 2, 4, or 5.
     /// IWM also contains band parameters ML = IWM(1) and
     /// MU = IWM(2) if MITER is 4 or 5.
     ///</param>
+    /// <param name="offset_iwm">The starting offset in <paramref name="IWM"/>.</param>
     /// <param name="F">
     /// = Dummy name for the user supplied subroutine for f.
     ///</param>
@@ -6820,18 +6846,10 @@ LABEL450:
     /// = Output error flag,  = 0 if no trouble, 1 if the P
     /// matrix is found to be singular.
     ///</param>
-    ///<param name="RPAR"></param>
-    ///<param name="offset_iwm"></param>
-    ///<param name="offset_ipar"></param>
-    ///<param name="offset_ewt"></param>
-    ///<param name="IPAR"></param>
-    ///<param name="offset_rpar"></param>
-    ///<param name="offset_savf"></param>
-    ///<param name="FTEM"></param>
-    ///<param name="offset_ftem"></param>
-    ///<param name="offset_wm"></param>
-    ///<param name="offset_y"></param>
-    ///<param name="offset_yh"></param>
+    /// <param name="RPAR">User-defined real parameter array passed to callback routines.</param>
+    /// <param name="offset_rpar">The starting offset in <paramref name="RPAR"/>.</param>
+    /// <param name="IPAR">User-defined integer parameter array passed to callback routines.</param>
+    /// <param name="offset_ipar">The starting offset in <paramref name="IPAR"/>.</param>
 
     public void Run(ref double[] Y, int offset_y, double[] YH, int offset_yh, int LDYH, double[] EWT, int offset_ewt, ref double[] FTEM, int offset_ftem, double[] SAVF, int offset_savf
                      , ref double[] WM, int offset_wm, ref int[] IWM, int offset_iwm, IFEX F, IJEX JAC, ref int IERPJ, double[] RPAR, int offset_rpar
@@ -7591,6 +7609,9 @@ LABEL330:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Solves the linear system associated with the current DVODE corrector matrix.
+    /// </summary>
     /// <param name="WM">
     /// = Real work space containing the inverse diagonal matrix if
     /// MITER = 3 and the LU decomposition of the matrix otherwise.
@@ -7599,22 +7620,22 @@ LABEL330:
     /// WM(1) = SQRT(UROUND) (not used here),
     /// WM(2) = HRL1, the previous value of H*RL1, used if MITER = 3.
     ///</param>
+    /// <param name="offset_wm">The starting offset in <paramref name="WM"/>.</param>
     /// <param name="IWM">
     /// = Integer work space containing pivot information, starting at
     /// IWM(31), if MITER is 1, 2, 4, or 5.  IWM also contains band
     /// parameters ML = IWM(1) and MU = IWM(2) if MITER is 4 or 5.
     ///</param>
+    /// <param name="offset_iwm">The starting offset in <paramref name="IWM"/>.</param>
     /// <param name="X">
     /// = The right-hand side vector on input, and the solution vector
     /// on output, of length N.
     ///</param>
+    /// <param name="offset_x">The starting offset in <paramref name="X"/>.</param>
     /// <param name="IERSL">
     /// = Output flag.  IERSL = 0 if no trouble occurred.
     /// IERSL = 1 if a singular matrix arose with MITER = 3.
     ///</param>
-    ///<param name="offset_wm"></param>
-    ///<param name="offset_iwm"></param>
-    ///<param name="offset_x"></param>
     public void Run(ref double[] WM, int offset_wm, int[] IWM, int offset_iwm, ref double[] X, int offset_x, ref int IERSL)
     {
       #region Variables
@@ -7898,20 +7919,23 @@ LABEL400:
       #endregion Common varaible Initialization
     }
 
+    /// <summary>
+    /// Saves or restores the DVODE COMMON block state.
+    /// </summary>
     /// <param name="RSAV">
     /// = real array of length 49 or more.
     ///</param>
+    /// <param name="offset_rsav">The starting offset in <paramref name="RSAV"/>.</param>
     /// <param name="ISAV">
     /// = integer array of length 41 or more.
     ///</param>
+    /// <param name="offset_isav">The starting offset in <paramref name="ISAV"/>.</param>
     /// <param name="JOB">
     /// = flag indicating to save or restore the COMMON blocks:
     /// JOB  = 1 if COMMON is to be saved (written to RSAV/ISAV).
     /// JOB  = 2 if COMMON is to be restored (read from RSAV/ISAV).
     /// A call with JOB = 2 presumes a prior call with JOB = 1.
     ///</param>
-    ///<param name="offset_isav"></param>
-    ///<param name="offset_rsav"></param>
     public void Run(ref double[] RSAV, int offset_rsav, ref int[] ISAV, int offset_isav, int JOB)
     {
       #region Variables
@@ -8469,13 +8493,16 @@ LABEL40:
     /// <param name="NI">
     /// = Number of integers (0, 1, or 2) to be printed with message.
     ///</param>
+    /// <summary>
+    /// Prints a DVODE diagnostic message with optional integer and floating-point values.
+    /// </summary>
+    /// <param name="I1">The first integer value associated with the message.</param>
+    /// <param name="I2">The second integer value associated with the message.</param>
     /// <param name="NR">
     /// = Number of reals (0, 1, or 2) to be printed with message.
     ///</param>
-    ///<param name="I1"></param>
-    ///<param name="I2"></param>
-    ///<param name="R1"></param>
-    ///<param name="R2"></param>
+    /// <param name="R1">The first real value associated with the message.</param>
+    /// <param name="R2">The second real value associated with the message.</param>
     public void Run(string MSG, int NMES, int NERR, int LEVEL, int NI, int I1
                      , int I2, int NR, double R1, double R2)
     {
@@ -9628,10 +9655,14 @@ LABEL10:
     /// 920501  Reformatted the REFERENCES section.  (WRB)
     /// ***END PROLOGUE  DGEFA
     ///</summary>
+    /// <summary>
+    /// Factors a dense matrix using Gaussian elimination with partial pivoting.
+    /// </summary>
     /// <param name="A">
     /// DOUBLE PRECISION(LDA, N)
     /// the matrix to be factored.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="LDA">
     /// INTEGER
     /// the leading dimension of the array  A .
@@ -9644,6 +9675,7 @@ LABEL10:
     /// INTEGER(N)
     /// an integer vector of pivot indices.
     ///</param>
+    /// <param name="offset_ipvt">The starting offset in <paramref name="IPVT"/>.</param>
     /// <param name="INFO">
     /// INTEGER
     /// = 0  normal value.
@@ -9653,8 +9685,6 @@ LABEL10:
     /// if called.  Use  RCOND  in DGECO for a reliable
     /// indication of singularity.
     ///</param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_ipvt"></param>
     public void Run(ref double[] A, int offset_a, int LDA, int N, ref int[] IPVT, int offset_ipvt, ref int INFO)
     {
       #region Variables
@@ -9999,10 +10029,14 @@ LABEL70:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DGESL
     ///</summary>
+    /// <summary>
+    /// Solves a dense linear system using a previously computed matrix factorization.
+    /// </summary>
     /// <param name="A">
     /// DOUBLE PRECISION(LDA, N)
     /// the output from DGECO or DGEFA.
     ///</param>
+    /// <param name="offset_a">The starting offset in <paramref name="A"/>.</param>
     /// <param name="LDA">
     /// INTEGER
     /// the leading dimension of the array  A .
@@ -10015,19 +10049,18 @@ LABEL70:
     /// INTEGER(N)
     /// the pivot vector from DGECO or DGEFA.
     ///</param>
+    /// <param name="offset_ipvt">The starting offset in <paramref name="IPVT"/>.</param>
     /// <param name="B">
     /// DOUBLE PRECISION(N)
     /// the right hand side vector.
     ///</param>
+    /// <param name="offset_b">The starting offset in <paramref name="B"/>.</param>
     /// <param name="JOB">
     /// INTEGER
     /// = 0         to solve  A*X = B ,
     /// = nonzero   to solve  TRANS(A)*X = B  where
     /// TRANS(A)  is the transpose.
     ///</param>
-    ///<param name="offset_ipvt"></param>
-    ///<param name="offset_a"></param>
-    ///<param name="offset_b"></param>
     public void Run(double[] A, int offset_a, int LDA, int N, int[] IPVT, int offset_ipvt, ref double[] B, int offset_b, int JOB)
     {
       #region Variables
@@ -10440,6 +10473,9 @@ LABEL100:
     /// 920501  Reformatted the REFERENCES section.  (WRB)
     /// ***END PROLOGUE  DGBFA
     ///</summary>
+    /// <summary>
+    /// Factors a banded matrix using Gaussian elimination with partial pivoting.
+    /// </summary>
     /// <param name="ABD">
     /// DOUBLE PRECISION(LDA, N)
     /// contains the matrix in band storage.  The columns
@@ -10448,6 +10484,7 @@ LABEL100:
     /// ML+1 through 2*ML+MU+1 of  ABD .
     /// See the comments below for details.
     ///</param>
+    /// <param name="offset_abd">The starting offset in <paramref name="ABD"/>.</param>
     /// <param name="LDA">
     /// INTEGER
     /// the leading dimension of the array  ABD .
@@ -10472,6 +10509,7 @@ LABEL100:
     /// INTEGER(N)
     /// an integer vector of pivot indices.
     ///</param>
+    /// <param name="offset_ipvt">The starting offset in <paramref name="IPVT"/>.</param>
     /// <param name="INFO">
     /// INTEGER
     /// = 0  normal value.
@@ -10481,8 +10519,6 @@ LABEL100:
     /// called.  Use  RCOND  in DGBCO for a reliable
     /// indication of singularity.
     ///</param>
-    ///<param name="offset_abd"></param>
-    ///<param name="offset_ipvt"></param>
     public void Run(ref double[] ABD, int offset_abd, int LDA, int N, int ML, int MU, ref int[] IPVT, int offset_ipvt
                      , ref int INFO)
     {
@@ -10939,10 +10975,14 @@ LABEL130:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DGBSL
     ///</summary>
+    /// <summary>
+    /// Solves a banded linear system using a previously computed factorization.
+    /// </summary>
     /// <param name="ABD">
     /// DOUBLE PRECISION(LDA, N)
     /// the output from DGBCO or DGBFA.
     ///</param>
+    /// <param name="offset_abd">The starting offset in <paramref name="ABD"/>.</param>
     /// <param name="LDA">
     /// INTEGER
     /// the leading dimension of the array  ABD .
@@ -10963,19 +11003,18 @@ LABEL130:
     /// INTEGER(N)
     /// the pivot vector from DGBCO or DGBFA.
     ///</param>
+    /// <param name="offset_ipvt">The starting offset in <paramref name="IPVT"/>.</param>
     /// <param name="B">
     /// DOUBLE PRECISION(N)
     /// the right hand side vector.
     ///</param>
+    /// <param name="offset_b">The starting offset in <paramref name="B"/>.</param>
     /// <param name="JOB">
     /// INTEGER
     /// = 0         to solve  A*X = B ,
     /// = nonzero   to solve  TRANS(A)*X = B , where
     /// TRANS(A)  is the transpose.
     ///</param>
-    ///<param name="offset_ipvt"></param>
-    ///<param name="offset_abd"></param>
-    ///<param name="offset_b"></param>
     public void Run(double[] ABD, int offset_abd, int LDA, int N, int ML, int MU, int[] IPVT, int offset_ipvt
                      , ref double[] B, int offset_b, int JOB)
     {
@@ -11277,6 +11316,9 @@ LABEL100:
     /// ***END PROLOGUE  DAXPY
     /// ***FIRST EXECUTABLE STATEMENT  DAXPY
     ///</summary>
+    /// <summary>
+    /// Computes <c>DY := DY + DA * DX</c> for strided vectors.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
@@ -11286,18 +11328,17 @@ LABEL100:
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The starting offset in <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
-    /// DY  double precision vector with N elements
     ///</param>
     /// <param name="DY">
-    /// double precision vector with N elements
+    /// double precision destination vector with N elements
     ///</param>
+    /// <param name="offset_dy">The starting offset in <paramref name="DY"/>.</param>
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
-    ///<param name="offset_dx"></param>
-    ///<param name="offset_dy"></param>
     public void Run(int N, double DA, double[] DX, int offset_dx, int INCX, ref double[] DY, int offset_dy, int INCY)
     {
       #region Implicit Variables
@@ -11543,24 +11584,26 @@ LABEL60:
     /// ***END PROLOGUE  DCOPY
     /// ***FIRST EXECUTABLE STATEMENT  DCOPY
     ///</summary>
+    /// <summary>
+    /// Copies one strided vector into another.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The starting offset in <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
-    /// DY  double precision vector with N elements
     ///</param>
     /// <param name="DY">
-    /// double precision vector with N elements
+    /// double precision destination vector with N elements
     ///</param>
+    /// <param name="offset_dy">The starting offset in <paramref name="DY"/>.</param>
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
-    ///<param name="offset_dx"></param>
-    ///<param name="offset_dy"></param>
     public void Run(int N, double[] DX, int offset_dx, int INCX, ref double[] DY, int offset_dy, int INCY)
     {
       #region Implicit Variables
@@ -11807,24 +11850,26 @@ LABEL60:
     /// ***END PROLOGUE  DDOT
     /// ***FIRST EXECUTABLE STATEMENT  DDOT
     ///</summary>
+    /// <summary>
+    /// Computes the inner product of two strided vectors.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
-    /// DY  double precision vector with N elements
     ///</param>
     /// <param name="DY">
-    /// double precision vector with N elements
+    /// double precision vector with N elements used as the second factor
     ///</param>
+    /// <param name="offset_dy">The offset into <paramref name="DY"/>.</param>
     /// <param name="INCY">
     /// storage spacing between elements of DY
     ///</param>
-    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
-    /// <param name="offset_dy">The offset into <paramref name="DY"/>.</param>
     /// <returns>The inner product of the two vectors.</returns>
     public double Run(int N, double[] DX, int offset_dx, int INCX, double[] DY, int offset_dy, int INCY)
     {
@@ -12150,16 +12195,19 @@ LABEL60:
     ///
     /// ***FIRST EXECUTABLE STATEMENT  DNRM2
     ///</summary>
+    /// <summary>
+    /// Computes the Euclidean norm of a strided vector.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
-    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
     /// <returns>The Euclidean length of the vector.</returns>
     public double Run(int N, double[] DX, int offset_dx, int INCX)
     {
@@ -12485,6 +12533,9 @@ LABEL300:
     /// ***END PROLOGUE  DSCAL
     /// ***FIRST EXECUTABLE STATEMENT  DSCAL
     ///</summary>
+    /// <summary>
+    /// Scales a strided vector by a constant factor.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
@@ -12494,10 +12545,10 @@ LABEL300:
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The starting offset in <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
-    /// <param name="offset_dx"></param>
     public void Run(int N, double DA, ref double[] DX, int offset_dx, int INCX)
     {
       #region Variables
@@ -12711,16 +12762,19 @@ LABEL40:
     /// ***END PROLOGUE  IDAMAX
     /// ***FIRST EXECUTABLE STATEMENT  IDAMAX
     ///</summary>
+    /// <summary>
+    /// Finds the index of the vector component with the maximum magnitude.
+    /// </summary>
     /// <param name="N">
     /// number of elements in input vector(s)
     ///</param>
     /// <param name="DX">
     /// double precision vector with N elements
     ///</param>
+    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
     /// <param name="INCX">
     /// storage spacing between elements of DX
     ///</param>
-    /// <param name="offset_dx">The offset into <paramref name="DX"/>.</param>
     /// <returns>The smallest index of the component with the maximum magnitude.</returns>
     public int Run(int N, double[] DX, int offset_dx, int INCX)
     {

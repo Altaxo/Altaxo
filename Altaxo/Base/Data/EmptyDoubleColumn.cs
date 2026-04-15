@@ -84,7 +84,7 @@ namespace Altaxo.Data
     /// Simply returns the value i.
     /// </summary>
     /// <param name="i">The index i.</param>
-    /// <returns>The index i.</returns>
+    /// <returns><see cref="double.NaN"/> for every index.</returns>
     public double this[int i]
     {
       get

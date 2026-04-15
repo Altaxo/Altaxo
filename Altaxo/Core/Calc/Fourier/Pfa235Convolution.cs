@@ -500,8 +500,8 @@ ErrorExit:
     /// at least the size of the data array.
     /// </param>
     /// <param name="scratchim">
-    ///  A work array. If a NULL pointer is passed the
-    /// work array is allocated and freed auotomatically.
+    ///  A work array for the imaginary part. If a NULL pointer is passed the
+    /// work array is allocated and freed automatically.
     /// If the array is given by the user it must have
     /// at least the size of the data array.
     /// </param>
@@ -704,7 +704,7 @@ ErrorExit:
     /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
     /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
     /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
-    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array for the imaginary part. It must be at least of length n. If null is provided here, a new scratch array will be allocated.</param>
     public void CyclicCorrelation(
       double[] src1real, double[] src1imag,
       double[] src2real, double[] src2imag,

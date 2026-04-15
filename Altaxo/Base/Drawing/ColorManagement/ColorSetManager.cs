@@ -153,9 +153,9 @@ namespace Altaxo.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
+    public override IColorSet CreateNewList(string listName, IEnumerable<NamedColor> listItems)
     {
-      return new ColorSet(name, symbols);
+      return new ColorSet(listName, listItems);
     }
 
     /// <inheritdoc/>

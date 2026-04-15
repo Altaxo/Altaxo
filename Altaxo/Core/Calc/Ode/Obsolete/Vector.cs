@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <summary>
     /// Copies vector to double[] array
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A copy of the vector data as a new array.</returns>
     public double[] ToArray()
     {
       return (double[])v.Clone();

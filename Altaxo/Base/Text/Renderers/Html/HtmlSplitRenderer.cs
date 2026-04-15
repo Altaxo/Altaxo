@@ -547,7 +547,7 @@ namespace Altaxo.Text.Renderers.Html
     /// Builds the HTML renderer.
     /// </summary>
     /// <param name="tw">The tw.</param>
-    /// <returns></returns>
+    /// <returns>A configured HTML renderer for writing split HTML output.</returns>
     public HtmlRenderer BuildHtmlRenderer(TextWriter tw)
     {
       var htmlRenderer = new HtmlRenderer(tw);
@@ -663,7 +663,7 @@ namespace Altaxo.Text.Renderers.Html
       /// Gets the length in 1/96th inch.
       /// </summary>
       /// <param name="lenString">The length string.</param>
-      /// <returns></returns>
+      /// <returns>The parsed length in 1/96th inch, or <see langword="null"/> if the value cannot be parsed.</returns>
       private double? GetLength(string lenString)
       {
         if (string.IsNullOrEmpty(lenString))
@@ -806,15 +806,15 @@ namespace Altaxo.Text.Renderers.Html
 
 
       /// <inheritdoc />
-      protected override void Write(HtmlRenderer renderer, LinkInline link)
+      protected override void Write(HtmlRenderer renderer, LinkInline obj)
       {
-        if (link.IsImage)
+        if (obj.IsImage)
         {
-          WriteImageLink(renderer, link);
+          WriteImageLink(renderer, obj);
         }
         else
         {
-          WriteNonimageLink(renderer, link);
+          WriteNonimageLink(renderer, obj);
         }
       }
     }

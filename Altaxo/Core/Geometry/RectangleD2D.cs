@@ -193,13 +193,21 @@ namespace Altaxo.Geometry
       return _x == other._x && _y == other._y && _w == other._w && _h == other._h;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Determines whether two rectangles are equal.
+    /// </summary>
+    /// <param name="p">The first rectangle.</param>
+    /// <param name="q">The second rectangle.</param>
     public static bool operator ==(RectangleD2D p, RectangleD2D q)
     {
       return p.Equals(q);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Determines whether two rectangles are not equal.
+    /// </summary>
+    /// <param name="p">The first rectangle.</param>
+    /// <param name="q">The second rectangle.</param>
     public static bool operator !=(RectangleD2D p, RectangleD2D q)
     {
       return !(p.Equals(q));
@@ -412,7 +420,6 @@ namespace Altaxo.Geometry
     /// Expands this rectangle, so that it contains the point p.
     /// </summary>
     /// <param name="p">The point that should be contained in this rectangle.</param>
-    /// <returns>The new rectangle that now contains the point p.</returns>
     public void ExpandToInclude(PointD2D p)
     {
       if (!(Contains(p)))
@@ -499,7 +506,7 @@ namespace Altaxo.Geometry
     /// If only one rectangle is provided, that rectangle is returned.
     /// If neither rectangle is provided, the return value is null.
     /// </returns>
-    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <exception cref="System.InvalidProgramException">Thrown when the rectangle combination state is inconsistent.</exception>
     public static RectangleD2D? ExpandToInclude(RectangleD2D? first, RectangleD2D? other)
     {
       if (first.HasValue && other.HasValue)

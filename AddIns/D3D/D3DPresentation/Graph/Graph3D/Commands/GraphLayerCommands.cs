@@ -164,7 +164,7 @@ namespace Altaxo.Graph.Graph3D.Commands
     /// <summary>
     /// Builds menu items representing plot items of the active layer.
     /// </summary>
-    public IEnumerable<object> BuildItems(Codon codon, object owner)
+    public IEnumerable<object> BuildItems(Codon codon, object parameter)
     {
       if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
       {

@@ -28,8 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using Altaxo.Graph;
 
 namespace Altaxo.Drawing.ColorManagement
 {
@@ -261,25 +259,11 @@ namespace Altaxo.Drawing.ColorManagement
     }
 
     /// <inheritdoc/>
-    public bool IsReadOnly
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-    /// <inheritdoc/>
     public NamedColor this[int index]
     {
       get
       {
         return _innerList[index];
-      }
-
-      set
-      {
-        throw new InvalidOperationException();
       }
     }
 
@@ -426,48 +410,6 @@ namespace Altaxo.Drawing.ColorManagement
         return false;
 
       return true;
-    }
-
-    /// <inheritdoc/>
-    public void Insert(int index, NamedColor item)
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public void RemoveAt(int index)
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public void Add(NamedColor item)
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public void Clear()
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public bool Contains(NamedColor item)
-    {
-      return _innerList.Contains(item);
-    }
-
-    /// <inheritdoc/>
-    public void CopyTo(NamedColor[] array, int arrayIndex)
-    {
-      _innerList.CopyTo(array, arrayIndex);
-    }
-
-    /// <inheritdoc/>
-    public bool Remove(NamedColor item)
-    {
-      throw new NotImplementedException();
     }
 
     /// <inheritdoc/>

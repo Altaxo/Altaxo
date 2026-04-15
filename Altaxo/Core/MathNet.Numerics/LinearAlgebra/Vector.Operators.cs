@@ -32,6 +32,9 @@ using System.Runtime.CompilerServices;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <content>
+  /// Defines operator overloads for <see cref="Vector{T}"/> instances.
+  /// </content>
   public abstract partial class Vector<T>
   {
     /// <summary>

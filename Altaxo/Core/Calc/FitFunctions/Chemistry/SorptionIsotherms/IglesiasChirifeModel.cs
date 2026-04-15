@@ -137,8 +137,8 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     /// </summary>
     /// <param name="x">The dependent variable. Usually water activity / relative humidity (0..1).</param>
     /// <param name="offset">The mass of the sample at x==0.</param>
-    /// <param name="p">Absorption constant.</param>
-    /// <param name="b">Absorption constant.</param>
+    /// <param name="p">The model intercept term in the exponential expression.</param>
+    /// <param name="b">The model slope term that scales the water-activity dependence.</param>
     /// <param name="M05">Mass uptake at an water activity of 0.5 (although questionable, even in terms of unit).</param>
     /// <returns>The mass of the sample at x.</returns>
     public static double Evaluate(double x, double offset, double p, double b, double M05)

@@ -364,10 +364,10 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="lower">Lower bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="upper">Upper bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="mode">Mode (most frequent value).  Range: lower ≤ mode ≤ upper</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double lower, double upper, double mode, double x)
@@ -403,10 +403,10 @@ namespace Altaxo.Calc.Distributions
     /// Computes the inverse of the cumulative distribution function (InvCDF) for the distribution
     /// at the given probability. This is also known as the quantile or percent point function.
     /// </summary>
-    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <param name="lower">Lower bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="upper">Upper bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="mode">Mode (most frequent value).  Range: lower ≤ mode ≤ upper</param>
+    /// <param name="p">The location at which to compute the inverse cumulative density.</param>
     /// <returns>the inverse cumulative density at <paramref name="p"/>.</returns>
     /// <seealso cref="InverseCumulativeDistribution"/>
     public static double InvCDF(double lower, double upper, double mode, double p)
@@ -483,7 +483,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="lower">Lower bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="upper">Upper bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="mode">Mode (most frequent value).  Range: lower ≤ mode ≤ upper</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double lower, double upper, double mode)
     {
       if (!(upper >= mode && mode >= lower))
@@ -535,7 +534,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="lower">Lower bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="upper">Upper bound. Range: lower ≤ mode ≤ upper</param>
     /// <param name="mode">Mode (most frequent value).  Range: lower ≤ mode ≤ upper</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double lower, double upper, double mode)
     {
       if (!(upper >= mode && mode >= lower))

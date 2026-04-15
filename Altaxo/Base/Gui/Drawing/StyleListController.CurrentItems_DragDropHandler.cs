@@ -32,7 +32,10 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing
 {
-  public partial class StyleListController<TManager, TList, TItem> 
+  /// <content>
+  /// Provides drag-and-drop support for current items in a style list controller.
+  /// </content>
+  public partial class StyleListController<TManager, TList, TItem>
     where TItem : Altaxo.Main.IImmutable
     where TList : IStyleList<TItem>
     where TManager : IStyleListManager<TList, TItem>
@@ -78,14 +81,14 @@ namespace Altaxo.Gui.Drawing
       /// <inheritdoc/>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
       {
-       
+
         _draggedNode = items.OfType<SelectableListNode>().FirstOrDefault();
 
 
         data = _draggedNode.Tag;
         canCopy = true;
         canMove = true;
-        
+
       }
 
       /// <inheritdoc/>
@@ -103,7 +106,7 @@ namespace Altaxo.Gui.Drawing
       /// <inheritdoc/>
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
-       
+
         // investigate data
 
         if (data is TItem)
@@ -116,23 +119,23 @@ namespace Altaxo.Gui.Drawing
         else if (data is Type)
         {
           canCopy = true;
-            canMove = false;
-            itemIsSwallowingData = false;
+          canMove = false;
+          itemIsSwallowingData = false;
         }
         else
         {
 
           canCopy = false;
-            canMove = false;
-            itemIsSwallowingData = false;
-          
+          canMove = false;
+          itemIsSwallowingData = false;
+
         }
       }
 
       /// <inheritdoc/>
       public void Drop(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
       {
-       
+
         var droppedItem = default(TItem);
         if (data is Type)
         {
@@ -188,11 +191,11 @@ namespace Altaxo.Gui.Drawing
         isMove = !isCtrlKeyPressed;
       }
 
-     
 
-      
 
-     
+
+
+
 
       #endregion Drop onto current items
     }

@@ -445,9 +445,9 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="job">Job selection flag: whether to calculate standard error estimates.</param>
     /// <param name="se">Output: standard error estimates (may be null or unused depending on <paramref name="job"/>).</param>
     /// <param name="WK0">Work arrays used by the algorithm.</param>
-    /// <param name="WK1">Work arrays used by the algorithm.</param>
-    /// <param name="WK2">Work arrays used by the algorithm.</param>
-    /// <param name="WK3">Work arrays used by the algorithm.</param>
+    /// <param name="WK1">First auxiliary work array used by the algorithm.</param>
+    /// <param name="WK2">Second auxiliary work array used by the algorithm.</param>
+    /// <param name="WK3">Third auxiliary work array used by the algorithm.</param>
     /// <param name="ier">Output: error code (0 on success).</param>
     protected abstract void InterpolationKernel(
       double[] x,
@@ -702,7 +702,7 @@ namespace Altaxo.Calc.Interpolation
     #region cubgcv
 
     /// <summary>
-    ///
+    /// Computes a cubic smoothing spline and related error estimates.
     /// </summary>
     /// <param name="x">Input: Abscissae of the N data points. Must be ordered so that x[i] &lt; x[i+1].</param>
     /// <param name="f">Input: Ordinates (function values) of the N data points.</param>
@@ -784,9 +784,9 @@ namespace Altaxo.Calc.Interpolation
     ///                           THE UNSCALED VALUES OF THE DF(I) TO FACILITATE
     /// COMPARISONS WITH A PRIORI VARIANCE ESTIMATES.
     /// </param>
-    /// <param name="WK1"></param>
-    /// <param name="WK2"></param>
-    /// <param name="WK3"></param>
+    /// <param name="WK1">Work matrix used for intermediate spline calculations.</param>
+    /// <param name="WK2">Work vector used for intermediate spline calculations.</param>
+    /// <param name="WK3">Work vector used to store scaling and statistical intermediate values.</param>
     /// <param name="ier">
     ///  IER    - ERROR PARAMETER. (OUTPUT)
     ///  TERMINAL ERROR
@@ -979,7 +979,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="C">Spline coeffients of order 1, 2 and 3 to be initialized.</param>
     /// <param name="ic">Number of coefficents of order 1, 2 or 3. Usually one less than n.</param>
     /// <param name="R">Work array to be initialized.</param>
-    /// <param name="T">Work array to be initialized.</param>
+    /// <param name="T">Work array holding intermediate tridiagonal system coefficients.</param>
     /// <param name="ier">Output: 0 on success, or an error number if failed.</param>
     public static void spint1(double[] x, out double avh, double[] y, double[] dy, out double avdy, int n, double[] a, double[][] C, int ic,
                     double[][] R, double[][] T, ref int ier)
@@ -1099,7 +1099,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">Abscissae values of the data points.</param>
     /// <param name="avh">Scaling parameter for the x-intervals.</param>
-    /// <param name="dy"></param>
+    /// <param name="dy">Scaled relative standard deviations associated with the data points.</param>
     /// <param name="n">Number of data points.</param>
     /// <param name="rho">Smooting parameter (0.. Infinity).</param>
     /// <param name="p">Is equal to rho/(1 + rho).</param>
@@ -1111,9 +1111,9 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="C">Spline coefficients of order 1, 2 and 3.</param>
     /// <param name="ic">Number of coefficents of order 1,2 and 3. Is one less the number of data points.</param>
     /// <param name="R">Work array.</param>
-    /// <param name="T">Work array.</param>
-    /// <param name="u">Work array.</param>
-    /// <param name="v">Work array.</param>
+    /// <param name="T">Work array containing transformed spline system coefficients.</param>
+    /// <param name="u">Work vector used for the forward recursion.</param>
+    /// <param name="v">Work vector used for the backward recursion.</param>
     static protected void spfit1(double[] x, double avh, double[] dy, int n, double rho, out double p, out double q, out double fun,
                  double var, double[] stat, double[] a, double[][] C, int ic, double[][] R, double[][] T, double[] u, double[] v)
 
@@ -1224,8 +1224,8 @@ namespace Altaxo.Calc.Interpolation
     /// Each dy[i] must be positive. The values were scaled by spint so that the sum of their squares is n.</param>
     /// <param name="n">Number of data points.</param>
     /// <param name="R">Work array.</param>
-    /// <param name="p"></param>
-    /// <param name="var"></param>
+    /// <param name="p">The smoothing parameter transformed to the interval from 0 to 1.</param>
+    /// <param name="var">The variance estimate used to scale the returned standard errors.</param>
     /// <param name="se">On return: contains the calculated standard errors.</param>
     protected static void sperr1(double[] x, double avh, double[] dy, int n, double[][] R, double p, double var, double[] se)
 
@@ -1277,7 +1277,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="C">Spline coefficients of order 1, 2 and 3.</param>
     /// <param name="ic">Number of coefficents of order 1,2 and 3. Is one less the number of data points.</param>
     /// <param name="u">Work array.</param>
-    /// <param name="v">Work array.</param>
+    /// <param name="v">Work vector containing intermediate spline coefficient values.</param>
     static protected void spcof1(double[] x, double avh, double[] y, double[] dy, int n, double p, double q, double[] a,
           double[][] C, int ic, double[] u, double[] v)
 

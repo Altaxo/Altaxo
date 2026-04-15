@@ -31,14 +31,13 @@
 
 #nullable disable
 
+// author: Thomas Åhlén, thahlen@gmail.com
+
 namespace Poly2Tri
 {
-  /**
-     *
-     * @author Thomas Åhlén, thahlen@gmail.com
-     *
-     */
-
+  /// <summary>
+  /// Provides triangulation state for the Delaunay sweep algorithm.
+  /// </summary>
   public class DTSweepContext : TriangulationContext
   {
     // Inital triangle factor, seed triangle will extend 30% of

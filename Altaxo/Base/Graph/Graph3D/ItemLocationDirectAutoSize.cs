@@ -179,11 +179,11 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="x">The x position.</param>
     /// <param name="y">The y position.</param>
     /// <param name="z">The z position.</param>
-    /// <param name="sizeX">The width (ignored).</param>
-    /// <param name="sizeY">The height (ignored).</param>
-    /// <param name="sizeZ">The z size (ignored).</param>
+    /// <param name="size_x">The width (ignored).</param>
+    /// <param name="size_y">The height (ignored).</param>
+    /// <param name="size_z">The z size (ignored).</param>
     /// <inheritdoc/>
-    public override void SetPositionAndSize(RADouble x, RADouble y, RADouble z, RADouble sizeX, RADouble sizeY, RADouble sizeZ)
+    public override void SetPositionAndSize(RADouble x, RADouble y, RADouble z, RADouble size_x, RADouble size_y, RADouble size_z)
     {
       bool isChanged = x != _positionX || y != _positionY || z != _positionZ;
 

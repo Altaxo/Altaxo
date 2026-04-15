@@ -133,7 +133,6 @@ namespace Altaxo.Calc.Random
     /// </summary>
     /// <remarks>Supports being called in parallel from multiple threads.</remarks>
     /// <param name="values">The array to fill with random samples.</param>
-    /// <returns>Nothing. The provided array is populated with random values.</returns>
     public static void Doubles(double[] values)
     {
       var bytes = new byte[values.Length * 4];

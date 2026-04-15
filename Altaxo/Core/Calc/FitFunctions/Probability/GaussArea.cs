@@ -318,7 +318,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the y-value of a single Gaussian term.
+    /// </summary>
+    /// <param name="x">The x-value at which the term is evaluated.</param>
+    /// <param name="area">The area of the Gaussian term.</param>
+    /// <param name="position">The position of the Gaussian term.</param>
+    /// <param name="sigma">The standard deviation of the Gaussian term.</param>
+    /// <returns>The y-value of the Gaussian term.</returns>
     public static double GetYOfOneTerm(double x, double area, double position, double sigma)
     {
       double arg = (x - position) / sigma;

@@ -206,7 +206,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
 
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the topology-based peak search.
+    /// </summary>
+    /// <param name="x">The optional x-values of the spectrum.</param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <returns>The detected peak descriptions.</returns>
     public List<PeakDescription> Execute(double[]? x, double[] y)
     {
       var pf = new PeakFinder();

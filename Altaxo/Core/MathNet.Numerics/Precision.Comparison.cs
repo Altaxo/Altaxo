@@ -29,6 +29,9 @@
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides comparison helpers for numeric precision operations.
+  /// </summary>
   public static partial class Precision
   {
     /// <summary>

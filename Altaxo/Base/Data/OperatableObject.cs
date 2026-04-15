@@ -33,9 +33,9 @@ namespace Altaxo.Data
   public abstract class OperatableObject
   {
     /// <inheritdoc/>
-    public override bool Equals(object? o)
+    public override bool Equals(object? obj)
     {
-      return base.Equals(o);
+      return base.Equals(obj);
     }
 
     /// <inheritdoc/>

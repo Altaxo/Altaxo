@@ -36,6 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   /// <summary>
   /// Represents the storage backing for a vector.
   /// </summary>
+  /// <typeparam name="T">The element type.</typeparam>
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public abstract partial class VectorStorage<T> : IEquatable<VectorStorage<T>>

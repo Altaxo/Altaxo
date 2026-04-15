@@ -24,14 +24,9 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
@@ -118,7 +113,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// </summary>
     /// <param name="pa">The plot data.</param>
     /// <param name="ps">The plot style.</param>
-    public DataMeshPlotItem(XYZMeshedColumnPlotData pa, DataMeshPlotStyle ps) 
+    public DataMeshPlotItem(XYZMeshedColumnPlotData pa, DataMeshPlotStyle ps)
     {
       ChildSetMember(ref _plotStyle, ps);
       ChildSetMember(ref _plotData, pa);
@@ -285,7 +280,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IXBoundsHolder Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the x bounds from a template boundary object.
+    /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetXBoundsFromTemplate(val);
@@ -301,7 +299,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IYBoundsHolder Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the y bounds from a template boundary object.
+    /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetYBoundsFromTemplate(val);
@@ -351,17 +352,17 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Prepares group styles for this plot item.
     /// </summary>
-    /// <param name="externalGroups">The external group styles.</param>
+    /// <param name="styles">The external group styles.</param>
     /// <param name="layer">The plot layer.</param>
-    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
     }
 
     /// <summary>
     /// Applies prepared group styles to this plot item.
     /// </summary>
-    /// <param name="externalGroups">The external group styles.</param>
-    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
+    /// <param name="styles">The external group styles.</param>
+    public override void ApplyGroupStyles(PlotGroupStyleCollection styles)
     {
     }
 

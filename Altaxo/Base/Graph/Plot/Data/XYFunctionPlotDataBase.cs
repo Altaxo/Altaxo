@@ -62,7 +62,11 @@ namespace Altaxo.Graph.Plot.Data
       CopyFrom(from);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Copies the state from another instance.
+    /// </summary>
+    /// <param name="obj">The instance to copy from.</param>
+    /// <returns><c>true</c> if the state was copied; otherwise, <c>false</c>.</returns>
     public virtual bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))

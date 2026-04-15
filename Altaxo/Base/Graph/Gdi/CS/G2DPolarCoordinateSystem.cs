@@ -68,24 +68,24 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
-    /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <param name="from">The coordinate system to copy from.</param>
     /// <inheritdoc />
-    public override void CopyFrom(G2DCoordinateSystem fromb)
+    public override void CopyFrom(G2DCoordinateSystem from)
     {
-      if (ReferenceEquals(this, fromb))
+      if (ReferenceEquals(this, from))
         return;
 
-      base.CopyFrom(fromb);
-      if (fromb is G2DPolarCoordinateSystem)
+      base.CopyFrom(from);
+      if (from is G2DPolarCoordinateSystem)
       {
-        var from = (G2DPolarCoordinateSystem)fromb;
-        _isXYInterchanged = from._isXYInterchanged;
-        _isXreverse = from._isXreverse;
-        _isYreverse = from._isYreverse;
+        var fromX = (G2DPolarCoordinateSystem)from;
+        _isXYInterchanged = fromX._isXYInterchanged;
+        _isXreverse = fromX._isXreverse;
+        _isYreverse = fromX._isYreverse;
 
-        _radius = from._radius;
-        _midX = from._midX;
-        _midY = from._midY;
+        _radius = fromX._radius;
+        _midX = fromX._midX;
+        _midY = fromX._midY;
       }
     }
 
@@ -500,14 +500,14 @@ namespace Altaxo.Graph.Gdi.CS
     }
 
     /// <inheritdoc />
-    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
+    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1)
     {
       if (LogicalToLayerCoordinates(r0, out var ax0, out var ay0) && LogicalToLayerCoordinates(r1, out var ax1, out var ay1))
       {
         // add a line when this is a radial ray
         if (((r0.RX == r1.RX) && !_isXYInterchanged) || ((r0.RY == r1.RY) && _isXYInterchanged))
         {
-          g.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
+          path.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
         }
         // add an arc if this is a tangential ray
         else if (((r0.RY == r1.RY) && !_isXYInterchanged) || ((r0.RX == r1.RX) && _isXYInterchanged))
@@ -528,7 +528,7 @@ namespace Altaxo.Graph.Gdi.CS
           }
           double r = Calc.RMath.Hypot(_midY - ay0, ax0 - _midX);
           if (r > 0)
-            g.AddArc((float)(_midX - r), (float)(_midY - r), (float)(2 * r), (float)(2 * r), (float)-startAngle, (float)-sweepAngle);
+            path.AddArc((float)(_midX - r), (float)(_midY - r), (float)(2 * r), (float)(2 * r), (float)-startAngle, (float)-sweepAngle);
         }
         else // if it is neither radial nor tangential
         {
@@ -541,7 +541,7 @@ namespace Altaxo.Graph.Gdi.CS
             LogicalToLayerCoordinates(r, out var ax, out var ay);
             pts[i] = new PointF((float)ax, (float)ay);
           }
-          g.AddLines(pts);
+          path.AddLines(pts);
         }
       }
     }

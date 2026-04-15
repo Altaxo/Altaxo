@@ -785,7 +785,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="nameParts">The name parts.</param>
     /// <param name="start">Index of the first name part to join.</param>
     /// <param name="count">Number of name parts to join.</param>
-    /// <returns></returns>
+    /// <returns>The full name composed from the selected parts.</returns>
     private string JoinPartsToName(string[] nameParts, int start, int count)
     {
       return string.Join(string.Empty, nameParts, start, count);

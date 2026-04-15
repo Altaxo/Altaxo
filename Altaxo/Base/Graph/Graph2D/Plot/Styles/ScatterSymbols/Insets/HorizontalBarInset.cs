@@ -62,10 +62,10 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
     #endregion Serialization
 
     /// <inheritdoc/>
-    public override Paths64 GetCopyOfClipperPolygon(double structureScale)
+    public override Paths64 GetCopyOfClipperPolygon(double relativeWidth)
     {
       var h = ClipperScalingInt;
-      var w = (int)Math.Round(0.25 + structureScale * ClipperScalingInt);
+      var w = (int)Math.Round(0.25 + relativeWidth * ClipperScalingInt);
 
       return [
         new Path64(4)

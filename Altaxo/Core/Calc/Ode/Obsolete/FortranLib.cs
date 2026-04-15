@@ -34,8 +34,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///  From Intel Fortran Language Reference
     /// </remarks>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">The string whose trailing blanks should be ignored.</param>
+    /// <returns>The length of <paramref name="s"/> after trimming trailing blanks.</returns>
     public static int LEN_TRIM(string s)
     {
       if (s is null)
@@ -86,9 +86,9 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///   From Intel Fortran Language Reference
     /// </remarks>
-    /// <param name="s"></param>
-    /// <param name="ncopies"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to repeat.</param>
+    /// <param name="ncopies">The number of repetitions to create.</param>
+    /// <returns>A new string consisting of <paramref name="s"/> repeated <paramref name="ncopies"/> times.</returns>
     public static string REPEAT(string s, int ncopies)
     {
       string value = "";
@@ -273,10 +273,10 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///   IBM XL Fortran for AIX
     /// </remarks>
-    /// <param name="s"></param>
-    /// <param name="set"></param>
-    /// <param name="back"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to search.</param>
+    /// <param name="set">The set of characters to look for.</param>
+    /// <param name="back">If set to <see langword="true"/>, search from the end of the string.</param>
+    /// <returns>The one-based position of the matching character, or zero if none is found.</returns>
     public static int SCAN(string s, string set, bool back)
     {
       int index = -1;
@@ -370,10 +370,10 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///   IBM XL Fortran for AIX
     /// </remarks>
-    /// <param name="s"></param>
-    /// <param name="value"></param>
-    /// <param name="back"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to search.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <param name="back">If set to <see langword="true"/>, search from the end of the string.</param>
+    /// <returns>The one-based position of the substring, or zero if it is not found.</returns>
     public static int INDEX(string s, string value, bool back)
     {
       int index = -1;
@@ -468,8 +468,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///   IBM XL Fortran for AIX
     /// </remarks>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to left-adjust.</param>
+    /// <returns>A left-adjusted copy of <paramref name="s"/>.</returns>
     public static string ADJUSTL(string s)
     {
       var sBuilder = new StringBuilder(s.Length);
@@ -501,8 +501,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// <remarks>
     ///   IBM XL Fortran for AIX
     /// </remarks>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to right-adjust.</param>
+    /// <returns>A right-adjusted copy of <paramref name="s"/>.</returns>
     public string ADJUSTR(string s)
     {
       var sBuilder = new StringBuilder(s.Length);
@@ -597,13 +597,12 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>
-    ///Retrieves a substring . The substring starts at a specified
-    ///character position and finisch a specified position.
+    /// Retrieves a substring between two character positions.
     /// </summary>
-    /// <param name="s"></param>
-    /// <param name="startIndex"></param>
-    /// <param name="lastIndex"></param>
-    /// <returns></returns>
+    /// <param name="s">The source character array.</param>
+    /// <param name="startIndex">The one-based start index of the substring.</param>
+    /// <param name="lastIndex">The one-based inclusive end index of the substring.</param>
+    /// <returns>A new character array containing the requested substring.</returns>
     public static char[] Substring(char[] s, int startIndex, int lastIndex)
     {
       char[] substring = new char[lastIndex - startIndex + 1];
@@ -619,12 +618,11 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>
-    ///Retrieves a substring . The substring starts at a specified
-    ///character position.
+    /// Retrieves a substring starting at a specified character position.
     /// </summary>
-    /// <param name="s"></param>
-    /// <param name="startIndex"></param>
-    /// <returns></returns>
+    /// <param name="s">The source character array.</param>
+    /// <param name="startIndex">The one-based start index of the substring.</param>
+    /// <returns>A new character array containing the substring from <paramref name="startIndex"/> to the end.</returns>
     public static char[] Substring(char[] s, int startIndex)
     {
       return FortranLib.Substring(s, startIndex, s.Length);

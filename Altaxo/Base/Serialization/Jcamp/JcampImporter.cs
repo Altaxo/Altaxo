@@ -85,15 +85,15 @@ namespace Altaxo.Serialization.Jcamp
     /// Imports a couple of JCAMP files into a table. The spectra are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
     /// </summary>
-    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="fileNames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
-    /// <param name="importOptionsObj">The import options object.</param>
+    /// <param name="importOptions">The import options object.</param>
     /// <param name="attachDataSource">Whether to attach a data source to the imported table.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (JcampImportOptions)importOptionsObj;
+      var importOptionsX = (JcampImportOptions)importOptions;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
@@ -108,7 +108,7 @@ namespace Altaxo.Serialization.Jcamp
       }
 
       int idxYColumn = 0;
-      foreach (string filename in filenames)
+      foreach (string filename in fileNames)
       {
         JcampReader imported;
 
@@ -162,7 +162,7 @@ namespace Altaxo.Serialization.Jcamp
             xcol = new Altaxo.Data.DoubleColumn();
             xcol.CopyDataFrom(xvalues);
             lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-            string xColumnName = (!string.IsNullOrEmpty(block.XLabel) && !importOptions.UseNeutralColumnName) ? block.XLabel : "X";
+            string xColumnName = (!string.IsNullOrEmpty(block.XLabel) && !importOptionsX.UseNeutralColumnName) ? block.XLabel : "X";
             table.DataColumns.Add(xcol, xColumnName, Altaxo.Data.ColumnKind.X, lastColumnGroup);
             if (!string.IsNullOrEmpty(block.XUnit))
             {
@@ -172,7 +172,7 @@ namespace Altaxo.Serialization.Jcamp
           }
 
           // now add the y-values
-          string yColumnName = (!importOptions.UseNeutralColumnName && !string.IsNullOrEmpty(block.YLabel)) ? block.YLabel :
+          string yColumnName = (!importOptionsX.UseNeutralColumnName && !string.IsNullOrEmpty(block.YLabel)) ? block.YLabel :
                                (imported.Blocks.Count == 1 ? "Y" : $"Y{idxBlock}");
           yColumnName = table.DataColumns.FindUniqueColumnName(yColumnName);
           var ycol = table.DataColumns.EnsureExistence(yColumnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
@@ -186,7 +186,7 @@ namespace Altaxo.Serialization.Jcamp
           }
 
 
-          if (importOptions.IncludeFilePathAsProperty)
+          if (importOptionsX.IncludeFilePathAsProperty)
           {
             // add also a property column named "FilePath" if not existing so far
             if (!table.PropCols.ContainsColumn("FilePath"))
@@ -210,15 +210,15 @@ namespace Altaxo.Serialization.Jcamp
 
       // Make also a note from where it was imported
       {
-        if (filenames.Count == 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
-        else if (filenames.Count > 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+        if (fileNames.Count == 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} at {DateTimeOffset.Now}");
+        else if (fileNames.Count > 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} and more ({fileNames.Count} files) at {DateTimeOffset.Now}");
       }
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(filenames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

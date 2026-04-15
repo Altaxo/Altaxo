@@ -499,7 +499,7 @@ namespace Altaxo.Calc.Ode
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <summary>Butcher tableau coefficients for the stage combinations.</summary>
     private static readonly double[][] _sa = new double[][]
         {
           new double[] { },
@@ -516,7 +516,7 @@ namespace Altaxo.Calc.Ode
           new double[] { a110, 0,  0,   a113, a114, a115, a116, a117, a118, a119, a1110 },
         };
 
-    /// <inheritdoc/>
+    /// <summary>Butcher tableau nodes for the stage evaluations.</summary>
     private static readonly double[] _sc = new double[] { 0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 };
 
     /// <summary>The high order coefficients.</summary>

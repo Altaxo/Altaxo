@@ -531,7 +531,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="b">The β shape parameter of the BetaScaled distribution. Range: β > 0.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double a, double b, double location, double scale)
     {
       if (!(a > 0.0 && b > 0.0 && scale > 0.0) || double.IsNaN(location))
@@ -586,7 +585,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="b">The β shape parameter of the BetaScaled distribution. Range: β > 0.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double a, double b, double location, double scale)
     {
       if (!(a > 0.0 && b > 0.0 && scale > 0.0) || double.IsNaN(location))

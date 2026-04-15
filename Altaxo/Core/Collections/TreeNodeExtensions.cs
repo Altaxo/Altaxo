@@ -754,7 +754,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Ensures that a list of indices that point to a node in a tree is valid. Here, only the childs of the root node are tested.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The node type.</typeparam>
     /// <param name="nodes">The nodes collection of a node of the tree.</param>
     /// <param name="index">The index list. On return, it is ensured that this index list designates a valid index of a node inside the tree.</param>
     /// <param name="level">The level. Must be always greater than 0.</param>
@@ -1197,7 +1197,7 @@ namespace Altaxo.Collections
     /// <typeparam name="M">The type to search for.</typeparam>
     /// <typeparam name="T">Type of the node.</typeparam>
     /// <param name="node">The node. The first node being considered is the parent node of this node.</param>
-    /// <returns></returns>
+    /// <returns>The first ancestor that implements <typeparamref name="M"/>, or <see langword="null"/> if none is found.</returns>
     [return: MaybeNull]
     public static M FirstAncestorImplementing<M, T>(this T node)
         where T : INodeWithParentNode<T>

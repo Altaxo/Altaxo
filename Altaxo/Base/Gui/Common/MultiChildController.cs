@@ -302,7 +302,6 @@ namespace Altaxo.Gui.Common
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public void Dispose()
     {
     }

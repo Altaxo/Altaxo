@@ -31,6 +31,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides drag support for available items in the list of X/Y columns controller.
+  /// </summary>
   public partial class ListOfXAndYColumnController
   {
     /// <summary>

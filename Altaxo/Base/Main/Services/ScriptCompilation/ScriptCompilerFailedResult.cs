@@ -63,7 +63,10 @@ namespace Altaxo.Main.Services.ScriptCompilation
       }
     }
 
-    /// <inheritdoc/>
+        /// <summary>
+    /// Gets the compiled script assembly.
+    /// </summary>
+    /// <remarks>Compilation failed, so this property always returns <c>null</c>.</remarks>
     public Assembly? ScriptAssembly
     {
       get

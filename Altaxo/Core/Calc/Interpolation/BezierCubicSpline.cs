@@ -75,15 +75,15 @@ namespace Altaxo.Calc.Interpolation
   public class BezierCubicSpline : CurveBase
   {
     /// <inheritdoc/>
-    public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
+    public override void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // verify index range
-      if (!MatchingIndexRange(x, y))
+      if (!MatchingIndexRange(xvec, yvec))
         throw new ArgumentException("index range mismatch of vectors");
 
       // link original data vectors into base class
-      base.x = x;
-      base.y = y;
+      base.x = xvec;
+      base.y = yvec;
     }
 
     /// <inheritdoc/>
@@ -132,51 +132,51 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    public override double GetYOfU(double t)
+    public override double GetYOfU(double u)
     {
       int hi = x.Count - 1;
-      int i = FindInterval(t, x);
+      int i = FindInterval(u, x);
 
       if (i < 0 || hi == 1)
       {
         // linear extrapolation and interpolation for 2 points
-        return y[0] + (t - x[0]) * (y[1] - y[0]) / (x[1] - x[0]);
+        return y[0] + (u - x[0]) * (y[1] - y[0]) / (x[1] - x[0]);
       }
       else if (i == 0)
       {
         i = 0;
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (u2 / 6.0 - 1.0),
-          c2 = u * (1.0 - u2 / 3.0),
-          c3 = u * u2 / 6.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (t2 / 6.0 - 1.0),
+          c2 = t * (1.0 - t2 / 3.0),
+          c3 = t * t2 / 6.0;
         return c1 * y[i] + c2 * y[i + 1] + c3 * y[i + 2];
       }
       else if (i >= hi)
       {
         // linear extrapolation
-        return y[hi] + (t - x[hi]) * (y[hi] - y[hi - 1]) / (x[hi] - x[hi - 1]);
+        return y[hi] + (u - x[hi]) * (y[hi] - y[hi - 1]) / (x[hi] - x[hi - 1]);
       }
       else if (i == hi - 1)
       {
         i = hi - 1;
-        double u = (x[i + 1] - t) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          c1 = 1.0 + u * (u2 / 6.0 - 1.0),
-          c2 = u * (1.0 - u2 / 3.0),
-          c3 = u * u2 / 6.0;
+        double t = (x[i + 1] - u) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          c1 = 1.0 + t * (t2 / 6.0 - 1.0),
+          c2 = t * (1.0 - t2 / 3.0),
+          c3 = t * t2 / 6.0;
         return c1 * y[i + 1] + c2 * y[i] + c3 * y[i - 1];
       }
       else
       {
-        double u = (t - x[i]) / (x[i + 1] - x[i]),
-          u2 = u * u,
-          u3 = 1.0 - u,
-          u4 = u3 * u3,
-          c1 = u3 * u4 / 6.0,
-          c2 = u2 * (u / 2.0 - 1.0) + 4.0 / 6.0,
-          c3 = u * (1.0 + u * u3) / 2.0 + 1.0 / 6.0,
-          c4 = u * u2 / 6.0;
+        double t = (u - x[i]) / (x[i + 1] - x[i]),
+          t2 = t * t,
+          t3 = 1.0 - t,
+          t4 = t3 * t3,
+          c1 = t3 * t4 / 6.0,
+          c2 = t2 * (t / 2.0 - 1.0) + 4.0 / 6.0,
+          c3 = t * (1.0 + t * t3) / 2.0 + 1.0 / 6.0,
+          c4 = t * t2 / 6.0;
         return c1 * y[i - 1] + c2 * y[i] + c3 * y[i + 1] + c4 * y[i + 2];
       }
     }

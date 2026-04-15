@@ -35,6 +35,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Provides drag-and-drop support for plot items in the list of X/Y columns controller.
+  /// </summary>
   public partial class ListOfXAndYColumnController
   {
     /// <summary>

@@ -451,7 +451,7 @@ namespace Altaxo.Graph.Gdi
     /// These two flags are ignored.
     /// </summary>
     /// <param name="fontStyle">The font style.</param>
-    /// <returns></returns>
+    /// <returns>The cache index for the specified font style.</returns>
     protected static int FontStyleToIndex(FontStyle fontStyle)
     {
       bool isBold = fontStyle.HasFlag(FontStyle.Bold);

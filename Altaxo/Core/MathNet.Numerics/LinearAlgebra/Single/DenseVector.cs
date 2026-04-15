@@ -388,7 +388,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// </summary>
     /// <param name="scalar">The scalar to multiply.</param>
     /// <param name="result">The vector to store the result of the multiplication.</param>
-    /// <remarks></remarks>
+  /// <remarks>Optimized provider-specific multiplication is used when the result is a <see cref="DenseVector"/>.</remarks>
     protected override void DoMultiply(float scalar, Vector<float> result)
     {
       if (result is DenseVector denseResult)
@@ -722,7 +722,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     /// </summary>
     /// <param name="divisor">The vector to pointwise divide this one by.</param>
     /// <param name="result">The vector to store the result of the pointwise division.</param>
-    /// <remarks></remarks>
+  /// <remarks>Optimized provider-specific division is used when both vectors are <see cref="DenseVector"/> instances.</remarks>
     protected override void DoPointwiseDivide(Vector<float> divisor, Vector<float> result)
     {
       if (divisor is DenseVector denseOther && result is DenseVector denseResult)

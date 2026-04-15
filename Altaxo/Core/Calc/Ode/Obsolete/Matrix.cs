@@ -543,7 +543,7 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>Matrix inverse for a lower triangular matrix</summary>
-    /// <returns></returns>
+    /// <returns>The inverse of the lower triangular matrix.</returns>
     public Matrix InverseLower()
     {
       int n = ColumnDimension;

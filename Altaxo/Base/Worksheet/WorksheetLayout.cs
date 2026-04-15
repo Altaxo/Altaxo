@@ -238,11 +238,11 @@ namespace Altaxo.Worksheet
     private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
     {
       /// <inheritdoc />
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        base.Serialize(obj, info);
+        base.Serialize(o, info);
 
-        var s = (WorksheetLayout)obj;
+        var s = (WorksheetLayout)o;
         info.CreateArray("DefaultPropertyColumnStyles", s._propertyColumnStyles.DefaultColumnStyles.Values.Count);
         foreach (object style in s._propertyColumnStyles.DefaultColumnStyles.Values)
           info.AddValue("DefaultPropertyColumnStyle", style);

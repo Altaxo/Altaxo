@@ -263,10 +263,10 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 3)]
     private class XmlSerializationSurrogate3 : XmlSerializationSurrogate2
     {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        base.Serialize(obj, info);
-        var s = (DataTable)obj;
+        base.Serialize(o, info);
+        var s = (DataTable)o;
         info.AddValue("Notes", s._notes.Text);
         info.AddValue("CreationTime", s._creationTime.ToLocalTime());
         info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());

@@ -31,6 +31,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
+  /// <summary>
+  /// Provides scaling helpers for Fourier transform results.
+  /// </summary>
   public partial class ManagedFourierTransformProvider
   {
     /// <summary>

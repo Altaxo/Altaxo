@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The light amplitude value.</param>
     /// <param name="valueName">The paramter name.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than or equal to zero.</exception>
     private void VerifyLightAmplitude(double value, string valueName)
     {
       if (!(value >= 0))
@@ -295,8 +295,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <param name="directionBelowToAbove">The direction below to above.</param>
     /// <param name="valueName">The name of the parameter.</param>
     /// <returns>Vector length.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="directionBelowToAbove"/> must be a non-empty vector with finite components.</exception>
     private double VerifyDirectionBelowToAbove(VectorD3D directionBelowToAbove, string valueName)
     {
       if (directionBelowToAbove == VectorD3D.Empty)

@@ -100,8 +100,9 @@ namespace Altaxo.Data
     /// <param name="options">Options that control the transpose process.</param>
     /// <param name="destTable">Table in which the transposed table should be stored.</param>
     /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="srcTable"/> or <paramref name="destTable"/> is <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="srcTable"/> and <paramref name="destTable"/> reference the same table instance.</exception>
     /// <exception cref="InvalidOperationException">The data columns to transpose are not of the same type. The first column that has a deviating type is column number  + firstDifferentColumnIndex.ToString()</exception>
     public static void Transpose(this DataTable srcTable, DataTableTransposeOptions options, DataTable destTable)
     {

@@ -55,7 +55,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
     /// <returns>A <see cref="UserSvd"/> instance for <paramref name="matrix"/>.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
-    /// <exception cref="NonConvergenceException"></exception>
+    /// <exception cref="NonConvergenceException">Thrown when the singular value decomposition iteration does not converge.</exception>
     public static UserSvd Create(Matrix<double> matrix, bool computeVectors)
     {
       var nm = Math.Min(matrix.RowCount + 1, matrix.ColumnCount);

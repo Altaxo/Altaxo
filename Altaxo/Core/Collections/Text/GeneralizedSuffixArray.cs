@@ -382,9 +382,9 @@ namespace Altaxo.Collections.Text
     /// <param name="suffixArray">The suffix array, i.e. the array of indices that designate the lexicographical order of the suffixes.</param>
     /// <param name="inverseSuffixArray">Inverse suffix array.</param>
     /// <param name="text">The text. Each element of the original text (or object array) is represented by an integer, so that equal elements of the original text map to equal integers.</param>
-    /// <param name="numberOfWords">The num_words.</param>
     /// <param name="textLength">Number of text elements. Can be smaller than the size of the <paramref name="text"/> array, since for some algorithms, the text array have to be longer than the text.</param>
-    /// <param name="wordIndices">The wordindex array.</param>
+    /// <param name="numberOfWords">The number of words represented in the generalized suffix array.</param>
+    /// <param name="wordIndices">Array that maps each text position to its corresponding word index.</param>
     private static int[] calc_lcptabs(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength, int numberOfWords, int[] wordIndices)
     {
       var lcptabs = new int[textLength];

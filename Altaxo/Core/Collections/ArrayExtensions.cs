@@ -39,7 +39,6 @@ namespace Altaxo.Collections
     /// <param name="array">The array to clone.</param>
     /// <returns>Cloned array, with each of the elements a clone from the original element.</returns>
     /// <exception cref="NullReferenceException">nameof(array)</exception>
-    /// <inheritdoc/>
     public static T[] CloneDeep<T>(this T[] array) where T : class, ICloneable
     {
       if (array is null)
@@ -61,7 +60,6 @@ namespace Altaxo.Collections
     /// <param name="array">The array to clone.</param>
     /// <returns>Cloned array, with each of the elements a clone from the original element.</returns>
     /// <exception cref="NullReferenceException">nameof(array)</exception>
-    /// <inheritdoc/>
     public static T?[] CloneDeepNullable<T>(this T?[] array) where T : class, ICloneable
     {
       if (array is null)
@@ -78,7 +76,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Tests whether two arrays are equal.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The element type of the arrays.</typeparam>
     /// <param name="x">The x array.</param>
     /// <param name="y">The y array.</param>
     /// <param name="comparer">The comparer that is used to compare two elements. If <c>null</c> is provided, then the default equality comparer is used.</param>

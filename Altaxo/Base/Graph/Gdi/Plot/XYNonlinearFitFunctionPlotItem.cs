@@ -109,9 +109,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="fitElementIndex">Index of the fit element.</param>
     /// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
     /// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
-    /// <param name="independentVariableIndex"></param>
-    /// <param name="independentVariableTransformation"></param>
-    /// <param name="ps">The ps.</param>
+    /// <param name="independentVariableIndex">Index of the independent variable of the fit element.</param>
+    /// <param name="independentVariableTransformation">Transformation that is applied to the independent variable before evaluating the fit function.</param>
+    /// <param name="ps">The plot style collection.</param>
     public XYNonlinearFitFunctionPlotItem(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation, int independentVariableIndex, IVariantToVariantTransformation independentVariableTransformation, G2DPlotStyleCollection ps)
         : base(
             new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex, dependentVariableTransformation, independentVariableIndex, independentVariableTransformation),

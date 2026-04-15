@@ -297,8 +297,8 @@ namespace Altaxo.Calc.Regression
     /// Gets the confidence band of the prediction.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
     /// <param name="confidenceLevel">The confidence level.</param>
+    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it from <see cref="GetCovarianceMatrix"/>; otherwise, you can provide <see langword="null"/>.</param>
     /// <returns>The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
     public (double yLower, double yMean, double yUpper) GetConfidenceBand(double x, double confidenceLevel, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
@@ -351,8 +351,8 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Gets the intersection point of two linear regressions
     /// </summary>
-    /// <param name="reg2">The reg2.</param>
-    /// <returns></returns>
+    /// <param name="reg2">The other regression line.</param>
+    /// <returns>The intersection point of both regression lines.</returns>
     public (double x, double y) GetIntersectionPoint(QuickLinearRegression reg2)
     {
       var x = (GetA0() - reg2.GetA0()) / (reg2.GetA1() - GetA1());

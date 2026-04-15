@@ -383,7 +383,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// </summary>
     /// <param name="l">The LookAtRH matrix. This matrix must have a determinant of 1, and each of the vectors {M11, M21, M31}, {M12, M22, M32}, {M13, M23, M33} must have a length of 1.</param>
     /// <returns>A new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is in such a way calculated that the distance is kept constant.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="l"/> is not a valid right-handed look-at matrix.</exception>
     public CameraBase WithLookAtRHMatrix(Matrix4x3 l)
     {
       return WithLookAtRHMatrix(l, Distance);
@@ -395,7 +395,7 @@ namespace Altaxo.Graph.Graph3D.Camera
     /// <param name="l">The LookAtRH matrix. This matrix must have a determinant of 1, and each of the vectors {M11, M21, M31}, {M12, M22, M32}, {M13, M23, M33} must have a length of 1.</param>
     /// <param name="newDistance">The distance between camera eye and target of the new camera.</param>
     /// <returns>A new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is calculated from the eye vector and the provided <paramref name="newDistance"/> value.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="l"/> is not a valid right-handed look-at matrix.</exception>
     public CameraBase WithLookAtRHMatrix(Matrix4x3 l, double newDistance)
     {
       double determinant = l.Determinant;

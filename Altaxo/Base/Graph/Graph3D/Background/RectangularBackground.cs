@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <value>
     /// The material.
     /// </value>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public IMaterial Material
     {
       get
@@ -282,7 +282,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// Gets the rectangle for the background to draw. Used both by <see cref="Measure"/> as well as <see cref="Draw(IGraphicsContext3D, RectangleD3D)"/>.
     /// </summary>
     /// <param name="itemRectangle">The item rectangle.</param>
-    /// <returns></returns>
+    /// <returns>The rectangle that encloses the background to draw.</returns>
     private RectangleD3D GetRectangleToDraw(RectangleD3D itemRectangle)
     {
       return new RectangleD3D(
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <param name="g">The drawing context.</param>
     /// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
     /// This parameter should have the same size as was used in the previous call to <see cref="Measure(RectangleD3D)" /></param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException">Thrown if the current material combination is not supported by the implementation.</exception>
     public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle)
     {
       Draw(g, itemRectangle, _material);
@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Graph3D.Background
     /// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
     /// This parameter should have the same size as was used in the previous call to <see cref="Measure(RectangleD3D)" /></param>
     /// <param name="overrideMaterial">The material to use for this background.</param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException">Thrown if the current material combination is not supported by the implementation.</exception>
     public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle, IMaterial overrideMaterial)
     {
       var rectangleToDraw = GetRectangleToDraw(itemRectangle);

@@ -94,7 +94,10 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region ICloneable Members
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Creates a copy of this group style.
+    /// </summary>
+    /// <returns>A copy of this group style.</returns>
     public LineConnection2DGroupStyle Clone()
     {
       return new LineConnection2DGroupStyle(this);

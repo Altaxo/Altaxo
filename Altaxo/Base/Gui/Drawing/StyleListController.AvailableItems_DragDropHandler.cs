@@ -32,6 +32,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing
 {
+  /// <content>
+  /// Provides drag-and-drop support for available items in a style list controller.
+  /// </content>
   public partial class StyleListController<TManager, TList, TItem> where TItem : Altaxo.Main.IImmutable
 where TList : IStyleList<TItem>
 where TManager : IStyleListManager<TList, TItem>
@@ -59,7 +62,7 @@ where TManager : IStyleListManager<TList, TItem>
       {
       }
 
-      
+
       /// <inheritdoc/>
       public void DragEnded(bool isCopy, bool isMove)
       {
@@ -67,14 +70,14 @@ where TManager : IStyleListManager<TList, TItem>
 
       /// <inheritdoc/>
       public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
-      { 
+      {
         var node = items.OfType<SelectableListNode>().FirstOrDefault();
 
 
         data = node.Tag;
         canCopy = true;
         canMove = false;
-        
+
       }
 
       /// <inheritdoc/>
@@ -117,7 +120,7 @@ where TManager : IStyleListManager<TList, TItem>
           isMove = false;
         }
       }
-    
+
       #endregion Drop onto available items
     }
   }

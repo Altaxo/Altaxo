@@ -45,7 +45,6 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     public int Memory { get; set; }
 
-    /// <inheritdoc />
     /// <summary>
     /// Creates an L-BFGS minimizer.
     /// </summary>

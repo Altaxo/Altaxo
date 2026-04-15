@@ -262,8 +262,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Returns the name that is displayed in the TreeView
     /// </summary>
-    /// <param name="fullFolderPath"></param>
-    /// <returns></returns>
+    /// <param name="fullFolderPath">The full path of the project folder.</param>
+    /// <returns>The folder name as displayed in the tree view.</returns>
     private static string GetDisplayNameOfFolder(string fullFolderPath)
     {
       return ProjectFolder.ConvertFolderNameToDisplayFolderLastPart(fullFolderPath);
@@ -397,7 +397,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Internally sets the list item handler and wires the ListChange event.
     /// </summary>
-    /// <param name="itemHandler"></param>
+    /// <param name="itemHandler">The item handler to assign to the list view.</param>
     /// <param name="isFullNameFolder">Indicates if the full folder name is shown in the view, or only the short name.</param>
     private void SetItemListHandler(AbstractItemHandler itemHandler, bool isFullNameFolder)
     {
@@ -443,7 +443,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Called if the list item handler announces a change in the item list.
     /// </summary>
-    /// <param name="list"></param>
+    /// <param name="list">The updated list of browser items.</param>
     private void EhListItemHandlerListChange(SelectableListNodeList list)
     {
       Current.Dispatcher.InvokeIfRequired(EhListItemHandlerListChange_Unsynchronized, list);
@@ -452,7 +452,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Called if the list item handler announces a change in the item list.
     /// </summary>
-    /// <param name="list"></param>
+    /// <param name="list">The updated list of browser items.</param>
     private void EhListItemHandlerListChange_Unsynchronized(SelectableListNodeList list)
     {
       SortItemList(list);
@@ -1144,7 +1144,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     /// <summary>
     /// Gets the resulting drag-drop operation. It is presumed that the data object in <paramref name="dao"/> is an <see cref="T:Altaxo.Serialization.IDataObject"/>.
-    /// The access to the data object is neccessary in order to determine if the drag is from a foreign application or the own application.
+    /// Access to the data object is necessary to determine whether the drag originates from this application or from a foreign application.
     /// </summary>
     /// <param name="dao">The data object used during drag-drop.</param>
     /// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
@@ -1152,7 +1152,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <param name="isSameApp">Result, that if it is <c>true</c> indicates that the drag operation was originated in the same application.</param>
     /// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
     /// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
-    /// <returns>The drop effect that is used (dependend on same app/foreign app, and the states of shift and ctrl key.</returns>
     private void GetResultingEffect(Altaxo.Serialization.Clipboard.IDataObject dao, bool isCtrlPressed, bool isShiftPressed, out bool isSameApp, out bool isCopy, out bool isMove)
     {
       isCopy = false;

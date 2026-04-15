@@ -90,7 +90,7 @@ namespace Altaxo
     /// This parameter can be null.</param>
     /// <param name="projectArchiveManager">The project archive manager that manages the archive.</param>
     /// <returns>A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</returns>
-    /// <exception cref="ApplicationException"></exception>
+    /// <exception cref="ApplicationException">Thrown if one or more project items cannot be written to the archive.</exception>
     public Dictionary<string, IProjectItem> SaveToArchive(IProjectArchive archiveToSaveTo, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info, IProjectArchive? originalArchive = null, IProjectArchiveManager? projectArchiveManager = null)
     {
       var errorText = new System.Text.StringBuilder();
@@ -781,7 +781,7 @@ namespace Altaxo
     /// </summary>
     /// <param name="type">The type (must be a type that implements <see cref="Altaxo.Main.IProjectItem"/>).</param>
     /// <returns>The collection in which items of this type are stored.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="type"/> is not a supported project item type.</exception>
     public override IProjectItemCollection GetCollectionForProjectItemType(System.Type type)
     {
       if (type == typeof(Altaxo.Data.DataTable))

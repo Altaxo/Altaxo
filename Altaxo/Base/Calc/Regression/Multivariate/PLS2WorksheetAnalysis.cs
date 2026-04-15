@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Exports a table to a PLS2CalibrationSet
     /// </summary>
     /// <param name="table">The table where the calibration model is stored.</param>
-    /// <param name="calibrationSet"></param>
+    /// <param name="calibrationSet">On return, contains the calibration model reconstructed from the table.</param>
     public static void Export(
       DataTable table,
       out PLS2CalibrationModel calibrationSet)

@@ -215,7 +215,7 @@ namespace Altaxo.Serialization.Origin
     /// </summary>
     /// <param name="spreadColumn">Origin spread column.</param>
     /// <returns>An Altaxo column. The exact type depends on the type of Origin's spread column.</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown when the Origin column uses a value type that is not supported for conversion.</exception>
     public static (string name, DataColumn dataColumn, ColumnKind kind) OriginColumnToAltaxoColumn(SpreadColumn spreadColumn)
     {
       DataColumn dataColumn;

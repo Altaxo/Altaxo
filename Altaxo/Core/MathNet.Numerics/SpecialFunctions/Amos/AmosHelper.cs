@@ -2,6 +2,9 @@
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides special function helpers and implementations.
+  /// </summary>
   public static partial class SpecialFunctions
   {
     // Translated from AMOS fortran codes by hand

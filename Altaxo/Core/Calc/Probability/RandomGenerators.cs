@@ -187,8 +187,8 @@ namespace Altaxo.Calc.Probability.Old
       seed = (uint)(0x7fffffff & hashstring.GetHashCode());
     }
 
-    /// <summary>The seed value.</summary>
-    /// <value>The seed value.</value>
+    /// <summary>Gets the current seed value.</summary>
+    /// <value>The seed used to initialize the generator state.</value>
     public uint Seed
     {
       get { return seed; }
@@ -1126,7 +1126,6 @@ namespace Altaxo.Calc.Probability.Old
     private uint[] r250_buffer = new uint[250];
     private int r250_index;
     /// <summary>Initializes a new instance of the <see cref="Ran250"/> class.</summary>
-    /// <summary>Initializes a new instance of the <see cref="Ran250"/> class.</summary>
     /// <param name="the_seed">The seed value.</param>
     public Ran250(uint the_seed)
       : base(the_seed)
@@ -1383,7 +1382,6 @@ namespace Altaxo.Calc.Probability.Old
 
     private int k;
     private uint[] ptgfsr = new uint[624];
-    /// <summary>Initializes a new instance of the <see cref="Ran19937"/> class.</summary>
     /// <summary>Initializes a new instance of the <see cref="Ran19937"/> class.</summary>
     /// <param name="the_seed">The seed value.</param>
     public Ran19937(uint the_seed)
@@ -1904,19 +1902,19 @@ namespace Altaxo.Calc.Probability.Old
 
     private static readonly double _OneBySqrt2Pi = 1 / Math.Sqrt(2 * Math.PI);
     /// <inheritdoc/>
-    public override double PDF(double z)
+    public override double PDF(double x)
     {
-      if (z <= 0)
+      if (x <= 0)
         return 0;
       else
-        return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((Math.Log(z) - mu) / sigma)) / (sigma * z);
+        return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((Math.Log(x) - mu) / sigma)) / (sigma * x);
     }
 
     private static readonly double _OneBySqrt2 = 1 / Math.Sqrt(2);
     /// <inheritdoc/>
-    public override double CDF(double z)
+    public override double CDF(double x)
     {
-      return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (Math.Log(z) - mu) / sigma));
+      return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (Math.Log(x) - mu) / sigma));
     }
 
     /// <inheritdoc/>

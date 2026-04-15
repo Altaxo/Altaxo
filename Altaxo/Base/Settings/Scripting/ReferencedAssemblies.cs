@@ -237,9 +237,9 @@ namespace Altaxo.Settings.Scripting
     /// <summary>
     /// Determines if a list of assembly contains an assembly with the same location than a given assembly.
     /// </summary>
-    /// <param name="asm"></param>
-    /// <param name="list"></param>
-    /// <returns></returns>
+    /// <param name="asm">The assembly whose location is compared against the assemblies in <paramref name="list"/>.</param>
+    /// <param name="list">The list of assemblies to search.</param>
+    /// <returns>The zero-based index of the matching assembly, or -1 if no matching assembly is found.</returns>
     private static int FindAssemblyInList(Assembly asm, List<Assembly> list)
     {
       for (var i = 0; i < list.Count; i++)

@@ -45,6 +45,9 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     private readonly LinearSpline _spline;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogLinear"/> class.
+    /// </summary>
     /// <param name="x">Sample points (N), sorted ascending</param>
     /// <param name="logy">Natural logarithm of the sample values (N) at the corresponding points</param>
     public LogLinear(double[] x, double[] logy)

@@ -572,7 +572,7 @@ namespace Altaxo.Calc
     /// formatting information.
     /// </param>
     /// <returns>Resulting part as double.</returns>
-    /// <exception cref="FormatException"/>
+    /// <exception cref="FormatException">Thrown when the token sequence cannot be parsed as a valid complex-number component.</exception>
     private static double ParsePart(ref LinkedListNode<string> token, out bool imaginary, IFormatProvider format)
     {
       imaginary = false;

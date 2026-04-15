@@ -151,13 +151,17 @@ namespace Altaxo.Gui.Scripting
 
     #region IMVCANController Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Attaches the current view to this controller.
+    /// </summary>
     public void AttachView()
     {
       _view.CompilerMessageClicked += EhView_GotoCompilerError;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Detaches the current view from this controller.
+    /// </summary>
     public void DetachView()
     {
       _view.CompilerMessageClicked -= EhView_GotoCompilerError;

@@ -536,7 +536,7 @@ namespace Altaxo.Units
     /// or
     /// Can not execute subtraction of unbiased unit minus biased unit
     /// </exception>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException">Thrown if an unsupported unit-bias combination is encountered.</exception>
     public static DimensionfulQuantity operator -(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (a.IsEmpty || b.IsEmpty)

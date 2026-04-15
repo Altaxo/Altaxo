@@ -58,7 +58,7 @@ namespace Altaxo.Main.Services
     #region Serialization
 
     /// <summary>
-    ///
+    /// XML serialization surrogate for lists of recent project file names.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("mscorlib", "System.Collections.Generic.List`1[ICSharpCode.Core.FileName]", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Private.CoreLib", "System.Collections.Generic.List`1[Altaxo.Main.Services.FileName]", 1)]

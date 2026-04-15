@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The light amplitude value.</param>
     /// <param name="valueName">The paramter name.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than or equal to zero.</exception>
     private void VerifyLightAmplitude(double value, string valueName)
     {
       if (!(value >= 0))
@@ -262,8 +262,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The position of the light.</param>
     /// <param name="valueName">The name of the parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must contain only finite coordinates.</exception>
     private void VerifyPosition(PointD3D value, string valueName)
     {
       if (value.IsNaN)
@@ -308,7 +307,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The light range.</param>
     /// <param name="valueName">The name of the parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than zero.</exception>
     private void VerifyRange(double value, string valueName)
     {
       if (!(value > 0))

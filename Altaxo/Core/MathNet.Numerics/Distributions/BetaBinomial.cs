@@ -301,9 +301,9 @@ namespace Altaxo.Calc.Distributions
     /// Samples BetaBinomial distributed random variables by sampling a Beta distribution then passing to a Binomial distribution.
     /// </summary>
     /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
-    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <returns>a random number from the BetaBinomial distribution.</returns>
     private static int SampleUnchecked(System.Random rnd, int n, double a, double b)
     {
@@ -361,9 +361,9 @@ namespace Altaxo.Calc.Distributions
     /// Samples a <c>BetaBinomial</c> distributed random variable.
     /// </summary>
     /// <param name="rnd">The random number generator to use.</param>
+    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
-    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <returns>a sample from the distribution.</returns>
 
     public int Sample(System.Random rnd, int n, double a, double b)
@@ -380,9 +380,9 @@ namespace Altaxo.Calc.Distributions
     /// </summary>
     /// <param name="rnd">The random number generator to use.</param>
     /// <param name="values">The array to fill with the samples.</param>
+    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
-    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     public void Samples(System.Random rnd, int[] values, int n, double a, double b)
     {
       if (!IsValidParameterSet(n, a, b))
@@ -396,9 +396,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Samples an array of <c>BetaBinomial</c> distributed random variables.
     /// </summary>
+    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
-    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <returns>a sequence of samples from the distribution.</returns>
     public IEnumerable<int> Samples(int n, double a, double b)
     {
@@ -413,9 +413,9 @@ namespace Altaxo.Calc.Distributions
     /// Fills an array with samples generated from the distribution.
     /// </summary>
     /// <param name="values">The array to fill with the samples.</param>
+    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     /// <param name="a">The α shape parameter of the Beta distribution. Range: α ≥ 0.</param>
     /// <param name="b">The β shape parameter of the Beta distribution. Range: β ≥ 0.</param>
-    /// <param name="n">The number of trials (n). Range: n ≥ 0.</param>
     public void Samples(int[] values, int n, double a, double b)
     {
       if (!IsValidParameterSet(n, a, b))

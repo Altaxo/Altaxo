@@ -116,8 +116,12 @@ namespace Altaxo.Drawing.LineCaps
     }
 
 
-    /// <inheritdoc/>
-    public bool Equals(ILineCap other)
+        /// <summary>
+        /// Determines whether the specified <see cref="ILineCap"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="ILineCap"/> to compare with this instance.</param>
+        /// <returns><see langword="true"/> if the specified <see cref="ILineCap"/> is equal to this instance; otherwise, <see langword="false"/>.</returns>
+        public bool Equals(ILineCap other)
     {
       if (other is null)
         return false;

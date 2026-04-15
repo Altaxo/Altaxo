@@ -343,13 +343,13 @@ namespace Altaxo.DataConnection
     }
 
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    protected override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
       {
         SwitchOffWatching();
       }
-      base.Dispose(disposing);
+      base.Dispose(isDisposing);
     }
 
     /// <inheritdoc />

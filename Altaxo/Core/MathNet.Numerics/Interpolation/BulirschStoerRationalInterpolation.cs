@@ -46,6 +46,9 @@ namespace Altaxo.Calc.Interpolation
     private readonly double[] _x;
     private readonly double[] _y;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BulirschStoerRationalInterpolation"/> class.
+    /// </summary>
     /// <param name="x">Sample Points t, sorted ascendingly.</param>
     /// <param name="y">Sample Values x(t), sorted ascendingly by x.</param>
     public BulirschStoerRationalInterpolation(double[] x, double[] y)

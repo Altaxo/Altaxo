@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.CS
@@ -36,7 +35,7 @@ namespace Altaxo.Graph.Gdi.CS
   /// Represents a projected 3D Cartesian coordinate system for GDI rendering.
   /// </summary>
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem}")]
-   public class G3DCartesicCoordinateSystem : G2DCoordinateSystem
+  public class G3DCartesicCoordinateSystem : G2DCoordinateSystem
   {
     private struct TMatrix
     {
@@ -56,18 +55,17 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
-    /// <param name="fromb">The coordinate system to copy from.</param>
+    /// <param name="from">The coordinate system to copy from.</param>
     /// <inheritdoc />
-    public override void CopyFrom(G2DCoordinateSystem fromb)
+    public override void CopyFrom(G2DCoordinateSystem from)
     {
-      if (ReferenceEquals(this, fromb))
+      if (ReferenceEquals(this, from))
         return;
 
-      base.CopyFrom(fromb);
-      if (fromb is G3DCartesicCoordinateSystem)
+      base.CopyFrom(from);
+      if (from is G3DCartesicCoordinateSystem fromX)
       {
-        var from = (G3DCartesicCoordinateSystem)fromb;
-        _projectionMatrix = from._projectionMatrix;
+        _projectionMatrix = fromX._projectionMatrix;
       }
     }
 

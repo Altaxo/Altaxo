@@ -1463,7 +1463,7 @@ namespace Altaxo.Graph.Scales.Ticks
     /// </summary>
     /// <param name="majorSpan">Major span value.</param>
     /// <param name="targetNumberOfMinorTicks">Target number of minor ticks.</param>
-    /// <returns></returns>
+    /// <returns>The calculated spacing between neighboring minor ticks.</returns>
     private static TimeSpanEx CalculateNumberOfMinorTicks(TimeSpanEx majorSpan, int targetNumberOfMinorTicks)
     {
       if (targetNumberOfMinorTicks <= 0)

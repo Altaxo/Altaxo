@@ -291,19 +291,19 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc />
-    public override void RemoveRows(int nDelFirstRow, int nDelCount)
+    public override void RemoveRows(int nFirstRow, int nCount)
     {
-      if (nDelFirstRow < 0)
-        throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
+      if (nFirstRow < 0)
+        throw new ArgumentException("Row number must be greater or equal 0, but was " + nFirstRow.ToString(), "nDelFirstRow");
 
-      if (nDelCount <= 0)
+      if (nCount <= 0)
         return; // nothing to do here, but we dont catch it
 
       // we must be careful, since the range to delete can be
       // above the range this column actually holds, but
       // we must handle this the right way
       int i, j;
-      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < _count; i++, j++)
+      for (i = nFirstRow, j = nFirstRow + nCount; j < _count; i++, j++)
       {
         _inUse[i] = _inUse[j];
         _data[i] = _data[j];
@@ -313,34 +313,34 @@ namespace Altaxo.Data
       _count = i < _count ? i : _count; // m_Count can only decrease
 
       if (_count != prevCount) // raise a event only if something really changed
-        EhSelfChanged(nDelFirstRow, prevCount, true);
+        EhSelfChanged(nFirstRow, prevCount, true);
     }
 
     /// <inheritdoc />
-    public override void InsertRows(int nInsBeforeColumn, int nInsCount)
+    public override void InsertRows(int nBeforeRow, int nCount)
     {
-      if (nInsCount <= 0 || nInsBeforeColumn >= Count)
+      if (nCount <= 0 || nBeforeRow >= Count)
         return; // nothing to do
 
-      int newlen = _count + nInsCount;
+      int newlen = _count + nCount;
       if (newlen > _capacity)
         Realloc(newlen);
 
       // copy values from m_Count downto nBeforeColumn
-      for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
+      for (int i = _count - 1, j = newlen - 1; i >= nBeforeRow; i--, j--)
       {
         _inUse[j] = _inUse[i];
         _data[j] = _data[i];
       }
 
-      for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
+      for (int i = nBeforeRow + nCount - 1; i >= nBeforeRow; i--)
       {
         _inUse[i] = false;
         _data[i] = false;
       }
 
       _count = newlen;
-      EhSelfChanged(nInsBeforeColumn, _count, false);
+      EhSelfChanged(nBeforeRow, _count, false);
     }
 
     /// <inheritdoc />

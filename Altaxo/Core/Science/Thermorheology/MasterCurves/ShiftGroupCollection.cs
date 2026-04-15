@@ -379,7 +379,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
     /// <param name="cancellationToken">The token to cancel the iteration.</param>
     /// <param name="progress">Progress callback that receives values between 0.0 and 1.0 indicating completion progress, or <c>null</c>. May be <c>null</c> if progress reporting is not required.</param>
-    /// <returns>Nothing. The method performs the iteration and updates internal shift values.</returns>
     public void Iterate(IReadOnlyList<int> shiftOrder, CancellationToken cancellationToken, IProgress<double>? progress)
     {
       progress?.Report(0);

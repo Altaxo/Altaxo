@@ -33,6 +33,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
 {
   // ReSharper disable UnusedParameter.Local
 
+  /// <content>
+  /// Provides validation helpers for <see cref="MatrixStorage{T}"/> operations.
+  /// </content>
   public partial class MatrixStorage<T>
   {
     private void ValidateRange(int row, int column)

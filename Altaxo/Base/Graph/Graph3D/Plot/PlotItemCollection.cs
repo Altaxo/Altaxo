@@ -699,7 +699,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
     /// </summary>
-    /// <param name="styles"></param>
+    /// <param name="styles">The styles to propagate from the parent hierarchy.</param>
     /// <param name="layer">The plot layer.</param>
     protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
     {
@@ -739,7 +739,7 @@ namespace Altaxo.Graph.Graph3D.Plot
     /// <summary>
     /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
     /// </summary>
-    /// <param name="styles"></param>
+    /// <param name="styles">The styles to apply from the parent hierarchy.</param>
     protected void ApplyStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles)
     {
       if ( //transferToLocalStyles
@@ -892,10 +892,10 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     /// <summary>
-    /// Does nothing because a plot item collection doesn't distibute item styles from members of the outer group into it's own members.
+    /// Does nothing because a plot item collection does not apply a single plot-style template to itself.
     /// </summary>
-    /// <param name="template">Ignored.</param>
-    /// <param name="strictness">Ignored.</param>
+    /// <param name="template">The template item. This value is ignored because collections do not own a single plot style.</param>
+    /// <param name="strictness">The copy strictness. This value is ignored because collections do not own a single plot style.</param>
     public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
     }

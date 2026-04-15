@@ -133,6 +133,9 @@ namespace Altaxo.Gui.Drawing
   /// <summary>
   /// Controller for editing named style lists.
   /// </summary>
+  /// <typeparam name="TManager">The type of the style list manager.</typeparam>
+  /// <typeparam name="TList">The type of the style list.</typeparam>
+  /// <typeparam name="TItem">The type of the style list item.</typeparam>
   [ExpectedTypeOfView(typeof(IStyleListView))]
   public partial class StyleListController<TManager, TList, TItem>
     :

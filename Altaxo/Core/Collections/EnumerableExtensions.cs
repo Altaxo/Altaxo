@@ -105,7 +105,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Returns the last value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The element type of the sequence.</typeparam>
     /// <param name="org">The enumeration.</param>
     /// <param name="otherValue">The other value.</param>
     /// <returns>Last value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.</returns>
@@ -128,7 +128,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Returns true and the first and last value of the enumeration, or, if the enumeration is empty, returns false.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The element type of the sequence.</typeparam>
     /// <param name="org">The enumeration.</param>
     /// <param name="first">if successful, the first value of the enumeration.</param>
     /// <param name="last">If successful, the last value of the enumeration.</param>
@@ -344,7 +344,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <typeparam name="T">The enumeration type.</typeparam>
     /// <param name="element">The element to present.</param>
-    /// <returns></returns>
+    /// <returns>An enumeration containing only <paramref name="element"/>.</returns>
     public static IEnumerable<T> AsEnumerable<T>(T element)
     {
       yield return element;
@@ -654,7 +654,7 @@ namespace Altaxo.Collections
     /// <param name="list">The list of elements.</param>
     /// <param name="upperIndexInclusive">The upper index (inclusive).</param>
     /// <param name="lowerIndexInclusive">The lower index (inclusive).</param>
-    /// <returns></returns>
+    /// <returns>An enumeration of the selected list elements in descending index order.</returns>
     public static IEnumerable<T> TakeFromUpperIndexInclusiveDownToLowerIndexInclusive<T>(this IList<T> list, int upperIndexInclusive, int lowerIndexInclusive)
     {
       if (list is null)
@@ -820,7 +820,7 @@ namespace Altaxo.Collections
     /// <param name="start">The start value.</param>
     /// <param name="step">The step value.</param>
     /// <param name="count">The number of values in the enumeration.</param>
-    /// <returns></returns>
+    /// <returns>An enumeration of equally spaced values.</returns>
     public static IEnumerable<double> EquallySpacedByStartStepCount(double start, double step, int count)
     {
       for (int i = 0; i < count; ++i)

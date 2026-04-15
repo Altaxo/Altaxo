@@ -225,3 +225,5 @@ dotnet_style_namespace_match_folder = true:suggestion
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 dotnet_code_quality_unused_parameters = all:suggestion
+dotnet_diagnostic.CA1725.severity = error
+dotnet_code_quality.CA1725.api_surface = public, protected, internal

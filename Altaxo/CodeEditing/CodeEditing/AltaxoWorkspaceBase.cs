@@ -295,16 +295,16 @@ namespace Altaxo.CodeEditing
       return Task.CompletedTask;
     }
 
-
-    protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
+    /// <inheritdoc/>
+    protected override void ApplyDocumentTextChanged(DocumentId id, SourceText text)
     {
-      if (_sourceTextChangedHandlers.TryGetValue(document, out var action) && null != action)
-        action.Invoke(newText);
+      if (_sourceTextChangedHandlers.TryGetValue(id, out var action) && null != action)
+        action.Invoke(text);
 
-      OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
+      OnDocumentTextChanged(id, text, PreservationMode.PreserveIdentity);
     }
 
-    
+
 
     public abstract Task UpdateLibrariesAsync(DocumentId documentId, IEnumerable<LibraryRef> libraries, CancellationToken cancellationToken);
 

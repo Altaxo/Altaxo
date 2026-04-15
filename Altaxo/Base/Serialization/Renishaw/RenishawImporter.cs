@@ -84,9 +84,9 @@ namespace Altaxo.Serialization.Renishaw
 
     /// <returns>Null if no error occurs, or an error description.</returns>
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, Altaxo.Data.DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (RenishawImportOptions)importOptionsObj;
+      var importOptionsX = (RenishawImportOptions)importOptions;
       DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -100,7 +100,7 @@ namespace Altaxo.Serialization.Renishaw
       }
 
       int idxYColumn = 0;
-      foreach (string filename in filenames)
+      foreach (string filename in fileNames)
       {
         WdfFileReader wdfFile;
         try
@@ -152,15 +152,15 @@ namespace Altaxo.Serialization.Renishaw
         // now add the y-values
         for (int iSpectrum = 0; iSpectrum < wdfFile.Count; iSpectrum++)
         {
-          string columnName = importOptions.UseNeutralColumnName ?
-                              $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
+          string columnName = importOptionsX.UseNeutralColumnName ?
+                              $"{(string.IsNullOrEmpty(importOptionsX.NeutralColumnName) ? "Y" : importOptionsX.NeutralColumnName)}{idxYColumn}" :
                               System.IO.Path.GetFileNameWithoutExtension(filename);
           columnName = table.DataColumns.FindUniqueColumnName(columnName);
           var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
           ++idxYColumn;
           ycol.CopyDataFrom(wdfFile.GetSpectrum(iSpectrum));
 
-          if (importOptions.IncludeFilePathAsProperty)
+          if (importOptionsX.IncludeFilePathAsProperty)
           {
             // add also a property column named "FilePath" if not existing so far
             if (!table.PropCols.ContainsColumn("FilePath"))
@@ -178,15 +178,15 @@ namespace Altaxo.Serialization.Renishaw
 
       // Make also a note from where it was imported
       {
-        if (filenames.Count == 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
-        else if (filenames.Count > 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+        if (fileNames.Count == 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} at {DateTimeOffset.Now}");
+        else if (fileNames.Count > 1)
+          table.Notes.WriteLine($"Imported from {fileNames[0]} and more ({fileNames.Count} files) at {DateTimeOffset.Now}");
       }
 
       if (attachDataSource)
       {
-        table.DataSource = CreateTableDataSource(filenames, importOptions);
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

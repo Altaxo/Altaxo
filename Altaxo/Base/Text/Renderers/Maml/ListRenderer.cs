@@ -35,11 +35,11 @@ namespace Altaxo.Text.Renderers.Maml
   public class ListRenderer : MamlObjectRenderer<ListBlock>
   {
     /// <inheritdoc />
-    protected override void Write(MamlRenderer renderer, ListBlock listBlock)
+    protected override void Write(MamlRenderer renderer, ListBlock obj)
     {
       renderer.EnsureLine();
 
-      if (listBlock.IsOrdered)
+      if (obj.IsOrdered)
       {
         renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "ordered" });
       }
@@ -47,7 +47,7 @@ namespace Altaxo.Text.Renderers.Maml
       {
         renderer.Push(MamlElements.list, new Dictionary<string, string> { ["class"] = "bullet" });
       }
-      foreach (var item in listBlock)
+      foreach (var item in obj)
       {
         var listItem = (ListItemBlock)item;
 

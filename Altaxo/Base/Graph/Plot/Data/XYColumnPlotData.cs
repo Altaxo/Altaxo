@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 2)]
     private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new ApplicationException("Calling a deprecated serialization handler for XYColumnPlotData");
         /*
@@ -452,15 +452,15 @@ namespace Altaxo.Graph.Plot.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 7)]
     private class XmlSerializationSurrogate7 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (XYColumnPlotData)obj;
+        var s = (XYColumnPlotData)o;
         base.Serialize(s, info);
         info.AddValueOrNull("XBoundaries", s._xBoundaries);
         info.AddValueOrNull("YBoundaries", s._yBoundaries);
       }
 
-      public override object? Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parentobject)
+      public override object? Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is XYColumnPlotData s)
           s.DeserializeSurrogate0(info);

@@ -70,15 +70,15 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
 
       /// <inheritdoc/>
-      public override string? Validate(string graphname)
+      public override string? Validate(string txt)
       {
-        var err = base.Validate(graphname);
+        var err = base.Validate(txt);
         if ( err is not null)
           return err;
 
-        if (_doc.Name == graphname)
+        if (_doc.Name == txt)
           return null;
-        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) is { } parent && parent.ContainsAnyName(graphname))
+        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) is { } parent && parent.ContainsAnyName(txt))
           return "This graph name already exists, please choose another name!";
         else
           return null;

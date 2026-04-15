@@ -205,20 +205,20 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
-      if (gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
+      if (gp.IsOutlineVisible(hitData.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new GraphicBaseHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
-        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
+        gp.Transform(hitData.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(hitData.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new GraphicBaseHitTestObject(this);
         }

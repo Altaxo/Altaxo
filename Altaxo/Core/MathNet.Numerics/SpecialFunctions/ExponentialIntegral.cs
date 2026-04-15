@@ -36,6 +36,9 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides exponential-integral special functions.
+  /// </summary>
   public static partial class SpecialFunctions
   {
     /// <summary>

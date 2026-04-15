@@ -284,7 +284,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="exponent">The exponent to raise 2 up to.</param>
     /// <returns>2 ^ exponent.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="exponent"/> is less than 0 or greater than or equal to 31.</exception>
     public static int PowerOfTwo(this int exponent)
     {
       if (exponent < 0 || exponent >= 31)
@@ -300,7 +300,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="exponent">The exponent to raise 2 up to.</param>
     /// <returns>2 ^ exponent.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="exponent"/> is less than 0 or greater than or equal to 63.</exception>
     public static long PowerOfTwo(this long exponent)
     {
       if (exponent < 0 || exponent >= 63)
@@ -339,7 +339,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">The number of which to find the closest upper power of two.</param>
     /// <returns>A power of two.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="number"/> is greater than the largest power of two representable by <see cref="int"/>.</exception>
     public static int CeilingToPowerOfTwo(this int number)
     {
       if (number == int.MinValue)
@@ -368,7 +368,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="number">The number of which to find the closest upper power of two.</param>
     /// <returns>A power of two.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"/>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="number"/> is greater than the largest power of two representable by <see cref="long"/>.</exception>
     public static long CeilingToPowerOfTwo(this long number)
     {
       if (number == long.MinValue)

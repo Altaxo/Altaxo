@@ -63,9 +63,9 @@ namespace Altaxo.Calc.LinearAlgebra
     {
     }
 
-    ///<summary>Initializes a new instance of the <c>LinearAlgebraException</c> class with serialized data.</summary>
-    ///<param name="info">The error message that explains the reason for the exception.</param>
-    ///<param name="context">The error message that explains the reason for the exception.</param>
+    ///<summary>Initializes a new instance of the <c>LinearAlgebraException</c> class from serialized data.</summary>
+    ///<param name="info">The serialization information that holds the exception data.</param>
+    ///<param name="context">The streaming context that describes the source of the serialized data.</param>
     protected LinearAlgebraException(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {

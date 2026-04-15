@@ -24,9 +24,9 @@
 
 #nullable disable
 using System.Collections.Generic;
-using Altaxo.Data;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Data;
 using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Worksheet
@@ -41,6 +41,8 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Combines a calibration table with a destination table.
   /// </summary>
+  /// <param name="CalibrationTable">The selected calibration table.</param>
+  /// <param name="DestinationTable">The selected destination table.</param>
   public record CalibrationAndDestinationTable(DataTable CalibrationTable, DataTable DestinationTable);
 
   /// <summary>

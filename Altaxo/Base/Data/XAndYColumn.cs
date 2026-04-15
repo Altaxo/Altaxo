@@ -51,7 +51,7 @@ namespace Altaxo.Data
     protected class SerializationSurrogate0 : IndependentAndDependentColumns.XmlSerializationSurrogate0
     {
       /// <inheritdoc/>
-      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
+      public override object? Deserialize(object? o, IXmlDeserializationInfo info, object? parent)
       {
         if (o is XAndYColumn s)
           s.DeserializeSurrogate0(info);

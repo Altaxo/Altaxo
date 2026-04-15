@@ -408,13 +408,13 @@ namespace Altaxo.Calc.Ode.Obsolete
     }
 
     /// <summary>
-    /// Execute predictor-corrector scheme for Nordsieck's method
+    /// Executes the predictor-corrector scheme for Nordsieck's method.
     /// </summary>
-    /// <param name="currstate"></param>
-    /// <param name="flag"></param>
+    /// <param name="currstate">The current Nordsieck state to advance.</param>
+    /// <param name="flag">A flag that indicates whether the predicted step is accepted.</param>
     /// <param name="f">right parts vector</param>
     /// <param name="opts">current options</param>
-    /// <returns>en - current error vector</returns>
+    /// <returns>The corrected Nordsieck state for the current step.</returns>
     private static NordsieckState PredictorCorrectorScheme(NordsieckState currstate, ref bool flag, Func<double, Vector, Vector> f, Options opts)
     {
       int n = currstate.xn.Length;

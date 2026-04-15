@@ -116,7 +116,7 @@ namespace Altaxo.Drawing
     /// </summary>
     /// <param name="listName">The name of the list.</param>
     /// <param name="listItems">The items of the list.</param>
-    /// <returns></returns>
+    /// <returns>A new list with the specified name and items.</returns>
     TList CreateNewList(string listName, IEnumerable<T> listItems);
 
     /// <summary>

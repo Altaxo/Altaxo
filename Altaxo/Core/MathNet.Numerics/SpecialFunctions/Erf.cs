@@ -335,16 +335,14 @@ namespace Altaxo.Calc
     }
 
     /// <summary>Calculates the inverse error function evaluated at z.</summary>
-    /// <returns>The inverse error function evaluated at given value.</returns>
     /// <remarks>
     ///   <list type="bullet">
     ///     <item>returns double.PositiveInfinity if <c>z &gt;= 1.0</c>.</item>
     ///     <item>returns double.NegativeInfinity if <c>z &lt;= -1.0</c>.</item>
     ///   </list>
     /// </remarks>
-    /// <summary>Calculates the inverse error function evaluated at z.</summary>
     /// <param name="z">value to evaluate.</param>
-    /// <returns>the inverse error function evaluated at Z.</returns>
+    /// <returns>The inverse error function evaluated at the specified value.</returns>
     public static double ErfInv(double z)
     {
       if (z == 0.0)

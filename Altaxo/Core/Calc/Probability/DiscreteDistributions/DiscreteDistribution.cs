@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
@@ -62,7 +60,11 @@ namespace Altaxo.Calc.Probability
       throw new NotImplementedException();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Returns the quantile corresponding to the specified cumulative probability.
+    /// </summary>
+    /// <param name="x">The cumulative probability.</param>
+    /// <returns>The quantile value for <paramref name="x"/>.</returns>
     public virtual double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");

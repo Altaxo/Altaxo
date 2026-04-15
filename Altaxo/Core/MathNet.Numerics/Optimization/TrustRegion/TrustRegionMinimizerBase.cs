@@ -79,8 +79,8 @@ namespace Altaxo.Calc.Optimization.TrustRegion
     /// <summary>
     /// Non-linear least square fitting by the trust-region algorithm.
     /// </summary>
-    /// <param name="objective">The objective model, including function, jacobian, observations, and parameter bounds.</param>
     /// <param name="subproblem">The trust-region subproblem solver.</param>
+    /// <param name="objective">The objective model, including function, jacobian, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
     /// <param name="lowerBound">The optional lower bounds for the parameters.</param>
     /// <param name="upperBound">The optional upper bounds for the parameters.</param>

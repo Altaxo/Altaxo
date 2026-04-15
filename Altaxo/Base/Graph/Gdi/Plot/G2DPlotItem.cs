@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <inheritdoc />
-    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
       var pdata = GetRangesAndPoints(layer);
       _localGroups ??= new PlotGroupStyleCollection() { ParentObject = this };
@@ -172,13 +172,13 @@ namespace Altaxo.Graph.Gdi.Plot
         _localGroups.Clear();
 
         // first add missing local group styles
-        _plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);
+        _plotStyles.CollectLocalGroupStyles(styles, _localGroups);
 
         // for the newly created group styles BeginPrepare must be called
         _localGroups.BeginPrepare();
 
         // now prepare the groups
-        _plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+        _plotStyles.PrepareGroupStyles(styles, _localGroups, layer, pdata);
 
         // for the group styles in the local group, PrepareStep and EndPrepare must be called,
         _localGroups.PrepareStep();
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <inheritdoc />
-    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyGroupStyles(PlotGroupStyleCollection styles)
     {
       if (_localGroups is null)
         throw new InvalidProgramException($"{nameof(_localGroups)} is null. Call {nameof(PrepareGroupStyles)} before!");
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.Gdi.Plot
         // for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
         _localGroups.BeginApply();
 
-        _plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
+        _plotStyles.ApplyGroupStyles(styles, _localGroups);
 
         // for externalGroups, EndApply is called later in the PlotItemCollection, for localGroups it has to be called here
         _localGroups.EndApply();
@@ -243,12 +243,12 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <inheritdoc />
-    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? prevPlotItem, IGPlotItem? nextPlotItem)
+    public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem)
     {
       var pdata = GetRangesAndPoints(layer);
       if (pdata is not null)
         Paint(g, layer, pdata,
-            (prevPlotItem is G2DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
+            (previousPlotItem is G2DPlotItem prevPI) ? prevPI.GetPlotData(layer) : null,
             (nextPlotItem is G2DPlotItem nextPI) ? nextPI.GetPlotData(layer) : null
             );
     }

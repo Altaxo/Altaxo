@@ -58,10 +58,9 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UnnamedProjectArchiveManager"/> class.
+    /// Initializes a new instance of the <see cref="UnnamedProjectArchiveManager"/> class with a known path.
     /// </summary>
-    /// <param name="pathName">The current file or folder name.</param>
-    /// <inheritdoc/>
+    /// <param name="pathName">The file or folder path.</param>
     public UnnamedProjectArchiveManager(PathName pathName)
     {
       _fileOrFolderName = pathName;

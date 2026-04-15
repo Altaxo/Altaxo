@@ -188,8 +188,8 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <param name="leftValue">The left value of the interval, might be less than or greater than <paramref name="rightValue"/>.</param>
-    /// <param name="rightValue">The right value of the interval, might be less than or greater han <paramref name="leftValue"/>.</param>
-    /// <returns></returns>
+    /// <param name="rightValue">The right value of the interval, which might be less than or greater than <paramref name="leftValue"/>.</param>
+    /// <returns>The fractional position of <paramref name="x"/> inside the interval, or <see langword="null"/> if <paramref name="x"/> is outside it.</returns>
     public static double? InFractionOfUnorderedIntervalCC(this double x, double leftValue, double rightValue)
     {
       bool inverted = false;

@@ -219,7 +219,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         throw new ArgumentException($"No columns found in the table with group number {GroupNumberOfParticipatingColumns} and column kind {ColumnKind.V}.");
 
       var columnX = table.DataColumns.FindXColumnOf(table[listParticipatingColumns[0]]);
-      if (columnX == null)
+      if (columnX is null)
         throw new ArgumentException($"No X column found in the table for the first participating column.");
       if (columnX is not DoubleColumn)
         throw new ArgumentException($"The X column found in the table for the first participating column is not a DoubleColumn.");

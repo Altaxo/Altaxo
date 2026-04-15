@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Hide the selected list items, so that they are not shown in the document area.
     /// </summary>
-    /// <param name="ctrl"></param>
+    /// <param name="ctrl">The project browse controller.</param>
     public static void HideSelectedListItems(this ProjectBrowseController ctrl)
     {
       var selItems = ctrl.GetSelectedListItems();
@@ -431,7 +431,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Creates a new text document in the current project folder, and shows it in the document area.
     /// </summary>
     /// <param name="ctrl">Project browse controller.</param>
-    /// <returns>The text controller used to show the newly created notes document.</returns>
     public static void CreateNewTextDocument(this ProjectBrowseController ctrl)
     {
       if (!ctrl.IsProjectFolderSelected(out string folderName))
@@ -444,7 +443,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Creates a new folder text document in the current project folder (i.e. a text document which has the same name as the folder), and shows it in the document area.
     /// </summary>
     /// <param name="ctrl">Project browse controller.</param>
-    /// <returns>The text controller used to show the newly created text document.</returns>
     public static void CreateNewFolderTextDocument(this ProjectBrowseController ctrl)
     {
       if (!ctrl.IsProjectFolderSelected(out string folderName))

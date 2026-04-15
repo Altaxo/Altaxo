@@ -30,6 +30,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the base implementation for 3D graphic objects.
+  /// </summary>
   public abstract partial class GraphicBase
   {
     /// <summary>

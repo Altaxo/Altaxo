@@ -31,6 +31,9 @@ using Complex = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Statistics
 {
+  /// <summary>
+  /// Provides array-based statistical operations for complex-valued samples.
+  /// </summary>
   public static partial class ArrayStatistics
   {
     /// <summary>

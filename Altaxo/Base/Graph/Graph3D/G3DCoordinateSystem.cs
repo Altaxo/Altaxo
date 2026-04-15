@@ -129,9 +129,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Draws an isoline beginning from a plane to the given point.
     /// </summary>
-    /// <param name="path">Graphics path to fill with the isoline.</param>
     /// <param name="id">The logical plane to start drawing from.</param>
     /// <param name="r">Logical coordinates of the end point.</param>
+    /// <param name="path">Graphics path to fill with the isoline.</param>
     public virtual void GetIsolineFromPlaneToPoint(CSPlaneID id, Logical3D r, out IPolylineD3D path)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -151,9 +151,9 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Gets an isoline beginning from a given point to the axis.
     /// </summary>
-    /// <param name="path">Graphics path to fill with the isoline.</param>
     /// <param name="r">Logical coordinate of the start point.</param>
     /// <param name="id">The logical plane to end the isoline.</param>
+    /// <param name="path">Graphics path to fill with the isoline.</param>
     public virtual void GetIsolineFromPointToPlane(Logical3D r, CSPlaneID id, out IPolylineD3D path)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -174,10 +174,10 @@ namespace Altaxo.Graph.Graph3D
     /// Draws an isoline on a plane beginning from r0 to r1. For r0,r1 either ry0,ry1 is used (if it is an x-axis),
     /// otherwise rx0,rx1 is used. The other parameter pair is not used.
     /// </summary>
-    /// <param name="path">Graphics path to fill with the isoline.</param>
+    /// <param name="id">The axis to end the isoline.</param>
     /// <param name="r0">Logical coordinate of the start point.</param>
     /// <param name="r1">Logical coordinate of the end point.</param>
-    /// <param name="id">The axis to end the isoline.</param>
+    /// <param name="path">Graphics path to fill with the isoline.</param>
     public virtual void GetIsolineOnPlane(CSPlaneID id, Logical3D r0, Logical3D r1, IPolylineD3D path)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -236,10 +236,10 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Get a line along the axis designated by the argument id from the logical values r0 to r1.
     /// </summary>
-    /// <param name="path">Graphics path.</param>
     /// <param name="id">Axis to draw the isoline along.</param>
     /// <param name="r0">Start point of the isoline. The logical value of the other coordinate.</param>
     /// <param name="r1">End point of the isoline. The logical value of the other coordinate.</param>
+    /// <param name="path">Graphics path.</param>
     public virtual void GetIsolineFromTo(CSLineID id, double r0, double r1, out IPolylineD3D path)
     {
       if (id.ParallelAxisNumber == 0)

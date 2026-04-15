@@ -37,9 +37,9 @@ using Altaxo.Calc.LinearAlgebra.Storage;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  /// <summary>
+  /// <content>
   /// Provides BCL interface implementations and formatting helpers for vectors.
-  /// </summary>
+  /// </content>
   [DebuggerDisplay("Vector {" + nameof(Count) + "}")]
   public abstract partial class Vector<T>
   {

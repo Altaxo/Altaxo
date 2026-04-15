@@ -32,6 +32,9 @@ using Altaxo.Graph.Graph3D.GraphicsContext;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
+  /// <summary>
+  /// Provides the base implementation for 3D graphic objects.
+  /// </summary>
   public abstract partial class GraphicBase
   {
     /// <summary>
@@ -77,7 +80,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// </summary>
       /// <param name="initialPosition">Initial position of the mouse.</param>
       /// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
-      /// thie activation is due to a regular mouse click in this grip.</param>
+      /// this activation is due to a regular mouse click in this grip.</param>
       public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
       {
         if (initialPosition is null)
@@ -129,7 +132,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <param name="currentMousePosition">The current mouse position.</param>
       /// <param name="initialObjectHitPositionLocalCoordinates">The initial position in local coordinates where the object or the handle was hit.</param>
       /// <returns>A difference vector (in world coordinates) that can be used to move the object or handle around.</returns>
-      /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+      /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the hit transformations do not allow calculation of a unique movement vector.</exception>
       public static VectorD3D GetMoveVectorInWorldCoordinates(HitTestPointData initialMousePosition, HitTestPointData currentMousePosition, PointD3D initialObjectHitPositionLocalCoordinates)
       {
         var m = initialMousePosition.HitTransformation; // initial ray position

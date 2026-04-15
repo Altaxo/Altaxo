@@ -201,7 +201,6 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="idx">Number of the coordinate.</param>
     /// <param name="value">Value of the coordinate to set.</param>
-    /// <returns>If idx is 0, 1, or 2, then RX, RY, or RZ is set, respectively. Otherwise an <see cref="ArgumentOutOfRangeException"/> is thrown.</returns>
     public void SetCoordinate(int idx, double value)
     {
       switch (idx)

@@ -111,7 +111,6 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     /// <param name="previousPlotItem">Previous plot item.</param>
     /// <param name="nextPlotItem">Next plot item.</param>
-    /// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
     public abstract void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem? previousPlotItem, IGPlotItem? nextPlotItem);
 
     /// <summary>

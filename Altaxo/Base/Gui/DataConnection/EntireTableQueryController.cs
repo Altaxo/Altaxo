@@ -82,9 +82,6 @@ namespace Altaxo.Gui.DataConnection
     /// <summary>
     /// Gets or sets the connection string that represents the underlying database.
     /// </summary>
-    /// <summary>
-    /// Gets or sets the connection string that represents the underlying database.
-    /// </summary>
     public AltaxoOleDbConnectionString ConnectionString
     {
       get { return _connectionString; }

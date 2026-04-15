@@ -1017,7 +1017,7 @@ namespace Altaxo.Main
     /// Reports all suspended nodes in the document tree.
     /// </summary>
     /// <param name="node">The root node.</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if suspended nodes were detected; otherwise, <c>false</c>.</returns>
     public static bool ReportSuspendedNodesProblems(IDocumentLeafNode node)
     {
       bool problemsDetected = false;

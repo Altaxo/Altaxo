@@ -660,7 +660,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
-    /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <param name="samples2">Another subset of samples, sampled from the same full population.</param>
     /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer).</returns>
     public static double Covariance(this IEnumerable<double> samples1, IEnumerable<double> samples2)
     {
@@ -675,7 +675,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data has less than two entries or if any entry is NaN.
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
-    /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <param name="samples2">Another subset of samples, sampled from the same full population.</param>
     /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer).</returns>
     public static double Covariance(this IEnumerable<float> samples1, IEnumerable<float> samples2)
     {
@@ -691,7 +691,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="samples1">A subset of samples, sampled from the full population.</param>
-    /// <param name="samples2">A subset of samples, sampled from the full population.</param>
+    /// <param name="samples2">Another subset of nullable samples, sampled from the same full population.</param>
     /// <returns>The unbiased estimate of the covariance between the two sample sequences (uses an N-1 normalizer). Null entries are ignored.</returns>
     public static double Covariance(this IEnumerable<double?> samples1, IEnumerable<double?> samples2)
     {
@@ -704,7 +704,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population1">The full population data.</param>
-    /// <param name="population2">The full population data.</param>
+    /// <param name="population2">Another full population data set.</param>
     /// <returns>The population covariance between the two full populations (uses an N normalizer).</returns>
     public static double PopulationCovariance(this IEnumerable<double> population1, IEnumerable<double> population2)
     {
@@ -719,7 +719,7 @@ namespace Altaxo.Calc.Statistics
     /// Returns NaN if data is empty or if any entry is NaN.
     /// </summary>
     /// <param name="population1">The full population data.</param>
-    /// <param name="population2">The full population data.</param>
+    /// <param name="population2">Another full population data set.</param>
     /// <returns>The population covariance between the two full populations (uses an N normalizer).</returns>
     public static double PopulationCovariance(this IEnumerable<float> population1, IEnumerable<float> population2)
     {
@@ -735,7 +735,7 @@ namespace Altaxo.Calc.Statistics
     /// Null-entries are ignored.
     /// </summary>
     /// <param name="population1">The full population data.</param>
-    /// <param name="population2">The full population data.</param>
+    /// <param name="population2">Another full nullable population data set.</param>
     /// <returns>The population covariance between the two full populations (uses an N normalizer). Null entries are ignored.</returns>
     public static double PopulationCovariance(this IEnumerable<double?> population1, IEnumerable<double?> population2)
     {

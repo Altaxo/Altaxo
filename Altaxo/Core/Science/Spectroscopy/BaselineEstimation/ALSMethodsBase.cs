@@ -134,7 +134,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
-    /// <inheritdoc/>
+
+    /// <summary>
+    /// Executes the baseline estimation for the specified data and returns the baseline-corrected y-values.
+    /// </summary>
+    /// <param name="x">The x-values of the data.</param>
+    /// <param name="y">The y-values of the data.</param>
+    /// <param name="regions">The optional regions that define contiguous data segments.</param>
+    /// <returns>The original x-values, the baseline-corrected y-values, and the regions.</returns>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var yBaseline = new double[y.Length];
@@ -156,7 +163,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       return (x, yy, regions);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the baseline estimation algorithm for a contiguous data segment.
+    /// </summary>
+    /// <param name="xArray">The x-values of the data segment.</param>
+    /// <param name="yArray">The y-values of the data segment.</param>
+    /// <param name="resultingBaseline">The span that receives the estimated baseline values.</param>
     public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
   }
 }

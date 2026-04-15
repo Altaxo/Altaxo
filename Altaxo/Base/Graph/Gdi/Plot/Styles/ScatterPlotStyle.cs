@@ -160,7 +160,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Copying
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Copies all style settings from another scatter-plot style.
+    /// </summary>
+    /// <param name="from">The source style.</param>
+    /// <param name="eventFiring">Controls how change events are raised.</param>
     [MemberNotNull(nameof(_scatterSymbol))]
     public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
     {
@@ -832,7 +836,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Calculates the scatter symbol from the original scatter symbol and the overrides of frame and inset.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The scatter symbol with the configured frame and inset overrides applied.</returns>
     private IScatterSymbol CalculateOverriddenScatterSymbol()
     {
       if (_scatterSymbol is NoSymbol)

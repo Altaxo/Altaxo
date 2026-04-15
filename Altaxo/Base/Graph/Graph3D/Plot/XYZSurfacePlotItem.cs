@@ -326,7 +326,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IXBoundsHolder Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the x bounds from a template boundary object.
+    /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetXBoundsFromTemplate(val);
@@ -342,7 +345,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IYBoundsHolder Members
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the y bounds from a template boundary object.
+    /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetYBoundsFromTemplate(val);
@@ -358,7 +364,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 
     #region IZBoundHolder
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the z bounds from a template boundary object.
+    /// </summary>
+    /// <param name="val">The template boundary object.</param>
     public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
       _plotData.SetZBoundsFromTemplate(val);
@@ -378,12 +387,12 @@ namespace Altaxo.Graph.Graph3D.Plot
     }
 
     /// <inheritdoc/>
-    public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
+    public override void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
     }
 
     /// <inheritdoc/>
-    public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyGroupStyles(PlotGroupStyleCollection styles)
     {
     }
 

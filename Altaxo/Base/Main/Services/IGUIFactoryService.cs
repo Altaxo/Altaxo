@@ -53,7 +53,7 @@ namespace Altaxo.Main.Services
     /// Retrieves information about a screen area.
     /// </summary>
     /// <param name="virtual_x">The virtual screen x coordinate of the point on the virtual screen.</param>
-    /// <param name="virtual_y">The virtual screen x coordinate of the point on the virtual screen.</param>
+    /// <param name="virtual_y">The virtual screen y coordinate of the point on the virtual screen.</param>
     /// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
     RectangleD2D GetScreenInformation(double virtual_x, double virtual_y);
 
@@ -202,7 +202,6 @@ namespace Altaxo.Main.Services
     /// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
     /// <param name="x">The x coordinate of the location where to show the context menu.</param>
     /// <param name="y">The y coordinate of the location where to show the context menu.</param>
-    /// <returns>The context menu. Returns <c>null</c> if there is no registered context menu provider.</returns>
     void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
 
     /// <summary>

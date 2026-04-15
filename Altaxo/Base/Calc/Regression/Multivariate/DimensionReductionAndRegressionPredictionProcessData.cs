@@ -55,7 +55,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionPredictionProcessData), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
       /// <inheritdoc />
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -65,7 +64,6 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("DataToPredict", s.DataToPredict);
       }
 
-      /// <inheritdoc/>
       /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {

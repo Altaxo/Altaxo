@@ -136,7 +136,6 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="folderName">Name of the folder.</param>
     /// <param name="restoreProjectAndWindowsState">Delegate that is used to deserialize and restore the project and the windows state.</param>
-    /// <returns></returns>
     void LoadFromFolder(DirectoryName folderName, RestoreProjectAndWindowsState restoreProjectAndWindowsState);
 
     /// <summary>

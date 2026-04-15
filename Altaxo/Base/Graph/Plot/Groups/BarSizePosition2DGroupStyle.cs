@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Sets the positions <see cref="_logicalItemOffsetX"/>  according to the <see cref="_cachedCurrentItemIndex"/>.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the cached bar-shift strategy is outside the supported range.</exception>
     private void SetPositionXY_AccordingToCachedCurrentItemIndex()
     {
       int itemIndexX = _cachedCurrentItemIndex;

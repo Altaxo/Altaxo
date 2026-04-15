@@ -1537,7 +1537,7 @@ L50:
     /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="a"></param>
+    /// <param name="a">The shape parameter of the incomplete gamma function.</param>
     /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
     /// <remarks><code>
     /// A slight deterioration of 2 or 3 digits accuracy will occur when
@@ -1577,7 +1577,7 @@ L50:
     /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="a"></param>
+    /// <param name="a">The shape parameter of the incomplete gamma function.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
     /// <returns>Complementary incomplete Gamma function value.</returns>
     /// <remarks>
@@ -1739,7 +1739,7 @@ L50:
       /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
       /// </summary>
       /// <param name="x">The function argument.</param>
-      /// <param name="a"></param>
+      /// <param name="a">The shape parameter of the incomplete gamma function.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
       /// <remarks><code>
@@ -2574,7 +2574,7 @@ L50:
       private const double six = 6.0;
 
       /// <summary>
-      ///
+      /// Computes the inverse of the incomplete beta function.
       /// </summary>
       /// <param name="p">first beta distribution parameter. Must be &gt; 0.</param>
       /// <param name="q">second beta distribution parameter.  Must be &gt; 0.</param>

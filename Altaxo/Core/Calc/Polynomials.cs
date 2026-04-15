@@ -176,7 +176,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
     /// <param name="a">Parameter (&gt; -1).</param>
-    /// <param name="b">Parameter (&gt; -1).</param>
+    /// <param name="b">Second Jacobi parameter (&gt; -1).</param>
     /// <param name="x">Point at which the computation is performed (-1 &lt;= <c>x</c> &lt;= 1).</param>
     /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
     /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>

@@ -30,6 +30,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controls the selection and editing of X and Y column pairs.
+  /// </summary>
   public partial class ListOfXAndYColumnController
   {
     /// <summary>

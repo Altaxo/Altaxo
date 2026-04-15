@@ -39,12 +39,9 @@
 using System;
 using System.Text;
 
+//  author: Thomas Åhlen (thahlen@gmail.com)
 namespace Poly2Tri
 {
-  /**
-     * @author Thomas Åhlen (thahlen@gmail.com)
-     */
-
   /// <summary>
   /// Represents the advancing front used during the sweep triangulation algorithm.
   /// </summary>

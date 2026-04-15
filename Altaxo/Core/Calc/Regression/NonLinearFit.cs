@@ -248,9 +248,9 @@ namespace Altaxo.Calc.Regression
     /// <param name="ipvt">Working array of length <c>n</c> containing pivot indices.</param>
     /// <param name="qtf">Working array of length <c>n</c> containing the first <c>n</c> elements of <c>(Qᵀ)f</c>.</param>
     /// <param name="wa1">Working array of length <c>n</c>.</param>
-    /// <param name="wa2">Working array of length <c>n</c>.</param>
-    /// <param name="wa3">Working array of length <c>n</c>.</param>
-    /// <param name="wa4">Working array of length <c>m</c>.</param>
+    /// <param name="wa2">Second working array of length <c>n</c>.</param>
+    /// <param name="wa3">Third working array of length <c>n</c>.</param>
+    /// <param name="wa4">Working array of length <c>m</c> used for function values.</param>
     /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <remarks>
     /// This is an easy-to-use interface with explicit auxiliary storage allocation.
@@ -333,9 +333,9 @@ namespace Altaxo.Calc.Regression
     /// <param name="ipvt">Pivot indices defining permutation matrix.</param>
     /// <param name="qtf">The first <c>n</c> elements of <c>(Qᵀ)f</c>.</param>
     /// <param name="wa1">Working array of length <c>n</c>.</param>
-    /// <param name="wa2">Working array of length <c>n</c>.</param>
-    /// <param name="wa3">Working array of length <c>n</c>.</param>
-    /// <param name="wa4">Working array of length <c>m</c>.</param>
+    /// <param name="wa2">Second working array of length <c>n</c>.</param>
+    /// <param name="wa3">Third working array of length <c>n</c>.</param>
+    /// <param name="wa4">Working array of length <c>m</c> used for function values.</param>
     /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <remarks>
     /// This overload provides full control over the minimization process and auxiliary storage allocation.
@@ -849,7 +849,7 @@ L300: // L300: error in the input parameters
     /// <param name="x">Output array that receives the least-squares solution.</param>
     /// <param name="sdiag">Output array that receives the diagonal elements of the upper triangular matrix <c>S</c>.</param>
     /// <param name="wa1">Working array of length <c>n</c>.</param>
-    /// <param name="wa2">Working array of length <c>n</c>.</param>
+    /// <param name="wa2">Second working array of length <c>n</c>.</param>
     public static void lmpar(int n, double[] r, int ldr, int[] ipvt, double[] diag, double[] qtb,
         double delta, ref double par, double[] x, double[] sdiag,
         double[] wa1, double[] wa2)

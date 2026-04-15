@@ -302,9 +302,9 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (b) of the distribution. Range: b > 0.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double location, double scale, double x)
@@ -358,7 +358,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (b) of the distribution. Range: b > 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double location, double scale)
     {
       if (scale <= 0.0)
@@ -407,7 +406,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="values">The array to fill with the samples.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (b) of the distribution. Range: b > 0.</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double location, double scale)
     {
       if (scale <= 0.0)

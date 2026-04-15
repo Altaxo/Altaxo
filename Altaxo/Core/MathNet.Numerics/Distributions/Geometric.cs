@@ -199,8 +199,8 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the probability mass (PMF) at k, i.e. P(X = k).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the probability mass function.</param>
     /// <returns>the probability mass at location <paramref name="k"/>.</returns>
     public static double PMF(double p, int k)
     {
@@ -220,8 +220,8 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the log probability mass (lnPMF) at k, i.e. ln(P(X = k)).
     /// </summary>
-    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <param name="k">The location in the domain where we want to evaluate the log probability mass function.</param>
     /// <returns>the log probability mass at location <paramref name="k"/>.</returns>
     public static double PMFLn(double p, int k)
     {
@@ -241,8 +241,8 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="p">The probability (p) of generating one. Range: 0 ≤ p ≤ 1.</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double p, double x)

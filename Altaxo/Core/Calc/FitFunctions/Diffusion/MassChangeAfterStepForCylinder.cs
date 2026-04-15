@@ -302,7 +302,16 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the mass change for a cylinder after a step change.
+    /// </summary>
+    /// <param name="t">The time at which the response is evaluated.</param>
+    /// <param name="r">The cylinder radius.</param>
+    /// <param name="t0">The start time of the step change.</param>
+    /// <param name="M0">The initial mass change offset.</param>
+    /// <param name="ΔM">The mass change amplitude.</param>
+    /// <param name="D">The diffusion constant.</param>
+    /// <returns>The mass change at time <paramref name="t"/>.</returns>
     public static double Evaluate(double t, double r, double t0, double M0, double ΔM, double D)
     {
       return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * (t - t0) / (r * r));

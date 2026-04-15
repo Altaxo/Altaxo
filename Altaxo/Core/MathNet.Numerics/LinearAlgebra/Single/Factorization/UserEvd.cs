@@ -299,7 +299,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
     /// Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
     /// Fortran subroutine in EISPACK.</remarks>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the symmetric diagonalization does not converge within the maximum number of iterations.</exception>
     private static void SymmetricDiagonalize(Matrix<float> eigenVectors, float[] d, float[] e, int order)
     {
       const int maxiter = 1000;

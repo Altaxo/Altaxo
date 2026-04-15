@@ -157,7 +157,7 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="idx">The index.</param>
     /// <returns>The element at index.</returns>
-    /// <exception cref="System.IndexOutOfRangeException"/>
+    /// <exception cref="System.IndexOutOfRangeException">Thrown when <paramref name="idx"/> is outside the valid range of buffered elements.</exception>
     public T this[int idx]
     {
       get

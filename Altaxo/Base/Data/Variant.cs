@@ -743,12 +743,12 @@ namespace Altaxo.Data
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object? k)
+    public override bool Equals(object? obj)
     {
-      if (k is AltaxoVariant av)
+      if (obj is AltaxoVariant av)
         return this == av;
       else
-        return this == new AltaxoVariant(k);
+        return this == new AltaxoVariant(obj);
     }
 
     /// <inheritdoc/>

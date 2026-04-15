@@ -85,9 +85,9 @@ namespace Altaxo.Serialization.Origin
     }
 
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (OriginImportOptions)importOptionsObj;
+      var importOptionsX = (OriginImportOptions)importOptions;
       var opData = new ImportOperationalDataForTable();
 
       foreach (var fileName in fileNames)
@@ -99,13 +99,13 @@ namespace Altaxo.Serialization.Origin
         }
         foreach (var entry in reader.EnumerateAllSpreadSheets(considerSpreadsheetsInExcelsToo: true))
         {
-          ImportSpreadSheet(reader, entry.fullName, entry.spreadsheet, importOptions, table, opData);
+          ImportSpreadSheet(reader, entry.fullName, entry.spreadsheet, importOptionsX, table, opData);
         }
 
 
         foreach (var entry in reader.EnumerateAllMatrixSheets())
         {
-          ImportMatrixSheet(reader, entry.fullName, entry.matrixSheet, importOptions, table, opData);
+          ImportMatrixSheet(reader, entry.fullName, entry.matrixSheet, importOptionsX, table, opData);
         }
       } // for each file
 

@@ -34,6 +34,9 @@ using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
 {
+  /// <summary>
+  /// Provides Sandcastle Help File Builder project helpers for the <see cref="MamlRenderer"/>.
+  /// </summary>
   public partial class MamlRenderer : TextRendererBase<MamlRenderer>
   {
     /// <summary>

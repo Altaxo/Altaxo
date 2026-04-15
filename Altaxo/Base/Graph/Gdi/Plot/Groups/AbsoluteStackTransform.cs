@@ -284,14 +284,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
     }
 
-    /// <inheritdoc/>
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void PaintPostprocessing()
     {
     }
 
-    /// <inheritdoc/>
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void PaintChild(System.Drawing.Graphics g, IPaintContext context, IPlotArea layer, PlotItemCollection collection, int indexOfChild)
     {
       var plotDataDict = context.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
@@ -440,10 +438,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
-    /// <summary>
-    /// Creates a copy of this transform.
-    /// </summary>
-    /// <returns>A copy of this transform.</returns>
     /// <summary>
     /// Creates a copy of this transform.
     /// </summary>

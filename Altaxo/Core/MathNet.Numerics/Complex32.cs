@@ -669,8 +669,8 @@ namespace Altaxo.Calc
     /// <param name="b">Im first</param>
     /// <param name="c">Re second</param>
     /// <param name="d">Im second</param>
-    /// <param name="swapped"></param>
-    /// <returns></returns>
+    /// <param name="swapped">If set to <see langword="true"/>, negates the imaginary part of the result to account for swapped operands.</param>
+    /// <returns>The quotient of the two complex numbers described by the input components.</returns>
     private static Complex32 InternalDiv(float a, float b, float c, float d, bool swapped)
     {
       float r = d / c;
@@ -979,7 +979,7 @@ namespace Altaxo.Calc
     /// formatting information.
     /// </param>
     /// <returns>Resulting part as float.</returns>
-    /// <exception cref="FormatException"/>
+    /// <exception cref="FormatException">Thrown when the token sequence cannot be parsed as a valid complex-number component.</exception>
     private static float ParsePart(ref LinkedListNode<string> token, out bool imaginary, IFormatProvider format)
     {
       imaginary = false;

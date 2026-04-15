@@ -35,6 +35,9 @@ using Markdig.Syntax;
 
 namespace Altaxo.Text.Renderers
 {
+  /// <summary>
+  /// Provides content topic file handling helpers for the <see cref="MamlRenderer"/>.
+  /// </summary>
   public partial class MamlRenderer : TextRendererBase<MamlRenderer>
   {
     #region Maml topic file handling

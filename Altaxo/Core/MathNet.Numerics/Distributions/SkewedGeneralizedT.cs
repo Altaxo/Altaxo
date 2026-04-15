@@ -362,12 +362,12 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Computes the cumulative distribution (CDF) of the distribution at x, i.e. P(X ≤ x).
     /// </summary>
-    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">First parameter that controls kurtosis. Range: p > 0</param>
     /// <param name="q">Second parameter that controls kurtosis. Range: q > 0</param>
+    /// <param name="x">The location at which to compute the cumulative distribution function.</param>
     /// <returns>the cumulative distribution at location <paramref name="x"/>.</returns>
     /// <seealso cref="CumulativeDistribution"/>
     public static double CDF(double location, double scale, double skew, double p, double q, double x)
@@ -399,13 +399,13 @@ namespace Altaxo.Calc.Distributions
     /// Computes the inverse of the cumulative distribution function (InvCDF) for the distribution
     /// at the given probability. This is also known as the quantile or percent point function.
     /// </summary>
-    /// <param name="pr">The location at which to compute the inverse cumulative density.</param>
     /// <param name="location">The location (μ) of the distribution.</param>
     /// <param name="scale">The scale (σ) of the distribution. Range: σ > 0.</param>
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">First parameter that controls kurtosis. Range: p > 0</param>
     /// <param name="q">Second parameter that controls kurtosis. Range: q > 0</param>
-    /// <returns>the inverse cumulative density at <paramref name="p"/>.</returns>
+    /// <param name="pr">The location at which to compute the inverse cumulative density.</param>
+    /// <returns>the inverse cumulative density at <paramref name="pr"/>.</returns>
     /// <seealso cref="InverseCumulativeDistribution"/>
     public static double InvCDF(double location, double scale, double skew, double p, double q, double pr)
     {
@@ -583,7 +583,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">First parameter that controls kurtosis. Range: p > 0</param>
     /// <param name="q">Second parameter that controls kurtosis. Range: q > 0</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(System.Random rnd, double[] values, double location, double scale, double skew, double p, double q)
     {
       if (!IsValidParameterSet(location, scale, skew, p, q))
@@ -641,7 +640,6 @@ namespace Altaxo.Calc.Distributions
     /// <param name="skew">The skew, 1 > λ > -1</param>
     /// <param name="p">First parameter that controls kurtosis. Range: p > 0</param>
     /// <param name="q">Second parameter that controls kurtosis. Range: q > 0</param>
-    /// <returns>a sequence of samples from the distribution.</returns>
     public static void Samples(double[] values, double location, double scale, double skew, double p, double q)
     {
       if (!IsValidParameterSet(location, scale, skew, p, q))

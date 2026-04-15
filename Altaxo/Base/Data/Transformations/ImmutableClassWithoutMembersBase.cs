@@ -43,7 +43,9 @@ namespace Altaxo.Data.Transformations
       return GetType() == obj?.GetType();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this instance can be edited.
+    /// </summary>
     public bool IsEditable { get { return false; } }
   }
 }

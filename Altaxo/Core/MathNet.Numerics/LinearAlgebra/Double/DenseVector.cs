@@ -397,7 +397,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// </summary>
     /// <param name="scalar">The scalar to multiply.</param>
     /// <param name="result">The vector to store the result of the multiplication.</param>
-    /// <remarks></remarks>
     protected override void DoMultiply(double scalar, Vector<double> result)
     {
       if (result is DenseVector denseResult)
@@ -729,7 +728,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     /// </summary>
     /// <param name="divisor">The vector to pointwise divide this one by.</param>
     /// <param name="result">The vector to store the result of the pointwise division.</param>
-    /// <remarks></remarks>
     protected override void DoPointwiseDivide(Vector<double> divisor, Vector<double> result)
     {
       if (divisor is DenseVector denseOther && result is DenseVector denseResult)

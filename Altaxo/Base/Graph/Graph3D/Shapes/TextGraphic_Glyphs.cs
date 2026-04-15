@@ -201,7 +201,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
       /// <summary>Extend of the object below the baseline. (Normally positive).</summary>
       public double ExtendBelowBaseline { get; set; }
 
-      /// <summary></summary>
+      /// <summary>
+      /// Measures the glyph and updates its cached size values.
+      /// </summary>
+      /// <param name="mc">The measurement context.</param>
+      /// <param name="x">The x-position at which the glyph is measured.</param>
       public virtual void Measure(MeasureContext mc, double x)
       {
         SizeX = 0;

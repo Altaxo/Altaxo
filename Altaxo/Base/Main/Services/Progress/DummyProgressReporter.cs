@@ -68,7 +68,12 @@ namespace Altaxo.Main.Services
       return this;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Creates a dummy subtask progress reporter.
+    /// </summary>
+    /// <param name="workAmount">The amount of work represented by the subtask.</param>
+    /// <param name="cancellationToken">The cancellation token to associate with the subtask.</param>
+    /// <returns>The dummy progress reporter instance.</returns>
     public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
     {
       return this;
@@ -107,7 +112,9 @@ namespace Altaxo.Main.Services
     {
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the current progress report text.
+    /// </summary>
     public string ReportText
     {
       get
@@ -125,7 +132,9 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the current progress value.
+    /// </summary>
     public double Progress
     {
       get
@@ -137,7 +146,9 @@ namespace Altaxo.Main.Services
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the current operation status.
+    /// </summary>
     public OperationStatus Status
     {
       get

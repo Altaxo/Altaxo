@@ -55,7 +55,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     /// <param name="computeVectors">Compute the singular U and VT vectors or not.</param>
     /// <returns>A singular value decomposition for the specified matrix.</returns>
     /// <exception cref="ArgumentNullException">If <paramref name="matrix"/> is <c>null</c>.</exception>
-    /// <exception cref="NonConvergenceException"></exception>
+  /// <exception cref="NonConvergenceException">Thrown when the singular value decomposition does not converge within the maximum number of iterations.</exception>
     public static UserSvd Create(Matrix<float> matrix, bool computeVectors)
     {
       var nm = Math.Min(matrix.RowCount + 1, matrix.ColumnCount);

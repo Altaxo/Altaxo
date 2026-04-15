@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The light amplitude value.</param>
     /// <param name="valueName">The paramter name.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than or equal to zero.</exception>
     private void VerifyLightAmplitude(double value, string valueName)
     {
       if (!(value >= 0))
@@ -286,8 +286,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The position of the light.</param>
     /// <param name="valueName">The name of the parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must contain only finite coordinates.</exception>
     private void VerifyPosition(PointD3D value, string valueName)
     {
       if (value.IsNaN)
@@ -330,8 +329,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// <param name="value">The direction from light to scene.</param>
     /// <param name="valueName">The name of the parameter.</param>
     /// <returns>Vector length.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be a non-empty vector with finite components.</exception>
     private double VerifyDirection(VectorD3D value, string valueName)
     {
       if (value == VectorD3D.Empty)
@@ -381,7 +379,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The light range.</param>
     /// <param name="valueName">The name of the parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than zero.</exception>
     private void VerifyRange(double value, string valueName)
     {
       if (!(value > 0))
@@ -426,7 +424,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
     /// </summary>
     /// <param name="value">The cone angle in radians.</param>
     /// <param name="valueName">The name of the parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> must be greater than or equal to zero.</exception>
     private void VerifyAngle(double value, string valueName)
     {
       if (!(value >= 0))

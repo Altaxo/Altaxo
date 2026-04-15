@@ -137,7 +137,7 @@ namespace Altaxo.Calc
     /// <param name="token">First token of the number.</param>
     /// <param name="culture">Culture Info.</param>
     /// <returns>The parsed double number using the given culture information.</returns>
-    /// <exception cref="FormatException" />
+    /// <exception cref="FormatException">Thrown when the token sequence cannot be parsed as a <see cref="double"/> using the specified culture.</exception>
     internal static double ParseDouble(ref LinkedListNode<string> token, CultureInfo culture)
     {
       // in case the + and - in scientific notation are separated, join them back together.
@@ -170,7 +170,7 @@ namespace Altaxo.Calc
     /// <param name="token">First token of the number.</param>
     /// <param name="culture">Culture Info.</param>
     /// <returns>The parsed float number using the given culture information.</returns>
-    /// <exception cref="FormatException" />
+    /// <exception cref="FormatException">Thrown when the token sequence cannot be parsed as a <see cref="float"/> using the specified culture.</exception>
     internal static float ParseSingle(ref LinkedListNode<string> token, CultureInfo culture)
     {
       // in case the + and - in scientific notation are separated, join them back together.

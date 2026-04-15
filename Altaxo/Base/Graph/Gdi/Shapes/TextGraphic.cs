@@ -767,9 +767,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     /// <inheritdoc />
-    public override void Paint(Graphics g, IPaintContext paintContext)
+    public override void Paint(Graphics g, IPaintContext context)
     {
-      Paint(g, paintContext, false);
+      Paint(g, context, false);
     }
 
     /// <summary>
@@ -854,11 +854,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     public static DoubleClickHandler? TextGraphicsEditorMethod;
 
     /// <inheritdoc />
-    public override IHitTestObject? HitTest(HitTestPointData htd)
+    public override IHitTestObject? HitTest(HitTestPointData hitData)
     {
       IHitTestObject? result;
 
-      var pt = htd.GetHittedPointInWorldCoord(_transformation);
+      var pt = hitData.GetHittedPointInWorldCoord(_transformation);
 
       foreach (GraphicsPath gp in _cachedSymbolPositions.Keys)
       {
@@ -872,7 +872,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         }
       }
 
-      result = base.HitTest(htd);
+      result = base.HitTest(hitData);
       if (result is not null)
         result.DoubleClick = TextGraphicsEditorMethod;
       return result;

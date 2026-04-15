@@ -642,7 +642,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="identifier">The identifier of the bundle.</param>
     /// <returns><c>True</c> if this instance contains a column bundle with the provided <paramref name="identifier"/>; otherwise <c>false</c>.</returns>
-    /// <exception cref="System.ArgumentNullException"></exception>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="identifier"/> is <see langword="null"/>.</exception>
     public bool ContainsIdentifier(string identifier)
     {
       if (identifier is null)
@@ -695,8 +695,8 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="identifier">The identifier to identify the column bundle.</param>
     /// <returns>All data column of the bundle which could be resolved, i.e. whose proxy contained a valid column.</returns>
-    /// <exception cref="System.ArgumentNullException"></exception>
-    /// <exception cref="System.InvalidOperationException"></exception>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="identifier"/> is <see langword="null"/>.</exception>
+    /// <exception cref="System.InvalidOperationException">Thrown if the specified <paramref name="identifier"/> does not exist in this collection.</exception>
     public IList<DataColumn> GetDataColumns(string identifier)
     {
       if (_isDirty)
@@ -717,8 +717,8 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="identifier">The identifier to identify the column bundle.</param>
     /// <returns>The first valid data column of the bundle identified by <paramref name="identifier"/>, or null if no such column exists.</returns>
-    /// <exception cref="System.ArgumentNullException"></exception>
-    /// <exception cref="System.InvalidOperationException"></exception>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="identifier"/> is <see langword="null"/>.</exception>
+    /// <exception cref="System.InvalidOperationException">Thrown if the specified <paramref name="identifier"/> does not exist in this collection.</exception>
     public DataColumn? GetDataColumnOrNull(string identifier)
     {
       if (_isDirty)

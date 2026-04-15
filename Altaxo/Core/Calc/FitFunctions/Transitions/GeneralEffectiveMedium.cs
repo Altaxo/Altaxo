@@ -423,9 +423,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] X, double[] P, double[] Y)
+    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
     {
-      Y[0] = EvaluateLog10(X[0], P[0], P[1], P[2], P[3], P[4]);
+      dependent[0] = EvaluateLog10(independent[0], parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
 
     /// <summary>

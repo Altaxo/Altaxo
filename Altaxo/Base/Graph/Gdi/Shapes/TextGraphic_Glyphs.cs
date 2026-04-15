@@ -35,10 +35,13 @@ namespace Altaxo.Graph.Gdi.Shapes
   using Geometry;
   using Plot;
 
+  /// <summary>
+  /// Represents a graphic text object.
+  /// </summary>
   public partial class TextGraphic : GraphicBase
   {
     /// <summary>
-    /// Holds Information about the metrics of a font.
+    /// Holds information about the metrics of a font.
     /// </summary>
     private class FontInfo
     {
@@ -46,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public double cyAscent { get; private set; }    // cached ascent value of the font
 
-      public double cyDescent { get; private set; } /// cached descent value of the font
+      public double cyDescent { get; private set; } // cached descent value of the font
 
       public double Size { get; private set; }
 
@@ -140,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       /// <summary>
-      /// Merges the providedstyle into the present style. Example: if the present style is Bold, and the style parameter is Italic, then the merged style is 'Bold Italic'.
+      /// Merges the provided style into the present style. Example: if the present style is Bold, and the style parameter is Italic, then the merged style is 'Bold Italic'.
       /// </summary>
       /// <param name="style">The style to merge with the present style.</param>
       public void MergeFontStyle(FontXStyle style)
@@ -221,7 +224,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <summary>Extend of the object below the baseline. (Normally positive).</summary>
       public double ExtendBelowBaseline { get; set; }
 
-      /// <summary></summary>
+      /// <summary>
+      /// Measures this glyph and updates its size information.
+      /// </summary>
       public virtual void Measure(Graphics g, MeasureContext mc, double x)
       {
         Width = 0;

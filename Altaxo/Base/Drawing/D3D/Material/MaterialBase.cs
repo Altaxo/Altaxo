@@ -149,11 +149,11 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     /// <summary>
-    /// Verifies the smothness to be in the range [0,1]
+    /// Verifies that the smoothness is in the range [0, 1].
     /// </summary>
-    /// <param name="value">The value of the specular exponent.</param>
-    /// <param name="valueName">Name of the value.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+    /// <param name="value">The smoothness value to validate.</param>
+    /// <param name="valueName">The name of the value.</param>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is outside the range [0, 1].</exception>
     protected void VerifySmoothness(double value, string valueName)
     {
       if (!(value >= 0))
@@ -204,9 +204,8 @@ namespace Altaxo.Drawing.D3D.Material
     /// Verifies the metalness to be in the range [0, 1].
     /// </summary>
     /// <param name="value">The value of the metalness.</param>
-    /// <param name="valueName">Name of the value.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException">
-    /// </exception>
+    /// <param name="valueName">The name of the value.</param>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is outside the range [0, 1].</exception>
     protected void VerifyMetalness(double value, string valueName)
     {
       if (!(value >= 0))
@@ -231,10 +230,10 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     /// <summary>
-    /// Gets a new instance of the material with the specular mixing coefficient set to the provided value.
+    /// Gets a new instance of the material with the index of refraction set to the provided value.
     /// </summary>
-    /// <param name="indexOfRefraction">The specular mixing coefficient.</param>
-    /// <returns>A new instance of the material with the specular mixing coefficient set to the provided value.</returns>
+    /// <param name="indexOfRefraction">The index of refraction.</param>
+    /// <returns>A new instance of the material with the index of refraction set to the provided value.</returns>
     public MaterialBase WithIndexOfRefraction(double indexOfRefraction)
     {
       if (!(indexOfRefraction == _indexOfRefraction))
@@ -252,12 +251,11 @@ namespace Altaxo.Drawing.D3D.Material
     }
 
     /// <summary>
-    /// Verifies the specular mixing coefficient to be in the range [0, 1].
+    /// Verifies that the index of refraction is within the supported range.
     /// </summary>
-    /// <param name="value">The value of the mixing coefficient.</param>
-    /// <param name="valueName">Name of the value.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException">
-    /// </exception>
+    /// <param name="value">The index of refraction value.</param>
+    /// <param name="valueName">The name of the value.</param>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is outside the supported range.</exception>
     protected void VerifyIndexOfRefraction(double value, string valueName)
     {
       if (!(value >= 1))

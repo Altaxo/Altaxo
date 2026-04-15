@@ -62,10 +62,14 @@ namespace Altaxo.Main.Services.Files
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets a value indicating whether this archive wrapper has been disposed.
+    /// </summary>
     public bool IsDisposed => _isDisposed;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the archive manager associated with this project archive.
+    /// </summary>
     public IProjectArchiveManager? ArchiveManager { get; set; }
 
     /// <summary>

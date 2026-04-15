@@ -68,9 +68,9 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// Sets model parameters and allocates scratch vectors for numerical Jacobian evaluation when necessary.
     /// </summary>
     /// <inheritdoc/>
-    public override void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
+    public override void SetParameters(IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed = null)
     {
-      base.SetParameters(initialGuess, isFixed);
+      base.SetParameters(parameters, isFixed);
 
       // set the vectors neccessary to calculate the numerical jacobian
       if (_userDerivative is null)

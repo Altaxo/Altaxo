@@ -33,6 +33,9 @@ using Complex = System.Numerics.Complex;
 // ReSharper disable once CheckNamespace
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides numerically stable helper functions for special-function calculations.
+  /// </summary>
   public partial class SpecialFunctions
   {
     /// <summary>

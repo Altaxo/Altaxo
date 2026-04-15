@@ -155,7 +155,10 @@ namespace Altaxo.Data
       }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Reports the document references stored by this instance.
+    /// </summary>
+    /// <param name="reportProxies">The callback that receives the reported proxies.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter reportProxies)
     {
       for (int i = _tables.Count - 1; i >= 0; i--)

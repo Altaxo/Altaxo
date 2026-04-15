@@ -38,13 +38,13 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
     /// Writes a link or image inline.
     /// </summary>
     /// <inheritdoc/>
-    protected override void Write(MamlRenderer renderer, LinkInline link)
+    protected override void Write(MamlRenderer renderer, LinkInline obj)
     {
-      var url = link.GetDynamicUrl is not null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+      var url = obj.GetDynamicUrl is not null ? obj.GetDynamicUrl() ?? obj.Url : obj.Url;
 
-      if (link.IsImage)
+      if (obj.IsImage)
       {
-        RenderImage(renderer, link, url);
+        RenderImage(renderer, obj, url);
       }
       else // link is not an image
       {
@@ -52,7 +52,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
         {
           renderer.Push(MamlElements.externalLink);
           renderer.Push(MamlElements.linkText);
-          renderer.WriteChildren(link);
+          renderer.WriteChildren(obj);
           renderer.PopTo(MamlElements.linkText);
 
           renderer.Push(MamlElements.linkUri);
@@ -71,11 +71,11 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
           }
           else
           {
-            renderer.UnresolvedLinks.Add(link);
+            renderer.UnresolvedLinks.Add(obj);
           }
 
           renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", totalAddress) });
-          renderer.WriteChildren(link);
+          renderer.WriteChildren(obj);
           renderer.PopTo(MamlElements.link);
         }
       }
@@ -154,7 +154,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
     /// Gets the length in 1/96th inch.
     /// </summary>
     /// <param name="lenString">The length string.</param>
-    /// <returns></returns>
+    /// <returns>The parsed length in 1/96th inch, or <see langword="null"/> if the value cannot be parsed.</returns>
     private double? GetLength(string lenString)
     {
       if (string.IsNullOrEmpty(lenString))

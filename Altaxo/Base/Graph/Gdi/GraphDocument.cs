@@ -301,7 +301,7 @@ typeof(GraphDocument),
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.GraphDocument", 3)]
     private class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
     {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
         /*
@@ -468,10 +468,10 @@ typeof(GraphDocument),
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-    public override void VisitDocumentReferences(DocNodeProxyReporter Report)
+    /// <param name="ReportProxies">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public override void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
-      _rootLayer.VisitDocumentReferences(Report);
+      _rootLayer.VisitDocumentReferences(ReportProxies);
     }
 
     /// <summary>
@@ -497,7 +497,7 @@ typeof(GraphDocument),
     /// <summary>
     /// Gets the bounds of the root layer.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The bounding rectangle of the root layer in parent coordinates.</returns>
     private RectangleD2D GetBounds()
     {
       var s = _rootLayer.Size;

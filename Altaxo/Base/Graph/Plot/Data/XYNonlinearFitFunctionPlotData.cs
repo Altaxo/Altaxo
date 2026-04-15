@@ -173,7 +173,6 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <inheritdoc />
-    /// <inheritdoc />
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_function is Main.IDocumentLeafNode fdln)

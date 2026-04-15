@@ -27,17 +27,17 @@ namespace Altaxo.Gui.Settings
   /// </summary>
   public interface IOptionPanelDescriptor
   {
-    /// <value>
-    /// Returns the ID of the dialog panel codon
-    /// </value>
+    /// <summary>
+    /// Gets the identifier of the dialog panel codon.
+    /// </summary>
     string ID
     {
       get;
     }
 
-    /// <value>
-    /// Returns the label of the dialog panel
-    /// </value>
+    /// <summary>
+    /// Gets the label of the dialog panel.
+    /// </summary>
     string Label { get; }
 
     /// <summary>
@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Settings
       get;
     }
 
-    /// <value>
-    /// Returns the dialog panel object
-    /// </value>
+    /// <summary>
+    /// Gets the dialog panel object.
+    /// </summary>
     IOptionPanel? OptionPanel
     {
       get;

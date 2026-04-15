@@ -153,9 +153,9 @@ namespace Altaxo.Worksheet
     }
 
     /// <inheritdoc />
-    public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn datac)
+    public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
-      return datac.Name;
+      return data.Name;
     }
 
     /// <inheritdoc />

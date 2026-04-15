@@ -215,8 +215,7 @@ namespace Altaxo.Graph.Plot.Data
         return s;
       }
 
-      /// <inheritdoc />
-      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+            public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
       {
         bool bAllResolved = true;
 

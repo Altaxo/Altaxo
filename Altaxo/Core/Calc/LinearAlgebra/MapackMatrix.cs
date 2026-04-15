@@ -45,9 +45,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int startRow, int endRow, int startColumn, int endColumn);
 
-    /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
-    /// <param name="r">Array of row indices;</param>
-    /// <param name="c">Array of row indices;</param>
+    /// <summary>Returns a submatrix extracted using explicit row and column index arrays.</summary>
+    /// <param name="r">Array of row indices.</param>
+    /// <param name="c">Array of column indices.</param>
     /// <returns>The extracted submatrix.</returns>
     IMapackMatrix Submatrix(int[] r, int[] c);
 
@@ -437,9 +437,9 @@ namespace Altaxo.Calc.LinearAlgebra
       return X;
     }
 
-    /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
-    /// <param name="r">Array of row indices</param>
-    /// <param name="c">Array of row indices</param>
+    /// <summary>Returns a submatrix extracted using explicit row and column index arrays.</summary>
+    /// <param name="r">Array of row indices.</param>
+    /// <param name="c">Array of column indices.</param>
     /// <returns>The extracted submatrix.</returns>
     public IMapackMatrix Submatrix(int[] r, int[] c)
     {

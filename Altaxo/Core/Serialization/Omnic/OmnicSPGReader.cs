@@ -447,6 +447,13 @@ namespace Altaxo.Serialization.Omnic
     /// <summary>
     /// Holds the subset of header information needed for SPG import.
     /// </summary>
+    /// <param name="Nx">The number of x points in the spectrum.</param>
+    /// <param name="FirstX">The first x value.</param>
+    /// <param name="LastX">The last x value.</param>
+    /// <param name="XUnit">The x-axis unit, if available.</param>
+    /// <param name="XTitle">The x-axis title.</param>
+    /// <param name="YUnit">The y-axis unit, if available.</param>
+    /// <param name="YTitle">The y-axis title.</param>
     private readonly record struct HeaderInfo(int Nx, double FirstX, double LastX, string? XUnit, string XTitle, string? YUnit, string YTitle);
   }
 }

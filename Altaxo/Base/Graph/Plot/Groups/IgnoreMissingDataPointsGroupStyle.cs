@@ -77,9 +77,6 @@ namespace Altaxo.Graph.Plot.Groups
     /// Initializes a new instance of the <see cref="IgnoreMissingDataPointsGroupStyle"/> class by copying another instance.
     /// </summary>
     /// <param name="from">The instance to copy.</param>
-    /// <summary>
-    /// Initializes a new instance of the <see cref="IgnoreMissingDataPointsGroupStyle"/> class by copying another instance.
-    /// </summary>
     public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
     {
       _isInitialized = from._isInitialized;

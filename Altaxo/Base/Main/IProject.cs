@@ -64,7 +64,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="type">The type (must be a type that implements <see cref="Altaxo.Main.IProjectItem"/>).</param>
     /// <returns>The collection in which items of this type are stored.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="type"/> is not a supported project item type.</exception>
     public IProjectItemCollection GetCollectionForProjectItemType(System.Type type);
 
     /// <summary>
@@ -120,7 +120,7 @@ namespace Altaxo.Main
     /// <param name="existingItem">If an item with the same type and name as the provided item exists in the project, that existing item is returned.</param>
     /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Thrown if the type of <paramref name="item"/> is not a supported project item type.</exception>
     public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem);
 
     /// <summary>

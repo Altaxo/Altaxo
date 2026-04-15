@@ -205,8 +205,8 @@ namespace Altaxo.Data
     /// Shows the ASCII analysis dialog.
     /// </summary>
     /// <param name="fileName">Name of the file to analyze.</param>
-    /// <param name="importOptions">On return, contains the ASCII import options the user has confirmed.</param>
     /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
+    /// <param name="importOptions">On return, contains the ASCII import options the user has confirmed.</param>
     /// <returns><c>True</c> if the user confirms this dialog (clicks OK). False if the user cancels this dialog.</returns>
     public static bool ShowAsciiImportOptionsDialog(string fileName, AsciiDocumentAnalysisOptions analysisOptions, out AsciiImportOptions importOptions)
     {

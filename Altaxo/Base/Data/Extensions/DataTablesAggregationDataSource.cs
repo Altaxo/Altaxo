@@ -34,9 +34,6 @@ namespace Altaxo.Data
   /// <summary>
   /// Provides a data source that aggregates data from multiple tables according to specified options.
   /// </summary>
-  /// <summary>
-  /// Provides a data source that aggregates data from multiple tables according to specified options.
-  /// </summary>
   public class DataTablesAggregationDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     /// <summary>
@@ -129,7 +126,6 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTablesAggregationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
       /// <inheritdoc />
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

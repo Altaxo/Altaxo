@@ -467,9 +467,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a table for statistics on columns. Property columns are included in the statistical table.
     /// </summary>
-    /// <param name="srcTable"></param>
-    /// <param name="selectedColumns"></param>
-    /// <returns></returns>
+    /// <param name="srcTable">The source table whose selected columns are analyzed.</param>
+    /// <param name="selectedColumns">The indices of the columns to include in the statistical table.</param>
+    /// <returns>A new table containing the statistics for the selected columns and copied property columns.</returns>
     private static DataTable CreateStatisticalTable(DataTable srcTable, IAscendingIntegerCollection selectedColumns)
     {
       var result = new DataTable
@@ -486,9 +486,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Create a statistical table for statistics on columns. Property columns are not included in the statistical table.
     /// </summary>
-    /// <param name="srcTable"></param>
-    /// <param name="selectedColumns"></param>
-    /// <returns></returns>
+    /// <param name="srcTable">The source column collection whose selected columns are analyzed.</param>
+    /// <param name="selectedColumns">The indices of the columns to include in the statistical table.</param>
+    /// <returns>A new table containing the statistics for the selected columns.</returns>
     private static DataTable CreateStatisticalTable(DataColumnCollection srcTable, IAscendingIntegerCollection selectedColumns)
     {
       var result = new DataTable();
@@ -501,7 +501,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates a statistical table for Statistics on Rows.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new table prepared to receive row-based statistics.</returns>
     private static DataTable CreateStatisticalTable()
     {
       var result = new DataTable();

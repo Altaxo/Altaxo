@@ -133,10 +133,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       /// <summary>
       /// Determines whether any collected grip is hit.
       /// </summary>
-      public bool IsGripHit(HitTestPointData point)
+      public bool IsGripHit(HitTestPointData hitData)
       {
         foreach (var ele in GripList)
-          if (ele.IsGripHit(point))
+          if (ele.IsGripHit(hitData))
             return true;
         return false;
       }

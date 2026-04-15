@@ -160,9 +160,9 @@ namespace Altaxo.Serialization.WITec
     }
 
     /// <inheritdoc />
-    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true)
     {
-      var importOptions = (WITecImportOptions)importOptionsObj;
+      var importOptionsX = (WITecImportOptions)importOptions;
       Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -185,16 +185,16 @@ namespace Altaxo.Serialization.WITec
         }
         reader.ExtractSpectra();
 
-        IEnumerable<TDGraphClass> spectra = importOptions.IgnoreSecondaryData ?
+        IEnumerable<TDGraphClass> spectra = importOptionsX.IgnoreSecondaryData ?
           reader.Spectra.Where(r => r.GraphType == TDGraphClass.GraphClassType.SpectralData) :
           reader.Spectra;
         int indexOfSpectrum = -1;
         foreach (var spectrum in spectra)
         {
           ++indexOfSpectrum;
-          if (!(importOptions.IndicesOfImportedGraphs.Count == 0 ||
-               importOptions.IndicesOfImportedGraphs.Contains(indexOfSpectrum) ||
-               importOptions.IndicesOfImportedGraphs.Contains(indexOfSpectrum - reader.Spectra.Count)
+          if (!(importOptionsX.IndicesOfImportedGraphs.Count == 0 ||
+               importOptionsX.IndicesOfImportedGraphs.Contains(indexOfSpectrum) ||
+               importOptionsX.IndicesOfImportedGraphs.Contains(indexOfSpectrum - reader.Spectra.Count)
             ))
           {
             continue;
@@ -247,9 +247,9 @@ namespace Altaxo.Serialization.WITec
             for (int iSpectrum = 0; iSpectrum < spectrum.ZValues.GetLength(0); ++iSpectrum)
             {
               string columnName;
-              if (importOptions.UseNeutralColumnName)
+              if (importOptionsX.UseNeutralColumnName)
               {
-                columnName = string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName;
+                columnName = string.IsNullOrEmpty(importOptionsX.NeutralColumnName) ? "Y" : importOptionsX.NeutralColumnName;
               }
               else
               {
@@ -309,7 +309,7 @@ namespace Altaxo.Serialization.WITec
                 xPC[table.DataColumns.GetColumnNumber(ycol)] = zMeta.ZValues[iSpectrum];
               }
 
-              if (importOptions.IncludeFilePathAsProperty)
+              if (importOptionsX.IncludeFilePathAsProperty)
               {
                 // add also a property column named "FilePath" if not existing so far
                 if (!table.PropCols.ContainsColumn("FilePath"))

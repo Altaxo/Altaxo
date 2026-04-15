@@ -395,7 +395,7 @@ search:
     /// On entry, contains the initial iterate; if the iteration converges, contains the final iterate on exit.
     /// </param>
     /// <param name="zi">
-    /// On entry, contains the initial iterate; if the iteration converges, contains the final iterate on exit.
+    /// On entry, contains the imaginary part of the initial iterate; if the iteration converges, contains the imaginary part of the final iterate on exit.
     /// </param>
     /// <param name="conv">Set to 1 if the iteration converged; otherwise 0.</param>
     private void vrshft(int l3, ref double zr, ref double zi, ref int conv)

@@ -4,6 +4,7 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-CopyFromAnalyzer | Naming | Warning | CopyFromAnalyzer
-NullComparisonAnalyzer | Naming | Warning | NullComparisonAnalyzerAnalyzer
-LEL001  | Naming   | Warning  | InterfaceParameterNameAnalyzer
+LEP001  | Naming | Warning | NullComparisonAnalyzerAnalyzer
+LED001  | Documentation | Warning  | InterfaceParameterNameAnalyzer
+LED002  | Documentation | Warning  | OrphanedInheritdocAnalyzer
+LED003  | Documentation | Warning  | RecordParameterDocumentationAnalyzer

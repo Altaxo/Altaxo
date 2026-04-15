@@ -338,8 +338,8 @@ namespace Altaxo.Calc.Interpolation
       /// <summary>
       /// Not implemented because this wrapper only exposes evaluation delegates.
       /// </summary>
-      /// <param name="xvec">Ignored.</param>
-      /// <param name="yvec">Ignored.</param>
+      /// <param name="xvec">Ignored abscissa vector.</param>
+      /// <param name="yvec">Ignored ordinate vector.</param>
       /// <exception cref="NotImplementedException">Always thrown.</exception>
       public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
       {

@@ -530,10 +530,10 @@ namespace Altaxo.Graph.Graph3D
     /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
     /// to change a plot so that the plot items refer to another table.
     /// </summary>
-    /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-    public override void VisitDocumentReferences(DocNodeProxyReporter Report)
+    /// <param name="ReportProxies">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+    public override void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
-      _rootLayer.VisitDocumentReferences(Report);
+      _rootLayer.VisitDocumentReferences(ReportProxies);
     }
 
     #endregion Infrastructure
@@ -577,7 +577,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Gets the bounds of the root layer.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The bounds of the root layer in parent coordinates.</returns>
     private RectangleD3D GetBounds()
     {
       var re = new RectangleD3D(PointD3D.Empty, _rootLayer.Size);
@@ -587,7 +587,7 @@ namespace Altaxo.Graph.Graph3D
     /// <summary>
     /// Gets the bounds of the root layer.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The bounds of the root layer in view coordinates.</returns>
     private RectangleD3D GetViewBounds()
     {
       var matrix = _camera.LookAtRHMatrix;
@@ -719,7 +719,7 @@ namespace Altaxo.Graph.Graph3D
     /// <param name="toEyeVector">The To-Eye vector (vector from the target to the camera position).</param>
     /// <param name="cameraUpVector">The camera up vector.</param>
     /// <param name="aspectRatio">The aspect ratio of the view port. If in doubt, use 1.</param>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown if the camera cannot create a view for the requested orientation.</exception>
     public void ViewToRootLayerCenter(VectorD3D toEyeVector, VectorD3D cameraUpVector, double aspectRatio)
     {
       var upVector = cameraUpVector.Normalized;

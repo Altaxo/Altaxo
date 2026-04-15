@@ -337,8 +337,8 @@ end_of_function:
     /// <summary>
     /// Gets the controller for a certain style instance from either the dictionary, or if not found, by creating a new instance.
     /// </summary>
-    /// <param name="style"></param>
-    /// <returns></returns>
+    /// <param name="style">The plot style instance.</param>
+    /// <returns>The controller for the specified plot style instance.</returns>
     private IMVCANController GetStyleController(IG2DPlotStyle style)
     {
       if (_styleControllerDictionary.ContainsKey(style))
@@ -411,7 +411,7 @@ end_of_function:
     /// This distributes changes made to one of the sub plot styles to all other plot styles. Additionally, the controller
     /// for this styles are also updated.
     /// </summary>
-    /// <param name="pivotelement"></param>
+    /// <param name="pivotelement">The index of the plot style whose changes are distributed.</param>
     /// <param name="updateAllStyleControllers">If true, the style controllers are newly initialized. Set this parameter to false if this is unneccessary, e.g.
     /// when applying the controller and closing it afterwards.</param>
     private void DistributeStyleChange(int pivotelement, bool updateAllStyleControllers)

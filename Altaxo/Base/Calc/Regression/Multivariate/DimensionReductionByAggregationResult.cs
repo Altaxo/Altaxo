@@ -37,9 +37,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Initializes a new instance of the <see cref="DimensionReductionByAggregationResult"/> record.
     /// </summary>
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionReductionByAggregationResult"/> record.
-    /// </summary>
     /// <param name="result">The aggregation result matrix.</param>
     /// <param name="aggregationKinds">The aggregation kinds used for the result columns.</param>
     public DimensionReductionByAggregationResult(IROMatrix<double> result, ImmutableList<KindOfAggregation> aggregationKinds)

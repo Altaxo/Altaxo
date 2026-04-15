@@ -500,12 +500,12 @@ namespace Altaxo.Main
     /// <summary>
     /// Helper function called by a child of this collection to handle renaming of this child.
     /// </summary>
-    /// <param name="newName">The new name of the child.</param>
     /// <param name="child">The child's instance.</param>
+    /// <param name="newName">The new name of the child.</param>
     /// <param name="setName">Action to set the name to the provided value. This function should only do set the name, but not raise any evens etc.</param>
     /// <param name="raiseOnNameChanged">Action to raise the NameChanged event on the child.</param>
     /// <exception cref="ArgumentNullException">newName - New name is null</exception>
-    /// <exception cref="ApplicationException"></exception>
+    /// <exception cref="ApplicationException">Thrown when the child can not be renamed because the requested name already exists.</exception>
     public void RenameChild(INameOwner child, string newName, Action<string> setName, Action<string> raiseOnNameChanged)
     {
       var oldName = child.Name;

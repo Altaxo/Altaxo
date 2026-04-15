@@ -32,7 +32,9 @@ namespace Altaxo.Collections
   /// </summary>
   public interface IContiguousIntegerRange : IReadOnlyList<int>, IAscendingIntegerCollection
   {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the first integer in the range.
+    /// </summary>
     int Start { get; }
   }
 
@@ -257,7 +259,6 @@ namespace Altaxo.Collections
 
     #region IList interface
 
-    /// <inheritdoc/>
     /// <summary>
     /// Returns the zero-based index of the specified item within the range.
     /// </summary>
@@ -271,7 +272,6 @@ namespace Altaxo.Collections
         return -1;
     }
 
-    /// <inheritdoc/>
     /// <summary>
     /// Throws because this range is read-only.
     /// </summary>
@@ -282,7 +282,6 @@ namespace Altaxo.Collections
       throw new InvalidOperationException("This instance is read-only");
     }
 
-    /// <inheritdoc/>
     /// <summary>
     /// Throws because this range is read-only.
     /// </summary>

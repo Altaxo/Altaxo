@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Represents the content of the matrix as a string.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A string representation of the matrix content.</returns>
     public override string ToString()
     {
       return MatrixMath.MatrixToString(null, this);

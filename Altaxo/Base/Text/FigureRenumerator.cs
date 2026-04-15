@@ -482,7 +482,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="leafBlock">The leaf block to extract the text from.</param>
     /// <param name="result">The result. Contains one or more text fragments bundled with its position in the source text.</param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException">Thrown when the leaf block contains an inline element type that is not yet supported.</exception>
     public static void ExtractTextContentFrom(Markdig.Syntax.LeafBlock leafBlock, List<(string Text, int Position)> result)
     {
       if (leafBlock.Inline is null)
@@ -515,7 +515,7 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="containerInline">The container inline to extract the text from.</param>
     /// <param name="result">The result. Contains one or more text fragments bundled with its position in the source text.</param>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException">Thrown when the container inline contains a child inline type that is not yet supported.</exception>
     public static void ExtractTextContentFrom(Markdig.Syntax.Inlines.ContainerInline containerInline, List<(string Text, int Position)> result)
     {
       foreach (var il in containerInline)

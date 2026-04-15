@@ -17,6 +17,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Ode
 {
+  /// <summary>
+  /// Provides a Gear BDF implementation that stores the solution state in Nordsieck form.
+  /// </summary>
   public partial class GearsBDFWithNordsieckState
   {
     /// <summary>

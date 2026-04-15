@@ -201,7 +201,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <inheritdoc/>
-    /// <inheritdoc/>
     public object Clone(bool copyWithDataReferences)
     {
       return new G3DPlotStyleCollection(this);
@@ -227,10 +226,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     #region Construction
 
     /// <summary>
-    /// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
-    /// </summary>
-    /// <summary>
-    /// Initializes a new instance of the <see cref="G3DPlotStyleCollection"/> class.
+    /// Creates an empty collection without any styles. Add styles to make the plot item visible.
     /// </summary>
     public G3DPlotStyleCollection()
     {
@@ -500,11 +496,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
-    /// Distibute changes made to one group style of the collection (at index <c>pivot</c> to all other members of the collection.
+    /// Distributes changes made to one group style of the collection at index <c>pivot</c> to all other members of the collection.
     /// </summary>
     /// <param name="pivot">Index of the group style that was changed. This style keeps it's properties.</param>
-    /// <param name="layer"></param>
-    /// <param name="pdata"></param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void DistributeSubStyleChange(int pivot, IPlotArea layer, Processed3DPlotData pdata)
     {
       var externGroup = new PlotGroupStyleCollection();
@@ -531,8 +527,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// all distributes group properties (local only) of this style collection.
     /// </summary>
     /// <param name="newSubStyle">Sub style to prepare.</param>
-    /// <param name="layer"></param>
-    /// <param name="pdata"></param>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="pdata">The processed plot data.</param>
     public void PrepareNewSubStyle(IG3DPlotStyle newSubStyle, IPlotArea layer, Processed3DPlotData pdata)
     {
       var externGroup = new PlotGroupStyleCollection();

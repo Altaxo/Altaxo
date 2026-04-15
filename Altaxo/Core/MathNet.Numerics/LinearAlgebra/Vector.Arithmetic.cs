@@ -31,6 +31,9 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  /// <content>
+  /// Defines arithmetic operations for <see cref="Vector{T}"/> instances.
+  /// </content>
   public abstract partial class Vector<T>
   {
     /// <summary>
@@ -1338,7 +1341,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Pointwise applies the atan2 function to each value of the current
     /// vector and a given other vector being the 'x' of atan2 and the
-     /// current vector being the 'y'.
+    /// current vector being the 'y'.
     /// </summary>
     /// <param name="other">The vector providing the x values for the atan2 operation.</param>
     /// <returns>A new vector containing the pointwise two-argument arctangents.</returns>
