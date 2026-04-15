@@ -36,7 +36,7 @@
     <ProjectReference Include="..\Base\AltaxoBase.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="PureHDF" Version="2.1.1" />
+    <PackageReference Include="PureHDF" Version="2.1.2" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">
