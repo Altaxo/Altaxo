@@ -47,6 +47,58 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Default number of Ascii lines to analyze.</summary>
     public const int DefaultNumberOfLinesToAnalyze = 1000;
 
+
+    /// <summary>
+    /// Gets or sets the number of lines used to analyze the structure of an ASCII data file.
+    /// </summary>
+    /// <value>
+    /// The number of lines to analyze.
+    /// </value>
+    public int NumberOfLinesToAnalyze
+    {
+      get { return field; }
+      init
+      {
+        if (value <= 0)
+          throw new ArgumentOutOfRangeException(nameof(NumberOfLinesToAnalyze), "Number of lines to analyze must be greater than zero.");
+        field = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets a set of cultures used to test whether a substring of text represents a number.
+    /// </summary>
+    /// <remarks>
+    /// You may add additional cultures to test, but note that this will increase the analysis time.
+    /// </remarks>
+    public ImmutableHashSet<CultureInfo> NumberFormatsToTest
+    {
+      get { return field; }
+      init
+      {
+        if (value is null || value.Count == 0)
+          throw new ArgumentException("Number formats to test must contain at least one culture.", nameof(NumberFormatsToTest));
+        field = value;
+      }
+    } = [CultureInfo.InvariantCulture];
+
+    /// <summary>
+    /// Gets a set of cultures used to test whether a substring of text represents a date/time value.
+    /// </summary>
+    /// <remarks>
+    /// You may add additional cultures to test, but note that this will increase the analysis time.
+    /// </remarks>
+    public ImmutableHashSet<CultureInfo> DateTimeFormatsToTest
+    {
+      get { return field; }
+      init
+      {
+        if (value is null || value.Count == 0)
+          throw new ArgumentException("DateTime formats to test must contain at least one culture.", nameof(DateTimeFormatsToTest));
+        field = value;
+      }
+    } = [CultureInfo.InvariantCulture];
+
     #region Serialization
 
     /// <summary>
@@ -205,56 +257,6 @@ namespace Altaxo.Serialization.Ascii
       return InitializeWithCultures(cultures);
     }
 
-    /// <summary>
-    /// Gets or sets the number of lines used to analyze the structure of an ASCII data file.
-    /// </summary>
-    /// <value>
-    /// The number of lines to analyze.
-    /// </value>
-    public int NumberOfLinesToAnalyze
-    {
-      get { return field; }
-      init
-      {
-        if (value <= 0)
-          throw new ArgumentOutOfRangeException(nameof(NumberOfLinesToAnalyze), "Number of lines to analyze must be greater than zero.");
-        field = value;
-      }
-    }
 
-
-    /// <summary>
-    /// Gets a set of cultures used to test whether a substring of text represents a number.
-    /// </summary>
-    /// <remarks>
-    /// You may add additional cultures to test, but note that this will increase the analysis time.
-    /// </remarks>
-    public ImmutableHashSet<CultureInfo> NumberFormatsToTest
-    {
-      get { return field; }
-      init
-      {
-        if (value is null || value.Count == 0)
-          throw new ArgumentException("Number formats to test must contain at least one culture.", nameof(NumberFormatsToTest));
-        field = value;
-      }
-    } = [CultureInfo.InvariantCulture];
-
-    /// <summary>
-    /// Gets a set of cultures used to test whether a substring of text represents a date/time value.
-    /// </summary>
-    /// <remarks>
-    /// You may add additional cultures to test, but note that this will increase the analysis time.
-    /// </remarks>
-    public ImmutableHashSet<CultureInfo> DateTimeFormatsToTest
-    {
-      get { return field; }
-      init
-      {
-        if (value is null || value.Count == 0)
-          throw new ArgumentException("DateTime formats to test must contain at least one culture.", nameof(DateTimeFormatsToTest));
-        field = value;
-      }
-    } = [CultureInfo.InvariantCulture];
   }
 }

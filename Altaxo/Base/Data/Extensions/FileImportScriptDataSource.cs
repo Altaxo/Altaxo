@@ -180,6 +180,8 @@ namespace Altaxo.Data
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, reporter);
     }
 

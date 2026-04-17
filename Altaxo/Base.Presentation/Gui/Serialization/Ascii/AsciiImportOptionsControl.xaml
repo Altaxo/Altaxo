@@ -1,100 +1,191 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Serialization.Ascii.AsciiImportOptionsControl"
-						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:core="clr-namespace:System;assembly=mscorlib"
-						 xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoCore"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Serialization.Ascii"
-						 mc:Ignorable="d">
-	<UserControl.Resources>
-		<ObjectDataProvider x:Key="columnTypeEnum" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
-			<ObjectDataProvider.MethodParameters>
-				<x:Type Type="axosa:AsciiColumnType" />
-			</ObjectDataProvider.MethodParameters>
-		</ObjectDataProvider>
-	</UserControl.Resources>
-	<StackPanel Orientation="Vertical">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             xmlns:core="clr-namespace:System;assembly=mscorlib"
+             xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoCore"
+             xmlns:local="clr-namespace:Altaxo.Gui.Serialization.Ascii"
+             xmlns:localb="clr-namespace:Altaxo.Gui.Serialization.Ascii;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=localb:AsciiImportOptionsController}"
+             mc:Ignorable="d">
+  <UserControl.Resources>
+    <ObjectDataProvider x:Key="columnTypeEnum"
+                        MethodName="GetValues"
+                        ObjectType="{x:Type core:Enum}">
+      <ObjectDataProvider.MethodParameters>
+        <x:Type Type="axosa:AsciiColumnType" />
+      </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+  </UserControl.Resources>
+  <StackPanel Orientation="Vertical">
     <CheckBox Content="Detect encoding from byte order marks"
               IsChecked="{Binding DetectEncodingFromByteOrderMarks, Mode=TwoWay}"
               ToolTip="If checked, the encoding is detected from byte order marks (if any). If unchecked, or if there aren't byte order marks the encoding selected below is used."
-              Margin="4,0,0,0"/>
+              Margin="4,0,0,0" />
     <DockPanel>
-      <Label Content="Encoding: "  DockPanel.Dock="Left"/>
+      <Label Content="Encoding: "
+             DockPanel.Dock="Left" />
       <ComboBox ItemsSource="{Binding CodePage.Items}"
                 SelectedItem="{Binding CodePage.SelectedItem, Mode=TwoWay}"
-                ToolTip="The encoding is used if the ASCII document not has byte order marks or if you have unchecked the checkbox 'Detect encoding from byte order marks'"/>
+                ToolTip="The encoding is used if the ASCII document not has byte order marks or if you have unchecked the checkbox 'Detect encoding from byte order marks'" />
     </DockPanel>
-    
-    <GroupBox Header="Analyzing options" Padding="0,4,0,4">
-			<local:AsciiDocumentAnalysisOptionsControl x:Name="_guiAnalysisControl" />
-		</GroupBox>
-		<Button x:Name="_guiAnalyzeAscii"  Content="Analyze!" Click="EhAnalyzeAscii" Margin="4" />
 
-		<GroupBox Header="Analyzing results" Padding="0,4,0,4">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-				</Grid.RowDefinitions>
-				<CheckBox x:Name="_guiKnownNumberOfHeaderLines" Grid.Row="0" Grid.Column="0" Content="Known number of main header lines:" />
-				<axogc:Int32UpDown x:Name="_guiNumberOfHeaderLines" Grid.Row="0" Grid.Column="1" Minimum="0" />
-				<CheckBox x:Name="_guiKnownIndexOfCaptionLine" Grid.Row="1" Grid.Column="0" Content="Known index of caption line (0 for no caption):" />
-				<axogc:Int32UpDown x:Name="_guiIndexOfCaptionLine" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="{Binding ElementName=_guiNumberOfHeaderLines, Path=Value}" />
-				<CheckBox x:Name="_guiKnownNumberFormat" Grid.Row="2" Grid.Column="0" Content="Known number format:" />
-				<ComboBox x:Name="_guiNumberFormats" Grid.Row="2" Grid.Column="1" SelectionChanged="EhNumberFormatChanged" />
-				<CheckBox x:Name="_guiKnownDateTimeFormat" Grid.Row="3" Grid.Column="0" Content="Known date/time format:" />
-				<ComboBox x:Name="_guiDateTimeFormats" Grid.Row="3" Grid.Column="1" SelectionChanged="EhDateTimeFormatChanged" />
+    <GroupBox Header="Analyzing options:"
+              Padding="0,4,0,4">
+      <ContentControl Content="{Binding AsciiDocumentAnalysisOptionsController.ViewObject}" />
+    </GroupBox>
+    <Button Content="Analyze!"
+            Command="{Binding CmdDoAnalyze}"
+            Margin="4" />
 
-				<CheckBox x:Name="_guiKnownSeparationStrategy" Grid.Row="4" Grid.Column="0" Content="Known separation strategy:" />
-				<ComboBox x:Name="_guiSeparationStrategy" Grid.Row="4" Grid.Column="1" SelectionChanged="EhSeparationStrategyChanged" />
-				<GroupBox x:Name="_guiSeparationStrategyDetailsHost" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Header="Separation strategy details:" Padding="0,4,0,4" />
+    <GroupBox Header="Analyzing results"
+              Padding="0,4,0,4">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+        <CheckBox Grid.Row="0"
+                  Grid.Column="0"
+                  IsChecked="{Binding IsNumberOfMainHeaderLinesKnown, Mode=TwoWay}"
+                  Content="Known number of main header lines:" />
+        <axogc:Int32UpDown Grid.Row="0"
+                           Grid.Column="1"
+                           Value="{Binding NumberOfMainHeaderLines}"
+                           Visibility="{Binding IsNumberOfMainHeaderLinesKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                           Minimum="0" />
+        <CheckBox Grid.Row="1"
+                  Grid.Column="0"
+                  IsChecked="{Binding IsIndexOfCaptionLineKnown, Mode=TwoWay}"
+                  Content="Known index of caption line (0 for no caption):" />
+        <axogc:Int32UpDown Grid.Row="1"
+                           Grid.Column="1"
+                           Value="{Binding IndexOfCaptionLine}"
+                           Visibility="{Binding IsIndexOfCaptionLineKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                           Minimum="0"
+                           Maximum="{Binding NumberOfMainHeaderLines}" />
+        <CheckBox Grid.Row="2"
+                  Grid.Column="0"
+                  IsChecked="{Binding IsNumberFormatCultureKnown, Mode=TwoWay}"
+                  Content="Known number format:" />
+        <ComboBox Grid.Row="2"
+                  Grid.Column="1"
+                  ItemsSource="{Binding NumberFormatCulture.Items}"
+                  SelectedItem="{Binding NumberFormatCulture.SelectedItem, Mode=TwoWay}"
+                  Visibility="{Binding IsNumberFormatCultureKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+        <CheckBox Grid.Row="3"
+                  Grid.Column="0"
+                  IsChecked="{Binding IsDateTimeFormatCultureKnown, Mode=TwoWay}"
+                  Content="Known date/time format:" />
+        <ComboBox Grid.Row="3"
+                  Grid.Column="1"
+                  ItemsSource="{Binding DateTimeFormatCulture.Items}"
+                  SelectedItem="{Binding DateTimeFormatCulture.SelectedItem, Mode=TwoWay}"
+                  Visibility="{Binding IsDateTimeFormatCultureKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"/>
 
-				<Expander Grid.Row="7">
-					<Expander.Header>
-						<CheckBox x:Name="_guiKnownTableColumns" Grid.Row="6" Grid.Column="0" Content="Known column types:" />
-					</Expander.Header>
-					<DataGrid x:Name="_guiColumnTypes" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" MinWidth="100" MinHeight="50" Margin="0,10,0,0">
-						<DataGrid.Columns>
-							<DataGridComboBoxColumn Header="Column type" SelectedItemBinding="{Binding Path=Value}"  ItemsSource="{Binding Source={StaticResource columnTypeEnum}}"  MinWidth="100"></DataGridComboBoxColumn>
-						</DataGrid.Columns>
-					</DataGrid>
-				</Expander>
-			</Grid>
-		</GroupBox>
-		<GroupBox Header="User options">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-				</Grid.RowDefinitions>
-				<CheckBox x:Name="_guiImportMultipleAsciiVertically" Content="Import multiple Ascii files vertically" Grid.Row="0" />
-				<CheckBox x:Name="_guiRenameColumnsWithHeaderNames" Grid.Row="1" Grid.ColumnSpan="2" Content="Rename columns with names from caption line" ToolTip="If checked, renames the columns if the first line contains the column names." />
-				<CheckBox x:Name="_guiRenameWorksheetWithFileName" Grid.Row="2" Grid.ColumnSpan="2" Content="Rename worksheet with file name" ToolTip="If checked, renames the worksheet to the data file name." />
-				<GroupBox Header="Header lines destination:" Grid.Row="3" Grid.ColumnSpan="2">
-					<axogc:SingleChoiceRadioWrapPanel x:Name="_guiHeaderLinesDestination" Orientation="Horizontal" />
-				</GroupBox>
-			</Grid>
-		</GroupBox>
-	</StackPanel>
+        <CheckBox Grid.Row="4"
+                  Grid.Column="0"
+                  IsChecked="{Binding IsSeparationStrategyKnown, Mode=TwoWay}"
+                  Content="Known separation strategy:" />
+        <ComboBox Grid.Row="4"
+                  Grid.Column="1"
+                  ItemsSource="{Binding SeparationStrategy.Items}"
+                  SelectedItem="{Binding SeparationStrategy.SelectedItem, Mode=TwoWay}" 
+                  Visibility="{Binding IsSeparationStrategyKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                  />
+        <GroupBox Grid.Row="5"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  Header="Separation strategy details:"
+                  Visibility="{Binding IsSeparationStrategyKnown, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                  Padding="0,4,0,4">
+          <ContentControl Content="{Binding SeparationStrategyInstanceController.ViewObject}" />
+        </GroupBox>
+
+        <Expander Grid.Row="7">
+          <Expander.Header>
+            <CheckBox Grid.Row="6"
+                      Grid.Column="0"
+                      IsChecked="{Binding IsTableStructureKnown, Mode=TwoWay}"
+                      Content="Known column types:" />
+          </Expander.Header>
+          <DataGrid ItemsSource="{Binding TableStructure}"
+              AutoGenerateColumns="False"
+                    CanUserAddRows="True"
+                    CanUserDeleteRows="True"
+                    IsReadOnly="False"
+                    HeadersVisibility="All"
+                    Visibility="{Binding IsTableStructureKnown, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                    MinWidth="100"
+                    MinHeight="50"
+                    Margin="0,10,0,0">
+            <DataGrid.Columns>
+              <DataGridComboBoxColumn Header="Column type"
+                                      SelectedItemBinding="{Binding Path=Value, Mode=TwoWay}"
+                                      ItemsSource="{Binding Source={StaticResource columnTypeEnum}}"
+                                      MinWidth="100" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </Expander>
+      </Grid>
+    </GroupBox>
+    <GroupBox Header="User options">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+        <CheckBox IsChecked="{Binding ImportMultipleAsciiVertically, Mode=TwoWay}"
+                  Content="Import multiple Ascii files vertically"
+                  Grid.Row="0" />
+        <CheckBox Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  IsChecked="{Binding RenameColumnsWithHeaderNames, Mode=TwoWay}"
+                  Content="Rename columns with names from caption line"
+                  ToolTip="If checked, renames the columns if the first line contains the column names." />
+        <CheckBox Grid.Row="2"
+                  Grid.ColumnSpan="2"
+                  IsChecked="{Binding RenameWorksheetWithFileName, Mode=TwoWay}"
+                  Content="Rename worksheet with file name"
+                  ToolTip="If checked, renames the worksheet to the data file name." />
+        <GroupBox Header="Header lines destination:"
+                  Grid.Row="3"
+                  Grid.ColumnSpan="2">
+          <axogc:SingleChoiceRadioWrapPanel ItemsSource="{Binding HeaderLinesDestination.Items}"
+                                            SelectedItem="{Binding HeaderLinesDestination.SelectedItem, Mode=TwoWay}"
+                                            Orientation="Horizontal" />
+        </GroupBox>
+                <CheckBox Grid.Row="4"
+                          Content="Reuse columnn names from destination table"
+                          IsChecked="{Binding ReuseColumnNames, Mode=TwoWay}"
+                          ToolTip="If checked, reuses the existing column names from the destination table." />
+                <CheckBox Grid.Row="5"
+                          Content="Reuse column kinds and group numbers from destination table"
+                          IsChecked="{Binding ReuseGroupNumbers, Mode=TwoWay}"
+                          ToolTip="If checked, reuses the existing column kinds and group numbers from the destination table." />
+            </Grid>
+    </GroupBox>
+  </StackPanel>
 </UserControl>

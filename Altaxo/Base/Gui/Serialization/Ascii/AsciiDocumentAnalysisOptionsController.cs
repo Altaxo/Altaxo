@@ -37,26 +37,8 @@ namespace Altaxo.Gui.Serialization.Ascii
   /// <summary>
   /// View contract for editing ASCII document-analysis options.
   /// </summary>
-  public interface IAsciiDocumentAnalysisOptionsView
+  public interface IAsciiDocumentAnalysisOptionsView : IDataContextAwareView
   {
-    /// <summary>
-    /// Gets or sets the number of lines to analyze.
-    /// </summary>
-    int NumberOfLinesToAnalyze { get; set; }
-
-    /// <summary>
-    /// Sets the number formats that can be analyzed.
-    /// </summary>
-    /// <param name="availableFormats">The available number formats.</param>
-    /// <param name="currentlySelectedItems">The currently selected number formats.</param>
-    void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
-
-    /// <summary>
-    /// Sets the date/time formats that can be analyzed.
-    /// </summary>
-    /// <param name="availableFormats">The available date/time formats.</param>
-    /// <param name="currentlySelectedItems">The currently selected date/time formats.</param>
-    void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
   }
 
   /// <summary>
@@ -66,10 +48,27 @@ namespace Altaxo.Gui.Serialization.Ascii
   [UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
   public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditImmutableDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
   {
-    private SelectableListNodeList _availableCultureList;
+    /// <summary>
+    /// Wrapper class for a <see cref="CultureInfo"/> value that implements the <see cref="System.ComponentModel.INotifyPropertyChanged"/> interface,
+    /// and provides a parameterless constructor that initializes the value to <see cref="CultureInfo.InvariantCulture"/>.
+    /// </summary>
+    public class CultureInfoWrapper : Boxed<CultureInfo>
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CultureInfoWrapper"/> class.
+      /// </summary>
+      public CultureInfoWrapper() : base(CultureInfo.InvariantCulture)
+      {
+      }
 
-    private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
-    private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CultureInfoWrapper"/> class.
+      /// </summary>
+      /// <param name="value">Initial value.</param>
+      public CultureInfoWrapper(CultureInfo value) : base(value)
+      {
+      }
+    }
 
     /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -77,14 +76,80 @@ namespace Altaxo.Gui.Serialization.Ascii
       yield break;
     }
 
-    /// <inheritdoc/>
-    public override void Dispose(bool isDisposing)
-    {
-      _numberFormatsToAnalyze = null;
-      _dateTimeFormatsToAnalyze = null;
+    #region Bindings
 
-      base.Dispose(isDisposing);
+    /// <summary>
+    /// Gets or sets the number of lines to analyze.
+    /// </summary>
+    public int NumberOfLinesToAnalyze
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(NumberOfLinesToAnalyze));
+        }
+      }
     }
+
+    /// <summary>
+    /// Gets or sets the collection of culture-specific number formats to analyze.
+    /// </summary>
+    /// <remarks>Use this property to specify which number formats, represented by their associated cultures,
+    /// should be included in analysis operations. Changing this collection will notify listeners of the
+    /// update.</remarks>
+    public ObservableCollection<CultureInfoWrapper> NumberFormatsToAnalyze
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(NumberFormatsToAnalyze));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the collection of culture-specific date and time formats to analyze.
+    /// </summary>
+    /// <remarks>Use this property to specify which date and time formats, represented by their associated
+    /// cultures, should be included in analysis operations. Changing this property raises a property changed
+    /// notification.</remarks>
+    public ObservableCollection<CultureInfoWrapper> DateTimeFormatsToAnalyze
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(DateTimeFormatsToAnalyze));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the list of available culture formats that can be selected.
+    /// </summary>
+    public ObservableCollection<CultureInfoWrapper> AvailableCultureFormats
+    {
+      get => field;
+      private set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(AvailableCultureFormats));
+        }
+      }
+    }
+
+
+    #endregion
 
     /// <inheritdoc/>
     protected override void Initialize(bool initData)
@@ -93,25 +158,13 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (initData)
       {
-        GetAvailableCultures(ref _availableCultureList);
+        NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
 
-        _numberFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
-        foreach (var item in _availableCultureList)
-          if (_doc.NumberFormatsToTest.Contains((CultureInfo)item.Tag))
-            _numberFormatsToAnalyze.Add(item);
+        AvailableCultureFormats = GetAvailableCultures();
 
-        _dateTimeFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>>();
+        NumberFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<CultureInfoWrapper>(_doc.NumberFormatsToTest.Select(e => new CultureInfoWrapper(e)));
 
-        foreach (var item in _availableCultureList)
-          if (_doc.DateTimeFormatsToTest.Contains((CultureInfo)item.Tag))
-            _dateTimeFormatsToAnalyze.Add(item);
-      }
-
-      if (_view is not null)
-      {
-        _view.NumberOfLinesToAnalyze = _doc.NumberOfLinesToAnalyze;
-        _view.SetNumberFormatsToAnalyze(_availableCultureList, _numberFormatsToAnalyze);
-        _view.SetDateTimeFormatsToAnalyze(_availableCultureList, _dateTimeFormatsToAnalyze);
+        DateTimeFormatsToAnalyze = new System.Collections.ObjectModel.ObservableCollection<CultureInfoWrapper>(_doc.DateTimeFormatsToTest.Select(e => new CultureInfoWrapper(e)));
       }
     }
 
@@ -120,47 +173,29 @@ namespace Altaxo.Gui.Serialization.Ascii
     {
       _doc = _doc with
       {
-        NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze,
-        NumberFormatsToTest = _numberFormatsToAnalyze.Select(item => (CultureInfo)item.Value.Tag).ToImmutableHashSet(),
-        DateTimeFormatsToTest = _dateTimeFormatsToAnalyze.Select(item => (CultureInfo)item.Value.Tag).ToImmutableHashSet(),
+        NumberOfLinesToAnalyze = NumberOfLinesToAnalyze,
+        NumberFormatsToTest = NumberFormatsToAnalyze.Select(x => x.Value).Distinct().ToImmutableHashSet(),
+        DateTimeFormatsToTest = DateTimeFormatsToAnalyze.Select(x => x.Value).Distinct().ToImmutableHashSet(),
       };
 
       return ApplyEnd(true, disposeController);
     }
 
     /// <summary>
-    /// Compares cultures by display name.
-    /// </summary>
-    private int CompareCultures(CultureInfo x, CultureInfo y)
-    {
-      return string.Compare(x.DisplayName, y.DisplayName);
-    }
-
-    /// <summary>
     /// Gets the available cultures.
     /// </summary>
-    private void GetAvailableCultures(ref SelectableListNodeList list)
+    private ObservableCollection<CultureInfoWrapper> GetAvailableCultures()
     {
-      list = new SelectableListNodeList();
-      var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-      Array.Sort(cultures, CompareCultures);
-
+      var list = new ObservableCollection<CultureInfoWrapper>();
       var invCult = System.Globalization.CultureInfo.InvariantCulture;
-      AddCulture(list, invCult, false);
+      list.Add(new CultureInfoWrapper(invCult));
 
+      var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+      Array.Sort(cultures, (x, y) => string.Compare(x.DisplayName, y.DisplayName));
       foreach (var cult in cultures)
-        AddCulture(list, cult, false);
+        list.Add(new CultureInfoWrapper(cult));
 
-      if (list.FirstSelectedNode is null)
-        list[0].IsSelected = true;
-    }
-
-    /// <summary>
-    /// Adds a culture to the selectable culture list.
-    /// </summary>
-    private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
-    {
-      cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));
+      return list;
     }
   }
 }

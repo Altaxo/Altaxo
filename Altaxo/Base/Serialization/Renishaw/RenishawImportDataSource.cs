@@ -140,6 +140,8 @@ namespace Altaxo.Serialization.Renishaw
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new RenishawImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

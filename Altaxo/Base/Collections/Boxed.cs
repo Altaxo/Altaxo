@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -39,11 +35,7 @@ namespace Altaxo.Collections
   public class Boxed<T> : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IEditableObject
   {
     /// <summary>Event arg for the property changed event.</summary>
-    private static readonly System.ComponentModel.PropertyChangedEventArgs _valueChangedEventArg = new System.ComponentModel.PropertyChangedEventArgs("Value");
-
-    /// <summary>The boxed value.</summary>
-
-    protected T _value;
+    private static readonly System.ComponentModel.PropertyChangedEventArgs _valueChangedEventArg = new System.ComponentModel.PropertyChangedEventArgs(nameof(Value));
 
     /// <summary>Occurs when the boxed value changed.</summary>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
@@ -56,17 +48,15 @@ namespace Altaxo.Collections
     /// </value>
     public T Value
     {
-      get { return _value; }
+      get { return field; }
       set
       {
-        T oldValue = _value;
-        _value = value;
-        if (PropertyChanged is not null && !object.Equals(_value, oldValue))
-          PropertyChanged(this, _valueChangedEventArg);
+        var oldValue = field;
+        field = value;
+        if (PropertyChanged is { } propChanged && !object.Equals(field, oldValue))
+          propChanged(this, _valueChangedEventArg);
       }
     }
-
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class.
@@ -74,8 +64,44 @@ namespace Altaxo.Collections
     /// <param name="val">The value to be boxed.</param>
     public Boxed(T val)
     {
-      _value = val;
+      Value = val;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Boxed&lt;T&gt;"/> class with a default value.
+    /// </summary>
+    public Boxed()
+    {
+      Value = default!;
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+      return obj is not Boxed<T> other ? false : Equals(other);
+    }
+
+    /// <inheritcdoc/>
+    override public int GetHashCode()
+    {
+      return Value is null ? typeof(T).GetHashCode() : Value.GetHashCode();
+    }
+
+    /// <inheritcdoc/>
+    public bool Equals(Boxed<T>? other)
+    {
+      if (other is null)
+        return false;
+      if (Value is null && other.Value is null)
+        return true;
+      if (Value is null || other.Value is null)
+        return false;
+      return Value.Equals(other.Value);
+    }
+
+
+
+
 
     /// <summary>
     /// Performs an implicit conversion from <see cref="Altaxo.Collections.Boxed&lt;T&gt;"/> to <see cref="T:T"/>.

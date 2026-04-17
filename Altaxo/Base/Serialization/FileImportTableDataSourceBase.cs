@@ -129,8 +129,7 @@ namespace Altaxo.Serialization
 
       if (validFileNames.Length > 0)
       {
-        destinationTable.DataColumns.RemoveColumnsAll();
-        destinationTable.PropCols.RemoveColumnsAll();
+        // Note that the ImportFromFiles call is responsible for removing all existing data and property columns before filling in the new data
         ImportFromFiles(validFileNames, destinationTable, reporter);
       }
 

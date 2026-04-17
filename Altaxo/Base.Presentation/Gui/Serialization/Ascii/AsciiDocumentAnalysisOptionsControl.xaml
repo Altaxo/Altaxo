@@ -1,13 +1,19 @@
-﻿<UserControl
-    x:Class="Altaxo.Gui.Serialization.Ascii.AsciiDocumentAnalysisOptionsControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-    xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoBase"
-    xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+﻿<UserControl x:Class="Altaxo.Gui.Serialization.Ascii.AsciiDocumentAnalysisOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoBase"
+             xmlns:core="clr-namespace:System;assembly=mscorlib"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axog="clr-namespace:Altaxo.Gui"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ascii="clr-namespace:Altaxo.Gui.Serialization.Ascii;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=ascii:AsciiDocumentAnalysisOptionsController}"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <axog:BindingProxy x:Key="DataContextProxy"
+                           Data="{Binding}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -19,78 +25,90 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Content="Number of lines to analyze:" />
-        <axogc:Int32UpDown
-            x:Name="_guiNumberOfLinesToAnalyze"
-            Grid.Row="0"
-            Grid.Column="1" />
-        <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="Number formats to test:" />
-        <DataGrid
-            x:Name="_guiNumberFormatsForAnalysis"
-            Grid.Row="1"
-            Grid.Column="1"
-            MinWidth="100"
-            MinHeight="50"
-            Margin="0,10,0,0"
-            AutoGenerateColumns="False"
-            CanUserAddRows="True"
-            CanUserDeleteRows="True">
+        <axogc:Int32UpDown Grid.Row="0"
+                           Grid.Column="1"
+                           Value="{Binding NumberOfLinesToAnalyze}"
+                           Minimum="0" />
+        <Label Grid.Row="1"
+               Grid.Column="0"
+               VerticalAlignment="Center"
+               Content="Number formats to test:" />
+        <DataGrid Grid.Row="1"
+                  Grid.Column="1"
+                  ItemsSource="{Binding NumberFormatsToAnalyze}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  IsReadOnly="False"
+                  HeadersVisibility="All"
+                  MinWidth="100"
+                  MinHeight="50"
+                  Margin="0,10,0,0"
+                  >
             <DataGrid.Columns>
-                <DataGridComboBoxColumn
-                    x:Name="_guiNumberFormatsForAnalysisColumn"
-                    MinWidth="100"
-                    SelectedItemBinding="{Binding Path=Value}">
+                <DataGridComboBoxColumn ItemsSource="{Binding Source={StaticResource DataContextProxy}, Path=Data.AvailableCultureFormats}"
+                                        DisplayMemberPath="Value.DisplayName"
+                                        SelectedItemBinding="{Binding ., Mode=TwoWay}"
+                                        MinWidth="100">
                     <DataGridComboBoxColumn.Header>
-                        <TextBlock Text="Locale" ToolTipService.ToolTip="Shortcut of the locale for the number format to test." />
+                        <TextBlock Text="Locale"
+                                   ToolTipService.ToolTip="Shortcut of the locale for the number format to test." />
                     </DataGridComboBoxColumn.Header>
                 </DataGridComboBoxColumn>
-                <DataGridTextColumn Binding="{Binding Path=Value.Tag.NumberFormat.NumberDecimalSeparator}" IsReadOnly="True">
+                <DataGridTextColumn Binding="{Binding Path=Value.NumberFormat.NumberDecimalSeparator}"
+                                    IsReadOnly="True">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Dec.sep." ToolTipService.ToolTip="The decimal separator that is set for the number format in this locale." />
+                        <TextBlock Text="Dec.sep."
+                                   ToolTipService.ToolTip="The decimal separator that is set for the number format in this locale." />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Value.Tag.NumberFormat.NumberGroupSeparator}" IsReadOnly="True">
+                <DataGridTextColumn Binding="{Binding Path=Value.NumberFormat.NumberGroupSeparator}"
+                                    IsReadOnly="True">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Group.sep." ToolTipService.ToolTip="The number group separator that is set for the number format in this locale." />
+                        <TextBlock Text="Group.sep."
+                                   ToolTipService.ToolTip="The number group separator that is set for the number format in this locale." />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Label
-            Grid.Row="2"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="Date/time formats to test:" />
-        <DataGrid
-            x:Name="_guiDateTimeFormatsForAnalysis"
-            Grid.Row="2"
-            Grid.Column="1"
-            MinWidth="100"
-            MinHeight="50"
-            Margin="0,10,0,0"
-            AutoGenerateColumns="False"
-            CanUserAddRows="True"
-            CanUserDeleteRows="True">
+        <Label Grid.Row="2"
+               Grid.Column="0"
+               VerticalAlignment="Center"
+               Content="Date/time formats to test:" />
+        <DataGrid Grid.Row="2"
+                  Grid.Column="1"
+                  ItemsSource="{Binding DateTimeFormatsToAnalyze}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  IsReadOnly="False"
+                  HeadersVisibility="All"
+                  MinWidth="100"
+                  MinHeight="50"
+                  Margin="0,10,0,0"
+                  >
             <DataGrid.Columns>
-                <DataGridComboBoxColumn
-                    x:Name="_guiDateTimeFormatsForAnalysisColumn"
-                    MinWidth="100"
-                    SelectedItemBinding="{Binding Path=Value}">
+                <DataGridComboBoxColumn ItemsSource="{Binding Source={StaticResource DataContextProxy}, Path=Data.AvailableCultureFormats}"
+                                        DisplayMemberPath="Value.DisplayName"
+                                        SelectedItemBinding="{Binding ., Mode=TwoWay}"
+                                        MinWidth="100">
                     <DataGridComboBoxColumn.Header>
-                        <TextBlock Text="Locale" ToolTipService.ToolTip="Shortcut of the locale for the date/time format to test." />
+                        <TextBlock Text="Locale"
+                                   ToolTipService.ToolTip="Shortcut of the locale for the date/time format to test." />
                     </DataGridComboBoxColumn.Header>
                 </DataGridComboBoxColumn>
-                <DataGridTextColumn Binding="{Binding Path=Value.Tag.DateTimeFormat.LongDatePattern}" IsReadOnly="True">
+                <DataGridTextColumn Binding="{Binding Path=Value.DateTimeFormat.LongDatePattern}"
+                                    IsReadOnly="True">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Date format" ToolTipService.ToolTip="The long date format pattern that is set in this locale." />
+                        <TextBlock Text="Date format"
+                                   ToolTipService.ToolTip="The long date format pattern that is set in this locale." />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Value.Tag.DateTimeFormat.LongTimePattern}" IsReadOnly="True">
+                <DataGridTextColumn Binding="{Binding Path=Value.DateTimeFormat.LongTimePattern}"
+                                    IsReadOnly="True">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Time format" ToolTipService.ToolTip="The long time format pattern that is set in this locale." />
+                        <TextBlock Text="Time format"
+                                   ToolTipService.ToolTip="The long time format pattern that is set in this locale." />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

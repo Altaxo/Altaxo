@@ -24,6 +24,7 @@
 
 #nullable enable
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Altaxo.Serialization.Ascii
@@ -51,7 +52,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Gets or sets the code page that is used to recognize the Ascii data. To use the system default code page, set this property to 0.
     /// </summary>
-    public int CodePage { get; init; }
+    public int CodePage { get; init; } = GetDefaultCodePage();
 
     /// <summary>
     /// Gets the encoding. You can set the Encoding setting the CodePage (see <see cref="CodePage"/>).
@@ -60,10 +61,17 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        var result = System.Text.Encoding.Default;
-        if (CodePage != 0)
+        var codePage = CodePage;
+
+        if (codePage == 0 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) // if we are on Windows, we get the actual ANSI code page, because the default encoding on Windows is UTF-8, which is not what we want in this case.
         {
-          var cp = System.Text.Encoding.GetEncodings().Where(ei => ei.CodePage == CodePage).FirstOrDefault();
+          // GetACP() liefert die aktuelle Windows ANSI-Codepage
+          codePage = GetACP();
+        }
+        var result = Encoding.Default;
+        if (codePage != 0)
+        {
+          var cp = Encoding.GetEncodings().Where(ei => ei.CodePage == codePage).FirstOrDefault();
           if (cp is not null)
           {
             result = cp.GetEncoding();
@@ -73,6 +81,24 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets the default code page for this System. On Windows, this is the ANSI code page, on other systems, it is the default code page.
+    /// </summary>
+    /// <returns></returns>
+    public static int GetDefaultCodePage()
+    {
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      {
+        return GetACP();
+      }
+      else
+      {
+        return Encoding.Default.CodePage;
+      }
+    }
+
+    [DllImport("kernel32.dll")]
+    static extern int GetACP();
 
 
     #region Serialization
@@ -147,7 +173,7 @@ namespace Altaxo.Serialization.Ascii
     /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -203,7 +229,6 @@ namespace Altaxo.Serialization.Ascii
           CodePage = codePage
         };
 
-        return s;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -215,6 +240,84 @@ namespace Altaxo.Serialization.Ascii
 
     #endregion Version 1
 
+    #region Version 2
+
+    /// <summary>
+    /// 2025-09-25: add CodePage property and DetectEncodingFromByteOrderMarks
+    /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// V3: 2026-04-17 Add ReuseColumnNames and ReuseGroupNumbers properties
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 3)]
+    private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AsciiImportOptions)o;
+
+        info.AddValue("RenameWorksheet", s.RenameWorksheet);
+        info.AddValue("RenameColumns", s.RenameColumns);
+        info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
+        info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
+        info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
+        info.AddValueOrNull("SeparationStrategy", s.SeparationStrategy);
+        info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture?.LCID ?? -1);
+        info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture?.LCID ?? -1);
+        info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
+        info.AddValue("ImportMultipleStreamsVertically", s.ImportMultipleStreamsVertically);
+        info.AddValue("DetectEncodingFromByteOrderMarks", s.DetectEncodingFromByteOrderMarks);
+        info.AddValue("CodePage", s.CodePage);
+        info.AddValue("ReuseColumnNames", s.ReuseColumnNames);
+        info.AddValue("ReuseGroupNumbers", s.ReuseGroupNumbers);
+      }
+
+      protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+
+        var renameWorksheet = info.GetBoolean("RenameWorksheet");
+        var renameColumns = info.GetBoolean("RenameColumns");
+        var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        var headerLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
+        var separationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var numberLCID = info.GetInt32("NumberFormatCultureLCID");
+        var numberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
+        var dateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        var recognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
+        var importMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
+        var detectEncodingFromByteOrderMarks = info.GetBoolean("DetectEncodingFromByteOrderMarks");
+        var codePage = info.GetInt32("CodePage");
+        var reuseColumnNames = info.GetBoolean("ReuseColumnNames");
+        var reuseGroupNumbers = info.GetBoolean("ReuseGroupNumbers");
+
+        return (o as AsciiImportOptions ?? new AsciiImportOptions()) with
+        {
+          RenameWorksheet = renameWorksheet,
+          RenameColumns = renameColumns,
+          IndexOfCaptionLine = indexOfCaptionLine,
+          NumberOfMainHeaderLines = numberOfMainHeaderLines,
+          HeaderLinesDestination = headerLinesDestination,
+          SeparationStrategy = separationStrategy,
+          NumberFormatCulture = numberFormatCulture,
+          DateTimeFormatCulture = dateTimeFormatCulture,
+          RecognizedStructure = recognizedStructure,
+          ImportMultipleStreamsVertically = importMultipleStreamsVertically,
+          DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks,
+          CodePage = codePage,
+          ReuseColumnNames = reuseColumnNames,
+          ReuseGroupNumbers = reuseGroupNumbers,
+        };
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+
+    #endregion Version 1
 
     #endregion Serialization
 
@@ -240,7 +343,8 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Number of lines to skip (the main header).</summary>
     public int? NumberOfMainHeaderLines { get; init; }
 
-    /// <summary>Index of the line, where we can extract the column names from.</summary>
+    /// <summary>Index of the line, where we can extract the column names from. ATTENTION: this value is zero based, i.e. if the caption is in the first line, the value is 0.
+    /// If the value is unkown, the value is <c>null</c>.</summary>
     public int? IndexOfCaptionLine { get; init; }
 
     /// <summary>Method to separate the tokens in each line of ascii text.</summary>
@@ -254,6 +358,22 @@ namespace Altaxo.Serialization.Ascii
 
     /// <summary>Structure of the main part of the file (which data type is placed in which column).</summary>
     public AsciiLineComposition? RecognizedStructure { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to reuse the column names from the table in which the data will be imported.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the column names will be reused; otherwise, <c>false</c>.
+    /// </value>
+    public bool ReuseColumnNames { get; init; } = true;
+
+    /// <summary>
+    /// Gets a value indicating whether to reuse the group numbers from the table in which the data will be imported.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the group numbers will be reused; otherwise, <c>false</c>.
+    /// </value>
+    public bool ReuseGroupNumbers { get; init; } = true;
 
     #endregion Properties
 

@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Data
   [UserControllerForObject(typeof(DataTablesAggregationOptions))]
   public class DataTablesAggregationOptionsController : MVCANControllerEditImmutableDocBase<DataTablesAggregationOptions, IDataTablesAggregationOptionsView>
   {
+
     /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

@@ -140,6 +140,8 @@ namespace Altaxo.Serialization.TA_Instruments
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new Q800Importer().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

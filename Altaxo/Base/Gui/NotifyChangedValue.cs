@@ -24,6 +24,7 @@
 
 #nullable enable
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Gui
@@ -34,11 +35,8 @@ namespace Altaxo.Gui
   /// This class is required when using a <c>DataGrid</c>, since plain values (such as <see cref="string"/>, <see cref="int"/>, etc.) are not directly editable.
   /// </summary>
   /// <typeparam name="T">Type of the value to wrap.</typeparam>
-  public class NotifyChangedValue<T> : System.ComponentModel.INotifyPropertyChanged
+  public class NotifyChangedValue<T> : System.ComponentModel.INotifyPropertyChanged, IEquatable<NotifyChangedValue<T>>
   {
-    [MaybeNull]
-    private T _value;
-
     /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
@@ -57,7 +55,7 @@ namespace Altaxo.Gui
     /// <param name="value">Initial value.</param>
     public NotifyChangedValue(T value)
     {
-      _value = value;
+      Value = value;
     }
 
     /// <summary>
@@ -68,15 +66,45 @@ namespace Altaxo.Gui
     {
       get
       {
-        return _value;
+        return field;
       }
       set
       {
-        var oldValue = _value;
-        _value = value;
-        if (!object.Equals(oldValue, value))
+        if (!object.Equals(field, value))
+        {
+          field = value;
           PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Value)));
+        }
       }
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+      if (obj is not NotifyChangedValue<T> other)
+        return false;
+      return Equals(other);
+    }
+
+    /// <inheritcdoc/>
+    override public int GetHashCode()
+    {
+      if (Value is null)
+        return typeof(T).GetHashCode();
+      else
+        return Value.GetHashCode();
+    }
+
+    /// <inheritcdoc/>
+    public bool Equals(NotifyChangedValue<T>? other)
+    {
+      if (other is null)
+        return false;
+      if (this.Value is null && other.Value is null)
+        return true;
+      if (this.Value is null || other.Value is null)
+        return false;
+      return Value.Equals(other.Value);
     }
   }
 }

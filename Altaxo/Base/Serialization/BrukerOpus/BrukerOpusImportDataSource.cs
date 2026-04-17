@@ -140,6 +140,8 @@ namespace Altaxo.Serialization.BrukerOpus
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new BrukerOpusImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

@@ -139,6 +139,8 @@ namespace Altaxo.Serialization.Origin
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new OriginImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

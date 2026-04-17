@@ -142,6 +142,8 @@ namespace Altaxo.Serialization.Omnic
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new OmnicSPAImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

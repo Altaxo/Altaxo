@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Altaxo.Gui
@@ -43,20 +38,20 @@ namespace Altaxo.Gui
   /// <example>
   /// Do something like this: (you may have to adapt it a bit to make it work in your control):
   /// (i) This will give you access to the UserControl DataContext using a StaticResource:
-  /// <code>
-  /// &lt;UserControl.Resources&gt;
-  ///     &lt;BindingProxy x:Key="DataContextProxy" Data="{Binding}" /&gt;
-  /// &lt;/UserControl.Resources&gt;
-  /// </code>
+  /// <code><![CDATA[
+  /// <UserControl.Resources>
+  ///     <BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
+  /// </UserControl.Resources>
+  /// ]]></code>
   /// (ii) this uses the DataContextProxy defined in (i):
-  /// <code>
-  /// &lt;Button.ContextMenu&gt;
-  ///     &lt;ContextMenu&gt;
-  ///         &lt;MenuItem   Header = "Remove" CommandParameter="{Binding Name}"
-  ///                     Command="{Binding Path=Data.RemoveCommand, Source={StaticResource DataContextProxy}}"/&gt;
-  ///     &lt;/ContextMenu&gt;
-  /// &lt;/Button.ContextMenu&gt;
-  /// </code>
+  /// <code><![CDATA[
+  /// <Button.ContextMenu>
+  ///     <ContextMenu>
+  ///         <MenuItem   Header = "Remove" CommandParameter="{Binding Name}"
+  ///                     Command="{Binding Path=Data.RemoveCommand, Source={StaticResource DataContextProxy}}"/>
+  ///     </ContextMenu>
+  /// </Button.ContextMenu>
+  /// ]]></code>
   /// </example>
   public class BindingProxy : Freezable
   {

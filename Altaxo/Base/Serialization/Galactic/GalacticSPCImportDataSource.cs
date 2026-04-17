@@ -140,6 +140,8 @@ namespace Altaxo.Serialization.Galactic
     /// <inheritdoc />
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       new GalacticSPCImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
 

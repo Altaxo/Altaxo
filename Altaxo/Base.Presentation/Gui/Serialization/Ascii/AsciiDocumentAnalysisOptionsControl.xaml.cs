@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
@@ -42,37 +37,6 @@ namespace Altaxo.Gui.Serialization.Ascii
     public AsciiDocumentAnalysisOptionsControl()
     {
       InitializeComponent();
-    }
-
-    /// <inheritdoc/>
-    public int NumberOfLinesToAnalyze
-    {
-      get
-      {
-        return _guiNumberOfLinesToAnalyze.Value;
-      }
-      set
-      {
-        _guiNumberOfLinesToAnalyze.Value = value;
-      }
-    }
-
-    /// <inheritdoc/>
-    public void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
-    {
-      _guiNumberFormatsForAnalysisColumn.ItemsSource = null;
-      _guiNumberFormatsForAnalysis.ItemsSource = null;
-      _guiNumberFormatsForAnalysisColumn.ItemsSource = availableFormats;
-      _guiNumberFormatsForAnalysis.ItemsSource = currentlySelectedItems;
-    }
-
-    /// <inheritdoc/>
-    public void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems)
-    {
-      _guiDateTimeFormatsForAnalysis.ItemsSource = null;
-      _guiDateTimeFormatsForAnalysisColumn.ItemsSource = null;
-      _guiDateTimeFormatsForAnalysisColumn.ItemsSource = availableFormats;
-      _guiDateTimeFormatsForAnalysis.ItemsSource = currentlySelectedItems;
     }
   }
 }

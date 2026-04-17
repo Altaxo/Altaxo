@@ -147,7 +147,9 @@ namespace Altaxo.Serialization.Ascii
     /// <inheritdoc/>
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
-
+      var snapshot = (ProcessOptions.ReuseColumnNames || ProcessOptions.ReuseGroupNumbers) ? new DataTableColumnNamesKindGroupSnapshot(destinationTable) : null;
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
       if (validFileNames.Length > 0)
       {
         if (validFileNames.Length == 1)
@@ -167,6 +169,9 @@ namespace Altaxo.Serialization.Ascii
             success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _processOptions, out errors);
         }
       }
+
+      // if the user wants to reuse column names and/or group numbers, restore them after importing the data
+      snapshot?.RestoreTo(destinationTable, ProcessOptions.ReuseColumnNames, ProcessOptions.ReuseGroupNumbers);
 
       var invalidFileNames = _files.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();
       if (invalidFileNames.Length > 0)
