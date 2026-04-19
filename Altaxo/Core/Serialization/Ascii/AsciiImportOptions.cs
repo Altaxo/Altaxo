@@ -98,7 +98,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     [DllImport("kernel32.dll")]
-    static extern int GetACP();
+    private static extern int GetACP();
 
 
     #region Serialization
@@ -166,14 +166,14 @@ namespace Altaxo.Serialization.Ascii
 
     #endregion Version 0
 
-    #region Version 1
+    #region Version 1 and 2
 
     /// <summary>
     /// 2025-09-25: add CodePage property and DetectEncodingFromByteOrderMarks
     /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Serialization.Ascii.AsciiImportOptions", 2)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -238,9 +238,9 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    #endregion Version 1
+    #endregion Version 1 and 2
 
-    #region Version 2
+    #region Version 3
 
     /// <summary>
     /// 2025-09-25: add CodePage property and DetectEncodingFromByteOrderMarks
@@ -317,7 +317,7 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    #endregion Version 1
+    #endregion Version 3
 
     #endregion Serialization
 
