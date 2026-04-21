@@ -3,10 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:common="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase"
+             xmlns:axog="clr-namespace:Altaxo.Gui"
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
+             d:DataContext="{d:DesignInstance Type=common:MultipleFilesController}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="500"
-						 ScrollViewer.VerticalScrollBarVisibility="Visible">
-
+             d:DesignHeight="300"
+             d:DesignWidth="500"
+             ScrollViewer.VerticalScrollBarVisibility="Visible">
+    <UserControl.Resources>
+        <axog:BindingProxy x:Key="DataContextProxy"
+                           Data="{Binding}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
@@ -25,40 +33,76 @@
             <ColumnDefinition Width="4" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="1" Content="File(s):" />
-        <ListBox x:Name="_guiFileNames" Grid.Row="2" Grid.RowSpan="5" SelectionMode="Extended"  MouseDoubleClick="EhFileNamesMouseDoubleClick">
+        <Label Grid.Row="1"
+               Content="File(s):" />
+        <ListBox Grid.Row="2"
+                 Grid.RowSpan="5"
+                 SelectionMode="Extended"
+                 ItemsSource="{Binding FileNames}"
+                 axogb:DoubleClickTriggersCommand.IsHandled="True"
+                 axogb:DoubleClickTriggersCommand.Command="{Binding CmdBrowseSelectedFileNames}"
+                 >
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected"
+                            Value="{Binding IsSelected, Mode=TwoWay}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Sort files ascending" Click="EhSortFileNamesAscending" />
+                    <MenuItem Header="Sort files ascending"
+                              Command="{Binding Source={StaticResource DataContextProxy}, Path=CmdSortFileNamesAscending}" />
+                    <MenuItem Header="Open in explorer"
+                              Command="{Binding Source={StaticResource DataContextProxy}, Path=CmdShowSelectedFileInExplorer}" />
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
 
-        <Button Grid.Row="2" Grid.Column="2"  Click="EhMoveUpFileName" Margin="2" ToolTip="Click to move selected items up">
+        <Button Grid.Row="2"
+                Grid.Column="2"
+                Command="{Binding CmdMoveUpSelectedFileNames}"
+                Margin="2"
+                ToolTip="Click to move selected items up">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource UpArrowPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Row="3" Grid.Column="2" Click="EhMoveDownFileName" Margin="2" ToolTip="Click to move selected items down">
+        <Button Grid.Row="3"
+                Grid.Column="2"
+                Command="{Binding CmdMoveDownSelectedFileNames}"
+                Margin="2"
+                ToolTip="Click to move selected items down">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource DownArrowPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Row="4" Grid.Column="2"  Click="EhAddNewFileName"  Margin="2" ToolTip="Click to add new file(s)">
+        <Button Grid.Row="4"
+                Grid.Column="2"
+                Command="{Binding CmdAddNewFileName}"
+                Margin="2"
+                ToolTip="Click to add new file(s)">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource AddCrossPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Row="5" Grid.Column="2"  Click="EhNewFileNameExclusively"  Margin="2" ToolTip="Click to remove old files and add new file(s)">
+        <Button Grid.Row="5"
+                Grid.Column="2"
+                Command="{Binding CmdNewFileNameExclusively}"
+                Margin="2"
+                ToolTip="Click to remove old files and add new file(s)">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource RightArrowPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Row="6" Grid.Column="2" Click="EhRemoveFileName" Margin="2" ToolTip="Click to remove selected items">
+        <Button Grid.Row="6"
+                Grid.Column="2"
+                Command="{Binding CmdDeleteSelectedFileNames}"
+                Margin="2"
+                ToolTip="Click to remove selected items">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource RemoveCrossPathStyle}" />
             </Viewbox>

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -33,47 +34,8 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// View contract for selecting and ordering multiple file names.
   /// </summary>
-  public interface IMultipleFilesView
+  public interface IMultipleFilesView : IDataContextAwareView
   {
-    /// <summary>
-    /// Sets the selectable file names.
-    /// </summary>
-    SelectableListNodeList FileNames { set; }
-
-    /// <summary>
-    /// Occurs when the selected file name should be browsed.
-    /// </summary>
-    event Action? BrowseSelectedFileName;
-
-    /// <summary>
-    /// Occurs when the selected file name should be deleted.
-    /// </summary>
-    event Action? DeleteSelectedFileName;
-
-    /// <summary>
-    /// Occurs when the selected file name should move up.
-    /// </summary>
-    event Action? MoveUpSelectedFileName;
-
-    /// <summary>
-    /// Occurs when the selected file name should move down.
-    /// </summary>
-    event Action? MoveDownSelectedFileName;
-
-    /// <summary>
-    /// Occurs when a new file name should be added.
-    /// </summary>
-    event Action? AddNewFileName;
-
-    /// <summary>
-    /// Occurs when a new file name should replace the current list.
-    /// </summary>
-    event Action? NewFileNameExclusively;
-
-    /// <summary>
-    /// Occurs when the file names should be sorted in ascending order.
-    /// </summary>
-    event Action? SortFileNamesAscending;
   }
 
   /// <summary>
@@ -82,8 +44,6 @@ namespace Altaxo.Gui.Common
   [ExpectedTypeOfView(typeof(IMultipleFilesView))]
   public class MultipleFilesController : MVCANControllerEditImmutableDocBase<IEnumerable<string>, IMultipleFilesView>, IMVCSupportsApplyCallback
   {
-    private SelectableListNodeList _fileNames = new SelectableListNodeList();
-
     /// <summary>
     /// Occurs after the controller was applied successfully.
     /// </summary>
@@ -94,6 +54,68 @@ namespace Altaxo.Gui.Common
     {
       yield break;
     }
+
+    #region Bindings
+
+    /// <summary>
+    /// List of file names to be shown in the view. Each node's Tag property should contain the file name as string.
+    /// </summary>
+    public SelectableListNodeList FileNames
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(FileNames));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Occurs when the file names should be browsed.
+    /// </summary>
+    public ICommand CmdBrowseSelectedFileNames { get => field ??= new RelayCommand(EhBrowseFileName); }
+
+    /// <summary>
+    /// Occurs when the selected file name should be deleted.
+    /// </summary>
+    public ICommand CmdDeleteSelectedFileNames { get => field ??= new RelayCommand(EhDeleteFileName); }
+
+    /// <summary>
+    /// Occurs when the selected file name should move up.
+    /// </summary>
+    public ICommand CmdMoveUpSelectedFileNames { get => field ??= new RelayCommand(EhMoveUpFileName); }
+
+    /// <summary>
+    /// Occurs when the selected file name should move down.
+    /// </summary>
+    public ICommand CmdMoveDownSelectedFileNames { get => field ??= new RelayCommand(EhMoveDownFileName); }
+
+    /// <summary>
+    /// Occurs when a new file name should be added.
+    /// </summary>
+    public ICommand CmdAddNewFileName { get => field ??= new RelayCommand(EhAddNewFileName); }
+
+    /// <summary>
+    /// Occurs when a new file name should replace the current list.
+    /// </summary>
+    public ICommand CmdNewFileNameExclusively { get => field ??= new RelayCommand(EhNewFileNameExclusively); }
+
+    /// <summary>
+    /// Occurs when the file names should be sorted in ascending order.
+    /// </summary>
+    public ICommand CmdSortFileNamesAscending { get => field ??= new RelayCommand(EhSortFileNamesAscending); }
+
+    /// <summary>
+    /// Occurs when the file should be shown in the explorer.
+    /// </summary>
+    public ICommand CmdShowSelectedFileInExplorer { get => field ??= new RelayCommand(EhShowFileInExplorer); }
+
+
+
+    #endregion Bindings
 
     /// <inheritdoc/>
     protected override void Initialize(bool initData)
@@ -107,83 +129,39 @@ namespace Altaxo.Gui.Common
       {
         //_doc.SourceFileName
 
-        _fileNames = new SelectableListNodeList();
+        var fileNames = new SelectableListNodeList();
         foreach (var fileName in _doc)
         {
-          _fileNames.Add(new SelectableListNode(fileName, fileName, false));
+          fileNames.Add(new SelectableListNode(fileName, fileName, false));
         }
-      }
-
-      if (_view is not null)
-      {
-        _view.FileNames = _fileNames;
+        FileNames = fileNames;
       }
     }
 
     /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
-      _doc = _fileNames.Select(x => (string)x.Tag!).ToArray();
+      _doc = FileNames.Select(x => (string)x.Tag!).ToArray();
 
       SuccessfullyApplied?.Invoke();
       return ApplyEnd(true, disposeController);
     }
 
-    /// <inheritdoc/>
-    protected override void AttachView()
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      base.AttachView();
-      _view.BrowseSelectedFileName += EhBrowseFileName;
-      _view.DeleteSelectedFileName += EhDeleteFileName;
-      _view.MoveUpSelectedFileName += EhMoveUpFileName;
-      _view.MoveDownSelectedFileName += EhMoveDownFileName;
-      _view.AddNewFileName += EhAddNewFileName;
-      _view.NewFileNameExclusively += EhNewFileNameExclusively;
-      _view.SortFileNamesAscending += EhSortFileNamesAscending;
-    }
-
-    /// <inheritdoc/>
-    protected override void DetachView()
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      _view.BrowseSelectedFileName -= EhBrowseFileName;
-      _view.DeleteSelectedFileName -= EhDeleteFileName;
-      _view.MoveUpSelectedFileName -= EhMoveUpFileName;
-      _view.MoveDownSelectedFileName -= EhMoveDownFileName;
-      _view.AddNewFileName -= EhAddNewFileName;
-      _view.NewFileNameExclusively -= EhNewFileNameExclusively;
-
-      _view.SortFileNamesAscending -= EhSortFileNamesAscending;
-
-      base.DetachView();
-    }
-
     private void EhDeleteFileName()
     {
-      _fileNames.RemoveSelectedItems();
+      FileNames.RemoveSelectedItems();
     }
 
     private void EhMoveUpFileName()
     {
-      _fileNames.MoveSelectedItemsUp();
-      if (_view is { } view)
-      {
-        view.FileNames = _fileNames;
-      }
+      FileNames.MoveSelectedItemsUp();
+
     }
 
     private void EhMoveDownFileName()
     {
-      _fileNames.MoveSelectedItemsDown();
-      if (_view is { } view)
-      {
-        view.FileNames = _fileNames;
-      }
+      FileNames.MoveSelectedItemsDown();
+
     }
 
     private (string Filter, string Description)[] _fileFilters = new[] { ("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)"), ("*.*", "All files (*.*)") };
@@ -204,7 +182,7 @@ namespace Altaxo.Gui.Common
 
     private void EhBrowseFileName()
     {
-      var node = _fileNames.FirstSelectedNode;
+      var node = FileNames.FirstSelectedNode;
       if (node is null)
         return;
 
@@ -221,7 +199,7 @@ namespace Altaxo.Gui.Common
 
     private void EhAddNewFileName(bool addExclusively)
     {
-      var node = _fileNames.Count > 0 ? _fileNames[_fileNames.Count - 1] : null;
+      var node = FileNames.Count > 0 ? FileNames[FileNames.Count - 1] : null;
       var options = new OpenFileOptions();
       foreach (var filter in _fileFilters)
         options.AddFilter(filter.Filter, filter.Description);
@@ -233,11 +211,11 @@ namespace Altaxo.Gui.Common
       {
         if (addExclusively)
         {
-          _fileNames.Clear();
+          FileNames.Clear();
         }
 
         foreach (var filename in options.FileNames)
-          _fileNames.Add(new SelectableListNode(filename, filename, false));
+          FileNames.Add(new SelectableListNode(filename, filename, false));
       }
     }
 
@@ -253,10 +231,29 @@ namespace Altaxo.Gui.Common
 
     private void EhSortFileNamesAscending()
     {
-      var listOfNamesSorted = new List<string>(_fileNames.OrderBy(x => (string)x.Tag!).Select(x => (string)x.Tag!));
-      _fileNames.Clear();
+      var listOfNamesSorted = new List<string>(FileNames.OrderBy(x => (string)x.Tag!).Select(x => (string)x.Tag!));
+      FileNames.Clear();
       foreach (var name in listOfNamesSorted)
-        _fileNames.Add(new SelectableListNode(name, name, false));
+        FileNames.Add(new SelectableListNode(name, name, false));
+    }
+
+    private void EhShowFileInExplorer()
+    {
+      var selectedNode = FileNames.FirstSelectedNode;
+
+      // Start a new explorer process with the file selected. If this fails, try to start the explorer process with the file's directory.
+      if (selectedNode is not null)
+      {
+        var fileName = selectedNode.Tag as string;
+
+        var processStartInfo = new System.Diagnostics.ProcessStartInfo
+        {
+          FileName = "explorer.exe",
+          Arguments = $"/select,\"{fileName}\"",
+          UseShellExecute = true
+        };
+        System.Diagnostics.Process.Start(processStartInfo);
+      }
     }
   }
 }
