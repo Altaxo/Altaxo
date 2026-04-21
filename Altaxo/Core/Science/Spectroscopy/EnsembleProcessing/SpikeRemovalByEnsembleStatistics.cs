@@ -269,6 +269,13 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
             }
           }
           var prominence = max - Math.Max(leftMin, rightMin);
+
+          if (prominence <= 0)
+          {
+            // Zero prominence can happen at the left or right boundary of a spectrum, because there we can not evaluate the left or right minimum
+            continue;
+          }
+
           var halfLevel = max - prominence / 2;
 
           // now search left and right for the half level
