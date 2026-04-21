@@ -383,7 +383,7 @@ namespace Altaxo.Serialization.Ascii
       // try to guess which of the header lines is the caption line
       // we take the caption line to be the first column which has the same number of tokens as the recognized structure
       // if no line fulfilles this criteria, the IndexOfCaptionLine remain unchanged.
-      _indexOfCaptionLine = null; // no caption by default
+      _indexOfCaptionLine = 0; // no caption by default
       if (0 == _numberOfMainHeaderLines)
         return; // if we have no main header lines, we have no caption
 
