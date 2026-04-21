@@ -11,8 +11,8 @@
 //
 //    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    General Public License for more details.
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program; if not, write to the Free Software
@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using System.Collections.Immutable;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 using Altaxo.Science.Spectroscopy.EnsembleProcessing;
@@ -30,39 +29,55 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Result of a dimension reduction by aggregation.
+  /// Represents a dimension reduction method that performs no operation and returns nothing.
   /// </summary>
-  public record DimensionReductionByAggregationResult : IDimensionReductionResult
+  /// <remarks>Although this method returns nothing, it can nevertheless be used in conjuction with preprocessing the output, in case the dimension reduction itself is not neccessary (in the moment).</remarks>
+  public record DimensionReductionNone : IDimensionReductionMethod
   {
+    #region Serialization
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionReductionByAggregationResult"/> record.
+    /// XML serialization surrogate (version 0).
     /// </summary>
-    /// <param name="result">The aggregation result matrix.</param>
-    /// <param name="aggregationKinds">The aggregation kinds used for the result columns.</param>
-    public DimensionReductionByAggregationResult(IROMatrix<double> result, ImmutableList<KindOfAggregation> aggregationKinds)
+    /// <remarks>V0: 2026-04-21.</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionNone), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      Result = result;
-      AggregationKinds = aggregationKinds;
+      /// <inheritdoc />
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionNone)o;
+      }
+
+      /// <inheritdoc />
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return ((o as DimensionReductionNone) ?? new DimensionReductionNone());
+      }
     }
+    #endregion
 
-    /// <summary>
-    /// Gets the result matrix. Rows correspond to the original data points, columns to the aggregated values.
-    /// </summary>
-    public IROMatrix<double> Result { get; init; }
+    /// <inheritdoc />
 
-    /// <summary>
-    /// Gets the aggregation kinds used for the result columns.
-    /// </summary>
-    private ImmutableList<KindOfAggregation> AggregationKinds { get; init; }
+    public string DisplayName => "None (no operation)";
 
+    /// <inheritdoc />
+    public IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> processData)
+    {
+      return new DimensionReductionNoneResult();
+    }
+  }
 
+  /// <summary>
+  /// Result of a no-operational dimension reduction.
+  /// </summary>
+  public record DimensionReductionNoneResult : IDimensionReductionResult
+  {
     /// <inheritdoc />
     public void SaveResultToTable(DimensionReductionOutputOptions outputOptions, DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra, Matrix<double> preprocessedSpectra, IEnsembleProcessingAuxiliaryData auxiliaryData)
     {
-      int numberOfSpectra = Result.RowCount;
-      int numberOfFactors = Result.ColumnCount;
+      int numberOfSpectra = preprocessedSpectra.RowCount;
       DataColumn column;
-
       int groupNumber = 0;
 
       // save the factors
@@ -76,14 +91,6 @@ namespace Altaxo.Calc.Regression.Multivariate
         column = destinationTable.DataColumns.EnsureExistence(sourceTable.PropertyColumns.GetColumnName(idxPropColumn), sourceTable.PropertyColumns[idxPropColumn].GetType(), ColumnKind.V, groupNumber);
         for (int i = 0; i < numberOfSpectra; ++i)
           column[i] = sourceTable.PropertyColumns[idxPropColumn][columnNumbersOfSpectraInSourceTable[i]];
-      }
-
-      // and now the factors
-      for (int idxFactor = 0; idxFactor < numberOfFactors; ++idxFactor)
-      {
-        column = destinationTable.DataColumns.EnsureExistence($"Result_{AggregationKinds[idxFactor]}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
-          column[idxSpectrum] = Result[idxSpectrum, idxFactor];
       }
 
       ++groupNumber;
@@ -116,30 +123,6 @@ namespace Altaxo.Calc.Regression.Multivariate
             }
           }
         }
-      }
-    }
-
-    /// <summary>
-    /// Saves the auxiliary spectral data.
-    /// </summary>
-    /// <param name="data">The data.</param>
-    /// <param name="numberOfSpectralPoints">The number of spectral points.</param>
-    /// <param name="destinationTable">The destination table.</param>
-    /// <param name="groupNumber">The group number.</param>
-    private void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, int numberOfSpectralPoints, DataTable destinationTable, int groupNumber)
-    {
-      if (data is EnsembleAuxiliaryDataCompound compound)
-      {
-        foreach (var item in compound.Values)
-        {
-          SaveAuxiliarySpectralData(item, numberOfSpectralPoints, destinationTable, groupNumber);
-        }
-      }
-      else if (data is EnsembleAuxiliaryDataVector vector && vector.Value.Length == numberOfSpectralPoints)
-      {
-        // save the data)
-        var column = destinationTable.DataColumns.EnsureExistence(data.Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        column.Data = vector.Value;
       }
     }
   }

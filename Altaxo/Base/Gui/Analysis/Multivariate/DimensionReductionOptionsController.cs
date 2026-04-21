@@ -252,6 +252,10 @@ namespace Altaxo.Gui.Analysis.Multivariate
           return ApplyEnd(false, disposeController);
         }
       }
+      else
+      {
+        _doc = _doc with { DimensionReductionMethod = _currentMethod };
+      }
 
       if (OutputOptionsController is { } ctrl3)
       {

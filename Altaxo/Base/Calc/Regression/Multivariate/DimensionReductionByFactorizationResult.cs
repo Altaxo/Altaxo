@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="data">The auxiliary data to save.</param>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="groupNumber">The destination group number.</param>
-    private void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
+    public static void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
     {
       if (data is EnsembleAuxiliaryDataCompound compound)
       {

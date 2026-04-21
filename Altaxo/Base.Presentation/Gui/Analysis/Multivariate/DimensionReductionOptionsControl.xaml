@@ -22,7 +22,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0">
+
+    <GroupBox Grid.Row="0"
+              Header="Spectrum preprocessing:">
+      <StackPanel Orientation="Vertical">
+        <ContentControl Content="{Binding SingleSpectrumPreprocessorController.ViewObject}" />
+      </StackPanel>
+    </GroupBox>
+      
+    <GroupBox Grid.Row="8">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Analysis method: " />
@@ -33,11 +41,7 @@
                 <ContentControl Content="{Binding MethodController.ViewObject}" Margin="0,4,0,0" HorizontalAlignment="Stretch" />
         </GroupBox>
 
-        <GroupBox Grid.Row="8" Header="Spectrum preprocessing:">
-            <StackPanel Orientation="Vertical">
-                <ContentControl Content="{Binding SingleSpectrumPreprocessorController.ViewObject}"/>
-            </StackPanel>
-        </GroupBox>
+        
 
         <GroupBox Grid.Row="10" Header="Output options:">
             <ContentControl Content="{Binding OutputOptionsController.ViewObject}" />
