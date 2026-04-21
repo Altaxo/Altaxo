@@ -84,6 +84,9 @@ namespace Altaxo.Serialization.WITec
       var buffer = new byte[8];
       stream.ReadExactly(buffer, 0, 8); // Skip the first 8 bytes
       MagicString = System.Text.Encoding.ASCII.GetString(buffer);
+      if (!MagicString.StartsWith("WIT_PR", StringComparison.OrdinalIgnoreCase))
+        throw new InvalidDataException($"The provided file does not appear to be a valid WITec project file. Expected magic string should start with 'WIT_PR', but it is '{MagicString}'.");
+
       var (name, node) = WITecTreeNode.Read(stream);
       RootNode = node;
       DataNode = node.GetChild("Data");

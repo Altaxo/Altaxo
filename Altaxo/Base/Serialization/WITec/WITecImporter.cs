@@ -66,14 +66,14 @@ namespace Altaxo.Serialization.WITec
 
       try
       {
+        WITecReader reader;
         using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-          var (name, rootNode) = WITecTreeNode.Read(stream);
-          if (rootNode.ChildNodes.TryGetValue("Data", out var dataNode) && dataNode.ChildNodes.Count > 0)
-          {
-            p += 0.5;
-          }
+          reader = new WITecReader(stream);
         }
+        reader.ExtractSpectra();
+
+        p += reader.Spectra.Count > 0 ? 0.5 : 0.4;
       }
       catch
       {

@@ -49,6 +49,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+ 
+  <ItemGroup>
+    <Content Include="Serialization\Omnic\TestFiles\Example1.SPA">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />

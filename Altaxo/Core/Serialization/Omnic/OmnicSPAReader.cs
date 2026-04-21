@@ -117,8 +117,15 @@ namespace Altaxo.Serialization.Omnic
       if (!stream.CanSeek)
         throw new ArgumentException($"{nameof(stream)} must be seekable!");
 
+      stream.Seek(0, SeekOrigin.Begin); // Ensure we start at the beginning of the stream
+      var buffer = new byte[18];
+      stream.ReadExactly(buffer, 0, buffer.Length);
+      var signature = System.Text.Encoding.ASCII.GetString(buffer, 0, buffer.Length); // read the file signature, should be "Spectral Data File"
+      if (signature != "Spectral Data File")
+        throw new ArgumentException($"Invalid file format (unexpected signature '{signature}')!");
+
       stream.Seek(Pos_BeginComment, SeekOrigin.Begin); // Begin of the comment section
-      var buffer = new byte[Pos_EndComment - Pos_BeginComment];
+      buffer = new byte[Pos_EndComment - Pos_BeginComment];
 
       stream.ReadExactly(buffer, 0, buffer.Length);
       var comment = System.Text.Encoding.UTF8.GetString(buffer);

@@ -113,6 +113,13 @@ namespace Altaxo.Serialization.Omnic
       const int Pos_FirstKeyLine = 304; // 0x130
       const int KeyLineSize = 16;
 
+      stream.Seek(0, SeekOrigin.Begin); // Ensure we start at the beginning of the stream
+      var buffer = new byte[18];
+      stream.ReadExactly(buffer, 0, buffer.Length);
+      var signature = System.Text.Encoding.ASCII.GetString(buffer, 0, buffer.Length); // read the file signature, should be "Spectral Data File"
+      if (signature != "Spectral Data File")
+        throw new ArgumentException($"Invalid file format (unexpected signature '{signature}')!");
+
       try
       {
         GroupName = ReadBText(stream, Pos_GroupName, Len_GroupName);
