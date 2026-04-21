@@ -255,7 +255,7 @@ namespace Altaxo.Serialization.WITec
               {
                 columnName = System.IO.Path.GetFileNameWithoutExtension(fileName);
               }
-              if (fileNames.Count == 1 && spectra.Count() == 1 && numberOfOtherDimensions == 2)
+              if (fileNames.Count == 1 && (spectra.Count() == 1 || importOptionsX.IndicesOfImportedGraphs.Count == 1) && numberOfOtherDimensions == 2)
               {
                 columnName = $"{columnName}{otherDim1}_{iSpectrum}";
               }
