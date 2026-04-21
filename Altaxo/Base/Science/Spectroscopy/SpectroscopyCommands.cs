@@ -317,18 +317,10 @@ namespace Altaxo.Science.Spectroscopy
       dstTable.DataColumns.RemoveColumnsAll();
       dstTable.PropCols.RemoveColumnsAll();
 
-      foreach (var entry in inputData.GetResolvedData())
+      foreach (var (xyCols, xArr, yArr, regions) in GetPreprocessedData(inputData, doc))
       {
         ++runningColumnNumber;
         var groupNumberBase = runningColumnNumber * 10;
-
-        var xyCols = entry.xyColumns;
-        var xArr = entry.xArray;
-        var yArr = entry.yArray;
-
-        // now apply the preprocessing steps
-        int[]? regions = null;
-        (xArr, yArr, regions) = doc.Execute(xArr, yArr, regions);
 
         // Store result
         var srcTable = xyCols.DataTable ?? throw new InvalidOperationException($"Neither x-column {xyCols.XColumn} nor y-column {xyCols.YColumn} have a parent data table.");
@@ -378,6 +370,52 @@ namespace Altaxo.Science.Spectroscopy
 
       return resultList;
     }
+
+    /// <summary>
+    /// Preprocesses the input spectral data according to the specified preprocessing options and yields the resulting
+    /// data for each X/Y column set.
+    /// </summary>
+    /// <remarks>If the input data all have the same length and share the same x-values, the spectra are preprocessed as an ensemble. Otherwise, they are preprocessed one-by-one.</remarks>
+    /// <param name="inputData">The input spectral data as a collection of X and Y columns to be preprocessed.</param>
+    /// <param name="doc">The preprocessing options to apply to the input data.</param>
+    /// <returns>An enumerable collection of tuples, each containing the X and Y column information, the processed X array, the
+    /// processed Y array, and the regions used during preprocessing. The regions value may be null if not applicable.</returns>
+    public static IEnumerable<(XAndYColumn xyColumn, double[] xArray, double[] yArray, int[]? regions)> GetPreprocessedData(ListOfXAndYColumn inputData, SpectralPreprocessingOptionsBase doc)
+    {
+      if (inputData.TryGetResolvedDataInMatrixForm() is { } inputDataResolvedInMatrixForm)
+      {
+        // now apply the preprocessing steps
+        int[]? regions = null;
+        (var xArray, var yMatrix, regions, _) = doc.Execute(inputDataResolvedInMatrixForm.xArray, inputDataResolvedInMatrixForm.yMatrix, regions);
+
+        for (int iRow = 0; iRow < yMatrix.RowCount; ++iRow)
+        {
+          var xyCols = inputDataResolvedInMatrixForm.xyColumns[iRow];
+          var xArr = (double[])xArray.Clone();
+          var yArr = new double[yMatrix.ColumnCount];
+          for (int j = 0; j < yMatrix.ColumnCount; ++j)
+          {
+            yArr[j] = yMatrix[iRow, j];
+          }
+          yield return (xyCols, xArr, yArr, regions);
+        }
+      }
+      else
+      {
+        foreach (var entry in inputData.GetResolvedData())
+        {
+          var xyCols = entry.xyColumns;
+          var xArr = entry.xArray;
+          var yArr = entry.yArray;
+
+          // now apply the preprocessing steps
+          int[]? regions = null;
+          (xArr, yArr, regions) = doc.Execute(xArr, yArr, regions);
+          yield return (xyCols, xArr, yArr, regions);
+        }
+      }
+    }
+
 
     /// <summary>
     /// Executes peak searching and fitting across one or multiple spectra and writes output to the provided peak table.

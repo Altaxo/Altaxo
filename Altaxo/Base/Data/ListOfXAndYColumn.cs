@@ -24,6 +24,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Main;
 
 namespace Altaxo.Data
@@ -193,6 +195,43 @@ namespace Altaxo.Data
         if (x is not null && y is not null && rowCount > 0)
           yield return (curve, x, y, rowCount);
       }
+    }
+
+    /// <summary>
+    /// Tries to get the resolved X and Y data for all curves in matrix form. If successful, returns a tuple containing the X array and the Y matrix.
+    /// The curves must have the same X array for this to work. The curves are represented by rows in the Y matrix.
+    /// </summary>
+    /// <returns>If successful, a tuple containing the curves that contribute to the matrix, the common x-data of all curves, and the yMatrix containing a row for each curve. If not successful, the return value is <c>null</c>.</returns>
+    public (XAndYColumn[] xyColumns, double[] xArray, Matrix<double> yMatrix)? TryGetResolvedDataInMatrixForm()
+    {
+      var resolvedData = GetResolvedData().ToList();
+      if (resolvedData.Count == 0)
+      {
+        return null;
+      }
+
+      int numberOfCurvePoints = resolvedData[0].rowCount;
+      var xyColumns = new XAndYColumn[resolvedData.Count];
+      var xArray = new double[numberOfCurvePoints];
+      var yMatrix = CreateMatrix.Dense<double>(resolvedData.Count, numberOfCurvePoints);
+
+      Array.Copy(resolvedData[0].xArray, xArray, numberOfCurvePoints); // copy the x array of the first curve, we will check that all other curves have the same x array
+      for (int i = 0; i < resolvedData.Count; i++)
+      {
+        xyColumns[i] = resolvedData[i].xyColumns;
+        var y = resolvedData[i].yArray;
+        var x = resolvedData[i].xArray;
+        for (int j = 0; j < numberOfCurvePoints; j++)
+        {
+          yMatrix[i, j] = y[j];
+
+          if (x[j] != xArray[j]) // test also for the x arrays to be the same, otherwise we cannot return a common x array
+          {
+            return null;
+          }
+        }
+      }
+      return (xyColumns, xArray, yMatrix);
     }
   }
 }
