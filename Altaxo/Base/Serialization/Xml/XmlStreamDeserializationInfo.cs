@@ -60,13 +60,36 @@ namespace Altaxo.Serialization.Xml
     /// done only if the objects are put in the right places in the document, so that
     /// the document paths can be resolved to the right objects.
     /// </summary>
-    public event XmlDeserializationCallbackEventHandler? DeserializationFinished;
+    public event XmlDeserializationCallbackEventHandler DeserializationFinished
+    {
+      add
+      {
+        _deserializationFinished.TryAdd(value, 0);
+      }
+      remove
+      {
+        _deserializationFinished.TryRemove(value, out _);
+      }
+    }
+
+    System.Collections.Concurrent.ConcurrentDictionary<XmlDeserializationCallbackEventHandler, byte> _deserializationFinished = new();
 
     /// <summary>
     /// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
     /// the data sources of the document, which should be suspended during the deserialization process.
     /// </summary>
-    public event Action? AfterDeserializationHasCompletelyFinished;
+    public event Action AfterDeserializationHasCompletelyFinished
+    {
+      add
+      {
+        _afterDeserializationHasCompletelyFinished.TryAdd(value, 0);
+      }
+      remove
+      {
+        _afterDeserializationHasCompletelyFinished.TryRemove(value, out _);
+      }
+    }
+    System.Collections.Concurrent.ConcurrentDictionary<Action, byte> _afterDeserializationHasCompletelyFinished = new();
 
     /// <summary>
     /// Occurs when a new instance of this class is created. Argument is the created instance.
@@ -189,15 +212,22 @@ namespace Altaxo.Serialization.Xml
     /// <param name="isFinalCall">If set to <c>true</c>, this is the final announcement for the document.</param>
     public void AnnounceDeserializationEnd(Main.IDocumentNode documentRoot, bool isFinalCall)
     {
-      DeserializationFinished?.Invoke(this, documentRoot, isFinalCall);
+      foreach (var handler in _deserializationFinished.Keys)
+      {
+        handler?.Invoke(this, documentRoot, isFinalCall);
+      }
     }
+
 
     /// <summary>
     /// Announces that deserialization has completely finished.
     /// </summary>
     public void AnnounceDeserializationHasCompletelyFinished()
     {
-      AfterDeserializationHasCompletelyFinished?.Invoke();
+      foreach (var handler in _afterDeserializationHasCompletelyFinished.Keys)
+      {
+        handler?.Invoke();
+      }
     }
 
     #region IXmlSerializationInfo Members
@@ -379,7 +409,7 @@ namespace Altaxo.Serialization.Xml
     /// <inheritdoc />
     public int GetInt32Attribute(string name)
     {
-      return XmlConvert.ToInt32(_xmlReader[name]??string.Empty);
+      return XmlConvert.ToInt32(_xmlReader[name] ?? string.Empty);
     }
 
     /// <inheritdoc />

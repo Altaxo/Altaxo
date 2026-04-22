@@ -828,6 +828,7 @@ namespace Altaxo.Graph.Gdi
           InitializeXScaleDataBounds();
         if (Scales.Y.DataBoundsObject.IsEmpty)
           InitializeYScaleDataBounds();
+        info.DeserializationFinished -= EhDeserializationFinished;
       }
     }
 

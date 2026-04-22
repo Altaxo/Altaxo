@@ -336,12 +336,12 @@ namespace Altaxo.Serialization.Xml
     /// done only if the objects are put in the right places in the document, so that
     /// the document paths can be resolved to the right objects.
     /// </summary>
-    event XmlDeserializationCallbackEventHandler? DeserializationFinished;
+    event XmlDeserializationCallbackEventHandler DeserializationFinished;
 
     /// <summary>
     /// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
     /// the data sources of the document, which should be suspended during the deserialization process.
     /// </summary>
-    event Action? AfterDeserializationHasCompletelyFinished;
+    event Action AfterDeserializationHasCompletelyFinished;
   }
 }
