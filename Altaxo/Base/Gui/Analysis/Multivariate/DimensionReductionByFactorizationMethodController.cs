@@ -89,6 +89,24 @@ namespace Altaxo.Gui.Analysis.Multivariate
       }
     }
 
+    /// <summary>
+    /// Gets or sets the available normalization methods for scores and loadings.
+    /// </summary>
+    public ItemsController<ScoresAndLoadingsNormalization> Normalization
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(Normalization));
+        }
+      }
+    }
+
+
 
     /// <summary>
     /// Gets or sets the controller for method-specific settings.
@@ -127,6 +145,8 @@ namespace Altaxo.Gui.Analysis.Multivariate
         Method = new ItemsController<ILowRankMatrixFactorization>(methodList, EhMethodChanged);
         Method.SelectedValue = _doc.Method;
         MaximumNumberOfFactors = _doc.MaximumNumberOfFactors;
+
+        Normalization = new ItemsController<ScoresAndLoadingsNormalization>(new SelectableListNodeList(_doc.Normalization));
       }
     }
 
@@ -156,7 +176,8 @@ namespace Altaxo.Gui.Analysis.Multivariate
       _doc = _doc with
       {
         Method = Method.SelectedValue,
-        MaximumNumberOfFactors = MaximumNumberOfFactors
+        MaximumNumberOfFactors = MaximumNumberOfFactors,
+        Normalization = Normalization.SelectedValue,
       };
 
       return ApplyEnd(true, disposeController);

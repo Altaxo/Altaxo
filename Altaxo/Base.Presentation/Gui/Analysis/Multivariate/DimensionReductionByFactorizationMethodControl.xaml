@@ -22,6 +22,8 @@
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0"
                Grid.Column="0"
@@ -41,7 +43,16 @@
                            Minimum="1"
                            Value="{Binding MaximumNumberOfFactors}" />
 
-        <ContentControl Grid.Row="4"
+        <Label Grid.Row="4"
+               Grid.Column="0"
+               Content="Normalization of scores and loadings:" />
+
+        <ComboBox Grid.Row="4"
+                  Grid.Column="2"
+                  ItemsSource="{Binding Normalization.Items}"
+                  SelectedItem="{Binding Normalization.SelectedItem, Mode=TwoWay}" />
+        
+        <ContentControl Grid.Row="6"
                         Grid.Column="0"
                         Grid.ColumnSpan="4"
                         Content="{Binding DetailsController.ViewObject}" />

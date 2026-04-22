@@ -1,0 +1,48 @@
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+namespace Altaxo.Calc.Regression.Multivariate
+{
+  /// <summary>
+  /// Designates the normalization method for the resulting loadings and scores of a factorization-based dimension reduction method.
+  /// </summary>
+  public enum ScoresAndLoadingsNormalization
+  {
+    /// <summary>
+    /// Specifies that the native platform implementation should be used (no further normalization applied).
+    /// </summary>
+    Native = 0,
+
+    /// <summary>
+    /// The maximum absolute value of the scores is normalized to 1.
+    /// </summary>
+    AbsMaxScores = 1,
+
+    /// <summary>
+    /// The maximum absolute value of the loadings is normalized to 1.
+    /// </summary>
+    AbsMaxLoadings = 2,
+
+  }
+}

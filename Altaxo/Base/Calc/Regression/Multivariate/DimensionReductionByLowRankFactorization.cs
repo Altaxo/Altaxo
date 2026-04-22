@@ -48,13 +48,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int MaximumNumberOfFactors { get; init; } = 3;
 
 
+    /// <summary>
+    /// Gets the normalization method applied to loadings and scores.
+    /// </summary>
+    /// <remarks>This property determines how the loadings and scores are scaled or transformed. The selected
+    /// normalization affects the interpretation of the results and may impact downstream analysis.</remarks>
+    public ScoresAndLoadingsNormalization Normalization { get; init; } = ScoresAndLoadingsNormalization.Native;
+
+
     #region Serialization
 
     /// <summary>
     /// XML serialization surrogate (version 0).
     /// </summary>
     /// <remarks>V0: 2026-01-09.</remarks>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionByLowRankFactorization), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Multivariate.DimensionReductionByLowRankFactorization", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
@@ -77,6 +85,38 @@ namespace Altaxo.Calc.Regression.Multivariate
           Method = method,
         };
 
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate (version 1).
+    /// </summary>
+    /// <remarks>V0: 2026-04-22 added property <c>Normalization</c>.</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionByLowRankFactorization), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc />
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionByLowRankFactorization)o;
+        info.AddValue("MaximumNumberOfFactors", s.MaximumNumberOfFactors);
+        info.AddValue("Method", s.Method);
+        info.AddEnum("Normalization", s.Normalization);
+      }
+
+      /// <inheritdoc />
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var maxNumberOfFactors = info.GetInt32("MaximumNumberOfFactors");
+        var method = info.GetValue<ILowRankMatrixFactorization>("Method", parent);
+        var normalization = info.GetEnum<ScoresAndLoadingsNormalization>("Normalization");
+        return ((o as DimensionReductionByLowRankFactorization) ?? new DimensionReductionByLowRankFactorization())
+          with
+        {
+          MaximumNumberOfFactors = maxNumberOfFactors,
+          Method = method,
+          Normalization = normalization,
+        };
       }
     }
     #endregion
@@ -118,7 +158,72 @@ namespace Altaxo.Calc.Regression.Multivariate
       var matrix = CreateMatrix.Dense<double>(processData.RowCount, processData.ColumnCount);
       MatrixMath.Copy(processData, matrix);
       var (scores, loadings) = Method.Factorize(matrix, MaximumNumberOfFactors);
+      NormalizeScoresAndLoadings(scores, loadings);
       return new DimensionReductionByFactorizationResult(scores, loadings, null, null);
+    }
+
+    /// <summary>
+    /// Normalizes the provided scores and loadings matrices according to the configured normalization method.
+    /// </summary>
+    /// <param name="scores">The matrix containing the scores to be normalized. The normalization is applied in place.</param>
+    /// <param name="loadings">The matrix containing the loadings to be normalized. The normalization is applied in place.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the configured normalization method is not supported.</exception>
+    public void NormalizeScoresAndLoadings(Matrix<double> scores, Matrix<double> loadings)
+    {
+      switch (Normalization)
+      {
+        case ScoresAndLoadingsNormalization.Native:
+          // No normalization applied.
+          break;
+        case ScoresAndLoadingsNormalization.AbsMaxScores:
+          {
+            for (int iC = 0; iC < scores.ColumnCount; ++iC)
+            {
+              var maxAbsValue = 0.0;
+              for (int iR = 0; iR < scores.RowCount; ++iR)
+              {
+                maxAbsValue = Math.Max(maxAbsValue, Math.Abs(scores[iR, iC]));
+              }
+              if (maxAbsValue > 0.0)
+              {
+                for (int iR = 0; iR < scores.RowCount; ++iR)
+                {
+                  scores[iR, iC] /= maxAbsValue;
+                }
+                for (int iCL = 0; iCL < loadings.ColumnCount; ++iCL)
+                {
+                  loadings[iC, iCL] *= maxAbsValue;
+                }
+              }
+            }
+          }
+          break;
+        case ScoresAndLoadingsNormalization.AbsMaxLoadings:
+          {
+            for (int iC = 0; iC < scores.ColumnCount; ++iC)
+            {
+              var maxAbsValue = 0.0;
+              for (int iCL = 0; iCL < loadings.ColumnCount; ++iCL)
+              {
+                maxAbsValue = Math.Max(maxAbsValue, Math.Abs(loadings[iC, iCL]));
+              }
+              if (maxAbsValue > 0.0)
+              {
+                for (int iCL = 0; iCL < loadings.ColumnCount; ++iCL)
+                {
+                  loadings[iC, iCL] /= maxAbsValue;
+                }
+                for (int iR = 0; iR < scores.RowCount; ++iR)
+                {
+                  scores[iR, iC] *= maxAbsValue;
+                }
+              }
+            }
+          }
+          break;
+        default:
+          throw new InvalidOperationException($"Unsupported normalization method: {Normalization}");
+      }
     }
   }
 }
