@@ -352,7 +352,7 @@ namespace Altaxo.Main.Commands
           }
 
           Current.Project.AddItem(newDoc);
-          Current.IProjectService.ShowDocumentView(newDoc);
+          Current.IProjectService.OpenOrCreateViewContentForDocument(newDoc);
         }
       }
     }

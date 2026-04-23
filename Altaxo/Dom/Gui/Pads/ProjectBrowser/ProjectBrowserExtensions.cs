@@ -297,7 +297,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         Current.Project.DataTableCollection.Add(destinationTable);
         destinationTable.DataSource = dataSource;
         destinationTable.UpdateTableFromTableDataSourceAsUserCancellable();
-        Current.ProjectService.ShowDocumentView(destinationTable);
+        Current.IProjectService.OpenOrCreateViewContentForDocument(destinationTable);
       }
     }
 

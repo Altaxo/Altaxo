@@ -89,7 +89,7 @@ namespace Altaxo.Data
         destTable.DataSource = dataSource;
 
         Current.Project.DataTableCollection.Add(destTable);
-        Current.IProjectService.ShowDocumentView(destTable);
+        Current.IProjectService.OpenOrCreateViewContentForDocument(destTable);
       }
     }
 

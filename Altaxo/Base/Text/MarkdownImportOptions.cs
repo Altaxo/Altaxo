@@ -154,7 +154,7 @@ namespace Altaxo.Text
 
       Current.Project.TextDocumentCollection.Add(textDocument);
 
-      Current.ProjectService.ShowDocumentView(textDocument);
+      Current.ProjectService.OpenOrCreateViewContentForDocument(textDocument);
 
       return errors.Length == 0 ? null : errors.ToString();
     }

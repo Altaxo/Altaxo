@@ -102,7 +102,7 @@ namespace Altaxo.Data
         var dataSource = new ConvertXYVToMatrixDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
         newTable.DataSource = dataSource;
 
-        Current.IProjectService.ShowDocumentView(newTable);
+        Current.IProjectService.OpenOrCreateViewContentForDocument(newTable);
       }
 
       return null;
@@ -160,7 +160,7 @@ namespace Altaxo.Data
         destTable.DataSource = dataSource;
 
         Current.Project.DataTableCollection.Add(destTable);
-        Current.IProjectService.ShowDocumentView(destTable);
+        Current.IProjectService.OpenOrCreateViewContentForDocument(destTable);
       }
     }
 

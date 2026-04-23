@@ -91,7 +91,7 @@ namespace Altaxo.Worksheet.Commands
       var destTable = Current.Project.CreateNewTable(srcTable.Name + "_Transposed", false);
 
       Altaxo.Data.Transposing.Transpose(srcTable, options, destTable);
-      Current.IProjectService.ShowDocumentView(destTable);
+      Current.IProjectService.OpenOrCreateViewContentForDocument(destTable);
 
       destTable.DataSource = new Altaxo.Data.DataTableTransposeDataSource(new Data.DataTableProxy(srcTable), options, new Data.DataSourceImportOptions());
     }

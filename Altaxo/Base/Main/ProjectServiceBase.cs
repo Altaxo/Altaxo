@@ -709,19 +709,26 @@ namespace Altaxo.Dom
     /// <returns>The shown view object, or <see langword="null"/> if no view could be created.</returns>
     public virtual object? ShowDocumentView(object document)
     {
-      var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
-
-      if (viewcontent is null) // if not found, try to create a new viewcontent
+      if (document is IProjectItem projectItem)
       {
-        viewcontent = (IViewContent?)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
+        return OpenOrCreateViewContentForDocument(projectItem);
       }
-
-      if (viewcontent is not null)
+      else
       {
-        Current.Workbench.ShowView(viewcontent, true);
-      }
+        var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
 
-      return viewcontent;
+        if (viewcontent is null) // if not found, try to create a new viewcontent
+        {
+          viewcontent = (IViewContent?)Current.Gui.GetControllerAndControl(new object[] { document }, typeof(IViewContent));
+        }
+
+        if (viewcontent is not null)
+        {
+          Current.Workbench.ShowView(viewcontent, true);
+        }
+
+        return viewcontent;
+      }
     }
 
     /// <summary>
