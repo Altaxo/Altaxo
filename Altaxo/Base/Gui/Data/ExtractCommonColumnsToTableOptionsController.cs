@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
@@ -25,296 +23,286 @@ namespace Altaxo.Gui.Data
     /// <inheritdoc />
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null);
+      yield return new ControllerAndSetNullMethod(InterpolationDetails, () => InterpolationDetails = null!);
     }
 
     #region Bindings
-
-    private bool _intersectXValues;
 
     /// <summary>
     /// Gets or sets a value indicating whether X values should be intersected.
     /// </summary>
     public bool IntersectXValues
     {
-      get => _intersectXValues;
+      get => field;
       set
       {
-        if (!(_intersectXValues == value))
+        if (!(field == value))
         {
-          _intersectXValues = value;
+          field = value;
           OnPropertyChanged(nameof(IntersectXValues));
         }
       }
     }
-
-    private bool _useUserDefinedNameForXColumn;
 
     /// <summary>
     /// Gets or sets a value indicating whether a user-defined name should be used for the X column.
     /// </summary>
     public bool UseUserDefinedNameForXColumn
     {
-      get => _useUserDefinedNameForXColumn;
+      get => field;
       set
       {
-        if (!(_useUserDefinedNameForXColumn == value))
+        if (!(field == value))
         {
-          _useUserDefinedNameForXColumn = value;
+          field = value;
           OnPropertyChanged(nameof(UseUserDefinedNameForXColumn));
         }
       }
     }
-
-    private string _userDefinedNameForXColumn;
 
     /// <summary>
     /// Gets or sets the user-defined name for the X column.
     /// </summary>
     public string UserDefinedNameForXColumn
     {
-      get => _userDefinedNameForXColumn;
+      get => field;
       set
       {
-        if (!(_userDefinedNameForXColumn == value))
+        if (!(field == value))
         {
-          _userDefinedNameForXColumn = value;
+          field = value;
           OnPropertyChanged(nameof(UserDefinedNameForXColumn));
         }
       }
     }
-
-    private bool _useUserDefinedNamesForYColumns;
 
     /// <summary>
     /// Gets or sets a value indicating whether user-defined names should be used for the Y columns.
     /// </summary>
     public bool UseUserDefinedNamesForYColumns
     {
-      get => _useUserDefinedNamesForYColumns;
+      get => field;
       set
       {
-        if (!(_useUserDefinedNamesForYColumns == value))
+        if (!(field == value))
         {
-          _useUserDefinedNamesForYColumns = value;
+          field = value;
           OnPropertyChanged(nameof(UseUserDefinedNamesForYColumns));
         }
       }
     }
-
-    private string _userDefinedNamesForYColumns;
 
     /// <summary>
     /// Gets or sets the user-defined names for the Y columns.
     /// </summary>
     public string UserDefinedNamesForYColumns
     {
-      get => _userDefinedNamesForYColumns;
+      get => field;
       set
       {
-        if (!(_userDefinedNamesForYColumns == value))
+        if (!(field == value))
         {
-          _userDefinedNamesForYColumns = value;
+          field = value;
           OnPropertyChanged(nameof(UserDefinedNamesForYColumns));
         }
       }
     }
-
-    private bool _placeMultipleYColumnsAdjacentInDestinationTable;
 
     /// <summary>
     /// Gets or sets a value indicating whether multiple Y columns should be placed adjacently in the destination table.
     /// </summary>
     public bool PlaceMultipleYColumnsAdjacentInDestinationTable
     {
-      get => _placeMultipleYColumnsAdjacentInDestinationTable;
+      get => field;
       set
       {
-        if (!(_placeMultipleYColumnsAdjacentInDestinationTable == value))
+        if (!(field == value))
         {
-          _placeMultipleYColumnsAdjacentInDestinationTable = value;
+          field = value;
           OnPropertyChanged(nameof(PlaceMultipleYColumnsAdjacentInDestinationTable));
         }
       }
     }
 
-    private bool _createPropertyColumnWithSourceTableName;
 
     /// <summary>
     /// Gets or sets a value indicating whether a property column with the source table name should be created.
     /// </summary>
     public bool CreatePropertyColumnWithSourceTableName
     {
-      get => _createPropertyColumnWithSourceTableName;
+      get => field;
       set
       {
-        if (!(_createPropertyColumnWithSourceTableName == value))
+        if (!(field == value))
         {
-          _createPropertyColumnWithSourceTableName = value;
+          field = value;
           OnPropertyChanged(nameof(CreatePropertyColumnWithSourceTableName));
         }
       }
     }
-
-    private bool _copyColumnProperties;
 
     /// <summary>
     /// Gets or sets a value indicating whether column properties should be copied to the destination table.
     /// </summary>
     public bool CopyColumnProperties
     {
-      get => _copyColumnProperties;
+      get => field;
       set
       {
-        if (!(_copyColumnProperties == value))
+        if (!(field == value))
         {
-          _copyColumnProperties = value;
+          field = value;
           OnPropertyChanged(nameof(CopyColumnProperties));
         }
       }
     }
 
-    private bool _useResampling;
+    /// <summary>
+    /// Contains the names of properties of the source table that should be copied to the destination table.
+    /// </summary>
+    public string TablePropertyNames
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(TablePropertyNames));
+        }
+      }
+    }
+
 
     /// <summary>
     /// Gets or sets a value indicating whether resampling should be used.
     /// </summary>
     public bool UseResampling
     {
-      get => _useResampling;
+      get => field;
       set
       {
-        if (!(_useResampling == value))
+        if (!(field == value))
         {
-          _useResampling = value;
+          field = value;
           OnPropertyChanged(nameof(UseResampling));
         }
       }
     }
-
-    private ItemsController<Type> _interpolationFunction;
 
     /// <summary>
     /// Gets or sets the interpolation function controller item list.
     /// </summary>
     public ItemsController<Type> InterpolationFunction
     {
-      get => _interpolationFunction;
+      get => field;
       set
       {
-        if (!(_interpolationFunction == value))
+        if (!(field == value))
         {
-          _interpolationFunction = value;
+          field?.Dispose();
+          field = value;
           OnPropertyChanged(nameof(InterpolationFunction));
         }
       }
     }
 
-    private double _interpolationInterval;
 
     /// <summary>
     /// Gets or sets the interpolation interval.
     /// </summary>
     public double InterpolationInterval
     {
-      get => _interpolationInterval;
+      get => field;
       set
       {
-        if (!(_interpolationInterval == value))
+        if (!(field == value))
         {
-          _interpolationInterval = value;
+          field = value;
           OnPropertyChanged(nameof(InterpolationInterval));
         }
       }
     }
 
-    private bool _useUserDefinedInterpolationRangeStart;
 
     /// <summary>
     /// Gets or sets a value indicating whether a user-defined interpolation range start should be used.
     /// </summary>
     public bool UseUserDefinedInterpolationRangeStart
     {
-      get => _useUserDefinedInterpolationRangeStart;
+      get => field;
       set
       {
-        if (!(_useUserDefinedInterpolationRangeStart == value))
+        if (!(field == value))
         {
-          _useUserDefinedInterpolationRangeStart = value;
+          field = value;
           OnPropertyChanged(nameof(UseUserDefinedInterpolationRangeStart));
         }
       }
     }
-
-    private double? _interpolationRangeStart;
 
     /// <summary>
     /// Gets or sets the user-defined interpolation range start.
     /// </summary>
     public double? InterpolationRangeStart
     {
-      get => _interpolationRangeStart;
+      get => field;
       set
       {
-        if (!(_interpolationRangeStart == value))
+        if (!(field == value))
         {
-          _interpolationRangeStart = value;
+          field = value;
           OnPropertyChanged(nameof(InterpolationRangeStart));
         }
       }
     }
 
 
-    private bool _useUserDefinedInterpolationRangeEnd;
 
     /// <summary>
     /// Gets or sets a value indicating whether a user-defined interpolation range end should be used.
     /// </summary>
     public bool UseUserDefinedInterpolationRangeEnd
     {
-      get => _useUserDefinedInterpolationRangeEnd;
+      get => field;
       set
       {
-        if (!(_useUserDefinedInterpolationRangeEnd == value))
+        if (!(field == value))
         {
-          _useUserDefinedInterpolationRangeEnd = value;
+          field = value;
           OnPropertyChanged(nameof(UseUserDefinedInterpolationRangeEnd));
         }
       }
     }
 
-    private double?  _interpolationRangeEnd;
-
     /// <summary>
     /// Gets or sets the user-defined interpolation range end.
     /// </summary>
-    public double?  InterpolationRangeEnd
+    public double? InterpolationRangeEnd
     {
-      get => _interpolationRangeEnd;
+      get => field;
       set
       {
-        if (!(_interpolationRangeEnd == value))
+        if (!(field == value))
         {
-          _interpolationRangeEnd = value;
+          field = value;
           OnPropertyChanged(nameof(InterpolationRangeEnd));
         }
       }
     }
-
-    private IMVCANController _interpolationDetails;
 
     /// <summary>
     /// Gets or sets the controller for editing interpolation-specific options.
     /// </summary>
     public IMVCANController InterpolationDetails
     {
-      get => _interpolationDetails;
+      get => field;
       set
       {
-        if (!(_interpolationDetails == value))
+        if (!(field == value))
         {
-          _interpolationDetails?.Dispose();
-          _interpolationDetails = value;
+          field?.Dispose();
+          field = value;
           OnPropertyChanged(nameof(InterpolationDetails));
         }
       }
@@ -329,7 +317,7 @@ namespace Altaxo.Gui.Data
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         IntersectXValues = _doc.IntersectXValues;
         UseUserDefinedNameForXColumn = !string.IsNullOrEmpty(_doc.UserDefinedNameForXColumn);
@@ -338,7 +326,8 @@ namespace Altaxo.Gui.Data
         UserDefinedNamesForYColumns = string.Join("\r\n", _doc.UserDefinedNamesForYColumns);
         PlaceMultipleYColumnsAdjacentInDestinationTable = _doc.PlaceMultipleYColumnsAdjacentInDestinationTable;
         CreatePropertyColumnWithSourceTableName = _doc.CreatePropertyColumnWithSourceTableName;
-        CopyColumnProperties =  _doc.CopyColumnProperties;
+        CopyColumnProperties = _doc.CopyColumnProperties;
+        TablePropertyNames = string.Join("\r\n", _doc.TablePropertyNames);
         UseResampling = _doc.UseResampling;
 
 
@@ -380,7 +369,7 @@ namespace Altaxo.Gui.Data
 
     private void EhInterpolationFunctionChanged(Type type)
     {
-      if(type is not null && type != _lastInterpolationFunction?.GetType())
+      if (type is not null && type != _lastInterpolationFunction?.GetType())
       {
         _lastInterpolationFunction = (IInterpolationFunctionOptions)Activator.CreateInstance(type);
 
@@ -394,7 +383,7 @@ namespace Altaxo.Gui.Data
     /// <inheritdoc />
     public override bool Apply(bool disposeController)
     {
-      var userDefinedY = UserDefinedNamesForYColumns.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+      var userDefinedY = UserDefinedNamesForYColumns.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
                         .Where(s => !string.IsNullOrEmpty(s.Trim()))
                         .ToImmutableArray();
 
@@ -407,10 +396,13 @@ namespace Altaxo.Gui.Data
         PlaceMultipleYColumnsAdjacentInDestinationTable = PlaceMultipleYColumnsAdjacentInDestinationTable,
         CreatePropertyColumnWithSourceTableName = CreatePropertyColumnWithSourceTableName,
         CopyColumnProperties = CopyColumnProperties,
+        TablePropertyNames = TablePropertyNames.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+                             .Where(s => !string.IsNullOrEmpty(s.Trim()))
+                             .ToImmutableArray(),
         Interpolation = null,
       };
 
-      if(UseResampling)
+      if (UseResampling)
       {
         if (InterpolationDetails is not null)
         {
@@ -433,7 +425,7 @@ namespace Altaxo.Gui.Data
       return ApplyEnd(true, disposeController);
     }
 
-   
+
   }
 
 }

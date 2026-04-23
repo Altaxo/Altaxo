@@ -450,9 +450,9 @@ namespace Altaxo.Data
               {
                 pcolOriginalTableName[destinationTable.DataColumns.GetColumnNumber(yDstCol)] = t.Table.Name;
               }
+              var idxDstCol = destinationTable.DataColumns.GetColumnNumber(yDstCol);
               if (options.CopyColumnProperties)
               {
-                var idxDstCol = destinationTable.DataColumns.GetColumnNumber(yDstCol);
                 var idxSrcCol = t.Table.DataColumns.GetColumnNumber(t.YColumns[iy]);
 
                 for (int ipc = 0; ipc < t.Table.PropertyColumns.ColumnCount; ++ipc)
@@ -463,6 +463,16 @@ namespace Altaxo.Data
                     var dstpCol = destinationTable.PropertyColumns.EnsureExistence(t.Table.PropertyColumns.GetColumnName(srcPCol), srcPCol.GetType(), t.Table.PropertyColumns.GetColumnKind(srcPCol), t.Table.PropertyColumns.GetColumnGroup(srcPCol));
                     dstpCol[idxDstCol] = srcPCol[idxSrcCol];
                   }
+                }
+              }
+
+              foreach (var pname in options.TablePropertyNames)
+              {
+                var propertyValue = t.Table.GetPropertyValue<object>(pname);
+                if (propertyValue is not null)
+                {
+                  var dstpCol = destinationTable.PropertyColumns.EnsureExistence(pname, GetPropertyColumnTypeForObject(propertyValue), ColumnKind.V, 0);
+                  dstpCol[idxDstCol] = new AltaxoVariant(propertyValue);
                 }
               }
             } // end deal with property columns
@@ -515,9 +525,9 @@ namespace Altaxo.Data
               {
                 pcolOriginalTableName[destinationTable.DataColumns.GetColumnNumber(yDstCol)] = t.Table.Name;
               }
+              var idxDstCol = destinationTable.DataColumns.GetColumnNumber(yDstCol);
               if (options.CopyColumnProperties)
               {
-                var idxDstCol = destinationTable.DataColumns.GetColumnNumber(yDstCol);
                 var idxSrcCol = t.Table.DataColumns.GetColumnNumber(t.YColumns[iy]);
 
                 for (int ipc = 0; ipc < t.Table.PropertyColumns.ColumnCount; ++ipc)
@@ -530,11 +540,34 @@ namespace Altaxo.Data
                   }
                 }
               }
+              foreach (var pname in options.TablePropertyNames)
+              {
+                var propertyValue = t.Table.GetPropertyValue<object>(pname);
+                if (propertyValue is not null)
+                {
+                  var dstpCol = destinationTable.PropertyColumns.EnsureExistence(pname, GetPropertyColumnTypeForObject(propertyValue), ColumnKind.V, 0);
+                  dstpCol[idxDstCol] = new AltaxoVariant(propertyValue);
+                }
+              }
 
             } // end deal with property columns
           } // end inner loop
         } // end outer loop
       } // end else
+    }
+
+    private static Type GetPropertyColumnTypeForObject(object value)
+    {
+      if (value is double || value is float)
+        return typeof(DoubleColumn);
+      else if (value is int || value is long || value is short || value is byte)
+        return typeof(DoubleColumn);
+      else if (value is bool)
+        return typeof(DoubleColumn);
+      else if (value is DateTime)
+        return typeof(DateTimeColumn);
+      else
+        return typeof(TextColumn);
     }
 
     /// <summary>

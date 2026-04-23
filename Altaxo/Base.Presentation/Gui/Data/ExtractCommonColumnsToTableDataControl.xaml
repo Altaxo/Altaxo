@@ -71,8 +71,10 @@
 
         <Label Grid.Row="4" Grid.Column="4"
                Content="Common Y-columns:"/>
-        <ListBox Grid.Row="6" Grid.Column="4"
-                 ItemsSource="{Binding YColumns}">
+        <ListBox Grid.Row="6" Grid.Column="4" 
+                 ItemsSource="{Binding YColumns}"
+                 SelectionMode="Extended"
+                 >
             <ListBox.Resources>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>

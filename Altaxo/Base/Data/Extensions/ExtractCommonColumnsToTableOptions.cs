@@ -46,6 +46,11 @@ namespace Altaxo.Data
     public ImmutableArray<string> UserDefinedNamesForYColumns { get; init; } = ImmutableArray<string>.Empty;
 
     /// <summary>
+    /// Gets the names of properties of the source table that should be copied to the destination table (as column properties). If the array is empty, no properties are copied.
+    /// </summary>
+    public ImmutableArray<string> TablePropertyNames { get; init; } = ImmutableArray<string>.Empty;
+
+    /// <summary>
     /// If true, the x-values of the x-columns of all tables are intersected.
     /// If false, the union of the x-values of the x-columns of all tables is used.
     /// </summary>
@@ -106,7 +111,7 @@ namespace Altaxo.Data
     /// 2022-10-12 Initial version
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExtractCommonColumnsToTableOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.ExtractCommonColumnsToTableOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc />
@@ -121,7 +126,7 @@ namespace Altaxo.Data
         info.AddValue("CopyColumnProperties", s.CopyColumnProperties);
         info.AddValue("UseResampling", s.UseResampling);
 
-        if(s.UseResampling)
+        if (s.UseResampling)
         {
           info.AddValue("InterpolationFunction", s.Interpolation);
           info.AddValue("InterpolationInterval", s.InterpolationInterval);
@@ -174,6 +179,90 @@ namespace Altaxo.Data
             PlaceMultipleYColumnsAdjacentInDestinationTable = placeMultipleYColumnsAdjacentInDestinationTable,
             CreatePropertyColumnWithSourceTableName = createPropertyColumnWithSourceTableName,
             CopyColumnProperties = copyColumnProperties,
+            Interpolation = interpolationFunction,
+            InterpolationInterval = interpolationInterval,
+            UserSpecifiedInterpolationStart = interpolationStart,
+            UserSpecifiedInterpolationEnd = interpolationEnd,
+          };
+      }
+    }
+
+    /// <summary>
+    /// Version 1 - 2026-04-23 Add TablePropertyNames.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExtractCommonColumnsToTableOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc />
+      public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ExtractCommonColumnsToTableOptions)o;
+        info.AddValue("UserDefinedNameForXColumn", s.UserDefinedNameForXColumn);
+        info.AddArray("UserDefinedNamesForYColumns", s.UserDefinedNamesForYColumns, s.UserDefinedNamesForYColumns.Length);
+        info.AddValue("IntersectXValues", s.IntersectXValues);
+        info.AddValue("PlaceMultipleYColumnsAdjacentInDestinationTable", s.PlaceMultipleYColumnsAdjacentInDestinationTable);
+        info.AddValue("CreatePropertyColumnWithSourceTableName", s.CreatePropertyColumnWithSourceTableName);
+        info.AddValue("CopyColumnProperties", s.CopyColumnProperties);
+        info.AddArray("TablePropertyNames", s.TablePropertyNames, s.TablePropertyNames.Length);
+        info.AddValue("UseResampling", s.UseResampling);
+
+        if (s.UseResampling)
+        {
+          info.AddValue("InterpolationFunction", s.Interpolation);
+          info.AddValue("InterpolationInterval", s.InterpolationInterval);
+          info.AddValue("UserInterpolationStart", s.UserSpecifiedInterpolationStart);
+          info.AddValue("UserInterpolationEnd", s.UserSpecifiedInterpolationEnd);
+        }
+      }
+
+      /// <inheritdoc />
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var userDefinedXColumn = info.GetString("UserDefinedNameForXColumn");
+        var userDefinedYColumns = info.GetArrayOfStrings("UserDefinedNamesForYColumns");
+
+        var intersectXValues = info.GetBoolean("IntersectXValues");
+        var placeMultipleYColumnsAdjacentInDestinationTable = info.GetBoolean("PlaceMultipleYColumnsAdjacentInDestinationTable");
+        var createPropertyColumnWithSourceTableName = info.GetBoolean("CreatePropertyColumnWithSourceTableName");
+        var copyColumnProperties = info.GetBoolean("CopyColumnProperties");
+        var tablePropertyNames = info.GetArrayOfStrings("TablePropertyNames");
+        var useResampling = info.GetBoolean("UseResampling");
+
+        IInterpolationFunctionOptions? interpolationFunction = null;
+        double interpolationInterval = 1;
+        double? interpolationStart = null, interpolationEnd = null;
+        if (useResampling)
+        {
+          interpolationFunction = info.GetValue<IInterpolationFunctionOptions>("InterpolationFunction", null);
+          interpolationInterval = info.GetDouble("InterpolationInterval");
+          interpolationStart = info.GetNullableDouble("UserInterpolationStart");
+          interpolationEnd = info.GetNullableDouble("UserInterpolationEnd");
+        }
+
+        return o is null ? new ExtractCommonColumnsToTableOptions
+        {
+          UserDefinedNameForXColumn = userDefinedXColumn,
+          UserDefinedNamesForYColumns = userDefinedYColumns.Select(s => s ?? string.Empty).ToImmutableArray(),
+          IntersectXValues = intersectXValues,
+          PlaceMultipleYColumnsAdjacentInDestinationTable = placeMultipleYColumnsAdjacentInDestinationTable,
+          CreatePropertyColumnWithSourceTableName = createPropertyColumnWithSourceTableName,
+          CopyColumnProperties = copyColumnProperties,
+          TablePropertyNames = tablePropertyNames.Select(s => s ?? string.Empty).ToImmutableArray(),
+          Interpolation = interpolationFunction,
+          InterpolationInterval = interpolationInterval,
+          UserSpecifiedInterpolationStart = interpolationStart,
+          UserSpecifiedInterpolationEnd = interpolationEnd,
+        } :
+          ((ExtractCommonColumnsToTableOptions)o) with
+          {
+            UserDefinedNameForXColumn = userDefinedXColumn,
+            UserDefinedNamesForYColumns = userDefinedYColumns.Select(s => s ?? string.Empty).ToImmutableArray(),
+            IntersectXValues = intersectXValues,
+            PlaceMultipleYColumnsAdjacentInDestinationTable = placeMultipleYColumnsAdjacentInDestinationTable,
+            CreatePropertyColumnWithSourceTableName = createPropertyColumnWithSourceTableName,
+            CopyColumnProperties = copyColumnProperties,
+            TablePropertyNames = tablePropertyNames.Select(s => s ?? string.Empty).ToImmutableArray(),
             Interpolation = interpolationFunction,
             InterpolationInterval = interpolationInterval,
             UserSpecifiedInterpolationStart = interpolationStart,
