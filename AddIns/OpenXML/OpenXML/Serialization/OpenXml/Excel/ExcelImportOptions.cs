@@ -70,7 +70,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
     public int? NumberOfMainHeaderLines { get; init; }
 
     /// <summary>
-    /// Gets the index of the caption line within the header lines.
+    /// Gets the index of the caption line within the header lines (zero based value). If the index of the caption line is unknown, the value is <c>null.</c>
     /// </summary>
     public int? IndexOfCaptionLine { get; init; }
 

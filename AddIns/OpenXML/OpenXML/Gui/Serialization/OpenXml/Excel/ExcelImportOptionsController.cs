@@ -270,7 +270,7 @@ namespace Altaxo.Gui.Serialization.OpenXml.Excel
         KnownNumberOfMainHeaderLines = _doc.NumberOfMainHeaderLines.HasValue;
         NumberOfMainHeaderLines = _doc.NumberOfMainHeaderLines ?? 0;
         KnownIndexOfCaptionLine = _doc.IndexOfCaptionLine.HasValue;
-        IndexOfCaptionLine = _doc.IndexOfCaptionLine ?? 0;
+        IndexOfCaptionLine = _doc.IndexOfCaptionLine + 1 ?? 0;
         TableStructureItems = new ObservableCollection<AsciiColumnType>(System.Enum.GetValues(typeof(AsciiColumnType)).Cast<AsciiColumnType>());
         TableStructureIsKnown = _doc.RecognizedStructure is not null;
         if (_doc.RecognizedStructure is not null)
@@ -295,7 +295,7 @@ namespace Altaxo.Gui.Serialization.OpenXml.Excel
         HeaderLinesDestination = HeaderLinesDestination.SelectedValue,
         IndicesOfImportedSheets = IndicesOfImportedSheets.Select(x => x.Index).ToImmutableList(),
         NumberOfMainHeaderLines = KnownNumberOfMainHeaderLines ? NumberOfMainHeaderLines : null,
-        IndexOfCaptionLine = KnownIndexOfCaptionLine && NumberOfMainHeaderLines > 0 ? IndexOfCaptionLine : null,
+        IndexOfCaptionLine = KnownIndexOfCaptionLine && NumberOfMainHeaderLines > 0 ? IndexOfCaptionLine - 1 : null,
         RecognizedStructure = TableStructureIsKnown ? new AsciiLineComposition(TableStructure.Select(x => x.Value), TableStructure.Count) : null,
       };
 
