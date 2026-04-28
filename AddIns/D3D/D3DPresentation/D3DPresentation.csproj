@@ -60,7 +60,7 @@
     <EmbeddedResource Include="CompiledShaders\SampleScene_VS2.cso" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Vortice.Mathematics" Version="2.1.0" />
+    <PackageReference Include="Vortice.Mathematics" Version="2.1.1" />
     <PackageReference Include="Vortice.D3DCompiler" Version="3.8.3" />
     <PackageReference Include="Vortice.Direct2D1" Version="3.8.3" />
     <PackageReference Include="Vortice.Direct3D11" Version="3.8.3" />
