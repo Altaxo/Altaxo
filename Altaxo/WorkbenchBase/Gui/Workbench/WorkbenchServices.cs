@@ -41,6 +41,8 @@ namespace Altaxo.Gui.Workbench
     /// but does not throw a NullReferenceException when ActiveViewContent is null.
     /// (instead, null is returned).
     /// </summary>
+    /// <param name="type">The service type to retrieve.</param>
+    /// <returns>The active view content service, or <see langword="null"/>.</returns>
     public static object? GetActiveViewContentService(Type type)
     {
       var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
@@ -55,7 +57,9 @@ namespace Altaxo.Gui.Workbench
       return null;
     }
 
-    /// <inheritdoc see="IWorkbench"/>
+    /// <summary>
+    /// Gets the workbench service.
+    /// </summary>
     public static IWorkbench Workbench
     {
       get { return Altaxo.Current.GetRequiredService<IWorkbench>(); }
@@ -64,6 +68,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the main window of the workbench.
     /// </summary>
+    /// <returns>The main window.</returns>
     public static System.Windows.Window MainWindow
     {
       get { return (System.Windows.Window)Altaxo.Current.GetRequiredService<IWorkbench>().ViewObject; }
@@ -72,18 +77,23 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the <see cref="IDispatcherMessageLoopWpf"/> representing the main UI thread.
     /// </summary>
+    /// <returns>The main dispatcher message loop.</returns>
     public static IDispatcherMessageLoopWpf MainThread
     {
       get { return Altaxo.Current.GetRequiredService<IDispatcherMessageLoopWpf>(); }
     }
 
-    /// <inheritdoc see="IWinFormsService"/>
+    /// <summary>
+    /// Gets the Windows Forms service.
+    /// </summary>
     public static IWinFormsService WinForms
     {
       get { return Altaxo.Current.GetRequiredService<IWinFormsService>(); }
     }
 
-    /// <inheritdoc see="IStatusBarService"/>
+    /// <summary>
+    /// Gets the status bar service.
+    /// </summary>
     public static IStatusBarService StatusBar
     {
       get { return Altaxo.Current.GetRequiredService<IStatusBarService>(); }

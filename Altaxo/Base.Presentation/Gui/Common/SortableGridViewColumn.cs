@@ -296,13 +296,32 @@ namespace Altaxo.Gui.Common
     HalfAutomatic
   }
 
+  /// <summary>
+  /// Converts a column sort direction match to a visibility value.
+  /// </summary>
   internal sealed class ColumnSortDirectionToVisibilityConverter : IValueConverter
   {
+    /// <summary>
+    /// Converts a sort direction to a visibility value.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">The comparison parameter.</param>
+    /// <param name="culture">The culture to use.</param>
+    /// <returns><see cref="Visibility.Visible"/> when the values match; otherwise, <see cref="Visibility.Collapsed"/>.</returns>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       return Equals(value, parameter) ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    /// <summary>
+    /// Not supported.
+    /// </summary>
+    /// <param name="value">The value to convert back.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">The comparison parameter.</param>
+    /// <param name="culture">The culture to use.</param>
+    /// <returns>Never returns a value.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotSupportedException();

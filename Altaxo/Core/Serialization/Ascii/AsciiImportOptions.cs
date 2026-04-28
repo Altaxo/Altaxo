@@ -84,7 +84,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Gets the default code page for this System. On Windows, this is the ANSI code page, on other systems, it is the default code page.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The default code page for the current operating system.</returns>
     public static int GetDefaultCodePage()
     {
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

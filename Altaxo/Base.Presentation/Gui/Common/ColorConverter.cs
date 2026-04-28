@@ -73,6 +73,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets a short label for the specified item-definition level.
     /// </summary>
+    /// <param name="level">The item-definition level.</param>
+    /// <returns>The short label for the specified level.</returns>
     public string GetLevelString(Altaxo.Main.ItemDefinitionLevel level)
     {
       switch (level)
@@ -166,6 +168,10 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Creates an image source for the specified Altaxo color.
     /// </summary>
+    /// <param name="axoColor">The Altaxo color.</param>
+    /// <param name="width">The image width.</param>
+    /// <param name="height">The image height.</param>
+    /// <returns>The created image source.</returns>
     public static ImageSource GetImageSourceFromAxoColor(AxoColor axoColor, int width, int height)
     {
       var innerRect = new Rect(0, 0, width, height);
@@ -179,6 +185,10 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Creates an image source for the specified brush.
     /// </summary>
+    /// <param name="val">The brush.</param>
+    /// <param name="width">The image width.</param>
+    /// <param name="height">The image height.</param>
+    /// <returns>The created image source.</returns>
     public static ImageSource GetImageSourceFromBrushX(BrushX val, int width, int height)
     {
       //
@@ -224,6 +234,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets a display name for the specified brush.
     /// </summary>
+    /// <param name="brush">The brush.</param>
+    /// <returns>The display name for the specified brush.</returns>
     public static string GetNameForBrushX(BrushX brush)
     {
       string name;

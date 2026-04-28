@@ -1044,7 +1044,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
     /// <summary>
     /// Activates the specified pad.
     /// </summary>
-    /// <param name="content"></param>
+    /// <param name="content">The pad descriptor to activate.</param>
     public void ActivatePad(PadDescriptor content)
     {
       if (content.PadContent is null)

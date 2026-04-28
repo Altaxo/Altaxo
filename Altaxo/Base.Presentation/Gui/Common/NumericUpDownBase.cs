@@ -383,11 +383,13 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Derived classes should return false if the command can not be executed.
     /// </summary>
+    /// <returns><see langword="true"/> if the command can be executed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool OnIncreaseCanExecute() { return true; }
 
     /// <summary>
     /// Derived classes should return false if the command can not be executed.
     /// </summary>
+    /// <returns><see langword="true"/> if the command can be executed; otherwise, <see langword="false"/>.</returns>
     protected virtual bool OnDecreaseCanExecute() { return true; }
 
 

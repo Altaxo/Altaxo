@@ -53,6 +53,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the commands configured for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The configured commands.</returns>
     public static object GetCommandsToBind(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CommandsToBindProperty);
@@ -61,6 +63,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the commands configured for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetCommandsToBind(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CommandsToBindProperty, value);
@@ -113,6 +117,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command bound to <see cref="ApplicationCommands.Copy"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command bound to <see cref="ApplicationCommands.Copy"/>.</returns>
     public static object GetCopy(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CopyProperty);
@@ -121,6 +127,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command bound to <see cref="ApplicationCommands.Copy"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetCopy(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CopyProperty, value);
@@ -142,6 +150,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command bound to <see cref="ApplicationCommands.Cut"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command bound to <see cref="ApplicationCommands.Cut"/>.</returns>
     public static object GetCut(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CutProperty);
@@ -150,6 +160,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command bound to <see cref="ApplicationCommands.Cut"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetCut(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CutProperty, value);
@@ -171,6 +183,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command bound to <see cref="ApplicationCommands.Paste"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command bound to <see cref="ApplicationCommands.Paste"/>.</returns>
     public static object GetPaste(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(PasteProperty);
@@ -179,6 +193,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command bound to <see cref="ApplicationCommands.Paste"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetPaste(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(PasteProperty, value);
@@ -200,6 +216,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command bound to <see cref="ApplicationCommands.Delete"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command bound to <see cref="ApplicationCommands.Delete"/>.</returns>
     public static object GetDelete(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(DeleteProperty);
@@ -208,6 +226,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command bound to <see cref="ApplicationCommands.Delete"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDelete(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(DeleteProperty, value);

@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Workbench
     /// Asks an <see cref="IViewContent"/> implementation to build an
     /// <see cref="INavigationPoint"/> and then logs it.
     /// </summary>
-    /// <param name="vc"></param>
+    /// <param name="vc">The view content to log.</param>
     public static void Log(IViewContent vc)
     {
       if (vc is null)
@@ -423,7 +423,7 @@ namespace Altaxo.Gui.Workbench
     /// Respond to changes in filenames by updating points in the history
     /// to reflect the change.
     /// </summary>
-    /// <param name="sender"/>
+    /// <param name="sender">The sender of the rename event.</param>
     /// <param name="e"><see cref="FileRenameEventArgs"/> describing
     /// the file rename.</param>
     private static void FileService_FileRenamed(object? sender, FileRenameEventArgs e)

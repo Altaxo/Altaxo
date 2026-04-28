@@ -43,6 +43,11 @@ namespace GongSolutions.Wpf.DragDrop
     /// With this action it's possible to check if the drga and drop operation is allowed to start
     /// e.g. check for a UIElement inside a list view item, that should not start a drag&amp;drop operation
     /// </summary>
+    /// <summary>
+    /// Determines whether the specified drag can start.
+    /// </summary>
+    /// <param name="dragInfo">Information about the drag.</param>
+    /// <returns><see langword="true"/> if dragging is allowed; otherwise, <see langword="false"/>.</returns>
     bool CanStartDrag(IDragInfo dragInfo);
 
     /// <summary>

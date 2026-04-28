@@ -25,6 +25,9 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
+  /// <summary>
+  /// Menu item representing a checkable add-in command.
+  /// </summary>
   internal sealed class MenuCheckBox : CoreMenuItem
   {
     private ICheckableMenuCommand cmd;
@@ -33,6 +36,13 @@ namespace Altaxo.Gui.AddInItems
     // because the IsCheckedChanged event may be a weak event
     private EventHandler isCheckedChangedHandler;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MenuCheckBox"/> class.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns the generated input bindings.</param>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public MenuCheckBox(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
       : base(codon, caller, conditions)
     {
@@ -55,6 +65,11 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Handles changes to the checkable command state.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void cmd_IsCheckedChanged(object? sender, EventArgs e)
     {
       IsChecked = cmd.IsChecked(_caller);

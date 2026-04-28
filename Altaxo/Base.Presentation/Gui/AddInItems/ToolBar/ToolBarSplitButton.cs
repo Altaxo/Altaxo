@@ -36,6 +36,13 @@ namespace Altaxo.Gui.AddInItems
     private Codon codon;
     private IReadOnlyCollection<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolBarSplitButton"/> class.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="submenu">The submenu items.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public ToolBarSplitButton(Codon codon, object caller, IList submenu, IReadOnlyCollection<ICondition> conditions)
     {
       ToolTipService.SetShowOnDisabled(this, true);
@@ -57,6 +64,9 @@ namespace Altaxo.Gui.AddInItems
       UpdateText();
     }
 
+    /// <summary>
+    /// Updates the text displayed by the toolbar split button.
+    /// </summary>
     public void UpdateText()
     {
       if (codon.Properties.Contains("tooltip"))
@@ -65,6 +75,9 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the toolbar button visibility.
+    /// </summary>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)

@@ -45,6 +45,9 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
+  /// <summary>
+  /// Combo box for selecting dash patterns.
+  /// </summary>
   public partial class DashPatternComboBox : DashPatternComboBoxBase
   {
     private DashPatternToItemNameConverter _itemToItemNameConverter;

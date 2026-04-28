@@ -261,6 +261,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the drag adorner template attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The drag adorner template.</returns>
     public static DataTemplate GetDragAdornerTemplate(UIElement target)
     {
       return (DataTemplate)target.GetValue(DragAdornerTemplateProperty);
@@ -269,6 +271,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the drag adorner template attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDragAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(DragAdornerTemplateProperty, value);
@@ -283,6 +287,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the drag adorner template selector attached to the specified element.
     /// </summary>
+    /// <param name="element">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDragAdornerTemplateSelector(DependencyObject element, DataTemplateSelector value)
     {
       element.SetValue(DragAdornerTemplateSelectorProperty, value);
@@ -291,6 +297,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the drag adorner template selector attached to the specified element.
     /// </summary>
+    /// <param name="element">The element that owns the attached property.</param>
+    /// <returns>The drag adorner template selector.</returns>
     public static DataTemplateSelector GetDragAdornerTemplateSelector(DependencyObject element)
     {
       return (DataTemplateSelector)element.GetValue(DragAdornerTemplateSelectorProperty);
@@ -305,6 +313,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets a value indicating whether the default drag adorner is used.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the default drag adorner is used; otherwise, <see langword="false"/>.</returns>
     public static bool GetUseDefaultDragAdorner(UIElement target)
     {
       return (bool)target.GetValue(UseDefaultDragAdornerProperty);
@@ -313,6 +323,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets a value indicating whether the default drag adorner is used.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetUseDefaultDragAdorner(UIElement target, bool value)
     {
       target.SetValue(UseDefaultDragAdornerProperty, value);
@@ -327,6 +339,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the opacity of the default drag adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The opacity of the default drag adorner.</returns>
     public static double GetDefaultDragAdornerOpacity(UIElement target)
     {
       return (double)target.GetValue(DefaultDragAdornerOpacityProperty);
@@ -335,6 +349,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the opacity of the default drag adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDefaultDragAdornerOpacity(UIElement target, double value)
     {
       target.SetValue(DefaultDragAdornerOpacityProperty, value);
@@ -349,6 +365,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets a value indicating whether default effect templates are used.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if default effect templates are used; otherwise, <see langword="false"/>.</returns>
     public static bool GetUseDefaultEffectDataTemplate(UIElement target)
     {
       return (bool)target.GetValue(UseDefaultEffectDataTemplateProperty);
@@ -357,6 +375,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets a value indicating whether default effect templates are used.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetUseDefaultEffectDataTemplate(UIElement target, bool value)
     {
       target.SetValue(UseDefaultEffectDataTemplateProperty, value);
@@ -371,6 +391,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the none effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The template for the none effect adorner.</returns>
     public static DataTemplate GetEffectNoneAdornerTemplate(UIElement target)
     {
       var template = (DataTemplate)target.GetValue(EffectNoneAdornerTemplateProperty);
@@ -399,6 +421,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the none effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectNoneAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectNoneAdornerTemplateProperty, value);
@@ -413,6 +437,9 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the copy effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="destinationText">The destination text to display.</param>
+    /// <returns>The template for the copy effect adorner.</returns>
     public static DataTemplate GetEffectCopyAdornerTemplate(UIElement target, string destinationText)
     {
       var template = (DataTemplate)target.GetValue(EffectCopyAdornerTemplateProperty);
@@ -428,6 +455,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the copy effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectCopyAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectCopyAdornerTemplateProperty, value);
@@ -442,6 +471,9 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the move effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="destinationText">The destination text to display.</param>
+    /// <returns>The template for the move effect adorner.</returns>
     public static DataTemplate GetEffectMoveAdornerTemplate(UIElement target, string destinationText)
     {
       var template = (DataTemplate)target.GetValue(EffectMoveAdornerTemplateProperty);
@@ -457,6 +489,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the move effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectMoveAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectMoveAdornerTemplateProperty, value);
@@ -471,6 +505,9 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the link effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="destinationText">The destination text to display.</param>
+    /// <returns>The template for the link effect adorner.</returns>
     public static DataTemplate GetEffectLinkAdornerTemplate(UIElement target, string destinationText)
     {
       var template = (DataTemplate)target.GetValue(EffectLinkAdornerTemplateProperty);
@@ -486,6 +523,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the link effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectLinkAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectLinkAdornerTemplateProperty, value);
@@ -500,6 +539,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the combined effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The template for the combined effect adorner.</returns>
     public static DataTemplate GetEffectAllAdornerTemplate(UIElement target)
     {
       var template = (DataTemplate)target.GetValue(EffectAllAdornerTemplateProperty);
@@ -512,6 +553,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the combined effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectAllAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectAllAdornerTemplateProperty, value);
@@ -526,6 +569,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the template for the scroll effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The template for the scroll effect adorner.</returns>
     public static DataTemplate GetEffectScrollAdornerTemplate(UIElement target)
     {
       var template = (DataTemplate)target.GetValue(EffectScrollAdornerTemplateProperty);
@@ -538,6 +583,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the template for the scroll effect adorner.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetEffectScrollAdornerTemplate(UIElement target, DataTemplate value)
     {
       target.SetValue(EffectScrollAdornerTemplateProperty, value);
@@ -552,6 +599,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets a value indicating whether the specified element is a drag source.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the specified element is a drag source; otherwise, <see langword="false"/>.</returns>
     public static bool GetIsDragSource(UIElement target)
     {
       return (bool)target.GetValue(IsDragSourceProperty);
@@ -560,6 +609,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets a value indicating whether the specified element is a drag source.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetIsDragSource(UIElement target, bool value)
     {
       target.SetValue(IsDragSourceProperty, value);
@@ -574,6 +625,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets a value indicating whether the specified element is a drop target.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the specified element is a drop target; otherwise, <see langword="false"/>.</returns>
     public static bool GetIsDropTarget(UIElement target)
     {
       return (bool)target.GetValue(IsDropTargetProperty);
@@ -582,6 +635,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets a value indicating whether the specified element is a drop target.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetIsDropTarget(UIElement target, bool value)
     {
       target.SetValue(IsDropTargetProperty, value);
@@ -596,6 +651,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the drag handler attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The drag handler attached to the specified element.</returns>
     public static IDragSource GetDragHandler(UIElement target)
     {
       return (IDragSource)target.GetValue(DragHandlerProperty);
@@ -604,6 +661,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the drag handler attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDragHandler(UIElement target, IDragSource value)
     {
       target.SetValue(DragHandlerProperty, value);
@@ -618,6 +677,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the drop handler attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The drop handler attached to the specified element.</returns>
     public static IDropTarget GetDropHandler(UIElement target)
     {
       return (IDropTarget)target.GetValue(DropHandlerProperty);
@@ -626,6 +687,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the drop handler attached to the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDropHandler(UIElement target, IDropTarget value)
     {
       target.SetValue(DropHandlerProperty, value);
@@ -640,6 +703,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets a value indicating whether the specified element is ignored as a drag source.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the specified element is ignored as a drag source; otherwise, <see langword="false"/>.</returns>
     public static bool GetDragSourceIgnore(UIElement target)
     {
       return (bool)target.GetValue(DragSourceIgnoreProperty);
@@ -648,6 +713,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets a value indicating whether the specified element is ignored as a drag source.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDragSourceIgnore(UIElement target, bool value)
     {
       target.SetValue(DragSourceIgnoreProperty, value);
@@ -662,6 +729,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Gets the drag mouse anchor point for the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <returns>The drag mouse anchor point for the specified element.</returns>
     public static Point GetDragMouseAnchorPoint(UIElement target)
     {
       return (Point)target.GetValue(DragMouseAnchorPointProperty);
@@ -670,6 +739,8 @@ namespace GongSolutions.Wpf.DragDrop
     /// <summary>
     /// Sets the drag mouse anchor point for the specified element.
     /// </summary>
+    /// <param name="target">The element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetDragMouseAnchorPoint(UIElement target, Point value)
     {
       target.SetValue(DragMouseAnchorPointProperty, value);
@@ -1051,7 +1122,7 @@ namespace GongSolutions.Wpf.DragDrop
     /// </summary>
     /// <param name="dragInfo">the drag info object</param>
     /// <param name="sender">the sender from an event, e.g. mouse down, mouse move</param>
-    /// <returns></returns>
+    /// <returns>The drag source handler, or the default drag handler if none is attached.</returns>
     private static IDragSource TryGetDragHandler(DragInfo dragInfo, UIElement sender)
     {
       IDragSource dragHandler = null;
@@ -1071,7 +1142,7 @@ namespace GongSolutions.Wpf.DragDrop
     /// </summary>
     /// <param name="dropInfo">the drop info object</param>
     /// <param name="sender">the sender from an event, e.g. drag over</param>
-    /// <returns></returns>
+    /// <returns>The drop target handler, or the default drop handler if none is attached.</returns>
     private static IDropTarget TryGetDropHandler(DropInfo dropInfo, UIElement sender)
     {
       IDropTarget dropHandler = null;

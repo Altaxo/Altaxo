@@ -30,6 +30,9 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Checks that the rename/overwrite operation is possible.
     /// </summary>
+    /// <param name="e">The rename event arguments.</param>
+    /// <param name="replaceAllowed">True if replacing an existing target is allowed.</param>
+    /// <returns><see langword="true"/> if the rename or replace operation can proceed; otherwise, <see langword="false"/>.</returns>
     public static bool CheckRenameOrReplacePossible(FileRenameEventArgs e, bool replaceAllowed = false)
     {
       if (e.IsDirectory && Directory.Exists(e.SourceFile))

@@ -46,6 +46,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets the attached event name.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <returns>The attached event name.</returns>
     public static string GetEventName0(DependencyObject obj)
     {
       return (string)obj.GetValue(EventNameProperty0);
@@ -54,6 +56,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the attached event name.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="value">The event name.</param>
     public static void SetEventName0(DependencyObject obj, string value)
     {
       obj.SetValue(EventNameProperty0, value);
@@ -86,6 +90,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets the attached command.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <returns>The attached command.</returns>
     public static ICommand GetCommand0(DependencyObject obj)
     {
       return (ICommand)obj.GetValue(CommandProperty0);
@@ -94,6 +100,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the attached command.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="value">The command value.</param>
     public static void SetCommand0(DependencyObject obj, ICommand value)
     {
       obj.SetValue(CommandProperty0, value);
@@ -108,6 +116,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets the attached command parameter.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <returns>The attached command parameter.</returns>
     public static object GetCommandParameter0(DependencyObject obj)
     {
       return obj.GetValue(CommandParameterProperty0);
@@ -116,6 +126,8 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the attached command parameter.
     /// </summary>
+    /// <param name="obj">The dependency object.</param>
+    /// <param name="value">The command parameter value.</param>
     public static void SetCommandParameter0(DependencyObject obj, object value)
     {
       obj.SetValue(CommandParameterProperty0, value);

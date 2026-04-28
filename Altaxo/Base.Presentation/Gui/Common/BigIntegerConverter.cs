@@ -31,6 +31,9 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Numeric up-down control for editing <see cref="BigInteger"/> values.
+  /// </summary>
   public partial class BigIntegerUpDown
   {
     /// <summary>
@@ -39,11 +42,12 @@ namespace Altaxo.Gui.Common
     protected class BigIntegerConverter : ValidationRule, IValueConverter
     {
       /// <summary>
-      /// Gets the default minimum value.
+      /// Gets the default minimum value, which is <see langword="null"/>.
       /// </summary>
       public BigInteger? DefaultMinimumValue => null;
+
       /// <summary>
-      /// Gets the default maximum value.
+      /// Gets the default maximum value, which is <see langword="null"/>.
       /// </summary>
       public BigInteger? DefaultMaximumValue => null;
 
@@ -84,7 +88,14 @@ namespace Altaxo.Gui.Common
       }
 
 
-      /// <inheritdoc/>
+      /// <summary>
+      /// Converts a <see cref="BigInteger"/> value to its string representation.
+      /// </summary>
+      /// <param name="value">The value to convert.</param>
+      /// <param name="targetType">The target type.</param>
+      /// <param name="parameter">The conversion parameter.</param>
+      /// <param name="culture">The culture to use.</param>
+      /// <returns>The converted string.</returns>
       public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
         BigInteger val = (BigInteger)value;
@@ -110,7 +121,14 @@ namespace Altaxo.Gui.Common
         }
       }
 
-      /// <inheritdoc/>
+      /// <summary>
+      /// Converts the specified text to a <see cref="BigInteger"/> value.
+      /// </summary>
+      /// <param name="value">The text to convert.</param>
+      /// <param name="targetType">The target type.</param>
+      /// <param name="parameter">The conversion parameter.</param>
+      /// <param name="culture">The culture to use.</param>
+      /// <returns>The converted value.</returns>
       public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
         var validationResult = ConvertAndValidate(value, out var result);
@@ -122,7 +140,12 @@ namespace Altaxo.Gui.Common
         return result;
       }
 
-      /// <inheritdoc/>
+      /// <summary>
+      /// Validates the specified text as a <see cref="BigInteger"/> value.
+      /// </summary>
+      /// <param name="value">The text to validate.</param>
+      /// <param name="cultureInfo">The culture to use.</param>
+      /// <returns>The validation result.</returns>
       public override ValidationResult Validate(object value, CultureInfo cultureInfo)
       {
         var validationResult = ConvertAndValidate(value, out var result);

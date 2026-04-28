@@ -30,6 +30,7 @@ namespace Altaxo.Main.Services
   /// </summary>
   internal sealed class FakeMessageLoop : IDispatcherMessageLoopWpf
   {
+    /// <inheritdoc/>
     public Thread Thread
     {
       get
@@ -38,6 +39,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public Dispatcher Dispatcher
     {
       get
@@ -46,6 +48,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public SynchronizationContext SynchronizationContext
     {
       get
@@ -54,6 +57,7 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public System.ComponentModel.ISynchronizeInvoke SynchronizingObject
     {
       get
@@ -62,92 +66,68 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <inheritdoc/>
     public bool InvokeRequired
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool CheckAccess()
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public void VerifyAccess()
     {
     }
 
     #region InvokeIfRequired (Actions)
 
+    /// <inheritdoc/>
     public void InvokeIfRequired(Action callback)
     {
       callback();
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the GUI.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg">The argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeIfRequired<T>(Action<T> action, T arg)
     {
       action(arg);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the GUI.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeIfRequired<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
     {
       action(arg1, arg2);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the GUI.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The 1st argument of the action.</param>
-    /// <param name="arg2">The 2nd argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeIfRequired<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
     {
       action(arg1, arg2, arg3);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the GUI.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
-    /// <param name="arg4">The 4th argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeIfRequired<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
       action(arg1, arg2, arg3, arg4);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
-    /// <param name="arg4">The 4th argument of the action.</param>
-    /// <param name="arg5">The 5th argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeIfRequired<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
     {
       action(arg1, arg2, arg3, arg4, arg5);
     }
 
+    /// <inheritdoc/>
     public void InvokeIfRequired(Action callback, DispatcherPriority priority)
     {
       callback();
     }
 
+    /// <inheritdoc/>
     public void InvokeIfRequired(Action callback, DispatcherPriority priority, CancellationToken cancellationToken)
     {
       callback();
@@ -157,59 +137,61 @@ namespace Altaxo.Main.Services
 
     #region InvokeIfRequired (Functions)
 
+    /// <inheritdoc/>
     public T InvokeIfRequired<T>(Func<T> callback)
     {
       return callback();
     }
 
-    /// <summary>
-    /// Evaluates a function synchronously with the Gui.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TResult">The type of function result.</typeparam>
-    /// <param name="function">The function to execute.</param>
-    /// <param name="arg">The 1st function argument.</param>
-    /// <returns>The result of the function evaluation.</returns>
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T, TResult>(Func<T, TResult> function, T arg)
     {
       return function(arg);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, TResult>(Func<T1, T2, TResult> function, T1 arg1, T2 arg2)
     {
       return function(arg1, arg2);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function, T1 arg1, T2 arg2, T3 arg3)
     {
       return function(arg1, arg2, arg3);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
       return function(arg1, arg2, arg3, arg4);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, T3, T4, T5, TResult>(Func<T1, T2, T3, T4, T5, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
     {
       return function(arg1, arg2, arg3, arg4, arg5);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, TResult>(Func<T1, T2, T3, T4, T5, T6, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
     {
       return function(arg1, arg2, arg3, arg4, arg5, arg6);
     }
 
+    /// <inheritdoc/>
     public TResult InvokeIfRequired<T1, T2, T3, T4, T5, T6, T7, TResult>(Func<T1, T2, T3, T4, T5, T6, T7, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     {
       return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     }
 
+    /// <inheritdoc/>
     public T InvokeIfRequired<T>(Func<T> callback, DispatcherPriority priority)
     {
       return callback();
     }
 
+    /// <inheritdoc/>
     public T InvokeIfRequired<T>(Func<T> callback, DispatcherPriority priority, CancellationToken cancellationToken)
     {
       return callback();
@@ -219,71 +201,43 @@ namespace Altaxo.Main.Services
 
     #region InvokeAndForget (Actions)
 
+    /// <inheritdoc/>
     public void InvokeAndForget(Action callback)
     {
       callback();
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg">The argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeAndForget<T>(Action<T> action, T arg)
     {
       action(arg);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeAndForget<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
     {
       action(arg1, arg2);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The 1st argument of the action.</param>
-    /// <param name="arg2">The 2nd argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeAndForget<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
     {
       action(arg1, arg2, arg3);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
-    /// <param name="arg4">The 4th argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeAndForget<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
       action(arg1, arg2, arg3, arg4);
     }
 
-    /// <summary>
-    /// Executes an action synchronously with the Gui without waiting.
-    /// </summary>
-    /// <param name="action">The action to execute.</param>
-    /// <param name="arg1">The first argument of the action.</param>
-    /// <param name="arg2">The second argument of the action.</param>
-    /// <param name="arg3">The 3rd argument of the action.</param>
-    /// <param name="arg4">The 4th argument of the action.</param>
-    /// <param name="arg5">The 5th argument of the action.</param>
+    /// <inheritdoc/>
     public void InvokeAndForget<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
     {
       action(arg1, arg2, arg3, arg4, arg5);
     }
 
+    /// <inheritdoc/>
     public void InvokeAndForget(Action callback, DispatcherPriority priority)
     {
       throw new NotImplementedException();
@@ -293,6 +247,7 @@ namespace Altaxo.Main.Services
 
     #region InvokeLaterAndForget (Actions)
 
+    /// <inheritdoc/>
     public void InvokeLaterAndForget(TimeSpan delay, Action method)
     {
       throw new NotImplementedException();
@@ -302,31 +257,37 @@ namespace Altaxo.Main.Services
 
     #region InvokeAsync
 
+    /// <inheritdoc/>
     public Task InvokeAsync(Action callback)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task InvokeAsync(Action callback, DispatcherPriority priority)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task InvokeAsync(Action callback, DispatcherPriority priority, CancellationToken cancellationToken)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task<T> InvokeAsync<T>(Func<T> callback)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task<T> InvokeAsync<T>(Func<T> callback, DispatcherPriority priority)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task<T> InvokeAsync<T>(Func<T> callback, DispatcherPriority priority, CancellationToken cancellationToken)
     {
       throw new NotImplementedException();
@@ -336,16 +297,19 @@ namespace Altaxo.Main.Services
 
     #region ISynchronizeInvoke
 
+    /// <inheritdoc/>
     public IAsyncResult BeginInvoke(Delegate method, object[] args)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public object EndInvoke(IAsyncResult result)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public object Invoke(Delegate method, object[] args)
     {
       throw new NotImplementedException();

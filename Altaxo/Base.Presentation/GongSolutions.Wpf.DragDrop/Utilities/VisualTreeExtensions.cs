@@ -28,6 +28,11 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
   /// </summary>
   public static class VisualTreeExtensions
   {
+    /// <summary>
+    /// Gets the visual tree root for the specified dependency object.
+    /// </summary>
+    /// <param name="d">The starting dependency object.</param>
+    /// <returns>The root dependency object.</returns>
     internal static DependencyObject FindVisualTreeRoot(this DependencyObject d)
     {
       var current = d;
@@ -98,8 +103,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     }
 
     /// <summary>
-    /// find the visual ancestor by type and go through the visual tree until the given itemsControl will be found
+    /// Finds the visual ancestor by type until the specified items control is reached.
     /// </summary>
+    /// <param name="d">The starting dependency object.</param>
+    /// <param name="type">The ancestor type to match.</param>
+    /// <param name="itemsControl">The items control that bounds the search.</param>
+    /// <returns>The matching ancestor, or the last matching ancestor before the items control.</returns>
     public static DependencyObject GetVisualAncestor(this DependencyObject d, Type type, ItemsControl itemsControl)
     {
       var item = VisualTreeHelper.GetParent(d.FindVisualTreeRoot());

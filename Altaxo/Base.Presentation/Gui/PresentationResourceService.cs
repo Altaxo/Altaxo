@@ -68,6 +68,7 @@ namespace Altaxo.Gui
     /// <param name="name">
     /// The name of the requested bitmap.
     /// </param>
+    /// <returns>The created image.</returns>
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>
@@ -102,6 +103,7 @@ namespace Altaxo.Gui
     /// <param name="name">
     /// The name of the requested bitmap.
     /// </param>
+    /// <returns>The bitmap source for the requested resource.</returns>
     /// <exception cref="ResourceNotFoundException">
     /// Is thrown when the GlobalResource manager can't find a requested resource.
     /// </exception>

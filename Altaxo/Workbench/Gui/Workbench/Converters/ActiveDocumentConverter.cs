@@ -39,6 +39,14 @@ namespace Altaxo.Gui.Workbench
   /// <seealso cref="IValueConverter" />
   internal class ActiveDocumentConverter : IValueConverter
   {
+    /// <summary>
+    /// Converts the active content to a value suitable for the binding target.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">The conversion parameter.</param>
+    /// <param name="culture">The culture to use.</param>
+    /// <returns>The converted value, or <see cref="Binding.DoNothing"/> when the input is not supported.</returns>
     public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)
@@ -51,6 +59,14 @@ namespace Altaxo.Gui.Workbench
       return Binding.DoNothing;
     }
 
+    /// <summary>
+    /// Converts the bound value back to active content.
+    /// </summary>
+    /// <param name="value">The value to convert back.</param>
+    /// <param name="targetType">The target type.</param>
+    /// <param name="parameter">The conversion parameter.</param>
+    /// <param name="culture">The culture to use.</param>
+    /// <returns>The converted value, or <see cref="Binding.DoNothing"/> when the input is not supported.</returns>
     public object? ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       if (value is IViewContent)

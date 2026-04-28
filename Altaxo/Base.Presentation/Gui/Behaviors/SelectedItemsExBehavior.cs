@@ -65,6 +65,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets a value indicating whether the behavior is enabled for the specified list box.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the behavior is enabled; otherwise, <see langword="false"/>.</returns>
     public static bool GetIsEnabled(ListBox frameworkElement)
     {
       return (bool)frameworkElement.GetValue(IsEnabledProperty);
@@ -73,6 +75,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets a value indicating whether the behavior is enabled for the specified list box.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <param name="observe">The value to set.</param>
     public static void SetIsEnabled(ListBox frameworkElement, bool observe)
     {
       frameworkElement.SetValue(IsEnabledProperty, observe);
@@ -137,6 +141,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the bindable selected-items collection.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <returns>The bindable selected-items collection.</returns>
     public static IList GetSelectedItemsEx(ListBox frameworkElement)
     {
       return (IList)frameworkElement.GetValue(SelectedItemsExProperty);
@@ -145,6 +151,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the bindable selected-items collection.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetSelectedItemsEx(ListBox frameworkElement, IList value)
     {
       frameworkElement.SetValue(SelectedItemsExProperty, value);
@@ -170,6 +178,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the selection-changed command.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <returns>The selection-changed command.</returns>
     public static ICommand GetSelectionChangedCommand(ListBox frameworkElement)
     {
       return (ICommand)frameworkElement.GetValue(SelectionChangedCommandProperty);
@@ -178,6 +188,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the selection-changed command.
     /// </summary>
+    /// <param name="frameworkElement">The list box that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetSelectionChangedCommand(ListBox frameworkElement, ICommand value)
     {
       frameworkElement.SetValue(SelectionChangedCommandProperty, value);

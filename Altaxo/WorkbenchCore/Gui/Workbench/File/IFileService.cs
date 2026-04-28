@@ -87,34 +87,46 @@ namespace Altaxo.Gui.Workbench
     IReadOnlyList<OpenedFile> OpenedFiles { get; }
 
     /// <summary>
-    /// Gets an opened file, or returns null if the file is not opened.
+    /// Gets the opened file for the specified <see cref="FileName"/>, or returns <see langword="null"/> if it is not open.
     /// </summary>
+    /// <param name="fileName">The name of the file to get.</param>
+    /// <returns>The opened file, or <c>null</c> if the file is not opened.</returns>
     OpenedFile? GetOpenedFile(FileName fileName);
 
     /// <summary>
-    /// Gets an opened file, or returns null if the file is not opened.
+    /// Gets the opened file for the specified path, or returns <see langword="null"/> if it is not open.
     /// </summary>
+    /// <param name="fileName">The name of the file to get.</param>
+    /// <returns>The opened file, or <c>null</c> if the file is not opened.</returns>
     OpenedFile? GetOpenedFile(string fileName);
 
     /// <summary>
-    /// Gets or creates an opened file.
+    /// Gets or creates an opened file for the specified <see cref="FileName"/>.
     /// Warning: the opened file will be a file without any views attached.
     /// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
     /// unload the OpenedFile instance if no views were attached to it.
     /// </summary>
+    /// <param name="fileName">The file to open or create.</param>
+    /// <returns>The opened file.</returns>
     OpenedFile GetOrCreateOpenedFile(FileName fileName);
 
     /// <summary>
-    /// Gets or creates an opened file.
+    /// Gets or creates an opened file for the specified path.
     /// Warning: the opened file will be a file without any views attached.
     /// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
     /// unload the OpenedFile instance if no views were attached to it.
     /// </summary>
+    /// <param name="fileName">The file to open or create.</param>
+    /// <returns>The opened file.</returns>
     OpenedFile GetOrCreateOpenedFile(string fileName);
 
     /// <summary>
     /// Creates a new untitled OpenedFile.
     /// </summary>
+    /// <value>The new opened file.</value>
+    /// <param name="defaultName">The unsaved name of the file to create.</param>
+    /// <param name="content">The content of the file to create.</param>
+    /// <returns>The created opened file.</returns>
     OpenedFile CreateUntitledOpenedFile(string defaultName, byte[] content);
 
     #endregion OpenedFiles
@@ -126,6 +138,8 @@ namespace Altaxo.Gui.Workbench
     /// Do not use in non-UI methods.
     /// </summary>
     /// <seealso cref="FileUtility.IsValidPath"/>
+    /// <param name="path">The path to validate.</param>
+    /// <returns><see langword="true"/> if the path is valid; otherwise, <see langword="false"/>.</returns>
     bool CheckFileName(string path);
 
     /// <summary>
@@ -134,6 +148,7 @@ namespace Altaxo.Gui.Workbench
     /// </summary>
     /// <param name="name">A single file name not the full path</param>
     /// <seealso cref="FileUtility.IsValidDirectoryEntryName"/>
+    /// <returns><see langword="true"/> if the name is valid; otherwise, <see langword="false"/>.</returns>
     bool CheckDirectoryEntryName(string name);
 
     #endregion CheckFileName
@@ -143,6 +158,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets whether the file is open in a view content.
     /// </summary>
+    /// <param name="fileName">The name of the file to check.</param>
+    /// <returns><see langword="true"/> if the file is open in a view content; otherwise, <see langword="false"/>.</returns>
     bool IsOpen(FileName fileName);
 
     /// <summary>
@@ -166,37 +183,49 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Shows the 'Open With' dialog, allowing the user to pick a display binding for opening the specified files.
     /// </summary>
+    /// <param name="fileNames">The files to open.</param>
+    /// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified files.</param>
+    /// <returns>The opened file view contents.</returns>
     IEnumerable<IFileViewContent> ShowOpenWithDialog(IEnumerable<FileName> fileNames, bool switchToOpenedView = true);
 
     /// <summary>
-    /// Opens a new unsaved file.
+    /// Opens a new unsaved text file.
     /// </summary>
-    /// <param name="defaultName">The (unsaved) name of the to open</param>
-    /// <param name="content">Content of the file to create</param>
+    /// <param name="defaultName">The unsaved name of the file to open.</param>
+    /// <param name="content">The text content of the file to create.</param>
+    /// <returns>The created file view content.</returns>
     IFileViewContent? NewFile(string defaultName, string content);
 
     /// <summary>
-    /// Opens a new unsaved file.
+    /// Opens a new unsaved binary file.
     /// </summary>
-    /// <param name="defaultName">The (unsaved) name of the to open</param>
-    /// <param name="content">Content of the file to create</param>
+    /// <param name="defaultName">The unsaved name of the file to open.</param>
+    /// <param name="content">The binary content of the file to create.</param>
+    /// <returns>The created file view content.</returns>
     IFileViewContent? NewFile(string defaultName, byte[] content);
 
     /// <summary>
     /// Gets a list of the names of the files that are open as primary files
     /// in view contents.
     /// </summary>
+    /// <value>The names of the files that are open as primary files.</value>
     IReadOnlyList<FileName> OpenPrimaryFiles { get; }
 
     /// <summary>
-    /// Gets the IViewContent for a fileName. Returns null if the file is not opened currently.
+    /// Gets the file view content for the specified file name, or returns <see langword="null"/> if it is not currently open.
     /// </summary>
+    /// <param name="fileName">The name of the file to get.</param>
+    /// <returns>The file view content, or <c>null</c> if the file is not open.</returns>
     IFileViewContent? GetOpenFile(FileName fileName);
 
     /// <summary>
     /// Opens the specified file and jumps to the specified file position.
     /// Line and column start counting at 1.
     /// </summary>
+    /// <param name="fileName">The file to open.</param>
+    /// <param name="line">The line number, starting at 1.</param>
+    /// <param name="column">The column number, starting at 1.</param>
+    /// <returns>The opened file view content.</returns>
     IFileViewContent? JumpToFilePosition(FileName fileName, int line, int column);
 
     #endregion OpenFile (ViewContent)
@@ -206,16 +235,27 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Removes a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="fileName">The file to remove.</param>
+    /// <param name="isDirectory">Set to <see langword="true"/> if the file is a directory.</param>
     void RemoveFile(string fileName, bool isDirectory);
 
     /// <summary>
     /// Renames or moves a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="oldName">The current file name.</param>
+    /// <param name="newName">The new file name.</param>
+    /// <param name="isDirectory">Set to <see langword="true"/> if the file is a directory.</param>
+    /// <returns><see langword="true"/> if the rename succeeded; otherwise, <see langword="false"/>.</returns>
     bool RenameFile(string oldName, string newName, bool isDirectory);
 
     /// <summary>
     /// Copies a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="oldName">The source file name.</param>
+    /// <param name="newName">The destination file name.</param>
+    /// <param name="isDirectory">Set to <see langword="true"/> if the file is a directory.</param>
+    /// <param name="overwrite">Set to <see langword="true"/> to overwrite an existing file.</param>
+    /// <returns><see langword="true"/> if the copy succeeded; otherwise, <see langword="false"/>.</returns>
     bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite);
 
     /// <summary>

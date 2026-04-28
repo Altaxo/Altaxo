@@ -40,6 +40,7 @@ namespace Altaxo.Gui.Workbench
     /// Creates a new output category.
     /// </summary>
     /// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
+    /// <returns>The created output category.</returns>
     IOutputCategory CreateCategory(string displayName);
 
     /// <summary>
@@ -47,11 +48,13 @@ namespace Altaxo.Gui.Workbench
     /// title already exists.
     /// </summary>
     /// <param name="displayName">The title of the category. This is parsed using StringParser and shown to the user.</param>
+    /// <returns>The existing or created output category.</returns>
     IOutputCategory GetOrCreateCategory(string displayName);
 
     /// <summary>
     /// Removes an existing output category.
     /// </summary>
+    /// <param name="category">The category to remove.</param>
     void RemoveCategory(IOutputCategory category);
 
     /// <summary>
@@ -82,6 +85,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Activates this output category in the UI.
     /// </summary>
+    /// <param name="bringPadToFront">Set to <see langword="true"/> to bring the pad to the front.</param>
     void Activate(bool bringPadToFront = false);
 
     /// <summary>
@@ -92,11 +96,13 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Appends text to this category.
     /// </summary>
+    /// <param name="text">The text to append.</param>
     void AppendText(string text);
 
     /// <summary>
     /// Appends text to this category, followed by a newline.
     /// </summary>
+    /// <param name="text">The text to append.</param>
     void AppendLine(string text);
   }
 }

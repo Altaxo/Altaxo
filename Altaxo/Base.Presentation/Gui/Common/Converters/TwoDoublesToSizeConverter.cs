@@ -42,10 +42,10 @@ namespace Altaxo.Gui.Common.Converters
     /// <summary>
     /// Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.
     /// </summary>
-    /// <param name="values">Must contain an array of at least two double values.</param>
-    /// <param name="targetType">Not used.</param>
-    /// <param name="parameter">Not used.</param>
-    /// <param name="culture">Not used.</param>
+    /// <param name="values">Must contain at least two <see cref="double"/> values.</param>
+    /// <param name="targetType">The target type. It is not used.</param>
+    /// <param name="parameter">The converter parameter. It is not used.</param>
+    /// <param name="culture">The culture. It is not used.</param>
     /// <returns>
     /// A <see cref="Size"/> value, consisting of the two doubles.
     /// </returns>
@@ -68,10 +68,8 @@ namespace Altaxo.Gui.Common.Converters
     /// <param name="targetTypes">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
-    /// <returns>
-    /// An array of values that have been converted from the target value back to the source values.
-    /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <returns>Does not return a value.</returns>
+    /// <exception cref="System.NotImplementedException">Always thrown because reverse conversion is not supported.</exception>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
       throw new NotImplementedException();

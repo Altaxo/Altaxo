@@ -47,6 +47,9 @@ namespace Altaxo.Main
     /// <code>if (MyEvent != null) MyEvent(x,y);</code>
     /// would not be safe.
     /// </summary>
+    /// <param name="eventHandler">The event handler to raise.</param>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     /// <remarks>Using this method is only thread-safe under the Microsoft .NET memory model,
     /// not under the less strict memory model in the CLI specification.</remarks>
     [Obsolete("Use 'event EventHandler MyEvent = delegate{};' instead")]
@@ -69,6 +72,10 @@ namespace Altaxo.Main
     /// <code>if (MyEvent != null) MyEvent(x,y);</code>
     /// would not be safe.
     /// </summary>
+    /// <typeparam name="T">The event argument type.</typeparam>
+    /// <param name="eventHandler">The event handler to raise.</param>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     [Obsolete("Use 'event EventHandler MyEvent = delegate{};' instead")]
     public static void RaiseEvent<T>(this EventHandler<T> eventHandler, object sender, T e) where T : EventArgs
     {
@@ -87,6 +94,7 @@ namespace Altaxo.Main
     /// Call this method on asynchronous tasks if you do not care about the result, but do not want
     /// unhandled exceptions to go unnoticed.
     /// </summary>
+    /// <param name="task">The task to observe.</param>
     public static void FireAndForget(this Task task)
     {
       task.ContinueWith(
@@ -107,8 +115,11 @@ namespace Altaxo.Main
     #region CoerceValue
 
     /// <summary>
-    /// Forces the value to stay between mininum and maximum.
+    /// Forces the value to stay between minimum and maximum.
     /// </summary>
+    /// <param name="value">The value to constrain.</param>
+    /// <param name="minimum">The lower bound.</param>
+    /// <param name="maximum">The upper bound.</param>
     /// <returns>minimum, if value is less than minimum.
     /// Maximum, if value is greater than maximum.
     /// Otherwise, value.</returns>
@@ -118,8 +129,11 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Forces the value to stay between mininum and maximum.
+    /// Forces the value to stay between minimum and maximum.
     /// </summary>
+    /// <param name="value">The value to constrain.</param>
+    /// <param name="minimum">The lower bound.</param>
+    /// <param name="maximum">The upper bound.</param>
     /// <returns>minimum, if value is less than minimum.
     /// Maximum, if value is greater than maximum.
     /// Otherwise, value.</returns>
@@ -135,6 +149,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Obsolete. Please use a regular foreach loop instead. ForEach() is executed for its side-effects, and side-effects mix poorly with a functional programming style.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="input">The sequence to enumerate.</param>
+    /// <param name="action">The action to run for each element.</param>
     //[Obsolete("Please use a regular foreach loop instead. ForEach() is executed for its side-effects, and side-effects mix poorly with a functional programming style.")]
     public static void ForEach<T>(this IEnumerable<T> input, Action<T> action)
     {
@@ -149,6 +166,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Adds all <paramref name="elements"/> to <paramref name="list"/>.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The collection to add to.</param>
+    /// <param name="elements">The elements to add.</param>
     public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> elements)
     {
       foreach (T o in elements)
@@ -184,6 +204,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Searches a sorted list
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
     /// <param name="list">The list to search in</param>
     /// <param name="key">The key to search for</param>
     /// <param name="keySelector">Function that maps list items to their sort key</param>
@@ -199,6 +221,8 @@ namespace Altaxo.Main
     /// <summary>
     /// Searches a sorted list
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
     /// <param name="list">The list to search in</param>
     /// <param name="index">Starting index of the range to search</param>
     /// <param name="length">Length of the range to search</param>
@@ -237,6 +261,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Inserts an item into a sorted list.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The list to insert into.</param>
+    /// <param name="item">The item to insert.</param>
+    /// <param name="comparer">The comparer used to keep the list sorted.</param>
     public static void OrderedInsert<T>(this IList<T> list, T item, IComparer<T> comparer)
     {
       int pos = BinarySearch(list, item, x => x, comparer);
@@ -248,6 +276,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Sorts the enumerable using the given comparer.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="input">The sequence to sort.</param>
+    /// <param name="comparer">The comparer to use.</param>
+    /// <returns>The sorted sequence.</returns>
     public static IOrderedEnumerable<T> OrderBy<T>(this IEnumerable<T> input, IComparer<T> comparer)
     {
       return Enumerable.OrderBy(input, e => e, comparer);
@@ -256,6 +288,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Converts a recursive data structure into a flat list.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
     /// <param name="input">The root elements of the recursive data structure.</param>
     /// <param name="recursion">The function that gets the children of an element.</param>
     /// <returns>Iterator that enumerates the tree structure in preorder.</returns>
@@ -268,6 +301,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Creates an array containing a part of the array (similar to string.Substring).
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="startIndex">The starting index.</param>
+    /// <returns>An array containing the slice from <paramref name="startIndex"/> to the end of the source array.</returns>
     public static T[] Splice<T>(this T[] array, int startIndex)
     {
       if (array is null)
@@ -278,6 +315,11 @@ namespace Altaxo.Main
     /// <summary>
     /// Creates an array containing a part of the array (similar to string.Substring).
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="array">The source array.</param>
+    /// <param name="startIndex">The starting index.</param>
+    /// <param name="length">The number of elements to copy.</param>
+    /// <returns>An array containing the requested slice of the source array.</returns>
     public static T[] Splice<T>(this T[] array, int startIndex, int length)
     {
       if (array is null)
@@ -315,6 +357,11 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the minimum element.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <returns>The minimum element.</returns>
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MinBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector) where K : IComparable<K>
     {
@@ -324,6 +371,12 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the minimum element.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <param name="keyComparer">The comparer used to compare keys.</param>
+    /// <returns>The minimum element.</returns>
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MinBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector, IComparer<K> keyComparer)
     {
@@ -356,6 +409,11 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the maximum element.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <returns>The maximum element.</returns>
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MaxBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector) where K : IComparable<K>
     {
@@ -365,6 +423,12 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the maximum element.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <typeparam name="K">The key type.</typeparam>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <param name="keyComparer">The comparer used to compare keys.</param>
+    /// <returns>The maximum element.</returns>
     /// <exception cref="InvalidOperationException">The input sequence is empty</exception>
     public static T MaxBy<T, K>(this IEnumerable<T> source, Func<T, K> keySelector, IComparer<K> keyComparer)
     {
@@ -398,6 +462,10 @@ namespace Altaxo.Main
     /// Returns the index of the first element for which <paramref name="predicate"/> returns true.
     /// If none of the items in the list fits the <paramref name="predicate"/>, -1 is returned.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The list to search.</param>
+    /// <param name="predicate">The predicate used to determine a match.</param>
+    /// <returns>The index of the first matching element, or -1 if no match is found.</returns>
     public static int FindIndex<T>(this IList<T> list, Func<T, bool> predicate)
     {
       for (int i = 0; i < list.Count; i++)
@@ -413,6 +481,10 @@ namespace Altaxo.Main
     /// Returns the index of the first element for which <paramref name="predicate"/> returns true.
     /// If none of the items in the list fits the <paramref name="predicate"/>, -1 is returned.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The list to search.</param>
+    /// <param name="predicate">The predicate used to determine a match.</param>
+    /// <returns>The index of the first matching element, or -1 if no match is found.</returns>
     public static int FindIndex<T>(this IReadOnlyList<T> list, Func<T, bool> predicate)
     {
       for (int i = 0; i < list.Count; i++)
@@ -427,6 +499,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Adds item to the list if the item is not null.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="list">The list to modify.</param>
+    /// <param name="itemToAdd">The item to add if it is not null.</param>
     public static void AddIfNotNull<T>(this IList<T> list, T itemToAdd) where T : class
     {
       if (itemToAdd is not null)
@@ -464,7 +539,7 @@ namespace Altaxo.Main
     /// <param name="s">String from which we want to remove another string at the start.</param>
     /// <param name="stringToRemove">The string to remove.</param>
     /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the start.</returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="s"/> does not start with <paramref name="stringToRemove"/>.</exception>
     [return: MaybeNull]
     [return: NotNullIfNotNull("s")]
     public static string RemoveFromStart(this string? s, string stringToRemove)
@@ -485,7 +560,7 @@ namespace Altaxo.Main
     /// <param name="s">String from which we want to remove another string at the end.</param>
     /// <param name="stringToRemove">The string to remove.</param>
     /// <returns>The string <paramref name="s"/> without string <paramref name="stringToRemove"/> at the end.</returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="s"/> does not end with <paramref name="stringToRemove"/>.</exception>
     [return: MaybeNull]
     [return: NotNullIfNotNull("s")]
     public static string RemoveFromEnd(this string? s, string stringToRemove)
@@ -503,6 +578,9 @@ namespace Altaxo.Main
     /// Trims the string from the first occurence of <paramref name="cutoffStart" /> to the end, including <paramref name="cutoffStart" />.
     /// If the string does not contain <paramref name="cutoffStart" />, just returns the original string.
     /// </summary>
+    /// <param name="s">The source string.</param>
+    /// <param name="cutoffStart">The marker at which to cut off the string.</param>
+    /// <returns>The string up to the first occurrence of <paramref name="cutoffStart"/>, or the original string if the marker is not found.</returns>
     [return: MaybeNull]
     [return: NotNullIfNotNull("s")]
     public static string CutoffEnd(this string? s, string cutoffStart)
@@ -551,6 +629,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Removes any character given in the array from the given string.
     /// </summary>
+    /// <param name="s">The source string.</param>
+    /// <param name="chars">The characters to remove.</param>
+    /// <returns>The string with the specified characters removed.</returns>
     public static string RemoveAny(this string s, params char[] chars)
     {
       if (string.IsNullOrEmpty(s))
@@ -686,6 +767,8 @@ namespace Altaxo.Main
     /// Use this method instead of the normal <c>string.GetHashCode</c> if the hash code
     /// is persisted to disk.
     /// </summary>
+    /// <param name="text">The text to hash.</param>
+    /// <returns>A stable hash code for <paramref name="text"/>.</returns>
     public static int GetStableHashCode(this string text)
     {
       unchecked
@@ -723,6 +806,9 @@ namespace Altaxo.Main
     /// Retrieves the service of type <c>T</c> from the provider.
     /// If the service cannot be found, this method returns <c>null</c>.
     /// </summary>
+    /// <typeparam name="T">The service type.</typeparam>
+    /// <param name="provider">The service provider.</param>
+    /// <returns>The requested service, or <c>null</c> if it is not available.</returns>
     public static T? GetService<T>(this IServiceProvider provider) where T : class
     {
       return (T?)provider.GetService(typeof(T));
@@ -732,6 +818,9 @@ namespace Altaxo.Main
     /// Retrieves the service of type <c>T</c> from the provider.
     /// If the service cannot be found, a <see cref="ServiceNotFoundException"/> will be thrown.
     /// </summary>
+    /// <typeparam name="T">The service type.</typeparam>
+    /// <param name="provider">The service provider.</param>
+    /// <returns>The requested service.</returns>
     public static T GetRequiredService<T>(this IServiceProvider provider) where T : class
     {
       return (T)GetRequiredService(provider, typeof(T));
@@ -741,6 +830,9 @@ namespace Altaxo.Main
     /// Retrieves the service of type <paramref name="serviceType"/> from the provider.
     /// If the service cannot be found, a <see cref="ServiceNotFoundException"/> will be thrown.
     /// </summary>
+    /// <param name="provider">The service provider.</param>
+    /// <param name="serviceType">The service type.</param>
+    /// <returns>The requested service.</returns>
     public static object GetRequiredService(this IServiceProvider provider, Type serviceType)
     {
       object? service = provider.GetService(serviceType);

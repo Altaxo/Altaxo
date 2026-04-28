@@ -65,6 +65,10 @@ namespace Altaxo.Gui.Workbench
 
     private readonly List<OptionBinding> bindings = new List<OptionBinding>();
 
+    /// <summary>
+    /// Adds a binding to the container.
+    /// </summary>
+    /// <param name="binding">The binding to add.</param>
     void IOptionBindingContainer.AddBinding(OptionBinding binding)
     {
       bindings.Add(binding);

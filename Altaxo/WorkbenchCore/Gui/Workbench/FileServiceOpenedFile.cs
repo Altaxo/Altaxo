@@ -23,18 +23,33 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
+  /// <summary>
+  /// Represents an opened file managed by <see cref="FileService"/>.
+  /// </summary>
   internal sealed class FileServiceOpenedFile : OpenedFile
   {
+    /// <summary>
+    /// The owning file service.
+    /// </summary>
     private readonly FileService _fileService;
+    /// <summary>
+    /// The registered views for this file.
+    /// </summary>
     private List<IFileViewContent> _registeredViews = new List<IFileViewContent>();
     //private FileChangeWatcher fileChangeWatcher;
 
+    /// <inheritdoc/>
     protected override void ChangeFileName(FileName newValue)
     {
       _fileService.OpenedFileFileNameChange(this, FileName, newValue);
       base.ChangeFileName(newValue);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileServiceOpenedFile"/> class.
+    /// </summary>
+    /// <param name="fileService">The owning file service.</param>
+    /// <param name="fileName">The file name.</param>
     internal FileServiceOpenedFile(FileService fileService, FileName fileName)
     {
       this._fileService = fileService;
@@ -43,6 +58,11 @@ namespace Altaxo.Gui.Workbench
       //fileChangeWatcher = new FileChangeWatcher(this);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileServiceOpenedFile"/> class for untitled data.
+    /// </summary>
+    /// <param name="fileService">The owning file service.</param>
+    /// <param name="fileData">The initial file data.</param>
     internal FileServiceOpenedFile(FileService fileService, byte[] fileData)
     {
       this._fileService = fileService;
@@ -60,6 +80,10 @@ namespace Altaxo.Gui.Workbench
       get { return _registeredViews.AsReadOnly(); }
     }
 
+    /// <summary>
+    /// Ensures the specified view is initialized.
+    /// </summary>
+    /// <param name="view">The view to initialize.</param>
     public override void ForceInitializeView(IFileViewContent view)
     {
       if (view is null)
@@ -70,6 +94,10 @@ namespace Altaxo.Gui.Workbench
       base.ForceInitializeView(view);
     }
 
+    /// <summary>
+    /// Registers a view with this opened file.
+    /// </summary>
+    /// <param name="view">The view to register.</param>
     public override void RegisterView(IFileViewContent view)
     {
       if (view is null)
@@ -92,6 +120,10 @@ namespace Altaxo.Gui.Workbench
 #endif
     }
 
+    /// <summary>
+    /// Unregisters a view from this opened file.
+    /// </summary>
+    /// <param name="view">The view to unregister.</param>
     public override void UnregisterView(IFileViewContent view)
     {
       if (view is null)
@@ -122,6 +154,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Closes the opened file when no views remain.
+    /// </summary>
     public override void CloseIfAllViewsClosed()
     {
       if (_registeredViews.Count == 0)
@@ -152,6 +187,9 @@ namespace Altaxo.Gui.Workbench
       SwitchedToView(newView);
     }
 
+    /// <summary>
+    /// Saves the file to disk.
+    /// </summary>
     public override void SaveToDisk()
     {
       try
@@ -163,6 +201,9 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Occurs when the file is closed.
+    /// </summary>
     public override event EventHandler? FileClosed;
   }
 }

@@ -83,7 +83,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     private ITextOnlyColorModel _altColorModel;
     private AxoColor _currentColor;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the currently selected color.
+    /// </summary>
     public AxoColor CurrentColor { get { return _currentColor; } }
 
     /// <summary>
@@ -155,7 +157,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       ColorVariationModelChanged?.Invoke();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Applies the current alpha component to the specified color.
+    /// </summary>
+    /// <param name="color">The color whose alpha component is updated.</param>
     public void AmendAlphaComponent(ref AxoColor color)
     {
       if (_colorModel.IsUsingByteComponents)
@@ -206,7 +211,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Updates the current color and optionally refreshes the related UI elements.
+    /// </summary>
+    /// <param name="newColor">The new color.</param>
+    /// <param name="updateCircle">True to update the color circle.</param>
+    /// <param name="updateVariations">True to update the color variations.</param>
+    /// <param name="updateComponents">True to update the component editors.</param>
+    /// <param name="updateAltComponents">True to update the alternative component editors.</param>
     public void ChangeCurrentColor(AxoColor newColor, bool updateCircle, bool updateVariations, bool updateComponents, bool updateAltComponents)
     {
       _currentColor = newColor;

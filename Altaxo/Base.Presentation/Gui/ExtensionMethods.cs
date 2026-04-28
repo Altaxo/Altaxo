@@ -31,6 +31,9 @@ namespace Altaxo.Gui
     /// <summary>
     /// Sets the value of a dependency property on <paramref name="targetObject"/> using a markup extension.
     /// </summary>
+    /// <param name="targetObject">The target dependency object.</param>
+    /// <param name="property">The dependency property to set.</param>
+    /// <param name="markupExtension">The markup extension to evaluate.</param>
     /// <remarks>This method does not support markup extensions like x:Static that depend on
     /// having a XAML file as context.</remarks>
     public static void SetValueToExtension(this DependencyObject targetObject, DependencyProperty property, MarkupExtension markupExtension)

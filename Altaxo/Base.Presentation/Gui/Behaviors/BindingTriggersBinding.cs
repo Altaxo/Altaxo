@@ -24,6 +24,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the trigger value for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The trigger value.</returns>
     public static object GetTrigger(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(TriggerProperty);
@@ -32,6 +34,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the trigger value for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetTrigger(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(TriggerProperty, value);
@@ -56,6 +60,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the feedback counter for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The feedback counter.</returns>
     public static long GetFeedback(FrameworkElement frameworkElement)
     {
       return (long)frameworkElement.GetValue(FeedbackProperty);
@@ -64,6 +70,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the feedback counter for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetFeedback(FrameworkElement frameworkElement, long value)
     {
       frameworkElement.SetValue(FeedbackProperty, value);

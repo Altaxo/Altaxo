@@ -24,6 +24,9 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui.Startup
 {
+  /// <summary>
+  /// Displays the application splash screen.
+  /// </summary>
   internal sealed class SplashScreenForm : Form
   {
     private static SplashScreenForm? _splashScreen;
@@ -31,6 +34,9 @@ namespace Altaxo.Gui.Startup
     private static List<string> _parameterList = new List<string>();
     private Bitmap? _bitmap;
 
+    /// <summary>
+    /// Gets or sets the current splash screen instance.
+    /// </summary>
     [DefaultValue(false)]
     public static SplashScreenForm? SplashScreen
     {
@@ -44,6 +50,10 @@ namespace Altaxo.Gui.Startup
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SplashScreenForm"/> class.
+    /// </summary>
+    /// <param name="applicationName">The application name to display.</param>
     public SplashScreenForm(string applicationName)
     {
       var startass = System.Reflection.Assembly.GetExecutingAssembly();
@@ -90,12 +100,20 @@ namespace Altaxo.Gui.Startup
       BackgroundImage = _bitmap;
     }
 
+    /// <summary>
+    /// Shows the splash screen.
+    /// </summary>
+    /// <param name="applicationName">The application name to display.</param>
     public static void ShowSplashScreen(string applicationName)
     {
       _splashScreen = new SplashScreenForm(applicationName);
       _splashScreen.Show();
     }
 
+    /// <summary>
+    /// Releases the unmanaged resources used by the splash screen.
+    /// </summary>
+    /// <param name="disposing">True to release managed resources; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
       if (disposing)
@@ -106,16 +124,28 @@ namespace Altaxo.Gui.Startup
       base.Dispose(disposing);
     }
 
+    /// <summary>
+    /// Gets the startup parameter list.
+    /// </summary>
+    /// <returns>The startup parameters.</returns>
     public static string[] GetParameterList()
     {
       return _parameterList.ToArray();
     }
 
+    /// <summary>
+    /// Gets the requested file list.
+    /// </summary>
+    /// <returns>The requested files.</returns>
     public static string[] GetRequestedFileList()
     {
       return _requestedFileList.ToArray();
     }
 
+    /// <summary>
+    /// Sets the command-line arguments.
+    /// </summary>
+    /// <param name="args">The command-line arguments.</param>
     public static void SetCommandLineArgs(string[] args)
     {
       _requestedFileList.Clear();

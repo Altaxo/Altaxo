@@ -76,6 +76,9 @@ namespace Altaxo.Gui.Main.Services
         { InternalSetText(text); }, System.Windows.Threading.DispatcherPriority.Normal, null);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether text appending is enabled.
+    /// </summary>
     bool IOutputView.IsEnabled { get { return _menuTextAppendEnabled.IsChecked; } set { _menuTextAppendEnabled.IsChecked = value; } }
 
     #endregion IOutputView Members

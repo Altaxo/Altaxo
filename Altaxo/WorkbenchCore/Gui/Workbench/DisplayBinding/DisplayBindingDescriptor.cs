@@ -33,9 +33,9 @@ namespace Altaxo.Gui.Workbench
     private Codon? _codon;
 
     /// <summary>
-    /// Gets the IDisplayBinding or ISecondaryDisplayBinding if it is already loaded,
-    /// otherwise returns null.
+    /// Gets the loaded binding, if any.
     /// </summary>
+    /// <returns>The loaded binding, or <see langword="null"/> if it has not been created yet.</returns>
     public object? GetLoadedBinding()
     {
       return _binding;
@@ -144,15 +144,13 @@ namespace Altaxo.Gui.Workbench
     }
 
     /// <summary>
-    /// Gets if the display binding can possibly open the file.
-    /// If this method returns false, it cannot open it; if the method returns
-    /// true, it *might* open it.
-    /// Call Binding.CanCreateContentForFile() to know for sure if the binding
-    /// will open the file.
+    /// Determines whether the binding can possibly open the specified file.
     /// </summary>
+    /// <param name="fileName">The file name to inspect.</param>
+    /// <returns><see langword="true"/> if the binding might open the file; otherwise, <see langword="false"/>.</returns>
     /// <remarks>
-    /// This method is used to skip loading addins like the ResourceEditor which cannot
-    /// attach to a certain file name for sure.
+    /// This method is used to skip loading add-ins like the ResourceEditor, which cannot
+    /// determine with certainty whether they can attach to a certain file name.
     /// </remarks>
     public bool CanOpenFile(string fileName)
     {

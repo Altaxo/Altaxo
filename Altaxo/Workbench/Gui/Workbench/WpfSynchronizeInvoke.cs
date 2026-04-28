@@ -18,6 +18,10 @@ namespace Altaxo.Gui.Workbench
   {
     private readonly Dispatcher dispatcher;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WpfSynchronizeInvoke"/> class.
+    /// </summary>
+    /// <param name="dispatcher">The dispatcher used for marshaling calls.</param>
     public WpfSynchronizeInvoke(Dispatcher dispatcher)
     {
       if (dispatcher is null)
@@ -25,6 +29,9 @@ namespace Altaxo.Gui.Workbench
       this.dispatcher = dispatcher;
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the call must be marshaled to the dispatcher thread.
+    /// </summary>
     public bool InvokeRequired
     {
       get
@@ -33,6 +40,12 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Begins an asynchronous invoke on the dispatcher.
+    /// </summary>
+    /// <param name="method">The delegate to invoke.</param>
+    /// <param name="args">The arguments to pass to the delegate.</param>
+    /// <returns>An asynchronous result.</returns>
     public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
     {
       DispatcherOperation op;
@@ -101,6 +114,11 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Ends an asynchronous invoke.
+    /// </summary>
+    /// <param name="result">The asynchronous result.</param>
+    /// <returns>The delegate return value.</returns>
     public object EndInvoke(IAsyncResult result)
     {
       var r = result as AsyncResult;
@@ -110,6 +128,12 @@ namespace Altaxo.Gui.Workbench
       return r._dispatcherOperation.Result;
     }
 
+    /// <summary>
+    /// Invokes a delegate synchronously on the dispatcher thread.
+    /// </summary>
+    /// <param name="method">The delegate to invoke.</param>
+    /// <param name="args">The arguments to pass to the delegate.</param>
+    /// <returns>The delegate return value.</returns>
     public object? Invoke(Delegate method, object?[]? args)
     {
       object? result = null;

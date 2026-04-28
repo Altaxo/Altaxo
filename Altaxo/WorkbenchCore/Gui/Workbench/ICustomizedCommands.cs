@@ -29,11 +29,13 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Returns true, if the save command is handled, false otherwise
     /// </summary>
+    /// <returns><see langword="true"/> if the save command was handled; otherwise, <see langword="false"/>.</returns>
     bool SaveCommand();
 
     /// <summary>
     /// Returns true, if the save as command is handled, false otherwise
     /// </summary>
+    /// <returns><see langword="true"/> if the save as command was handled; otherwise, <see langword="false"/>.</returns>
     bool SaveAsCommand();
   }
 }

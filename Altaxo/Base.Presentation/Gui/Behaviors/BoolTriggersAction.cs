@@ -57,6 +57,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the trigger value for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The trigger value.</returns>
     public static bool GetTriggerValue(FrameworkElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(TriggerValueProperty);
@@ -65,6 +67,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the trigger value for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetTriggerValue(FrameworkElement frameworkElement, bool value)
     {
       frameworkElement.SetValue(TriggerValueProperty, value);
@@ -103,6 +107,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the action that is invoked when the trigger changes from <see langword="false"/> to <see langword="true"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The action to invoke.</returns>
     public static EventHandler GetWhenFalseToTrue(FrameworkElement frameworkElement)
     {
       return (EventHandler)frameworkElement.GetValue(WhenFalseToTrueProperty);
@@ -111,6 +117,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the action that is invoked when the trigger changes from <see langword="false"/> to <see langword="true"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetWhenFalseToTrue(FrameworkElement frameworkElement, EventHandler value)
     {
       frameworkElement.SetValue(WhenFalseToTrueProperty, value);
@@ -132,6 +140,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the action that is invoked when the trigger changes from <see langword="true"/> to <see langword="false"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The action to invoke.</returns>
     public static EventHandler GetWhenTrueToFalse(FrameworkElement frameworkElement)
     {
       return (EventHandler)frameworkElement.GetValue(WhenTrueToFalseProperty);
@@ -140,6 +150,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the action that is invoked when the trigger changes from <see langword="true"/> to <see langword="false"/>.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetWhenTrueToFalse(FrameworkElement frameworkElement, EventHandler value)
     {
       frameworkElement.SetValue(WhenTrueToFalseProperty, value);

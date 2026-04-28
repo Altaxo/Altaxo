@@ -47,6 +47,13 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
       return uiElement is not null && uiElement.Visibility == Visibility.Visible;
     }
 
+    /// <summary>
+    /// Gets the hit-tested element of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The expected UI element type.</typeparam>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="elementPosition">The hit-test position.</param>
+    /// <returns>The matching element, or <see langword="null"/> if none was found.</returns>
     private static T GetHitTestElement4Type<T>(object sender, Point elementPosition) where T : UIElement
     {
       var visual = sender as Visual;
@@ -139,6 +146,12 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
     /// Because the popup is not attached to the visual tree of the sender.
     /// This function test this by looping back from the original source to the sender and if it didn't end up at the sender stopped the drag.
     /// </summary>
+    /// <summary>
+    /// Determines whether the original source is outside the sender's visual tree.
+    /// </summary>
+    /// <param name="sender">The visual to test.</param>
+    /// <param name="e">The mouse event arguments.</param>
+    /// <returns><see langword="true"/> if the original source is not part of the sender; otherwise, <see langword="false"/>.</returns>
     public static bool IsNotPartOfSender(object sender, MouseButtonEventArgs e)
     {
       var visual = e.OriginalSource as Visual;

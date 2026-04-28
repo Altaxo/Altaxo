@@ -124,6 +124,11 @@ namespace Altaxo.Gui
       }
     }
 
+    /// <summary>
+    /// Shows the specified window as a modal dialog.
+    /// </summary>
+    /// <param name="window">The window to show.</param>
+    /// <returns>The dialog result returned by the window.</returns>
     internal bool? InternalShowModalWindow(System.Windows.Window window)
     {
       if (window is null)
@@ -168,7 +173,7 @@ namespace Altaxo.Gui
     /// Shows a window as a modal window.
     /// </summary>
     /// <param name="window">The window.</param>
-    /// <returns></returns>
+    /// <returns>The modal dialog result.</returns>
     public bool? ShowDialog(System.Windows.Window window)
     {
       return Current.Dispatcher.InvokeIfRequired(InternalShowModalWindow, window);
@@ -701,7 +706,6 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
     /// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
     /// <param name="x">The x coordinate of the location where to show the context menu.</param>
     /// <param name="y">The y coordinate of the location where to show the context menu.</param>
-    /// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
     public override void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y)
     {
       foreach (var entry in RegisteredContextMenuProviders)
@@ -772,7 +776,7 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
     /// <param name="millisecondsDelay">The milliseconds delay, before the dialog is shown.</param>
     /// <param name="task">The task (must be already running).</param>
     /// <param name="monitor">The background monitor.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the user accepted the dialog; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="System.ApplicationException">Is thrown when is call does not come from the Gui thread.</exception>
     public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor)
     {

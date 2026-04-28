@@ -31,6 +31,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Converts the value from string.
     /// </summary>
+    /// <typeparam name="T">The target type.</typeparam>
+    /// <param name="v">The string value.</param>
+    /// <param name="defaultValue">The value to return when conversion fails.</param>
+    /// <returns>The converted value or <paramref name="defaultValue"/>.</returns>
     public static T FromString<T>(string v, T defaultValue)
     {
       if (string.IsNullOrEmpty(v))
@@ -52,6 +56,9 @@ namespace Altaxo.Main
     /// <summary>
     /// Converts the value to string.
     /// </summary>
+    /// <typeparam name="T">The source type.</typeparam>
+    /// <param name="val">The value to convert.</param>
+    /// <returns>The string representation, or <see langword="null"/> if conversion fails.</returns>
     public static string? ToString<T>(T val)
     {
       if (typeof(T) == typeof(string))

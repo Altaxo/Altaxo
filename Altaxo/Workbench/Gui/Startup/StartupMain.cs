@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Startup
     /// If the name of the startup assembly ends with "Startup", "Startup64", or "Startup32", e.g. AltaxoStartup, the part of the name before "Startup" is used as the application name, i.e. "Altaxo"
     /// Otherwise, the name of the startup assembly is used directly as application name.
     /// </summary>
-    /// <returns>Application name.</returns>
+    /// <returns>The application name.</returns>
     private static string FindApplicationName()
     {
       var assName = Assembly.GetEntryAssembly()?.GetName().Name ?? throw new InvalidOperationException("Unable to get name of entry assembly");
@@ -90,6 +90,7 @@ namespace Altaxo.Gui.Startup
     /// <summary>
     /// Starts the application.
     /// </summary>
+    /// <param name="args">The command-line arguments.</param>
     [STAThread()]
     public static void Main(string[] args)
     {
@@ -207,7 +208,8 @@ namespace Altaxo.Gui.Startup
     /// <summary>
     /// Checks if we do have a compatible dotnet framework version for running this app.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="args">The startup arguments.</param>
+    /// <returns><see langword="true"/> if the environment is compatible; otherwise, <see langword="false"/>.</returns>
     private static bool CheckEnvironment(StartupArguments args)
     {
       // Safety check: our setup already checks that .NET 4 is installed, but we manually check the .NET version in case the app is
@@ -444,7 +446,7 @@ namespace Altaxo.Gui.Startup
     /// <param name="wbSettings">The workbench settings.</param>
     /// <param name="BeforeRunWorkbench">Action(s) that are executed immediatly before the workbench runs. May be null.</param>
     /// <param name="WorkbenchClosed">Action(s) that are executed immediatly after the workbench has closed. May be null.</param>
-    /// <exception cref="RunWorkbenchException"></exception>
+    /// <exception cref="RunWorkbenchException">Thrown when running the workbench fails.</exception>
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
     private static void RunWorkbench(StartupSettings wbSettings, Action BeforeRunWorkbench, Action? WorkbenchClosed)
     {

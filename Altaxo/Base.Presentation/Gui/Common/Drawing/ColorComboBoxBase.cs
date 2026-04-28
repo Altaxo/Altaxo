@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Common.Drawing
     /// property is set to <c>true</c>, the color must be a member of a plot color set.
     /// </summary>
     /// <param name="color">The color that fulfills the above stated requirements.</param>
-    /// <returns></returns>
+    /// <returns>The coerced color.</returns>
     protected virtual NamedColor InternalSelectedColorCoerce(NamedColor color)
     {
       color = color.CoerceParentColorSetToNullIfNotMember();

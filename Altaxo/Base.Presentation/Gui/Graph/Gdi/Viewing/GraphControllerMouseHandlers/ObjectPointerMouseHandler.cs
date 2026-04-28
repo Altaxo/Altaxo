@@ -460,7 +460,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public override void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -502,7 +501,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnMouseUp(position, e);
@@ -538,7 +536,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public override void OnDoubleClick(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnDoubleClick(position, e);
@@ -570,7 +567,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public override void OnClick(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnClick(position, e);
@@ -622,7 +618,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// This function is called if a key is pressed.
     /// </summary>
     /// <param name="e">Key event args.</param>
-    /// <returns></returns>
+    /// <returns>False if the key was not processed.</returns>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       var keyData = e.Key;

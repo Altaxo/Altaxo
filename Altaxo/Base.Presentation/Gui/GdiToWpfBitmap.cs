@@ -95,8 +95,8 @@ namespace Altaxo.Gui
     /// <summary>
     /// Creates an instance of given width and height. Note that the GidBitmap is created during this calling thread. (the WpfBitmap is created later during the first access to WpfBitmap).
     /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
+    /// <param name="width">The bitmap width.</param>
+    /// <param name="height">The bitmap height.</param>
     public GdiToWpfBitmap(int width, int height)
     {
       Current.Dispatcher.VerifyAccess();
@@ -113,8 +113,8 @@ namespace Altaxo.Gui
     /// <summary>
     /// Resizes the bitmap. Note that the GidBitmap is created during this calling thread. (the WpfBitmap is created later during the first access to WpfBitmap).
     /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
+    /// <param name="width">The bitmap width.</param>
+    /// <param name="height">The bitmap height.</param>
     public void Resize(int width, int height)
     {
       Current.Dispatcher.VerifyAccess();
@@ -225,7 +225,7 @@ namespace Altaxo.Gui
     /// Begins the GDI painting by creating a new Gdi graphics context that can be used for drawing. If finished,
     /// <see cref="EndGdiPainting"/> must be called to invalidate the interop bitmap and to update the WpfBitmapSource.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The graphics context for drawing.</returns>
     public System.Drawing.Graphics BeginGdiPainting()
     {
       return System.Drawing.Graphics.FromImage(_bmp);

@@ -27,10 +27,24 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.AddInItems
 {
+  /// <summary>
+  /// Menu item representing an executable add-in command.
+  /// </summary>
   internal class MenuCommand : CoreMenuItem
   {
+    /// <summary>
+    /// The activation method used for telemetry.
+    /// </summary>
     private readonly string ActivationMethod;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MenuCommand"/> class.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns the generated input bindings.</param>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="activationMethod">The activation method.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public MenuCommand(UIElement inputBindingOwner, Codon codon, object caller, string activationMethod, IReadOnlyCollection<ICondition> conditions) : base(codon, caller, conditions)
     {
       ActivationMethod = activationMethod;
@@ -61,6 +75,13 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Adds a key gesture to the specified input binding owner.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns the input bindings.</param>
+    /// <param name="kg">The key gesture.</param>
+    /// <param name="shortcutCommand">The command to invoke.</param>
+    /// <param name="featureName">The feature name used for telemetry.</param>
     internal static void AddGestureToInputBindingOwner(UIElement inputBindingOwner, KeyGesture kg, System.Windows.Input.ICommand shortcutCommand, string featureName)
     {
       if (inputBindingOwner is not null && kg is not null && shortcutCommand is not null)
@@ -90,6 +111,10 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Gets the feature name for the current command.
+    /// </summary>
+    /// <returns>The feature name.</returns>
     private string GetFeatureName()
     {
       string commandName = _codon.Properties["command"];
@@ -108,6 +133,11 @@ namespace Altaxo.Gui.AddInItems
       private readonly System.Windows.Input.ICommand baseCommand;
       private readonly string featureName;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ShortcutCommandWrapper"/> class.
+      /// </summary>
+      /// <param name="baseCommand">The wrapped command.</param>
+      /// <param name="featureName">The feature name.</param>
       public ShortcutCommandWrapper(System.Windows.Input.ICommand baseCommand, string featureName)
       {
         Debug.Assert(baseCommand is not null);

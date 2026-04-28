@@ -29,9 +29,11 @@ namespace Altaxo.Gui.Common
   public static class WpfTreeNavigation
   {
     /// <summary>
-    /// Returns the first occurence of object of type <typeparamref name="T"/> in the visual tree of <paramref name="root" />.
-    /// <param name="root">Start node.</param>
+    /// Returns the first occurrence of an object of type <typeparamref name="T"/> in the visual tree of <paramref name="root"/>.
     /// </summary>
+    /// <typeparam name="T">The type to find.</typeparam>
+    /// <param name="root">The root node to search.</param>
+    /// <returns>The first matching child, or <see langword="null"/> if no matching child exists.</returns>
     public static T TryFindChild<T>(DependencyObject root) where T : DependencyObject
     {
       if (root is T)
@@ -46,11 +48,12 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Returns the first occurence of object of type <typeparamref name="T"/> in the visual tree of <paramref name="child" />.
+    /// Returns the first occurrence of an object of type <typeparamref name="T"/> in the visual tree of <paramref name="child"/>.
     /// </summary>
-    /// <param name="child">Start node</param>
-    /// <param name="includeItSelf">If true, the <paramref name="child"/> itself is included in the search.</param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type to find.</typeparam>
+    /// <param name="child">The starting node.</param>
+    /// <param name="includeItSelf">If <see langword="true"/>, the <paramref name="child"/> itself is included in the search.</param>
+    /// <returns>The first matching parent, or <see langword="null"/> if no matching parent exists.</returns>
     public static T TryFindParent<T>(DependencyObject child, bool includeItSelf = true) where T : DependencyObject
     {
       if (includeItSelf && child is T)

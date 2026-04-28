@@ -53,26 +53,33 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Inserts a new <see cref="IViewContent"/> object in the workspace and switches to the new view.
     /// </summary>
+    /// <param name="content">The content to show.</param>
     void ShowView(IViewContent content);
 
     /// <summary>
     /// Inserts a new <see cref="IViewContent"/> object in the workspace.
     /// </summary>
+    /// <param name="content">The content to show.</param>
+    /// <param name="switchToOpenedView">Whether to switch to the opened view.</param>
     void ShowView(IViewContent content, bool switchToOpenedView);
 
     /// <summary>
     /// Activates the specified pad.
     /// </summary>
+    /// <param name="content">The pad to activate.</param>
     void ActivatePad(PadDescriptor content);
 
     /// <summary>
     /// Returns a pad from a specific type. Null is retured if a pad of that type is not found.
     /// </summary>
+    /// <param name="type">The pad type.</param>
+    /// <returns>The pad descriptor, or <see langword="null"/> if no pad of that type exists.</returns>
     PadDescriptor? GetPad(Type type);
 
     /// <summary>
     /// 	Closes all views related to current solution.
     /// </summary>
+    /// <param name="force">Whether to force closing.</param>
     /// <returns>
     /// 	True if all views were closed properly, false if closing was aborted.
     /// </returns>

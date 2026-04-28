@@ -81,13 +81,17 @@ namespace Altaxo.Collections
       return obj is not Boxed<T> other ? false : Equals(other);
     }
 
-    /// <inheritcdoc/>
-    override public int GetHashCode()
+    /// <inheritdoc/>
+    public override int GetHashCode()
     {
       return Value is null ? typeof(T).GetHashCode() : Value.GetHashCode();
     }
 
-    /// <inheritcdoc/>
+    /// <summary>
+    /// Determines whether this instance is equal to another boxed value.
+    /// </summary>
+    /// <param name="other">The object to compare with.</param>
+    /// <returns><see langword="true"/> if the boxed values are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Boxed<T>? other)
     {
       if (other is null)

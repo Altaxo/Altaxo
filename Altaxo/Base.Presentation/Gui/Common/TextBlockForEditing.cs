@@ -432,6 +432,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// If the MouseLeave event occurs for this instance, it is no longer eligible for editing (but a current editing remains unaffected).
     /// </summary>
+    /// <param name="e">The event data.</param>
     protected override void OnMouseLeave(MouseEventArgs e)
     {
       base.OnMouseLeave(e);

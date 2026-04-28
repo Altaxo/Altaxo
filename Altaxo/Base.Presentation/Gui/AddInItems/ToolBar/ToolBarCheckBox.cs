@@ -28,6 +28,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.AddInItems
 {
+  /// <summary>
+  /// Represents a toolbar checkbox that is bound to an add-in command.
+  /// </summary>
   internal sealed class ToolBarCheckBox : CheckBox, IStatusUpdate
   {
     private readonly Codon codon;
@@ -35,6 +38,12 @@ namespace Altaxo.Gui.AddInItems
     private BindingExpressionBase isCheckedBinding;
     private readonly IEnumerable<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolBarCheckBox"/> class.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public ToolBarCheckBox(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
     {
       ToolTipService.SetShowOnDisabled(this, true);
@@ -60,6 +69,9 @@ namespace Altaxo.Gui.AddInItems
       SetResourceReference(FrameworkElement.StyleProperty, ToolBar.CheckBoxStyleKey);
     }
 
+    /// <summary>
+    /// Updates the text displayed by the toolbar check box.
+    /// </summary>
     public void UpdateText()
     {
       if (codon.Properties.Contains("tooltip"))
@@ -72,6 +84,9 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the toolbar check box visibility and check state.
+    /// </summary>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)
@@ -82,6 +97,9 @@ namespace Altaxo.Gui.AddInItems
         isCheckedBinding.UpdateTarget();
     }
 
+    /// <summary>
+    /// Handles clicks by refreshing the bound check state.
+    /// </summary>
     protected override void OnClick()
     {
       base.OnClick();

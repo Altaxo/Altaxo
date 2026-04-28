@@ -139,6 +139,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Use this method to save the file to disk using a new name.
     /// </summary>
+    /// <param name="newFileName">The new file name.</param>
     public void SaveToDisk(FileName newFileName)
     {
       FileName = newFileName;
@@ -168,6 +169,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Forces initialization of the specified view.
     /// </summary>
+    /// <param name="view">The view to initialize.</param>
     public virtual void ForceInitializeView(IFileViewContent view)
     {
       if (view is null)
@@ -235,6 +237,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Opens the file for reading.
     /// </summary>
+    /// <returns>A readable stream for the file contents.</returns>
     public virtual Stream OpenRead()
     {
       if (_fileData is not null)
@@ -252,6 +255,7 @@ namespace Altaxo.Gui.Workbench
     /// This method should only be used when there is no current view or by the
     /// current view.
     /// </summary>
+    /// <param name="fileData">The file contents.</param>
     /// <remarks>
     /// Use this method to specify the initial file content if you use a OpenedFile instance
     /// for a file that doesn't exist on disk but should be automatically created when a view

@@ -184,6 +184,11 @@ namespace Altaxo.Gui.Common
       base.OnItemsSourceChanged(oldValue, newValue);
     }
 
+    /// <summary>
+    /// Updates the internal selection list after a tree view item changes its selection state.
+    /// </summary>
+    /// <param name="viewItem">The tree view item.</param>
+    /// <param name="newSelectionState">The new selection state.</param>
     internal void OnSelectionStateChanged(MultiSelectTreeViewItem viewItem, bool newSelectionState)
     {
       if (true == newSelectionState)
@@ -213,6 +218,11 @@ namespace Altaxo.Gui.Common
       _wasCtrlPressedOnLastItemMouseDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
     }
 
+    /// <summary>
+    /// Handles mouse-down input on a tree view item.
+    /// </summary>
+    /// <param name="viewItem">The tree view item.</param>
+    /// <param name="e">The mouse event data.</param>
     internal void OnViewItemMouseDown(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
     {
       if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
@@ -224,6 +234,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles mouse-up input on a tree view item.
+    /// </summary>
+    /// <param name="viewItem">The tree view item.</param>
+    /// <param name="e">The mouse event data.</param>
     internal void OnViewItemMouseUp(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
     {
       if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
@@ -235,6 +250,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles mouse double-click input on a tree view item.
+    /// </summary>
+    /// <param name="viewItem">The tree view item.</param>
+    /// <param name="e">The mouse event data.</param>
     internal void OnViewItemMouseDoubleClick(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
     {
       OnItemDoubleClicked(viewItem);
@@ -242,9 +262,9 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
-    /// Handels the situation when a item is clicked (either by mouse or by keyboard).
+    /// Handles the situation when an item is clicked, either by mouse or by keyboard.
     /// </summary>
-    /// <param name="item"></param>
+    /// <param name="item">The clicked item.</param>
     internal void OnItemClicked(MultiSelectTreeViewItem item)
     {
       if (item is not null)

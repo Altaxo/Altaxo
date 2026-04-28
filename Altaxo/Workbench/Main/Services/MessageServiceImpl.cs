@@ -31,17 +31,34 @@ using Microsoft.Win32;
 
 namespace Altaxo.Main.Services
 {
+  /// <summary>
+  /// Implements dialog-based message handling for the workbench.
+  /// </summary>
   internal class MessageServiceImpl : IDialogMessageService
   {
+    /// <summary>
+    /// Gets or sets the default message box title.
+    /// </summary>
     public string DefaultMessageBoxTitle { get; set; }
 
+    /// <summary>
+    /// Gets or sets the product name.
+    /// </summary>
     public string ProductName { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MessageServiceImpl"/> class.
+    /// </summary>
     public MessageServiceImpl()
     {
       DefaultMessageBoxTitle = ProductName = "Altaxo";
     }
 
+    /// <summary>
+    /// Shows an exception message.
+    /// </summary>
+    /// <param name="ex">The exception to show.</param>
+    /// <param name="message">The optional message text.</param>
     public virtual void ShowException(Exception ex, string? message)
     {
       message ??= string.Empty;
@@ -55,6 +72,12 @@ namespace Altaxo.Main.Services
       DoShowMessage(message, StringParser.Parse("${res:Global.ErrorText}"), MessageBoxImage.Error);
     }
 
+    /// <summary>
+    /// Shows a message box on the UI thread if necessary.
+    /// </summary>
+    /// <param name="message">The message text.</param>
+    /// <param name="caption">The message caption.</param>
+    /// <param name="icon">The message icon.</param>
     private void DoShowMessage(string message, string caption, MessageBoxImage icon)
     {
       if (Current.GetService<IDispatcherMessageLoop>() is { } dispatcher && dispatcher.InvokeRequired)
@@ -86,18 +109,31 @@ namespace Altaxo.Main.Services
       }
     }
 
+    /// <summary>
+    /// Shows an error message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
     public void ShowError(string message)
     {
       Current.Log.Error(message);
       DoShowMessage(StringParser.Parse(message), StringParser.Parse("${res:Global.ErrorText}"), MessageBoxImage.Error);
     }
 
+    /// <summary>
+    /// Shows a warning message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
     public void ShowWarning(string message)
     {
       Current.Log.Warn(message);
       DoShowMessage(StringParser.Parse(message), StringParser.Parse("${res:Global.WarningText}"), MessageBoxImage.Warning);
     }
 
+    /// <summary>
+    /// Shows an information message.
+    /// </summary>
+    /// <param name="message">The message to show.</param>
+    /// <param name="caption">The message caption.</param>
     public void ShowMessage(string message, string? caption)
     {
       caption ??= string.Empty;
@@ -105,18 +141,34 @@ namespace Altaxo.Main.Services
       DoShowMessage(StringParser.Parse(message), StringParser.Parse(caption), MessageBoxImage.Information);
     }
 
+    /// <summary>
+    /// Shows a formatted error message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowErrorFormatted(string formatstring, params object[] formatitems)
     {
       Current.Log.Error(formatstring);
       DoShowMessage(StringParser.Format(formatstring, formatitems), StringParser.Parse("${res:Global.ErrorText}"), MessageBoxImage.Error);
     }
 
+    /// <summary>
+    /// Shows a formatted warning message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowWarningFormatted(string formatstring, params object[] formatitems)
     {
       Current.Log.Warn(formatstring);
       DoShowMessage(StringParser.Format(formatstring, formatitems), StringParser.Parse("${res:Global.WarningText}"), MessageBoxImage.Warning);
     }
 
+    /// <summary>
+    /// Shows a formatted information message.
+    /// </summary>
+    /// <param name="formatstring">The composite format string.</param>
+    /// <param name="caption">The message caption.</param>
+    /// <param name="formatitems">The format arguments.</param>
     public void ShowMessageFormatted(string formatstring, string? caption, params object[] formatitems)
     {
       caption ??= string.Empty;
@@ -124,6 +176,12 @@ namespace Altaxo.Main.Services
       DoShowMessage(StringParser.Format(formatstring, formatitems), StringParser.Parse(caption), MessageBoxImage.Information);
     }
 
+    /// <summary>
+    /// Asks the user a yes or no question.
+    /// </summary>
+    /// <param name="question">The question text.</param>
+    /// <param name="caption">The message caption.</param>
+    /// <returns><see langword="true"/> if the answer is yes; otherwise, <see langword="false"/>.</returns>
     public bool AskQuestion(string question, string? caption)
     {
       caption ??= string.Empty;
@@ -141,16 +199,35 @@ namespace Altaxo.Main.Services
       return result == MessageBoxResult.Yes;
     }
 
+    /// <summary>
+    /// Gets message box options for the specified text.
+    /// </summary>
+    /// <param name="text">The text to inspect.</param>
+    /// <returns>The matching message box options.</returns>
     private static MessageBoxOptions GetOptions(string text)
     {
       return IsRtlText(text) ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0;
     }
 
+    /// <summary>
+    /// Determines whether the text is right-to-left.
+    /// </summary>
+    /// <param name="text">The text to inspect.</param>
+    /// <returns><see langword="true"/> if the text is right-to-left; otherwise, <see langword="false"/>.</returns>
     private static bool IsRtlText(string text)
     {
       return false;
     }
 
+    /// <summary>
+    /// Shows a custom dialog.
+    /// </summary>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="dialogText">The dialog text.</param>
+    /// <param name="acceptButtonIndex">The accept button index.</param>
+    /// <param name="cancelButtonIndex">The cancel button index.</param>
+    /// <param name="buttontexts">The dialog button texts.</param>
+    /// <returns>The dialog result.</returns>
     public int ShowCustomDialog(string caption, string dialogText, int acceptButtonIndex, int cancelButtonIndex, params string[] buttontexts)
     {
       var messageBox = new CustomDialog(caption, dialogText, acceptButtonIndex, cancelButtonIndex, buttontexts);
@@ -158,12 +235,28 @@ namespace Altaxo.Main.Services
       return messageBox.Result;
     }
 
+    /// <summary>
+    /// Shows a dialog for a save error.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="message">The message text.</param>
+    /// <param name="dialogName">The dialog name.</param>
+    /// <param name="exceptionGot">The exception.</param>
     public void InformSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot)
     {
       var dlg = new SaveErrorInformDialog(fileName, message, dialogName, exceptionGot);
       ((GuiFactoryServiceWpfWin)Current.Gui).ShowDialog(dlg);
     }
 
+    /// <summary>
+    /// Shows a dialog for choosing how to handle a save error.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="message">The message text.</param>
+    /// <param name="dialogName">The dialog name.</param>
+    /// <param name="exceptionGot">The exception.</param>
+    /// <param name="chooseLocationEnabled">Whether choosing a different location is enabled.</param>
+    /// <returns>The chosen action.</returns>
     public ChooseSaveErrorResult ChooseSaveError(PathName fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
     {
       ChooseSaveErrorResult r = ChooseSaveErrorResult.Ignore;
@@ -231,15 +324,20 @@ restartlabel:
     /// <summary>
     /// Shows an input box.
     /// </summary>
-    /// <param name="caption"></param>
-    /// <param name="dialogText"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
+    /// <param name="caption">The dialog caption.</param>
+    /// <param name="dialogText">The dialog text.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns>The entered text.</returns>
     public string ShowInputBox(string caption, string dialogText, string defaultValue)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Shows a handled exception.
+    /// </summary>
+    /// <param name="ex">The exception to show.</param>
+    /// <param name="message">The optional message text.</param>
     public void ShowHandledException(Exception ex, string? message = null)
     {
       message ??= string.Empty;
@@ -256,16 +354,37 @@ restartlabel:
       DoShowMessage(message, StringParser.Parse("${res:Global.ErrorText}"), MessageBoxImage.Error);
     }
 
+    /// <summary>
+    /// Writes a message line.
+    /// </summary>
+    /// <param name="level">The message level.</param>
+    /// <param name="source">The source.</param>
+    /// <param name="message">The message text.</param>
     public void WriteLine(MessageLevel level, string source, string message)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Writes a formatted message line.
+    /// </summary>
+    /// <param name="messageLevel">The message level.</param>
+    /// <param name="source">The source.</param>
+    /// <param name="format">The format string.</param>
+    /// <param name="args">The format arguments.</param>
     public void WriteLine(MessageLevel messageLevel, string source, string format, params object[] args)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Writes a formatted message line using the specified format provider.
+    /// </summary>
+    /// <param name="messageLevel">The message level.</param>
+    /// <param name="source">The source.</param>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="format">The format string.</param>
+    /// <param name="args">The format arguments.</param>
     public void WriteLine(MessageLevel messageLevel, string source, IFormatProvider provider, string format, params object[] args)
     {
       throw new NotImplementedException();

@@ -136,6 +136,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Displays the exception box.
     /// </summary>
+    /// <param name="exception">The exception to display.</param>
+    /// <param name="message">The message to show with the exception.</param>
     public static void ShowErrorBox(Exception exception, string message)
     {
       ShowErrorBox(exception, message, false);

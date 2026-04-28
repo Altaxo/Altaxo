@@ -223,6 +223,9 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Determines whether two navigation points are equal.
     /// </summary>
+    /// <param name="p1">The first navigation point.</param>
+    /// <param name="p2">The second navigation point.</param>
+    /// <returns><see langword="true"/> if the points are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return object.Equals(p1, p2); // checks for null and calls p1.Equals(p2)
@@ -231,6 +234,9 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Determines whether two navigation points are not equal.
     /// </summary>
+    /// <param name="p1">The first navigation point.</param>
+    /// <param name="p2">The second navigation point.</param>
+    /// <returns><see langword="true"/> if the points are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return !(p1 == p2);
@@ -239,6 +245,9 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Determines whether the left navigation point sorts before the right one.
     /// </summary>
+    /// <param name="p1">The left navigation point.</param>
+    /// <param name="p2">The right navigation point.</param>
+    /// <returns><see langword="true"/> if the left point sorts before the right one; otherwise, <see langword="false"/>.</returns>
     public static bool operator <(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return p1 is null ? !(p2 is null) : (p1.CompareTo(p2) < 0);
@@ -247,6 +256,9 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Determines whether the left navigation point sorts after the right one.
     /// </summary>
+    /// <param name="p1">The left navigation point.</param>
+    /// <param name="p2">The right navigation point.</param>
+    /// <returns><see langword="true"/> if the left point sorts after the right one; otherwise, <see langword="false"/>.</returns>
     public static bool operator >(DefaultNavigationPoint? p1, DefaultNavigationPoint? p2)
     {
       return p1 is null ? false : (p1.CompareTo(p2) > 0);

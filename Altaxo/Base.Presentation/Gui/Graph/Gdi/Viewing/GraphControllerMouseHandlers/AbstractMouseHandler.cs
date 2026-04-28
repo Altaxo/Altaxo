@@ -71,7 +71,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>The current mouse position in root layer coordinates</summary>
     protected PointD2D _positionCurrentMouseInRootLayerCoordinates;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the graph tool type handled by this mouse handler.
+    /// </summary>
     public abstract GraphToolType GraphToolType { get; }
 
     /// <summary>
@@ -79,7 +81,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnMouseMove(PointD2D position, MouseEventArgs e)
     {
     }
@@ -89,7 +90,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
     {
       _positionLastMouseUpInMouseCoordinates = position;
@@ -100,7 +100,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
     {
       _positionLastMouseDownInMouseCoordinates = position;
@@ -111,7 +110,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnClick(PointD2D position, MouseButtonEventArgs e)
     {
     }
@@ -121,7 +119,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">Mouse position.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
     public virtual void OnDoubleClick(PointD2D position, MouseButtonEventArgs e)
     {
     }
@@ -137,7 +134,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// This function is called just after the paint event. The graphic context is in graph coordinates.
     /// </summary>
-    /// <param name="g"></param>
+    /// <param name="g">The graphics context.</param>
     public virtual void AfterPaint(Graphics g)
     {
     }
@@ -152,7 +149,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// This function is called if a key is pressed.
     /// </summary>
     /// <param name="e">Key event arguments.</param>
-    /// <returns></returns>
+    /// <returns>False if the key was not processed.</returns>
     public virtual bool ProcessCmdKey(KeyEventArgs e)
     {
       return false; // per default the key is not processed

@@ -56,9 +56,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the click event by opening the text tool dialog.
     /// </summary>
-    /// <param name="e">EventArgs.</param>
     /// <param name="position">Mouse position.</param>
-    /// <returns>The mouse state handler for handling the next mouse events.</returns>
+    /// <param name="e">EventArgs.</param>
     public override void OnClick(PointD2D position, MouseButtonEventArgs e)
     {
       base.OnClick(position, e);

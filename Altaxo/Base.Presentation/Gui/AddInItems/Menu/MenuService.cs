@@ -40,10 +40,24 @@ namespace Altaxo.Gui.AddInItems
   /// </summary>
   public static class MenuService
   {
+    /// <summary>
+    /// Carries state used while creating menu items.
+    /// </summary>
     internal sealed class MenuCreateContext
     {
+      /// <summary>
+      /// Gets or sets the element that owns generated input bindings.
+      /// </summary>
       public UIElement InputBindingOwner;
+
+      /// <summary>
+      /// Gets or sets the activation method.
+      /// </summary>
       public string ActivationMethod;
+
+      /// <summary>
+      /// Gets or sets a value indicating whether menu builders are expanded immediately for shortcut discovery.
+      /// </summary>
       public bool ImmediatelyExpandMenuBuildersForShortcuts;
     }
 
@@ -82,6 +96,8 @@ namespace Altaxo.Gui.AddInItems
     /// <summary>
     /// Registers a WPF command for use with the &lt;MenuItem command="name"&gt; syntax.
     /// </summary>
+    /// <param name="name">The command name.</param>
+    /// <param name="command">The command to register.</param>
     public static void RegisterKnownCommand(string name, System.Windows.Input.ICommand command)
     {
       if (name is null)
@@ -184,6 +200,11 @@ namespace Altaxo.Gui.AddInItems
       return menu;
     }
 
+    /// <summary>
+    /// Creates a deferred context menu wrapper for the provided items.
+    /// </summary>
+    /// <param name="subItems">The menu items to expand on open.</param>
+    /// <returns>The created context menu.</returns>
     internal static ContextMenu CreateContextMenu(IList subItems)
     {
       var contextMenu = new ContextMenu()
@@ -242,6 +263,12 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Creates menu items without expanding nested builders.
+    /// </summary>
+    /// <param name="context">The menu creation context.</param>
+    /// <param name="descriptors">The menu item descriptors.</param>
+    /// <returns>The created menu items.</returns>
     internal static IList CreateUnexpandedMenuItems(MenuCreateContext context, IEnumerable descriptors)
     {
       var result = new ArrayList();
@@ -336,6 +363,8 @@ namespace Altaxo.Gui.AddInItems
     /// Converts from the Windows-Forms style label format (accessor key marked with '&amp;')
     /// to a WPF label format (accessor key marked with '_').
     /// </summary>
+    /// <returns>Converts a Windows Forms-style label to a WPF-style label.</returns>
+    /// <param name="label">The label to convert.</param>
     public static string ConvertLabel(string label)
     {
       return label.Replace("_", "__").Replace("&", "_");
@@ -344,6 +373,11 @@ namespace Altaxo.Gui.AddInItems
     /// <summary>
     /// Creates an KeyGesture for a shortcut.
     /// </summary>
+    /// <summary>
+    /// Parses a shortcut string into a key gesture.
+    /// </summary>
+    /// <param name="text">The shortcut text.</param>
+    /// <returns>The parsed key gesture.</returns>
     public static KeyGesture ParseShortcut(string text)
     {
       return (KeyGesture)new KeyGestureConverter().ConvertFromInvariantString(text.Replace('|', '+'));
@@ -374,6 +408,9 @@ namespace Altaxo.Gui.AddInItems
     }
   }
 
+  /// <summary>
+  /// Converts WPF key values to Unicode characters when possible.
+  /// </summary>
   internal static class KeyCodeConversion
   {
     [DllImport("user32.dll")]
@@ -434,6 +471,11 @@ private static void ClearKeyboardBuffer(IntPtr hkl)
 
 */
 
+    /// <summary>
+    /// Converts a WPF key to a Unicode character when possible.
+    /// </summary>
+    /// <param name="keyData">The key to convert.</param>
+    /// <returns>The mapped Unicode character or the virtual key code.</returns>
     public static char KeyToUnicode(this Key keyData)
     {
       // 2 is used to translate into an unshifted character value

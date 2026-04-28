@@ -117,8 +117,12 @@ namespace Altaxo.Gui.Workbench
     }
   }
 
+  /// <summary>
+  /// Converts <see cref="ExternalProcessDisplayBinding"/> instances to and from their persisted string representation.
+  /// </summary>
   internal sealed class ExternalProcessDisplayBindingConverter : TypeConverter
   {
+    /// <inheritdoc/>
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
       if (sourceType == typeof(string))
@@ -127,6 +131,7 @@ namespace Altaxo.Gui.Workbench
         return base.CanConvertFrom(context, sourceType);
     }
 
+    /// <inheritdoc/>
     public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
     {
       if (destinationType == typeof(string))
@@ -135,6 +140,7 @@ namespace Altaxo.Gui.Workbench
         return base.CanConvertTo(context, destinationType);
     }
 
+    /// <inheritdoc/>
     public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
     {
       if (destinationType == typeof(string))
@@ -148,6 +154,7 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <inheritdoc/>
     public override object? ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
     {
       if (value is string valueString)

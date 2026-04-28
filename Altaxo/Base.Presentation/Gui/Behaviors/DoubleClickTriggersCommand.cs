@@ -54,6 +54,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets a value indicating whether the handled flag is set for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns><see langword="true"/> if the event is marked as handled; otherwise, <see langword="false"/>.</returns>
     public static bool GetIsHandled(FrameworkElement frameworkElement)
     {
       return (bool)frameworkElement.GetValue(IsHandledProperty);
@@ -62,6 +64,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets a value indicating whether the double-click event is marked as handled for the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="observe">The value to set.</param>
     public static void SetIsHandled(FrameworkElement frameworkElement, bool observe)
     {
       frameworkElement.SetValue(IsHandledProperty, observe);
@@ -102,6 +106,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command associated with the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command associated with the specified framework element.</returns>
     public static ICommand GetCommand(FrameworkElement frameworkElement)
     {
       return (ICommand)frameworkElement.GetValue(CommandProperty);
@@ -110,6 +116,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command associated with the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetCommand(FrameworkElement frameworkElement, ICommand value)
     {
       frameworkElement.SetValue(CommandProperty, value);
@@ -131,6 +139,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the command parameter associated with the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <returns>The command parameter associated with the specified framework element.</returns>
     public static object GetCommandParameter(FrameworkElement frameworkElement)
     {
       return frameworkElement.GetValue(CommandParameterProperty);
@@ -139,6 +149,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the command parameter associated with the specified framework element.
     /// </summary>
+    /// <param name="frameworkElement">The framework element that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetCommandParameter(FrameworkElement frameworkElement, object value)
     {
       frameworkElement.SetValue(CommandParameterProperty, value);

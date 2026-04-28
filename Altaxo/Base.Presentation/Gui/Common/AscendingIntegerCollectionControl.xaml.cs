@@ -67,6 +67,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Sets the range list source displayed by the control.
     /// </summary>
+    /// <param name="source">The range list source.</param>
     public void SetRangeListSource(IEnumerable<object> source)
     {
       _ranges = source;
@@ -76,6 +77,7 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Switches between the simple and advanced presentations.
     /// </summary>
+    /// <param name="showAdvanced"><see langword="true"/> to show the advanced view; otherwise, <see langword="false"/>.</param>
     public void SwitchEasyAdvanced(bool showAdvanced)
     {
       if (showAdvanced)
@@ -93,6 +95,11 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Handles the switch-to-advanced request.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
     private void EhSwitchToAdvanced(object sender, RoutedEventArgs e)
     {
       var ev = SwitchToAdvandedView;

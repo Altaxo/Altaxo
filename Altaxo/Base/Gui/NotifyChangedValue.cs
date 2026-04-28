@@ -86,8 +86,8 @@ namespace Altaxo.Gui
       return Equals(other);
     }
 
-    /// <inheritcdoc/>
-    override public int GetHashCode()
+    /// <inheritdoc/>
+    public override int GetHashCode()
     {
       if (Value is null)
         return typeof(T).GetHashCode();
@@ -95,7 +95,11 @@ namespace Altaxo.Gui
         return Value.GetHashCode();
     }
 
-    /// <inheritcdoc/>
+    /// <summary>
+    /// Determines whether this instance is equal to another wrapped value.
+    /// </summary>
+    /// <param name="other">The object to compare with.</param>
+    /// <returns><see langword="true"/> if the wrapped values are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(NotifyChangedValue<T>? other)
     {
       if (other is null)

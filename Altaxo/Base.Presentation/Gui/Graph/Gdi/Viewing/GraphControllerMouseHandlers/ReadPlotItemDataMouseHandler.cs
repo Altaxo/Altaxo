@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Moves the cross along the plot.
     /// </summary>
-    /// <param name="increment"></param>
+    /// <param name="increment">The increment to apply.</param>
     private void MoveLeftRight(int increment)
     {
       if (!TestMovementPresumtions())
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Moves the cross to the next plot item. If no plot item is found in this layer, it moves the cross to the next layer.
     /// </summary>
-    /// <param name="increment"></param>
+    /// <param name="increment">The increment to apply.</param>
     private void MoveUpDown(int increment)
     {
       if (!TestMovementPresumtions())
@@ -334,7 +334,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="layer">The layer in which this plot item resides.</param>
     /// <param name="plotitem">The plot item for which the number should be retrieved.</param>
-    /// <returns></returns>
+    /// <returns>The plot item index, or -1 if the item is not found.</returns>
     private int GetPlotItemNumber(XYPlotLayer layer, XYColumnPlotItem plotitem)
     {
       if (layer is not null)

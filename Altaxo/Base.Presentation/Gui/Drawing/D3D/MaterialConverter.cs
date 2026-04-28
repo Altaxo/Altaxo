@@ -86,6 +86,10 @@ namespace Altaxo.Gui.Drawing.D3D
     /// <summary>
     /// Creates an image source from an <see cref="AxoColor"/>.
     /// </summary>
+    /// <param name="axoColor">The color to render.</param>
+    /// <param name="width">The image width.</param>
+    /// <param name="height">The image height.</param>
+    /// <returns>The generated image source.</returns>
     public static ImageSource GetImageSourceFromAxoColor(AxoColor axoColor, int width, int height)
     {
       var innerRect = new Rect(0, 0, width, height);
@@ -99,6 +103,10 @@ namespace Altaxo.Gui.Drawing.D3D
     /// <summary>
     /// Creates an image source from a material.
     /// </summary>
+    /// <param name="val">The material to render.</param>
+    /// <param name="width">The image width.</param>
+    /// <param name="height">The image height.</param>
+    /// <returns>The generated image source.</returns>
     public static ImageSource GetImageSourceFromBrushX(IMaterial val, int width, int height)
     {
       //
@@ -151,6 +159,8 @@ namespace Altaxo.Gui.Drawing.D3D
     /// <summary>
     /// Gets a display name for a material.
     /// </summary>
+    /// <param name="material">The material.</param>
+    /// <returns>The display name of the material.</returns>
     public static string GetNameForMaterial(IMaterial material)
     {
       string name;

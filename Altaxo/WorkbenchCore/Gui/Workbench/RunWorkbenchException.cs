@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Create a new RunWorkbenchException instance.
     /// </summary>
+    /// <param name="message">The exception message.</param>
     public RunWorkbenchException(string message) : base(message)
     {
     }
@@ -44,6 +45,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Create a new RunWorkbenchException instance.
     /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="innerException">The inner exception.</param>
     public RunWorkbenchException(string message, Exception innerException) : base(message, innerException)
     {
     }
@@ -51,6 +54,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Create a new RunWorkbenchException instance.
     /// </summary>
+    /// <param name="info">The serialization info.</param>
+    /// <param name="context">The streaming context.</param>
     protected RunWorkbenchException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

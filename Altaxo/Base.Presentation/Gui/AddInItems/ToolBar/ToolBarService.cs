@@ -211,6 +211,11 @@ namespace Altaxo.Gui.AddInItems
       return CreateToolBars((UIElement)uiElementInputBindingOwner, owner, addInTreePath);
     }
 
+    /// <summary>
+    /// Creates the visual content for a toolbar item.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <returns>The created content object.</returns>
     internal static object CreateToolBarItemContent(Codon codon)
     {
       object result = null;

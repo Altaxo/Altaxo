@@ -46,18 +46,27 @@ namespace Altaxo.Main
     /// <summary>
     /// Sends a message to the specified window.
     /// </summary>
+    /// <param name="hWnd">The window handle.</param>
+    /// <param name="msg">The message identifier.</param>
+    /// <param name="wParam">Additional message information.</param>
+    /// <param name="lParam">Additional message information, typically a pointer or handle value.</param>
+    /// <returns>The result of the message dispatch.</returns>
     [DllImport("user32.dll")]
     public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>
     /// Brings the specified window to the foreground.
     /// </summary>
+    /// <param name="hWnd">The window handle.</param>
+    /// <returns>The result of the call.</returns>
     [DllImport("user32.dll")]
     public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
 
     /// <summary>
     /// Closes an open object handle.
     /// </summary>
+    /// <param name="hObject">The handle to close.</param>
+    /// <returns><see langword="true"/> if the handle was closed; otherwise, <see langword="false"/>.</returns>
     [DllImport("kernel32", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool CloseHandle(IntPtr hObject);
@@ -65,12 +74,21 @@ namespace Altaxo.Main
     /// <summary>
     /// Gets a pseudo handle for the current process.
     /// </summary>
+    /// <returns>A pseudo handle for the current process.</returns>
     [DllImport("kernel32.dll")]
     public static extern IntPtr GetCurrentProcess();
 
     /// <summary>
     /// Duplicates an object handle.
     /// </summary>
+    /// <param name="hSourceProcessHandle">The source process handle.</param>
+    /// <param name="hSourceHandle">The source handle.</param>
+    /// <param name="hTargetProcess">The target process handle.</param>
+    /// <param name="targetHandle">Receives the duplicated handle.</param>
+    /// <param name="dwDesiredAccess">The desired access mask.</param>
+    /// <param name="bInheritHandle">Whether the handle is inheritable.</param>
+    /// <param name="dwOptions">The duplication options.</param>
+    /// <returns><see langword="true"/> if duplication succeeded; otherwise, <see langword="false"/>.</returns>
     [DllImport("kernel32.dll", BestFitMapping = false, CharSet = CharSet.Ansi)]
     public static extern bool DuplicateHandle(HandleRef hSourceProcessHandle, SafeHandle hSourceHandle, HandleRef hTargetProcess, out SafeWaitHandle targetHandle, int dwDesiredAccess, bool bInheritHandle, int dwOptions);
 

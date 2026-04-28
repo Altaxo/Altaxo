@@ -65,6 +65,11 @@ namespace Altaxo.Gui
       this.resourceName = resourceName;
     }
 
+    /// <summary>
+    /// Creates a new ResourceServiceImage.
+    /// </summary>
+    /// <param name="resourceService">The resource service.</param>
+    /// <param name="resourceName">The name of the image resource.</param>
     internal ResourceServiceImage(IResourceService resourceService, string resourceName)
     {
       this.resourceName = resourceName;

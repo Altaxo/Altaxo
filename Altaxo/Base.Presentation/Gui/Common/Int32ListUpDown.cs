@@ -527,6 +527,11 @@ namespace Altaxo.Gui.Common
       return base.GetPattern(patternInterface);
     }
 
+    /// <summary>
+    /// Raises the value changed automation event.
+    /// </summary>
+    /// <param name="oldValue">The previous value.</param>
+    /// <param name="newValue">The new value.</param>
     internal void RaiseValueChangedEvent(int oldValue, int newValue)
     {
       base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,

@@ -152,7 +152,7 @@ namespace Altaxo.Gui
 
     /// <summary>Converts <see cref="Altaxo.Drawing.ImageProxy"/> instances to Wpf <see cref="ImageSource"/> instances.</summary>
     /// <param name="proxy">The proxy.</param>
-    /// <returns></returns>
+    /// <returns>The resulting image source.</returns>
     public static ImageSource ToWpf(ImageProxy proxy)
     {
       var stream = proxy.GetContentStream();

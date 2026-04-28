@@ -64,6 +64,7 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the fallback bitmap used when no file image can be loaded.
     /// </summary>
+    /// <returns>The fallback bitmap.</returns>
     public static Bitmap GetDefaultBitmap()
     {
       if (_defaultBitmap is { } defBmp)

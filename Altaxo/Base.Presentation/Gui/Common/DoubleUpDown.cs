@@ -362,10 +362,21 @@ namespace Altaxo.Gui.Common
       return change > 0;
     }
 
+    /// <summary>
+    /// Handles changes to the change increment.
+    /// </summary>
+    /// <param name="element">The dependency object.</param>
+    /// <param name="args">The property changed event arguments.</param>
     private static void OnChangeChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
     {
     }
 
+    /// <summary>
+    /// Coerces the change increment.
+    /// </summary>
+    /// <param name="element">The dependency object.</param>
+    /// <param name="value">The value to coerce.</param>
+    /// <returns>The coerced value.</returns>
     private static object CoerceChange(DependencyObject element, object value)
     {
       double newChange = (double)value;
@@ -482,6 +493,11 @@ namespace Altaxo.Gui.Common
       return base.GetPattern(patternInterface);
     }
 
+    /// <summary>
+    /// Raises the automation value-changed event.
+    /// </summary>
+    /// <param name="oldValue">The old value.</param>
+    /// <param name="newValue">The new value.</param>
     internal void RaiseValueChangedEvent(double oldValue, double newValue)
     {
       base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
@@ -490,6 +506,9 @@ namespace Altaxo.Gui.Common
 
     #region IRangeValueProvider Members
 
+    /// <summary>
+    /// Gets a value indicating whether the control is read-only.
+    /// </summary>
     bool IRangeValueProvider.IsReadOnly
     {
       get
@@ -498,21 +517,34 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    /// <summary>
+    /// Gets the large change amount.
+    /// </summary>
     double IRangeValueProvider.LargeChange
     {
       get { return MyOwner.Change; }
     }
 
+    /// <summary>
+    /// Gets the maximum value.
+    /// </summary>
     double IRangeValueProvider.Maximum
     {
       get { return MyOwner.Maximum; }
     }
 
+    /// <summary>
+    /// Gets the minimum value.
+    /// </summary>
     double IRangeValueProvider.Minimum
     {
       get { return MyOwner.Minimum; }
     }
 
+    /// <summary>
+    /// Sets the current value.
+    /// </summary>
+    /// <param name="value">The value to set.</param>
     void IRangeValueProvider.SetValue(double value)
     {
       if (!IsEnabled())
@@ -529,11 +561,17 @@ namespace Altaxo.Gui.Common
       MyOwner.Value = val;
     }
 
+    /// <summary>
+    /// Gets the small change amount.
+    /// </summary>
     double IRangeValueProvider.SmallChange
     {
       get { return MyOwner.Change; }
     }
 
+    /// <summary>
+    /// Gets the current value.
+    /// </summary>
     double IRangeValueProvider.Value
     {
       get { return MyOwner.Value; }

@@ -285,12 +285,18 @@ namespace Altaxo.Gui.Common
 
     private event Action? DimensionfulQuantityView_QuantityChanged;
 
+    /// <summary>
+    /// Occurs when the selected quantity changes.
+    /// </summary>
     event Action? IDimensionfulQuantityView.SelectedQuantityChanged
     {
       add { DimensionfulQuantityView_QuantityChanged += value; }
       remove { DimensionfulQuantityView_QuantityChanged -= value; }
     }
 
+    /// <summary>
+    /// Sets the quantity unit environment.
+    /// </summary>
     QuantityWithUnitGuiEnvironment IDimensionfulQuantityView.UnitEnvironment
     {
       set { _converter.UnitEnvironment = value; }

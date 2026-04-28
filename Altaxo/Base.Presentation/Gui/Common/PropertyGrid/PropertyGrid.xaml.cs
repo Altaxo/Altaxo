@@ -66,7 +66,10 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the property grid with the provided category and name views.
+    /// </summary>
+    /// <param name="values">The values that describe the property grid rows.</param>
     public void Values_Initialize(IEnumerable<ICategoryNameView> values)
     {
       _guiGrid.Children.Clear();

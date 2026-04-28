@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Moves the cross along the plot.
     /// </summary>
-    /// <param name="increment"></param>
+    /// <param name="increment">The increment to apply.</param>
     private void MoveLeftRight(double increment)
     {
       _positionOfCrossInRootLayerCoordinates = _positionOfCrossInRootLayerCoordinates.WithXPlus(increment);
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Moves the cross to the next plot item. If no plot item is found in this layer, it moves the cross to the next layer.
     /// </summary>
-    /// <param name="increment"></param>
+    /// <param name="increment">The increment to apply.</param>
     private void MoveUpDown(double increment)
     {
       _positionOfCrossInRootLayerCoordinates = _positionOfCrossInRootLayerCoordinates.WithYPlus(increment);

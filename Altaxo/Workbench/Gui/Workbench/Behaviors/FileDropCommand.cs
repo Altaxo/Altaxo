@@ -105,8 +105,8 @@ namespace Altaxo.Gui.Workbench
     ///
     /// This implementation supports binding of delegate commands and routed commands.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">The drop target.</param>
+    /// <param name="e">The drag event data.</param>
     private static void UIElement_Drop(object sender, DragEventArgs e)
     {
       var uiElement = sender as UIElement;

@@ -132,6 +132,7 @@ namespace Altaxo.Gui.Common
       execute(parameter);
     }
 
+    /// <inheritdoc/>
     void ICommand.Execute(object parameter)
     {
       if (parameter is TArg)
@@ -140,6 +141,7 @@ namespace Altaxo.Gui.Common
         throw new ArgumentException(string.Format("Type {0} was expected, but it is type {1}", typeof(TArg), parameter?.GetType()), nameof(parameter));
     }
 
+    /// <inheritdoc/>
     bool ICommand.CanExecute(object parameter)
     {
       if (parameter is TArg)

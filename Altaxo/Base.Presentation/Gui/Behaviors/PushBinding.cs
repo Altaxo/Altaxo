@@ -103,6 +103,7 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Configures the binding against the specified target object.
     /// </summary>
+    /// <param name="targetObject">The object that will be bound.</param>
     public void SetupTargetBinding(DependencyObject targetObject)
     {
       if (targetObject == null)

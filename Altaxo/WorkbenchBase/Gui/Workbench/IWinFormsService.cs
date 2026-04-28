@@ -37,6 +37,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Loads the default monospaced font (Consolas or Courier New).
     /// </summary>
+    /// <param name="style">The font style to load.</param>
+    /// <returns>The loaded font.</returns>
     Font LoadDefaultMonospacedFont(FontStyle style);
 
     /// <summary>
@@ -63,18 +65,24 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Infrastructure method; please use the <c>IResourceService.GetBitmap()</c> extension method instead.
     /// </summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns>The loaded bitmap.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     Bitmap GetResourceServiceBitmap(string resourceName);
 
     /// <summary>
     /// Infrastructure method; please use the <c>IResourceService.GetIcon()</c> extension method instead.
     /// </summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns>The loaded icon.</returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     Icon GetResourceServiceIcon(string resourceName);
 
     /// <summary>
     /// Creates a new icon from the given bitmap.
     /// </summary>
+    /// <param name="bitmap">The bitmap to convert.</param>
+    /// <returns>The created icon.</returns>
     Icon BitmapToIcon(Bitmap bitmap);
 
     /// <summary>
@@ -85,6 +93,9 @@ namespace Altaxo.Gui.Workbench
     /// When a WindowsFormsHost is replaced with another content, the host is disposed (but the control
     /// inside the host isn't)
     /// </summary>
+    /// <param name="contentControl">The content control to populate.</param>
+    /// <param name="content">The content to place into the control.</param>
+    /// <param name="serviceProvider">An optional service provider used while setting the content.</param>
     void SetContent(System.Windows.Controls.ContentControl contentControl, object content, IServiceProvider? serviceProvider = null);
 
     /// <summary>
@@ -95,6 +106,9 @@ namespace Altaxo.Gui.Workbench
     /// When a WindowsFormsHost is replaced with another content, the host is disposed (but the control
     /// inside the host isn't)
     /// </summary>
+    /// <param name="contentControl">The content presenter to populate.</param>
+    /// <param name="content">The content to place into the presenter.</param>
+    /// <param name="serviceProvider">An optional service provider used while setting the content.</param>
     void SetContent(System.Windows.Controls.ContentPresenter contentControl, object content, IServiceProvider? serviceProvider = null);
 
     /// <summary>

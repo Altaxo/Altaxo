@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
-    /// <param name="g"></param>
+    /// <param name="g">The graphics context.</param>
     public override void AfterPaint(Graphics g)
     {
       if (_currentPoint >= 1)

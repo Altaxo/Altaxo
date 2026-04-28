@@ -79,13 +79,15 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Activates the view with the specified index.
     /// </summary>
+    /// <param name="viewNumber">The index of the view to activate.</param>
     void SwitchView(int viewNumber);
 
     /// <summary>
     /// Closes the window, if force == true it closes the window
     /// without asking, even the content is dirty.
     /// </summary>
-    /// <returns>true, if window is closed</returns>
+    /// <param name="force">Whether to force closing.</param>
+    /// <returns><see langword="true"/> if the window was closed; otherwise, <see langword="false"/>.</returns>
     bool CloseWindow(bool force);
 
     /// <summary>

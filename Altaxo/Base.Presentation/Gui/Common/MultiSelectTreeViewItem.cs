@@ -374,7 +374,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="item1">One node.</param>
     /// <param name="item2">The other node.</param>
-    /// <param name="includingIndirectChildNodes"></param>
+    /// <param name="includingIndirectChildNodes">True to include indirect child nodes; otherwise, false.</param>
     public static void SelectAllNodesInbetween(MultiSelectTreeViewItem item1, MultiSelectTreeViewItem item2, bool includingIndirectChildNodes)
     {
       int level1 = item1.GetDepth();

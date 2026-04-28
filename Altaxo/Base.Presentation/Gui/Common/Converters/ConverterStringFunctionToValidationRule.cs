@@ -87,15 +87,15 @@ namespace Altaxo.Gui.Common.Converters
     }
 
     /// <summary>
-    /// Converts a function: Func&lt;object, System.Globalization.CultureInfo, string&gt; to a <see cref="ValidationRule"/>.
+    /// Converts a function, such as <see cref="Func{T1, T2, TResult}"/>, to a <see cref="ValidationRule"/>.
     /// </summary>
-    /// <param name="value">The value that should be converted. Has to be a Func&lt;object, System.Globalization.CultureInfo, string&gt; instance.</param>
-    /// <param name="targetType">Ignored.</param>
-    /// <param name="parameter">Ignored.</param>
-    /// <param name="culture">Ignored.</param>
+    /// <param name="value">The value that should be converted. It must be a function that accepts an object and a culture and returns a string.</param>
+    /// <param name="targetType">The target type. It is ignored.</param>
+    /// <param name="parameter">The converter parameter. It is ignored.</param>
+    /// <param name="culture">The culture. It is ignored.</param>
     /// <returns>
-    /// A validation rule, which uses the provided function to get validation results. If the provided function returns null, this is considered as successful validation. If the provided function returns a non-null string,
-    /// this is considered as an error message, and the validation is considered unsuccessful, the returned string is used as the parameter for the <see cref="ValidationResult"/>.
+    /// A validation rule that delegates validation to the supplied function. If the function returns <c>null</c>, the value is considered valid. If it returns a string,
+    /// the string is used as the error message of the resulting <see cref="ValidationResult"/>.
     /// </returns>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
@@ -104,16 +104,14 @@ namespace Altaxo.Gui.Common.Converters
     }
 
     /// <summary>
-    /// Not implemented.
+    /// Not implemented. This converter only supports one-way conversion.
     /// </summary>
     /// <param name="value">The value that is produced by the binding target.</param>
     /// <param name="targetType">The type to convert to.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
-    /// <returns>
-    /// Not implemented.
-    /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <returns>Does not return a value.</returns>
+    /// <exception cref="System.NotImplementedException">Always thrown because reverse conversion is not supported.</exception>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       throw new NotImplementedException();

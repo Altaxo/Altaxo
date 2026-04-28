@@ -129,7 +129,7 @@ namespace Altaxo.Gui
     /// Gets the family name of a Wpf font family.
     /// </summary>
     /// <param name="fontFamily">The font family.</param>
-    /// <returns></returns>
+    /// <returns>The resolved family name.</returns>
     protected static string GetFontFamilyName(FontFamily fontFamily)
     {
       var count = fontFamily.FamilyNames.Count;
@@ -492,7 +492,7 @@ namespace Altaxo.Gui
       /// </summary>
       /// <param name="f1">The first typeface.</param>
       /// <param name="f2">The second typeface.</param>
-      /// <returns></returns>
+    /// <returns>A comparison value indicating the sort order.</returns>
       public static int Compare(Typeface f1, Typeface f2)
       {
         int result;
@@ -543,7 +543,7 @@ namespace Altaxo.Gui
       /// </summary>
       /// <param name="style">The font style.</param>
       /// <returns>A number corresponding to the style.</returns>
-      /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown when the style is not supported.</exception>
       protected static int GetFontStyleOrdinal(FontStyle style)
       {
         if (style == FontStyles.Normal)
@@ -587,7 +587,7 @@ namespace Altaxo.Gui
     /// </summary>
     /// <param name="altaxoFontFamilies">Dictionary to add the Altaxo font families to.</param>
     /// <param name="fontList">List of (Wpf) typefaces which are used to build the Altaxo font families wich are then added to the dictionary <paramref name="altaxoFontFamilies"/>.</param>
-    /// <exception cref="System.InvalidOperationException"></exception>
+    /// <exception cref="System.InvalidOperationException">Thrown when a duplicate family name is encountered.</exception>
     protected static void AddToAltaxoFontFamilies(ConcurrentDictionary<string, Typeface[]> altaxoFontFamilies, IReadOnlyList<Typeface> fontList)
     {
       Typeface[] fam;
@@ -704,7 +704,7 @@ namespace Altaxo.Gui
       /// </summary>
       /// <param name="text">The text to measure.</param>
       /// <param name="font">The text font.</param>
-      /// <returns></returns>
+    /// <returns>The measured size of the string.</returns>
       public override VectorD3D MeasureString(string text, FontX3D font)
       {
         var scale = font.Font.Size / FontSizeForCaching;

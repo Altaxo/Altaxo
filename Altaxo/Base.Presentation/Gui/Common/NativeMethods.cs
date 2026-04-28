@@ -22,8 +22,16 @@ using System.Runtime.InteropServices;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Provides native Win32 interop methods used by the common GUI helpers.
+  /// </summary>
   internal static class NativeMethods
   {
+    /// <summary>
+    /// Deletes a GDI object.
+    /// </summary>
+    /// <param name="hObject">The handle to the GDI object.</param>
+    /// <returns><see langword="true"/> if the object was deleted successfully; otherwise, <see langword="false"/>.</returns>
     [DllImport("gdi32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool DeleteObject(IntPtr hObject);

@@ -41,37 +41,59 @@ namespace Altaxo.Gui.DataConnection
   /// </summary>
   public partial class QueryDesignerControl : UserControl, IQueryDesignerView
   {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the user chooses a connection string.
+    /// </summary>
     public event Action? ChooseConnectionString;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the group-by state changes.
+    /// </summary>
     public event Action<bool>? GroupByChanged;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the user chooses query properties.
+    /// </summary>
     public event Action? ChooseProperties;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the SQL query should be checked.
+    /// </summary>
     public event Action? CheckSql;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the query results should be shown.
+    /// </summary>
     public event Action? ViewResults;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when the query should be cleared.
+    /// </summary>
     public event Action? ClearQuery;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when a tree node is double-clicked.
+    /// </summary>
     public event Action<NGTreeNode>? TreeNodeMouseDoubleClick;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when related tables are required.
+    /// </summary>
     public event Action<NGTreeNode, List<string>>? RelatedTablesRequired;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when a table should be hidden.
+    /// </summary>
     public event Action<NGTreeNode>? HideTableChosen;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when all tables should be shown.
+    /// </summary>
     public event Action? ShowTablesAllChosen;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Occurs when a related table name is chosen.
+    /// </summary>
     public event Action<string>? RelatedTableNameChosen;
 
     /// <summary>

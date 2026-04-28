@@ -68,9 +68,11 @@ namespace Altaxo.Main
     /// Converts an async function that produces a result collection using callbacks,
     /// into an IObservable.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
     /// <param name="func">
     /// The async function will run once for each subscription on the observable.
     /// </param>
+    /// <returns>The created observable sequence.</returns>
     /// <remarks>
     /// The async function gets passed a cancellation token. This token will get signalled when the observable subscription is cancelled.
     /// </remarks>
@@ -83,6 +85,7 @@ namespace Altaxo.Main
     /// Converts an async function that produces a result collection using callbacks,
     /// into an IObservable.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
     /// <param name="func">
     /// The async function will run once for each subscription on the observable.
     /// </param>
@@ -93,6 +96,7 @@ namespace Altaxo.Main
     /// calls to the parent progress monitor, but uses a cancellation token that gets signalled
     /// when the observable subscription is cancelled.
     /// </param>
+    /// <returns>The created observable sequence.</returns>
     /// <remarks>
     /// Multiple subscriptions on the observable do not work well together with progress reporting.
     /// </remarks>
@@ -155,6 +159,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the first element of the observable sequence.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the first element.</returns>
     public static Task<T> FirstAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return FirstInternalAsync(source, cancellationToken, true);
@@ -163,6 +171,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the first element of the observable sequence, or the default value when the sequence is empty.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the first element, or the default value when the sequence is empty.</returns>
     public static Task<T> FirstOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return FirstInternalAsync(source, cancellationToken, false);
@@ -190,6 +202,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the single element of the observable sequence.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the single element.</returns>
     public static Task<T> SingleAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return SingleInternalAsync(source, cancellationToken, true);
@@ -198,6 +214,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the single element of the observable sequence, or the default value when the sequence is empty.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the single element, or the default value when the sequence is empty.</returns>
     public static Task<T> SingleOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return SingleInternalAsync(source, cancellationToken, false);
@@ -245,6 +265,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the last element of the observable sequence.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the last element.</returns>
     public static Task<T> LastAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return LastInternalAsync(source, cancellationToken, true);
@@ -253,6 +277,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Returns the last element of the observable sequence, or the default value when the sequence is empty.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the last element, or the default value when the sequence is empty.</returns>
     public static Task<T> LastOrDefaultAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       return LastInternalAsync(source, cancellationToken, false);
@@ -296,6 +324,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Converts the observable into a List.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that resolves to the collected list.</returns>
     public static async Task<List<T>> ToListAsync<T>(this IObservable<T> source, CancellationToken cancellationToken = default(CancellationToken))
     {
       var tcs = new TaskCompletionSource<List<T>>();
@@ -318,6 +350,10 @@ namespace Altaxo.Main
     /// <summary>
     /// Subscribes to the observable and runs an action for each element.
     /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source observable.</param>
+    /// <param name="action">The action to run for each element.</param>
+    /// <returns>A task that completes when the observable completes.</returns>
     public static async Task ForEachAsync<T>(this IObservable<T> source, Action<T> action)
     {
       var tcs = new TaskCompletionSource<object>();

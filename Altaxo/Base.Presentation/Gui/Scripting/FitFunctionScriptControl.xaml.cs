@@ -52,7 +52,9 @@ namespace Altaxo.Gui.Scripting
       InitializeNumberOfParameters();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the number-of-parameters combo box.
+    /// </summary>
     public void InitializeNumberOfParameters()
     {
       _suppressEvents++;

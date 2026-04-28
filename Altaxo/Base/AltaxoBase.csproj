@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
   -->
-
+  
   <!-- Enforce XML documentation and treat specific warnings as errors    -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

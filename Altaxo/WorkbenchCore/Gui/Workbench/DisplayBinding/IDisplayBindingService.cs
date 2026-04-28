@@ -38,21 +38,29 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets the primary display binding for the specified file name.
     /// </summary>
+    /// <param name="filename">The file name to inspect.</param>
+    /// <returns>The preferred display binding for the file.</returns>
     IDisplayBinding GetBindingPerFileName(FileName filename);
 
     /// <summary>
     /// Gets the default primary display binding for the specified file name.
     /// </summary>
+    /// <param name="filename">The file name to inspect.</param>
+    /// <returns>The default display binding descriptor for the file.</returns>
     DisplayBindingDescriptor GetDefaultCodonPerFileName(FileName filename);
 
     /// <summary>
     /// Sets the default display binding for the specified file extension.
     /// </summary>
+    /// <param name="extension">The file extension.</param>
+    /// <param name="bindingDescriptor">The binding descriptor to set.</param>
     void SetDefaultCodon(string extension, DisplayBindingDescriptor bindingDescriptor);
 
     /// <summary>
     /// Gets list of possible primary display bindings for the specified file name.
     /// </summary>
+    /// <param name="filename">The file name to inspect.</param>
+    /// <returns>The available display binding descriptors.</returns>
     IReadOnlyList<DisplayBindingDescriptor> GetCodonsPerFileName(FileName filename);
 
     /// <summary>

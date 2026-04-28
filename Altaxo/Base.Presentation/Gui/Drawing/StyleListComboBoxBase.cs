@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Drawing
   /// <summary>
   /// Base class to choose items from a style lists. See <see cref="IStyleList{T}"/>
   /// </summary>
+  /// <typeparam name="TManager">Type of the style list manager.</typeparam>
+  /// <typeparam name="TList">Type of the style list.</typeparam>
+  /// <typeparam name="TItem">Type of the item.</typeparam>
   public abstract class StyleListComboBoxBase<TManager, TList, TItem> : UserControl
     where TManager : IStyleListManager<TList, TItem>
     where TList : IStyleList<TItem>
@@ -243,6 +246,8 @@ namespace Altaxo.Gui.Drawing
     /// <summary>
     /// Handles a change of the selected item.
     /// </summary>
+    /// <param name="obj">The dependency object that owns the property.</param>
+    /// <param name="args">The property changed event arguments.</param>
     protected virtual void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       var oldItem = (TItem)args.OldValue;
@@ -275,7 +280,7 @@ namespace Altaxo.Gui.Drawing
     /// Coerce the selected item to fulfill certain requirements: (i) the item must still be a member of the ParentColorSet of this item.
     /// </summary>
     /// <param name="item">The item that fulfills the above stated requirements.</param>
-    /// <returns></returns>
+    /// <returns>The coerced item.</returns>
     protected virtual TItem InternalSelectedItemCoerce(TItem item)
     {
       return item;
@@ -562,7 +567,7 @@ namespace Altaxo.Gui.Drawing
     /// Function that converts the items intended to set the ItemsSource of the ComboBox to something else.
     /// </summary>
     /// <param name="source">The source.</param>
-    /// <returns></returns>
+    /// <returns>The converted source items.</returns>
     protected virtual IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
     {
       return source;
@@ -592,6 +597,9 @@ namespace Altaxo.Gui.Drawing
     /// <summary>
     /// Gets the items whose display names start with the specified filter string.
     /// </summary>
+    /// <param name="originalList">The list to filter.</param>
+    /// <param name="filterString">The filter string.</param>
+    /// <returns>The filtered items.</returns>
     protected List<object> GetFilteredList(IReadOnlyList<TItem> originalList, string filterString)
     {
       var result = new List<object>();
@@ -611,6 +619,8 @@ namespace Altaxo.Gui.Drawing
     /// <summary>
     /// Handles the closing of the combo-box drop-down.
     /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
     {
       if (_filterString.Length > 0)
@@ -685,6 +695,8 @@ namespace Altaxo.Gui.Drawing
     /// <summary>
     /// Shows the style-list manager dialog.
     /// </summary>
+    /// <param name="sender">The sender of the event.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhShowStyleListManagerDialog(object sender, RoutedEventArgs e)
     {
       var itemList = _styleListManager.GetParentList(SelectedItem);
@@ -711,6 +723,8 @@ namespace Altaxo.Gui.Drawing
     /// <summary>
     /// Handles the opening of the combo-box drop-down.
     /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event arguments.</param>
     protected virtual void EhComboBox_DropDownOpened(object sender, EventArgs e)
     {
       if (IsTreeDropDownOpen)

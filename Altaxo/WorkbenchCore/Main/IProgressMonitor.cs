@@ -121,6 +121,10 @@ namespace Altaxo.Main
       return new DummyProgressMonitor() { CancellationToken = cancellationToken };
     }
 
+    /// <summary>
+    /// Reports the current progress.
+    /// </summary>
+    /// <param name="value">The progress value.</param>
     void IProgress<double>.Report(double value)
     {
       Progress = value;

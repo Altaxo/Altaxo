@@ -33,6 +33,13 @@ namespace Altaxo.Gui.AddInItems
     private readonly object caller;
     private readonly IEnumerable<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConditionalSeparator"/> class.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="inToolbar">Whether the separator is used in a toolbar.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public ConditionalSeparator(Codon codon, object caller, bool inToolbar, IEnumerable<ICondition> conditions)
     {
       this.codon = codon;
@@ -45,10 +52,16 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the separator text.
+    /// </summary>
     public void UpdateText()
     {
     }
 
+    /// <summary>
+    /// Updates the separator visibility based on its conditions.
+    /// </summary>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)

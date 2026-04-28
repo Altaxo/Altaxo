@@ -23,10 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Main.Services;
 
@@ -43,12 +40,12 @@ namespace Altaxo.Gui.Pads.FileBrowser
     /// Initializes the folder tree nodes.
     /// </summary>
     /// <param name="nodes">The root node collection.</param>
-    void Initialize_FolderTree(NGTreeNodeCollection nodes);
+    public void Initialize_FolderTree(NGTreeNodeCollection nodes);
 
     /// <summary>
     /// Occurs when a folder tree node is selected.
     /// </summary>
-    event Action<NGTreeNode> FolderTreeNodeSelected;
+    public event Action<NGTreeNode> FolderTreeNodeSelected;
   }
 
   #endregion Interfaces
@@ -83,10 +80,10 @@ namespace Altaxo.Gui.Pads.FileBrowser
         set { _selectedImageIndex = value; }
       }
 
-      protected override void OnPropertyChanged(string name)
+      protected override void OnPropertyChanged(string propertyName)
       {
-        base.OnPropertyChanged(name);
-        if (name == "IsSelected" && _imageIndex != _selectedImageIndex)
+        base.OnPropertyChanged(propertyName);
+        if (propertyName == "IsSelected" && _imageIndex != _selectedImageIndex)
           base.OnPropertyChanged("ImageIndex");
       }
 

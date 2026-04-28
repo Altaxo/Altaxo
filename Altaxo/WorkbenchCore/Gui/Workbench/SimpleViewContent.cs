@@ -53,7 +53,10 @@ namespace Altaxo.Gui.Workbench
     }
 
     // make this method public
-    /// <inheritdoc/>
+    /// <summary>
+    /// Sets the localized title.
+    /// </summary>
+    /// <param name="text">The localized title text.</param>
     public new void SetLocalizedTitle(string text)
     {
       base.SetLocalizedTitle(text);

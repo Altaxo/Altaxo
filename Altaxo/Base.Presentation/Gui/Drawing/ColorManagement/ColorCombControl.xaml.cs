@@ -311,11 +311,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     //
     // Internals
 
+    /// <summary>
+    /// Gets the neighboring hexagon buttons.
+    /// </summary>
     internal HexagonButton[] Neighbors
     {
       get { return _neighbors; }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this button was visited.
+    /// </summary>
     internal bool Visited;
 
     //

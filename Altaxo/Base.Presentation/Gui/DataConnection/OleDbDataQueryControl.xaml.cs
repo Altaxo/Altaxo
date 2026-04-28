@@ -118,13 +118,17 @@ namespace Altaxo.Gui.DataConnection
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Switches the view to the table tab.
+    /// </summary>
     public void ShowTableTabItem()
     {
       _tab.SelectedIndex = 0;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Switches the view to the SQL text tab.
+    /// </summary>
     public void ShowSqlTextTabItem()
     {
       _tab.SelectedIndex = 1;

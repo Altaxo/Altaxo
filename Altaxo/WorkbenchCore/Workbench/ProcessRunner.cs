@@ -340,6 +340,8 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Escapes a set of arguments according to the CommandLineToArgvW rules.
     /// </summary>
+    /// <param name="arguments">The command line arguments.</param>
+    /// <returns>The escaped command line, or <see langword="null"/> if <paramref name="arguments"/> is <see langword="null"/>.</returns>
     /// <remarks>
     /// Command line parsing rules:
     /// - 2n backslashes followed by a quotation mark produce n backslashes, and the quotation mark is considered to be the end of the argument.
@@ -629,6 +631,16 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Creates the native process.
     /// </summary>
+    /// <param name="lpApplicationName">The application name.</param>
+    /// <param name="lpCommandLine">The command line.</param>
+    /// <param name="lpProcessAttributes">The process security attributes.</param>
+    /// <param name="lpThreadAttributes">The thread security attributes.</param>
+    /// <param name="bInheritHandles">Whether handles are inherited.</param>
+    /// <param name="dwCreationFlags">The process creation flags.</param>
+    /// <param name="lpEnvironment">The environment block.</param>
+    /// <param name="lpCurrentDirectory">The current directory.</param>
+    /// <param name="lpStartupInfo">The startup information.</param>
+    /// <param name="lpProcessInformation">Receives the process information.</param>
     protected virtual void CreateProcess(
       string lpApplicationName,
       StringBuilder lpCommandLine,
@@ -766,6 +778,7 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Asynchronously waits for the process to exit.
     /// </summary>
+    /// <returns>A task that completes when the process exits.</returns>
     public Task WaitForExitAsync()
     {
       if (hasExited)
@@ -832,6 +845,7 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Opens a text reader around the standard output.
     /// </summary>
+    /// <returns>A text reader for standard output.</returns>
     public StreamReader OpenStandardOutputReader()
     {
       return new StreamReader(StandardOutput, OemEncoding);
@@ -840,6 +854,7 @@ namespace Altaxo.Workbench
     /// <summary>
     /// Opens a text reader around the standard error.
     /// </summary>
+    /// <returns>A text reader for standard error.</returns>
     public StreamReader OpenStandardErrorReader()
     {
       return new StreamReader(StandardError, OemEncoding);

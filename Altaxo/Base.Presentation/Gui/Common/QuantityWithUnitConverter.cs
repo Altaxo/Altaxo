@@ -224,11 +224,11 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Converts from a <see cref="DimensionfulQuantity"/> to a string.
     /// </summary>
-    /// <param name="value">The value to convert. Has to be a <see cref="DimensionfulQuantity"/>.</param>
-    /// <param name="targetType">Ignored.</param>
-    /// <param name="parameter">Ignored.</param>
-    /// <param name="culture">This parameter is not used. Instead, the current Altaxo Gui culture is used.</param>
-    /// <returns></returns>
+    /// <param name="value">The value to convert. It must be a <see cref="DimensionfulQuantity"/>.</param>
+    /// <param name="targetType">The target type. It is not used.</param>
+    /// <param name="parameter">The converter parameter. It is not used.</param>
+    /// <param name="culture">The culture. It is not used because the current Altaxo GUI culture is used instead.</param>
+    /// <returns>The formatted quantity string.</returns>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       var q = (DimensionfulQuantity)value;
@@ -269,10 +269,10 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Converts a string to a <see cref="DimensionfulQuantity"/>.
     /// </summary>
-    /// <param name="value">String to convert.</param>
-    /// <param name="targetType">Ignored.</param>
-    /// <param name="parameter">Ignored.</param>
-    /// <param name="culture">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
+    /// <param name="value">The string to convert.</param>
+    /// <param name="targetType">The target type. It is not used.</param>
+    /// <param name="parameter">The converter parameter. It is not used.</param>
+    /// <param name="culture">The culture. It is not used because culture information is retrieved from Altaxo's settings.</param>
     /// <returns>The converted quantity.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {

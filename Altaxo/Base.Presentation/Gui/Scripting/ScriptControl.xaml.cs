@@ -65,7 +65,10 @@ namespace Altaxo.Gui.Scripting
       InitializeComponent();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Adds a pure script view to the control.
+    /// </summary>
+    /// <param name="scriptView">The script view to add.</param>
     public void AddPureScriptView(IPureScriptView scriptView)
     {
       if (object.Equals(_scriptView, scriptView))
@@ -85,7 +88,10 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Compiles the current script.
+    /// </summary>
+    /// <returns>Always <c>null</c>; compilation is handled by the controller.</returns>
     public IScriptCompilerResult Compile()
     {
       return null; // we are unable to compile here; compilation must be handled by the controller.

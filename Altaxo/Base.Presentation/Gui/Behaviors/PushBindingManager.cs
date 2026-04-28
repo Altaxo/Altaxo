@@ -34,6 +34,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the push bindings for the specified object.
     /// </summary>
+    /// <param name="obj">The object that owns the attached property.</param>
+    /// <returns>The push bindings for the specified object.</returns>
     public static PushBindingCollection GetPushBindings(DependencyObject obj)
     {
       if (obj.GetValue(PushBindingsProperty) == null)
@@ -46,6 +48,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the push bindings for the specified object.
     /// </summary>
+    /// <param name="obj">The object that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetPushBindings(DependencyObject obj, PushBindingCollection value)
     {
       obj.SetValue(PushBindingsProperty, value);
@@ -64,6 +68,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Gets the style-defined push bindings for the specified object.
     /// </summary>
+    /// <param name="obj">The object that owns the attached property.</param>
+    /// <returns>The style-defined push bindings for the specified object.</returns>
     public static PushBindingCollection GetStylePushBindings(DependencyObject obj)
     {
       return (PushBindingCollection)obj.GetValue(StylePushBindingsProperty);
@@ -72,6 +78,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Sets the style-defined push bindings for the specified object.
     /// </summary>
+    /// <param name="obj">The object that owns the attached property.</param>
+    /// <param name="value">The value to set.</param>
     public static void SetStylePushBindings(DependencyObject obj, PushBindingCollection value)
     {
       obj.SetValue(StylePushBindingsProperty, value);
@@ -80,6 +88,8 @@ namespace Altaxo.Gui.Behaviors
     /// <summary>
     /// Applies style-defined push bindings to the target object.
     /// </summary>
+    /// <param name="target">The target object.</param>
+    /// <param name="e">The property changed event arguments.</param>
     public static void StylePushBindingsChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
     {
       if (target != null)

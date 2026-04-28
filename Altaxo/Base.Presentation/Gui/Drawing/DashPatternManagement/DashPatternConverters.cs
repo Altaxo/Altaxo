@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     /// </summary>
     /// <param name="text">The text.</param>
     /// <param name="error">The error.</param>
-    /// <returns></returns>
+    /// <returns>The converted dash pattern, or <c>null</c> if the text cannot be converted.</returns>
     private static IDashPattern ConvertFromText(string text, out string error)
     {
       error = null;
@@ -140,6 +140,9 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     /// <summary>
     /// Validates the textual dash-pattern input.
     /// </summary>
+    /// <param name="obj">The input text.</param>
+    /// <param name="info">The culture information.</param>
+    /// <returns>The validation result, or the error message if validation fails.</returns>
     public string EhValidateText(object obj, System.Globalization.CultureInfo info)
     {
       string text = (string)obj;

@@ -37,43 +37,93 @@ namespace Altaxo.Main.Services
 
     #region InvokeIfRequired (Actions)
 
-    /// <inheritdoc see="Invoke(Action)"/>
+    /// <summary>
+    /// Invokes an action on the dispatcher with the specified priority.
+    /// </summary>
+    /// <param name="callback">The action to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
     void InvokeIfRequired(Action callback, DispatcherPriority priority);
 
-    /// <inheritdoc see="Invoke(Action)"/>
+    /// <summary>
+    /// Invokes an action on the dispatcher with the specified priority.
+    /// </summary>
+    /// <param name="callback">The action to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <param name="cancellationToken">A token used to cancel the operation.</param>
     void InvokeIfRequired(Action callback, DispatcherPriority priority, CancellationToken cancellationToken);
 
     #endregion InvokeIfRequired (Actions)
 
     #region InvokeIfRequired (Functions)
 
-    /// <inheritdoc see="Invoke{T}(Func{T})"/>
+    /// <summary>
+    /// Invokes a function on the dispatcher with the specified priority.
+    /// </summary>
+    /// <typeparam name="T">The callback return type.</typeparam>
+    /// <param name="callback">The function to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <returns>The function result.</returns>
     T InvokeIfRequired<T>(Func<T> callback, DispatcherPriority priority);
 
-    /// <inheritdoc see="Invoke{T}(Func{T})"/>
+    /// <summary>
+    /// Invokes a function on the dispatcher with the specified priority.
+    /// </summary>
+    /// <typeparam name="T">The callback return type.</typeparam>
+    /// <param name="callback">The function to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <param name="cancellationToken">A token used to cancel the operation.</param>
+    /// <returns>The function result.</returns>
     T InvokeIfRequired<T>(Func<T> callback, DispatcherPriority priority, CancellationToken cancellationToken);
 
     #endregion InvokeIfRequired (Functions)
 
     #region InvokeAndForget (Actions)
 
-    /// <inheritdoc see="InvokeAsyncAndForget(Action)"/>
+    /// <summary>
+    /// Invokes an action on the dispatcher without waiting.
+    /// </summary>
+    /// <param name="callback">The action to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
     void InvokeAndForget(Action callback, DispatcherPriority priority);
 
     #endregion InvokeAndForget (Actions)
 
     #region InvokeAsync
 
-    /// <inheritdoc see="InvokeAsync(Action)"/>
+    /// <summary>
+    /// Invokes an action asynchronously with the specified priority.
+    /// </summary>
+    /// <param name="callback">The action to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task InvokeAsync(Action callback, DispatcherPriority priority);
 
-    /// <inheritdoc see="InvokeAsync(Action)"/>
+    /// <summary>
+    /// Invokes an action asynchronously with the specified priority.
+    /// </summary>
+    /// <param name="callback">The action to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <param name="cancellationToken">A token used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task InvokeAsync(Action callback, DispatcherPriority priority, CancellationToken cancellationToken);
 
-    /// <inheritdoc see="InvokeAsync(Action)"/>
+    /// <summary>
+    /// Invokes a function asynchronously with the specified priority.
+    /// </summary>
+    /// <typeparam name="T">The callback return type.</typeparam>
+    /// <param name="callback">The function to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<T> InvokeAsync<T>(Func<T> callback, DispatcherPriority priority);
 
-    /// <inheritdoc see="InvokeAsync(Action)"/>
+    /// <summary>
+    /// Invokes a function asynchronously with the specified priority.
+    /// </summary>
+    /// <typeparam name="T">The callback return type.</typeparam>
+    /// <param name="callback">The function to execute.</param>
+    /// <param name="priority">The dispatcher priority.</param>
+    /// <param name="cancellationToken">A token used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<T> InvokeAsync<T>(Func<T> callback, DispatcherPriority priority, CancellationToken cancellationToken);
 
     #endregion InvokeAsync

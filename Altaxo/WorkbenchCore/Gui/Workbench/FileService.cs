@@ -223,7 +223,12 @@ namespace Altaxo.Gui.Workbench
       return file;
     }
 
-    /// <summary>Called by OpenedFile.set_FileName to update the dictionary.</summary>
+    /// <summary>
+    /// Called by <see cref="OpenedFile.FileName"/> changes to update the dictionary.
+    /// </summary>
+    /// <param name="file">The opened file whose name changed.</param>
+    /// <param name="oldName">The previous file name.</param>
+    /// <param name="newName">The new file name.</param>
     internal void OpenedFileFileNameChange(OpenedFile file, FileName oldName, FileName newName)
     {
       if (oldName is null)
@@ -249,7 +254,10 @@ namespace Altaxo.Gui.Workbench
       openedFileDict[newName] = file;
     }
 
-    /// <summary>Called by OpenedFile.UnregisterView to update the dictionary.</summary>
+    /// <summary>
+    /// Called when an opened file closes to update the dictionary.
+    /// </summary>
+    /// <param name="file">The opened file that was closed.</param>
     internal void OpenedFileClosed(OpenedFile file)
     {
       if (openedFileDict.TryGetValue(file.FileName, out var existing) && existing != file)
@@ -291,7 +299,11 @@ namespace Altaxo.Gui.Workbench
       return GetOpenFile(fileName) is not null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Opens a file or returns the already opened view content.
+    /// </summary>
+    /// <param name="fileName">The file to open.</param>
+    /// <returns>The opened file view content, or <see langword="null"/> if opening failed.</returns>
     public IFileViewContent? OpenFile(FileName fileName)
     {
       return OpenFile(fileName, true);
@@ -520,6 +532,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Removes a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="fileName">The file or directory to remove.</param>
+    /// <param name="isDirectory">Whether the path refers to a directory.</param>
     public void RemoveFile(string fileName, bool isDirectory)
     {
       var eargs = new FileCancelEventArgs(fileName, isDirectory);
@@ -569,6 +583,10 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Renames or moves a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="oldName">The current file name.</param>
+    /// <param name="newName">The new file name.</param>
+    /// <param name="isDirectory">Whether the path refers to a directory.</param>
+    /// <returns><see langword="true"/> if the rename succeeded; otherwise, <see langword="false"/>.</returns>
     public bool RenameFile(string oldName, string newName, bool isDirectory)
     {
       if (string.Equals(FileUtility.NormalizePath(oldName),
@@ -620,6 +638,11 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Copies a file, raising the appropriate events. This method may show message boxes.
     /// </summary>
+    /// <param name="oldName">The source file name.</param>
+    /// <param name="newName">The destination file name.</param>
+    /// <param name="isDirectory">Whether the path refers to a directory.</param>
+    /// <param name="overwrite">Whether an existing target file may be overwritten.</param>
+    /// <returns><see langword="true"/> if the copy succeeded; otherwise, <see langword="false"/>.</returns>
     public bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite)
     {
       if (FileUtility.IsEqualFileName(oldName, newName))

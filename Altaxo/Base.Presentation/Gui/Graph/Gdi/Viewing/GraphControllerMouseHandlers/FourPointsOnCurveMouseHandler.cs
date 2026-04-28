@@ -233,12 +233,24 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <inheritdoc/>
     public override GraphToolType GraphToolType => GraphToolType.FourPointsOnCurve;
 
+    /// <summary>
+    /// Gets the inner left point.
+    /// </summary>
     (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerLeftPoint => _handle.Length == 4 ? ((_handle[1].PlotIndex, _handle[1].RowIndex)) : (-1, -1);
 
+    /// <summary>
+    /// Gets the inner right point.
+    /// </summary>
     (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerRightPoint => _handle.Length == 4 ? ((_handle[^2].PlotIndex, _handle[^2].RowIndex)) : (-1, -1);
 
+    /// <summary>
+    /// Gets the outer left point.
+    /// </summary>
     (double PlotIndex, double RowIndex) IToolTwoPointsOnCurve.OuterLeftPoint => (_handle[0].PlotIndex, _handle[0].RowIndex);
 
+    /// <summary>
+    /// Gets the outer right point.
+    /// </summary>
     (double PlotIndex, double RowIndex) IToolTwoPointsOnCurve.OuterRightPoint => (_handle[^1].PlotIndex, _handle[^1].RowIndex);
 
 
@@ -634,7 +646,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// This function is called if a key is pressed.
     /// </summary>
     /// <param name="e">Key event arguments.</param>
-    /// <returns></returns>
+    /// <returns><see langword="true"/> if the key was handled; otherwise, <see langword="false"/>.</returns>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       int? indexOfHandle = null;
@@ -822,7 +834,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="layer">The layer in which this plot item resides.</param>
     /// <param name="plotitem">The plot item for which the number should be retrieved.</param>
-    /// <returns></returns>
+    /// <returns>The plot item index, or -1 if the item is not found.</returns>
     private int GetPlotItemNumber(XYPlotLayer layer, XYColumnPlotItem plotitem)
     {
       if (layer is not null)

@@ -38,6 +38,13 @@ namespace Altaxo.Gui.AddInItems
     private readonly string inputGestureText;
     private readonly IEnumerable<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolBarButton"/> class.
+    /// </summary>
+    /// <param name="inputBindingOwner">The element that owns the input bindings.</param>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public ToolBarButton(UIElement inputBindingOwner, Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
     {
       ToolTipService.SetShowOnDisabled(this, true);
@@ -65,6 +72,10 @@ namespace Altaxo.Gui.AddInItems
       SetResourceReference(FrameworkElement.StyleProperty, ToolBar.ButtonStyleKey);
     }
 
+    /// <summary>
+    /// Gets the feature name for the current command.
+    /// </summary>
+    /// <returns>The feature name.</returns>
     private string GetFeatureName()
     {
       string commandName = codon.Properties["command"];
@@ -78,6 +89,9 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the tooltip text.
+    /// </summary>
     public void UpdateText()
     {
       if (codon.Properties.Contains("tooltip"))
@@ -94,6 +108,9 @@ namespace Altaxo.Gui.AddInItems
     /// </summary>
     /// <remarks>The workbench calls <see cref="IStatusUpdate.UpdateStatus"/> for all tool bars, usually when
     /// <see cref="CommandManager.RequerySuggested"/> fires.</remarks>
+    /// <summary>
+    /// Updates the toolbar button visibility.
+    /// </summary>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)

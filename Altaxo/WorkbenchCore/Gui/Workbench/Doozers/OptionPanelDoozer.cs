@@ -58,6 +58,8 @@ namespace Altaxo.Gui.Workbench
     /// Creates an item with the specified sub items. And the current
     /// Condition status for this item.
     /// </summary>
+    /// <param name="args">The build arguments.</param>
+    /// <returns>The created option panel descriptor.</returns>
     public object BuildItem(BuildItemArgs args)
     {
       string label = args.Codon["label"];

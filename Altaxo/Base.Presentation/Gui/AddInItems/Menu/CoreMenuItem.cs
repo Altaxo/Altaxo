@@ -30,8 +30,17 @@ namespace Altaxo.Gui.AddInItems
   /// </summary>
   internal class CoreMenuItem : MenuItem, IStatusUpdate
   {
+    /// <summary>
+    /// The codon used to initialize this menu item.
+    /// </summary>
     protected readonly Codon _codon;
+    /// <summary>
+    /// The caller object passed to the add-in tree.
+    /// </summary>
     protected readonly object _caller;
+    /// <summary>
+    /// The conditions controlling visibility and enabled state.
+    /// </summary>
     protected readonly IReadOnlyCollection<ICondition> _conditions;
 
     /// <summary>
@@ -46,6 +55,12 @@ namespace Altaxo.Gui.AddInItems
     /// </summary>
     internal bool _setEnabled;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CoreMenuItem"/> class.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public CoreMenuItem(Codon codon, object caller, IReadOnlyCollection<ICondition> conditions)
     {
       _codon = codon;
@@ -68,6 +83,9 @@ namespace Altaxo.Gui.AddInItems
       UpdateText();
     }
 
+    /// <summary>
+    /// Updates the menu item header.
+    /// </summary>
     public void UpdateText()
     {
       if (_codon is not null)
@@ -76,6 +94,9 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the menu item visibility and enabled state.
+    /// </summary>
     public virtual void UpdateStatus()
     {
       ConditionFailedAction result = Altaxo.AddInItems.Condition.GetFailedAction(_conditions, _useDataContext ? (DataContext ?? _caller) : _caller);

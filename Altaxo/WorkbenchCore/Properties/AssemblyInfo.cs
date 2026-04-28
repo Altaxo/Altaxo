@@ -82,16 +82,26 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
 [assembly: SupportsSerializationVersioningAttribute()]
+
+/// <summary>Contains version information for the assembly.</summary>
 internal static class RevisionClass
 {
+  /// <summary>Contains the major version of the assembly./// </summary>
   public const string Major = "$MAJORVERSION$";
+  /// <summary>Contains the minor version of the assembly./// </summary>
   public const string Minor = "$MINORVERSION$";
+  /// <summary>Contains the build number of the assembly./// </summary>
   public const string Build = "$REVNUM$";
+  /// <summary>Contains the revision number of the assembly./// </summary>
   public const string Revision = "$DIRTY$";
 
+  /// <summary>Contains the main version of the assembly./// </summary>
   public const string MainVersion = Major + "." + Minor;
+  /// <summary>Contains the full version of the assembly./// </summary>
   public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
 
+  /// <summary>Contains the branch name of the assembly./// </summary>
   public const string BranchName = "$BRANCH$";
+  /// <summary>Contains the revision ID of the assembly./// </summary>
   public const string RevisionID = "$REVID$";
 }

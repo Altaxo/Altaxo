@@ -52,6 +52,12 @@ namespace GongSolutions.Wpf.DragDrop
     /// </summary>
     public DropInfo DropInfo { get; set; }
 
+    /// <summary>
+    /// Creates a drop target adorner of the specified type.
+    /// </summary>
+    /// <param name="type">The adorner type.</param>
+    /// <param name="adornedElement">The element to adorn.</param>
+    /// <returns>The created adorner.</returns>
     internal static DropTargetAdorner Create(Type type, UIElement adornedElement)
     {
       if (!typeof(DropTargetAdorner).IsAssignableFrom(type))

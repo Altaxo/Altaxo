@@ -66,6 +66,12 @@ namespace Altaxo.Gui.AddInItems
     /// <summary>
     /// Creates a lazy command.
     /// </summary>
+    /// <summary>
+    /// Creates a command wrapper that lazily instantiates the underlying command when needed.
+    /// </summary>
+    /// <param name="codon">The add-in codon describing the command.</param>
+    /// <param name="conditions">The conditions associated with the command.</param>
+    /// <returns>The created command.</returns>
     public static ICommand CreateLazyCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
     {
       if (codon.Properties["loadclasslazy"] == "false")
@@ -87,6 +93,12 @@ namespace Altaxo.Gui.AddInItems
     /// <summary>
     /// Creates a non-lazy command.
     /// </summary>
+    /// <summary>
+    /// Creates a command without forcing lazy loading.
+    /// </summary>
+    /// <param name="codon">The add-in codon describing the command.</param>
+    /// <param name="conditions">The conditions associated with the command.</param>
+    /// <returns>The created command.</returns>
     public static ICommand CreateCommand(Codon codon, IReadOnlyCollection<ICondition> conditions)
     {
       ICommand command = CreateCommand(codon);

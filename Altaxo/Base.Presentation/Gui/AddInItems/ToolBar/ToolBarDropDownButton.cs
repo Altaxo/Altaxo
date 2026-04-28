@@ -36,6 +36,13 @@ namespace Altaxo.Gui.AddInItems
     private readonly object caller;
     private readonly IEnumerable<ICondition> conditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ToolBarDropDownButton"/> class.
+    /// </summary>
+    /// <param name="codon">The add-in codon.</param>
+    /// <param name="caller">The caller object.</param>
+    /// <param name="subMenu">The submenu items.</param>
+    /// <param name="conditions">The conditions that control visibility.</param>
     public ToolBarDropDownButton(Codon codon, object caller, IList subMenu, IEnumerable<ICondition> conditions)
     {
       ToolTipService.SetShowOnDisabled(this, true);
@@ -53,6 +60,9 @@ namespace Altaxo.Gui.AddInItems
       UpdateText();
     }
 
+    /// <summary>
+    /// Updates the text displayed by the toolbar drop-down button.
+    /// </summary>
     public void UpdateText()
     {
       if (codon.Properties.Contains("tooltip"))
@@ -61,6 +71,9 @@ namespace Altaxo.Gui.AddInItems
       }
     }
 
+    /// <summary>
+    /// Updates the toolbar button visibility.
+    /// </summary>
     public void UpdateStatus()
     {
       if (Altaxo.AddInItems.Condition.GetFailedAction(conditions, caller) == ConditionFailedAction.Exclude)

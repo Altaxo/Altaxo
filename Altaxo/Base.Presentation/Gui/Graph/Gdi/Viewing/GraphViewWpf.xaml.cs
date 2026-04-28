@@ -310,7 +310,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     /// <summary>
     /// Called by the PresentationGraphController to get a new graphics context for painting.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="gdiWpfBitmap">The bitmap wrapper.</param>
+    /// <returns>The graphics context for drawing.</returns>
     public static System.Drawing.Graphics GetGraphicsContextFromWpfGdiBitmap(GdiToWpfBitmap gdiWpfBitmap)
     {
       var grfx = gdiWpfBitmap.BeginGdiPainting();
@@ -370,6 +371,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
     #region Altaxo.Gui.Graph.Viewing.IGraphView
 
+    /// <summary>
+    /// Gets the element that should receive initial keyboard focus.
+    /// </summary>
     object Altaxo.Gui.Graph.Gdi.Viewing.IGraphView.GuiInitiallyFocusedElement
     {
       get
@@ -383,6 +387,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       }
     }
 
+    /// <summary>
+    /// Sets the graph controller for this view.
+    /// </summary>
     IGraphViewEventSink IGraphView.Controller
     {
       set
@@ -906,11 +913,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       return glyphs;
     }
 
+    /// <summary>
+    /// Captures the mouse on the graph canvas.
+    /// </summary>
     void IGraphView.CaptureMouseOnCanvas()
     {
       _guiCanvas.CaptureMouse();
     }
 
+    /// <summary>
+    /// Releases mouse capture from the graph canvas.
+    /// </summary>
     void IGraphView.ReleaseCaptureMouseOnCanvas()
     {
       _guiCanvas.ReleaseMouseCapture();

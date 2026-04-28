@@ -43,6 +43,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
     /// <summary>
     /// Returns true if one or more property columns or rows are selected.
     /// </summary>
+    /// <param name="table">The worksheet table.</param>
+    /// <param name="selectedPropertyColumns">The selected property columns.</param>
+    /// <param name="selectedPropertyRows">The selected property rows.</param>
+    /// <returns><c>true</c> if one or more property cells are selected; otherwise, <c>false</c>.</returns>
     public static bool ArePropertyCellsSelected(DataTable table, IAscendingIntegerCollection selectedPropertyColumns, IAscendingIntegerCollection selectedPropertyRows)
     {
       return table.PropCols.ColumnCount > 0 && (selectedPropertyColumns.Count > 0 || selectedPropertyRows.Count > 0);

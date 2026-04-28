@@ -36,15 +36,11 @@ namespace Altaxo.Gui.Workbench
     /// <returns><see langword="true"/> if this binding is preferred; otherwise, <see langword="false"/>.</returns>
     bool IsPreferredBindingForFile(FileName fileName);
 
-    /// <remarks>
-    /// This function determines, if this display binding is able to create
-    /// an IViewContent for the file given by fileName.
-    /// </remarks>
-    /// <returns>
-    /// true, if this display binding is able to create
-    /// an IViewContent for the file given by fileName.
-    /// false otherwise
-    /// </returns>
+    /// <summary>
+    /// Determines whether this binding can create content for the specified file.
+    /// </summary>
+    /// <param name="fileName">The file name to evaluate.</param>
+    /// <returns><see langword="true"/> if this binding can create content for the file; otherwise, <see langword="false"/>.</returns>
     bool CanCreateContentForFile(FileName fileName);
 
     /// <summary>
@@ -56,12 +52,11 @@ namespace Altaxo.Gui.Workbench
     /// <returns>A score indicating how well the content matches this binding.</returns>
     double AutoDetectFileContent(FileName fileName, Stream fileContent, string detectedMimeType);
 
-    /// <remarks>
-    /// Creates a new IViewContent object for the file fileName
-    /// </remarks>
-    /// <returns>
-    /// A newly created IViewContent object.
-    /// </returns>
+    /// <summary>
+    /// Creates a new view content object for the specified file.
+    /// </summary>
+    /// <param name="file">The opened file.</param>
+    /// <returns>A newly created view content object.</returns>
     IViewContent? CreateContentForFile(OpenedFile file);
   }
 }

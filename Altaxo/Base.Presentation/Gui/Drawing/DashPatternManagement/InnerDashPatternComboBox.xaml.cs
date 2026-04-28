@@ -204,6 +204,8 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     /// <summary>
     /// Handles a change of the selected dash pattern.
     /// </summary>
+    /// <param name="obj">The dependency object that owns the property.</param>
+    /// <param name="args">The property changed event arguments.</param>
     protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
       if (_img is not null)
@@ -245,6 +247,8 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     /// <summary>
     /// Creates an image for a dash pattern.
     /// </summary>
+    /// <param name="val">The dash pattern.</param>
+    /// <returns>The generated image source.</returns>
     public static ImageSource GetImage(IDashPattern val)
     {
       const double height = 1;

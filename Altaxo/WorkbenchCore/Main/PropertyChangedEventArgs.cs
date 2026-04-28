@@ -23,11 +23,15 @@ namespace Altaxo.Main
   /// <summary>
   /// PropertyChangedEventHandler with the old and new value.
   /// </summary>
+  /// <typeparam name="T">The value type.</typeparam>
+  /// <param name="sender">The sender.</param>
+  /// <param name="e">The event arguments.</param>
   public delegate void PropertyChangedEventHandler<T>(object sender, PropertyChangedEventArgs<T> e);
 
   /// <summary>
   /// PropertyChangedEventArgs that contains the old and new value.
   /// </summary>
+  /// <typeparam name="T">The value type.</typeparam>
   public class PropertyChangedEventArgs<T> : EventArgs
   {
     private readonly T oldValue;

@@ -29,6 +29,8 @@ namespace Altaxo.Gui.Workbench
     /// <summary>
     /// Gets if the display binding can attach to the specified view content.
     /// </summary>
+    /// <param name="content">The view content to inspect.</param>
+    /// <returns><see langword="true"/> if the binding can attach; otherwise, <see langword="false"/>.</returns>
     bool CanAttachTo(IViewContent content);
 
     /// <summary>
@@ -42,6 +44,8 @@ namespace Altaxo.Gui.Workbench
     /// If ReattachWhenParserServiceIsReady is used, the implementation is responsible
     /// for checking that no duplicate secondary view contents are added.
     /// </summary>
+    /// <param name="viewContent">The primary view content.</param>
+    /// <returns>The created secondary view contents.</returns>
     IViewContent[] CreateSecondaryViewContent(IViewContent viewContent);
   }
 }
