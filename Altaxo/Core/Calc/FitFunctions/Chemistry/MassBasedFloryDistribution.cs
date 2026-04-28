@@ -379,8 +379,14 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         lowerBounds[j + 0] = 0; // minimal amplitude is 0
         upperBounds[j + 0] = null; // maximal amplitude is not limited
 
-        lowerBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / maximalPosition;
-        upperBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / minimalPosition;
+        if (maximalPosition.HasValue)
+        {
+          lowerBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / (IndependentVariableIsDecadicLogarithm ? Math.Pow(10, maximalPosition.Value) : maximalPosition.Value);
+        }
+        if (minimalPosition.HasValue)
+        {
+          upperBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / (IndependentVariableIsDecadicLogarithm ? Math.Pow(10, minimalPosition.Value) : minimalPosition.Value);
+        }
       }
 
       return (lowerBounds, upperBounds);

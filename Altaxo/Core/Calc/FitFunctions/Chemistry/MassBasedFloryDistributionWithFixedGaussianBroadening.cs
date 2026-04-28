@@ -541,29 +541,18 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
 
-      if (IndependentVariableIsDecadicLogarithm)
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
-        {
-          lowerBounds[j + 0] = 0; // minimal amplitude is 0
-          upperBounds[j + 0] = null; // maximal amplitude is not limited
-          if (maximalPosition.HasValue)
-            lowerBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / Math.Pow(10, maximalPosition.Value);
-          if (minimalPosition.HasValue)
-            upperBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / Math.Pow(10, minimalPosition.Value);
-        }
-      }
-      else
-      {
-        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
-        {
-          lowerBounds[j + 0] = 0; // minimal amplitude is 0
-          upperBounds[j + 0] = null; // maximal amplitude is not limited
+        lowerBounds[j + 0] = 0; // minimal amplitude is 0
+        upperBounds[j + 0] = null; // maximal amplitude is not limited
 
-          if (maximalPosition.HasValue)
-            lowerBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / maximalPosition.Value;
-          if (minimalPosition.HasValue)
-            upperBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / minimalPosition.Value;
+        if (maximalPosition.HasValue)
+        {
+          lowerBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / (IndependentVariableIsDecadicLogarithm ? Math.Pow(10, maximalPosition.Value) : maximalPosition.Value);
+        }
+        if (minimalPosition.HasValue)
+        {
+          upperBounds[j + 1] = 2 * MolecularWeightOfMonomerUnit / (IndependentVariableIsDecadicLogarithm ? Math.Pow(10, minimalPosition.Value) : minimalPosition.Value);
         }
       }
 
