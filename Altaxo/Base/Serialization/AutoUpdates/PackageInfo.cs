@@ -265,7 +265,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
     #region Input / output from / to text lines (PackageInfo.txt on SourceForge; old style; before 2024-11)
 
-    /// <summary>Gets the package infos from the lines of the provided stream.</summary>
+    /// <summary>Gets the package information from the lines of the provided stream.</summary>
     /// <param name="stream">Stream to read from.</param>
     /// <returns>The package infos. If the format of the stream is invalid, various exceptions will be thrown.</returns>
     public static PackageInfo[] ReadPackagesFromText_Before2024_11(Stream stream)
@@ -338,7 +338,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Writes the (old style) package to one line of text.
     /// </summary>
-    /// <param name="sw">The sw.</param>
+    /// <param name="sw">The writer to which the package information is written.</param>
     public void WritePackageToText(StreamWriter sw)
     {
       sw.WriteLine($"{UnstableOrStableName}\t{Version.ToString(4)}\t{FileLength}\t{Hash}\tRequiredNetFrameworkVersion={RequiredNetFrameworkVersion ?? new Version(4, 8)}");
@@ -481,7 +481,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Saves the package to a stream. Intended for MakePackage, in which every package info is saved into a single file.
     /// </summary>
-    /// <param name="stream">The stream.</param>
+    /// <param name="stream">The stream to which the package is written.</param>
     public void WritePackageToJson(Stream stream)
     {
       using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
@@ -495,7 +495,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Saves the package using a Json writer. This call can be used to save more than one package into a file.
     /// </summary>
-    /// <param name="writer">The Json writer.</param>
+    /// <param name="writer">The JSON writer.</param>
     public void WritePackageToJson(Utf8JsonWriter writer)
     {
       writer.WriteStartObject();
@@ -638,7 +638,7 @@ namespace Altaxo.Serialization.AutoUpdates
     #region Helper functions
 
     /// <summary>Determines whether the provided string designates either the stable or the unstable build.</summary>
-    /// <param name="s">The string..</param>
+    /// <param name="s">The string to evaluate.</param>
     /// <param name="isUnstable">On output, this returns true if the string designates the unstable build.</param>
     /// <returns><c>true</c> if the provided string designates either the stable or the unstable build; otherwise, <c>false</c>.</returns>
     public static bool IsValidStableIdentifier(string s, out bool isUnstable)
@@ -674,8 +674,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
-    /// <summary>Gets the stable identifier (either 'Unstable' or 'Stable').</summary>
-    /// <param name="loadUnstable">Determines either to return 'Unstable' or 'Stable'</param>
+    /// <summary>Gets the stability identifier, either <c>Unstable</c> or <c>Stable</c>.</summary>
+    /// <param name="loadUnstable">If set to <c>true</c>, returns <c>Unstable</c>; otherwise, returns <c>Stable</c>.</param>
     /// <returns>'Unstable' if <paramref name="loadUnstable"/> is <c>true</c>, otherwise 'Stable'.</returns>
     public static string GetStableIdentifier(bool loadUnstable)
     {
@@ -684,7 +684,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
 
-    /// <summary>Gets the last time a check for new updates was made</summary>
+    /// <summary>Gets the last time a check for new updates was made.</summary>
     /// <param name="loadUnstable">If set to <c>true</c>, the time of the last check time for an unstable version is returned, otherwise the last check time for a stable version is returned.</param>
     /// <returns>The last check time (as Utc). If no check was made before, <see cref="DateTime.MinValue"/> is returned.</returns>
     public static DateTime GetLastUpdateCheckTimeUtc(bool loadUnstable)
@@ -703,7 +703,7 @@ namespace Altaxo.Serialization.AutoUpdates
       return DateTime.MinValue;
     }
 
-    /// <summary>Gets the directory where to store the downloaded update package.</summary>
+    /// <summary>Gets the directory in which the downloaded update package is stored.</summary>
     /// <param name="loadUnstableVersion"><c>true</c> when to get the folder for the unstable version; false otherwise.</param>
     /// <returns>The directory where to store the downloaded package.</returns>
     public static string GetDownloadDirectory(bool loadUnstableVersion)
@@ -729,10 +729,31 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <exception cref="System.NotImplementedException">The downloaded file {fileInfo.FullName} was hashed with algorithm {HashName}, which is not implemented here.</exception>
     public FileStream? VerifyLengthAndHashOfPackageZipFileInFolder(string storagePath, bool leavePackageFileStreamOpen = false)
     {
-      // test, if the file exists and has the right Hash
       var fileInfo = new FileInfo(Path.Combine(storagePath, FileNameOfPackageZipFile));
+      return VerifyLengthAndHashOfPackageZipFile(fileInfo, leavePackageFileStreamOpen);
+    }
+
+    /// <summary>
+    /// Verifies the length and hash of the package's zip file. If length or hash differ, an exception is thrown.
+    /// </summary>
+    /// <param name="fileInfo">The file information of the package file.</param>
+    /// <param name="leavePackageFileStreamOpen">If true, the file stream to the package file is left open.
+    /// You are responsible then for disposing the returned file stream.</param>
+    /// <returns>If the argument <paramref name="leavePackageFileStreamOpen"/> was true, the opened (read-only) stream of the package file.
+    /// You must not forget to dispose that stream. Otherwise, the return value is null.</returns>
+    /// <exception cref="System.IO.InvalidDataException">
+    /// The file {FileNameOfPackageZipFile} can't be found in directory {storagePath}
+    /// or
+    /// The downloaded file {fileInfo.FullName} has an unexpected length of {fileInfo.Length}. The expected value is {FileLength}
+    /// or
+    /// The downloaded file {fileInfo.FullName} has a different hash and is considered corrupted.
+    /// </exception>
+    /// <exception cref="System.NotImplementedException">The downloaded file {fileInfo.FullName} was hashed with algorithm {HashName}, which is not implemented here.</exception>
+    public FileStream? VerifyLengthAndHashOfPackageZipFile(FileInfo fileInfo, bool leavePackageFileStreamOpen = false)
+    {
+      // test, if the file exists and has the right Hash
       if (!fileInfo.Exists)
-        throw new InvalidDataException($"The file {FileNameOfPackageZipFile} can't be found in directory {storagePath}");
+        throw new InvalidDataException($"The file {FileNameOfPackageZipFile} can't be found in directory {Path.GetDirectoryName(fileInfo.FullName)}");
 
       // test for the appropriate length
       if (fileInfo.Length != FileLength)
@@ -754,13 +775,13 @@ namespace Altaxo.Serialization.AutoUpdates
       FileStream? packageFileStream = null;
       if (leavePackageFileStreamOpen)
       {
-        packageFileStream = new FileStream(Path.Combine(storagePath, FileNameOfPackageZipFile), FileMode.Open, FileAccess.Read, FileShare.Read);
+        packageFileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
         hash = hashProvider.ComputeHash(packageFileStream);
         packageFileStream.Seek(0, SeekOrigin.Begin);
       }
       else
       {
-        using (var packageFile = new FileStream(Path.Combine(storagePath, FileNameOfPackageZipFile), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var packageFile = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
           hash = hashProvider.ComputeHash(packageFile);
         }
@@ -776,7 +797,75 @@ namespace Altaxo.Serialization.AutoUpdates
       return packageFileStream;
     }
 
+    /// <summary>
+    /// Determines whether the file length and hash of the package zip file are correct. This is a simple wrapper around <see cref="VerifyLengthAndHashOfPackageZipFile(FileInfo, bool)"/>, which returns true if the verification was successful, and false if an exception was thrown.
+    /// </summary>
+    /// <param name="fileInfo">The file information of the package's zip file to verify. Cannot be null.</param>
+    /// <returns>True if the file length and hash are correct; otherwise, false.</returns>
+    public bool IsLengthAndHashOfPackageZipFileCorrect(FileInfo fileInfo)
+    {
+      try
+      {
+        var fs = VerifyLengthAndHashOfPackageZipFile(fileInfo, leavePackageFileStreamOpen: false);
+        fs?.Dispose();
+        return true;
+      }
+      catch (InvalidDataException)
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Removes the package's zip file if its length or hash does not match the expected values.
+    /// </summary>
+    /// <remarks>This method verifies the integrity of the file at the specified path by checking its length
+    /// and hash. If the verification fails, the file is deleted. No exception is thrown if the file cannot be
+    /// deleted.</remarks>
+    /// <param name="storageFolder">The storage path where the package's zip file is located. Cannot be null.</param>
+    /// <returns>The full path of the removed file if it was deleted; otherwise, <c>null</c>.</returns>
+    public string? RemovePackageZipFileIfLengthOrHashDiffer(string storageFolder)
+    {
+      var fileInfo = new FileInfo(Path.Combine(storageFolder, FileNameOfPackageZipFile));
+      return RemovePackageZipFileIfLengthOrHashDiffer(fileInfo);
+    }
+
+    /// <summary>
+    /// Removes the package's zip file if its length or hash does not match the expected values.
+    /// </summary>
+    /// <remarks>This method verifies the integrity of the file at the specified path by checking its length
+    /// and hash. If the verification fails, the file is deleted. No exception is thrown if the file cannot be
+    /// deleted.</remarks>
+    /// <param name="fileInfo">The file information of the package's zip file to verify and potentially remove. Cannot be null.</param>
+    /// <returns>The full path of the removed file if it was deleted; otherwise, <c>null</c>.</returns>
+    public string? RemovePackageZipFileIfLengthOrHashDiffer(FileInfo fileInfo)
+    {
+      try
+      {
+        var fs = VerifyLengthAndHashOfPackageZipFile(fileInfo, leavePackageFileStreamOpen: false);
+      }
+      catch (InvalidDataException)
+      {
+        try
+        {
+          if (fileInfo.Exists)
+          {
+            File.Delete(fileInfo.FullName);
+            return fileInfo.FullName;
+          }
+          else
+          {
+            return null;
+          }
+        }
+        catch
+        {
+        }
+      }
+      return null;
+
     #endregion
 
+    }
   }
 }

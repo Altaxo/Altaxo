@@ -30,7 +30,7 @@ namespace Altaxo.Serialization.AutoUpdates
 {
 
   /// <summary>
-  /// Helper class to determine which version of .NET core is installed.
+  /// Helper class to determine which version of .NET Core is installed.
   /// </summary>
   public class NetCoreVersionDetermination
   {
@@ -51,9 +51,9 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
     /// <summary>
-    /// Gets the highest net core version installed currently.
+    /// Gets the highest .NET Core version currently installed.
     /// </summary>
-    /// <returns>The highest .NET core version that is currently installed; or null if .NET core is not present on this machine.</returns>
+    /// <returns>The highest .NET Core version that is currently installed, or <c>null</c> if .NET Core is not present on this machine.</returns>
     public static Version? GetNetCoreVersion()
     {
       try
@@ -75,8 +75,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
     /// <summary>
     /// Determines whether a specific version of the .NET Core runtime is installed.
-    /// You have to specify major and minor version, e.g. for .NET core 5.0: 5 and 0.
-    /// The function then will return true if any 5.0 version is installed, e.g. 5.0.2 etc.
+    /// You must specify the major and minor version, for example 5 and 0 for .NET Core 5.0.
+    /// The function then returns true if any 5.0 version is installed, for example 5.0.2.
     /// </summary>
     /// <param name="major">The major version to look for.</param>
     /// <param name="minor">The minor version to look for.</param>

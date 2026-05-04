@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Threading.Tasks;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -35,7 +36,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <para>args[0] is either 'stable' or 'unstable'</para>
     /// <para>args[1] is the version string of the currently installed Altaxo version (e.g.: 1.2.3.4).</para>
     /// </param>
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
       try
       {
@@ -56,8 +57,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
         var currentProgramVersion = new Version(args[1]);
 
-        var downLoader = new Downloader(loadUnstableVersion, currentProgramVersion);
-        downLoader.Run();
+        var updateDownloader = new UpdateDownloader(loadUnstableVersion, currentProgramVersion);
+        await updateDownloader.RunAll();
       }
       catch (Exception ex) // catch all Exceptions silently
       {

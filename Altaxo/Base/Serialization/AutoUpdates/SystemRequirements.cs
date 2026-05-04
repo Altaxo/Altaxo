@@ -168,13 +168,12 @@ namespace Altaxo.Serialization.AutoUpdates
       }
     }
 
-    /// <summary>If there already the currently best package in the download directory, this function gets the present downloaded package.
-    /// If anything is invalid (wrong format of the version file,
-    /// wrong hash sum), the return value is <c>Null</c>.</summary>
+    /// <summary>If the currently best package is already present in the download directory, this function gets the downloaded package.
+    /// If anything is invalid, such as the wrong format of the version file or an incorrect hash sum, the return value is <c>null</c>.</summary>
     /// <param name="versionFileStream">Stream to read the version info from. This must be the opened stream of the VersionInfo.json file in the download directory.</param>
     /// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
-    /// <param name="leavePackageFileStreamOpen">If true, the file stream of the package file that was opened for checking the hash is left opened and
-    /// returned as the second item of the returned tuple. In that case, you are responsible for  disposing the stream.</param>
+    /// <param name="leavePackageFileStreamOpen">If true, the file stream of the package file that was opened for checking the hash is left open and
+    /// returned as the second item of the returned tuple. In that case, you are responsible for disposing the stream.</param>
     /// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
     public static (PackageInfo? packageInfo, FileStream? packageFileStream) TryGetPackageThatWasDownloadedAlready(Stream versionFileStream, string storagePath, bool leavePackageFileStreamOpen = false)
     {
