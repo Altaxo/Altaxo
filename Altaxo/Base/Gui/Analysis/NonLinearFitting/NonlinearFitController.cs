@@ -475,6 +475,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public ICommand CmdBoundsMergeAbsoluteLimits => _cmdBoundsMergeAbsoluteLimits ??= new RelayCommand(EhView_CmdBoundsMergeHardLimits);
 
     private ICommand _cmdBoundsMergeSensibleLimits;
+
+    /// <summary>
+    /// Gets the command for applying linear constraints to the current parameter and try to get then into the allowed range.
+    /// </summary>
+    public ICommand CmdCoerceLinearConstraints => field ??= new RelayCommand(EhCmd_CoerceLinearConstraints);
+
+
+
     /// <summary>
     /// Gets the command for merging sensible bounds.
     /// </summary>
@@ -571,44 +579,105 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _confidenceLevel = new DimensionfulQuantity(level, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ConfidenceLevelEnvironment.DefaultUnit);
       }
 
-      if (true == _parameterController.Apply(false))
+      if (false == _parameterController.Apply(false))
       {
-        // test if there are any parameters to vary
-        if (_doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault() is null)
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+        return;
+      }
+
+      // test if there are any parameters to vary
+      if (_doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault() is null)
+      {
+        Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
+        return;
+      }
+
+      var (msg, isFatal, linearConstraints) = ParameterSetController.TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
+      if (msg.Length > 0)
+      {
+        if (isFatal)
         {
-          Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
+          msg.AppendLine("Please make the neccessary corrections!");
+          Current.Gui.ErrorMessageBox(msg.ToString(), "Errors testing boundaries");
+          _parameterController.InitializeDocument(_doc.CurrentParameters);
           return;
         }
-
-        var (msg, isFatal) = ParameterSetController.TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
-        if (msg.Length > 0)
+        else
         {
-          if (isFatal)
+          msg.AppendLine("Do you want to proceed with the fit?");
+          if (false == Current.Gui.YesNoMessageBox(msg.ToString(), "Warnings", true))
           {
-            msg.AppendLine("Please make the neccessary corrections!");
-            Current.Gui.ErrorMessageBox(msg.ToString(), "Errors testing boundaries");
             _parameterController.InitializeDocument(_doc.CurrentParameters);
             return;
           }
-          else
-          {
-            msg.AppendLine("Do you want to proceed with the fit?");
-            if (false == Current.Gui.YesNoMessageBox(msg.ToString(), "Warnings", true))
-            {
-              _parameterController.InitializeDocument(_doc.CurrentParameters);
-              return;
-            }
-          }
+        }
+      }
+
+      // test now again if there are any parameters to vary
+      if (linearConstraints.AreAllParametersFixed)
+      {
+        Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
+        return;
+      }
+
+      var backConvertedToBoundaryConstraints = linearConstraints.TryConvertToBoundaryConstraints();
+
+
+      // now we have to decide:
+      // if there are no additional free linear constraints, then we can use LevenbergMarquardtMinimizerNonAllocating
+      // in the case there are additional free linear constraints, we have to use LevenbergMarquardtMinimizerWithConstraintsNonAllocating
+      Exception? exception = null;
+      NonlinearModelOfFitEnsemble fitAdapter;
+      NonlinearMinimizationResult? minimizationResult = null;
+
+      if (_doc.CurrentParameters.AdditionalConstraints.Any() && backConvertedToBoundaryConstraints is null)
+      {
+        // the linear constraints are not simple boundary constraints, so we have to use the more general minimizer with linear constraints
+        var (linearConstraintsWithoutFixedParameters, fixedParameters) = linearConstraints.ToProjectorWithoutFixedParameters();
+
+        var newParameterSet = _doc.CurrentParameters.WithParametersSetToFixed(fixedParameters);
+        fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, newParameterSet);
+
+        var fit = new LevenbergMarquardtMinimizerWithConstraintsNonAllocating()
+        {
+          Projector = linearConstraintsWithoutFixedParameters,
+        };
+
+        var (initialGuess, lowerBounds, upperBounds) = ParameterSetElement.CollectVaryingParametersAndBoundaries(newParameterSet);
+
+        var initialGuessA = linearConstraintsWithoutFixedParameters.Project(CreateVector.DenseOfEnumerable(initialGuess));
+
+        if (initialGuess.Any(x => double.IsNaN(x)))
+        {
+          Current.Gui.ErrorMessageBox("After applying the linear constraints, at least one of the parameter is NaN. Please try to start with valid initial parameter values");
+          return;
         }
 
-        var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
+        exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
+        {
+          minimizationResult = fit.FindMinimum(
+                                  fitAdapter,
+                                  initialGuessA,
+                                  null, null,
+                                  reporter.CancellationTokenHard,
+                                  (iterations, chi2, _) => reporter.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"));
+        });
+
+      }
+      else
+      {
+        var currentParameters = _doc.CurrentParameters;
+
+        if (backConvertedToBoundaryConstraints.HasValue)
+        {
+          currentParameters = currentParameters.WithUpdatedFixedParametersAndBoundaries(linearConstraints.ValuesFixedByConstraints, backConvertedToBoundaryConstraints.Value);
+        }
+
+
+        fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
         var fit = new LevenbergMarquardtMinimizerNonAllocating();
-
-
-        var (initialGuess, lowerBounds, upperBounds) = ParameterSetElement.CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
-        NonlinearMinimizationResult minimizationResult = null;
-
-        var exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
+        var (initialGuess, lowerBounds, upperBounds) = ParameterSetElement.CollectVaryingParametersAndBoundaries(currentParameters);
+        exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
             {
               minimizationResult = fit.FindMinimum(
                                       fitAdapter,
@@ -619,28 +688,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                                       reporter.CancellationTokenHard,
                                       (iterations, chi2, _) => reporter.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"));
             });
-        if (exception is null)
-        {
-          ChiSquareValue = fitAdapter.Value;
-          _sigmaSquare = fitAdapter.SigmaSquare;
-          _numberOfFitPoints = fitAdapter.NumberOfObservations;
-          _covarianceMatrix = minimizationResult.Covariance?.Clone();
-
-          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, minimizationResult.StandardErrors);
-
-          //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-          //_doc.FitEnsemble.DistributeParameters();
-
-          OnAfterFittingStep();
-        }
-        else if (exception is not null)
-        {
-          Current.Gui.ErrorMessageBox($"An exception was thrown during fitting. Details:\r\n{exception}", "Fit exception");
-        }
       }
-      else
+
+      if (exception is null)
       {
-        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+        ChiSquareValue = fitAdapter.Value;
+        _sigmaSquare = fitAdapter.SigmaSquare;
+        _numberOfFitPoints = fitAdapter.NumberOfObservations;
+        _covarianceMatrix = minimizationResult.Covariance?.Clone();
+
+        fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, minimizationResult.StandardErrors);
+
+        //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+        //_doc.FitEnsemble.DistributeParameters();
+
+        OnAfterFittingStep();
+      }
+      else if (exception is not null)
+      {
+        Current.Gui.ErrorMessageBox($"An exception was thrown during fitting. Details:\r\n{exception}", "Fit exception");
       }
     }
 
@@ -695,12 +761,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// <summary>
       /// Gets a value indicating whether cancellation is pending.
       /// </summary>
-      public new bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
+      public bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
 
       /// <summary>
       /// Gets a value indicating whether report text is available.
       /// </summary>
-      public new bool HasReportText => _reportTextDirty;
+      public bool HasReportText => _reportTextDirty;
 
       /// <summary>
       /// Gets a value indicating whether reporting should occur now.
@@ -711,7 +777,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// Gets the progress fraction.
       /// </summary>
       /// <returns>The progress fraction.</returns>
-      public new double GetProgressFraction()
+      public double GetProgressFraction()
       {
         return 0;
       }
@@ -720,7 +786,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// Gets the current report text.
       /// </summary>
       /// <returns>The report text.</returns>
-      public new string GetReportText()
+      public string GetReportText()
       {
         return _reportText;
       }
@@ -729,7 +795,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// Reports progress text.
       /// </summary>
       /// <param name="text">The progress text.</param>
-      public new void ReportProgress(string text)
+      public void ReportProgress(string text)
       {
       }
 
@@ -738,14 +804,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       /// </summary>
       /// <param name="text">The progress text.</param>
       /// <param name="progressValue">The progress value.</param>
-      public new void ReportProgress(string text, double progressValue)
+      public void ReportProgress(string text, double progressValue)
       {
       }
 
       /// <summary>
       /// Requests cancellation.
       /// </summary>
-      public new void SetCancellationPending()
+      public void SetCancellationPending()
       {
         _cancellationTokenSource.Cancel();
       }
@@ -1163,8 +1229,8 @@ Label_EditScript:
                   doc,
                   idxFitEnsemble,
                   idxDependentVariable,
-                  dependentVariableFitFunctionTransformation : fitEle.GetDependentVariableTransformation(idxDependentVariable),
-                  dependentVariableValueTransformationInverse : functionDepVarPlotItemTransformation,
+                  dependentVariableFitFunctionTransformation: fitEle.GetDependentVariableTransformation(idxDependentVariable),
+                  dependentVariableValueTransformationInverse: functionDepVarPlotItemTransformation,
                   0,
                   functionIndepVarPlotItemTransformation,
                   numberOfFitPoints,
@@ -1798,6 +1864,63 @@ Label_EditScript:
                       e.LowerBound.Value : e.Parameter)
         };
       }
+    }
+
+    private void EhCmd_CoerceLinearConstraints()
+    {
+      if (!_parameterController.Apply(false))
+        return;
+
+      var parameters = _doc.CurrentParameters;
+      ClampParameterValuesToLowerBoundAndUpperBound(_doc.CurrentParameters.Select(p => p.LowerBound).ToArray(), _doc.CurrentParameters.Select(p => p.UpperBound).ToArray());
+      parameters = _doc.CurrentParameters;
+
+      var parameterNames = _doc.CurrentParameters.Select(x => x.Name).ToArray();
+
+      var constraintCompiler = new LinearConstraintsCompiler(_doc.CurrentParameters);
+      var result = constraintCompiler.Compile(_doc.CurrentParameters.AdditionalConstraints);
+      if (!result.IsSuccess)
+      {
+        var message = $"Error in additional constraint(s):\n{string.Join("\n", result.Diagnostics.Select(d => d.ToString()))}";
+        Current.Gui.ErrorMessageBox(message, "Constraint error(s)");
+        return;
+      }
+
+      var (linearConstraints, errorMessage) = result.TryConvertToProjector();
+      if (linearConstraints is null)
+      {
+        Current.Gui.ErrorMessageBox($"Error in additional constraint(s):\n{errorMessage}", "Constraint error(s)");
+        return;
+      }
+      var initialGuess = linearConstraints.Project(CreateVector.DenseOfEnumerable(_doc.CurrentParameters.Select(ps => ps.Parameter)));
+
+      {
+        // Test for NaN values
+        var list = new List<string>();
+        for (int i = 0; i < initialGuess.Count; i++)
+        {
+          if (double.IsNaN(initialGuess[i]))
+          {
+            list.Add(parameterNames[i]);
+          }
+        }
+        if (list.Count > 0)
+        {
+          var message = $"The following parameters have NaN values:\n{string.Join("\n", list)}\r\nDo you want to use the coerced parameters anyway?";
+          if (!Current.Gui.YesNoMessageBox(message, "NaN values error", false))
+            return;
+        }
+      }
+
+      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      {
+        _doc.CurrentParameters[i] = _doc.CurrentParameters[i] with
+        {
+          Parameter = initialGuess[i],
+        };
+      }
+
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
     }
 
     private static StringBuilder TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(ParameterSet parameters, double?[] lowerBounds, double?[] upperBounds)

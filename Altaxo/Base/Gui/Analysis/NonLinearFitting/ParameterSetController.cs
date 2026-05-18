@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 
@@ -199,6 +202,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   [ExpectedTypeOfView(typeof(IParameterSetView))]
   public class ParameterSetController : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
   {
+    /// <inheritdoc/>
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    #region Bindings
+
     /// <summary>
     /// Gets the editable parameter list.
     /// </summary>
@@ -220,12 +231,42 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       new SelectableListNode("<", true, false),
       };
 
-
-    /// <inheritdoc/>
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    /// <summary>
+    /// Gets or sets additional linear constraints of the parameters that come as string expressions.
+    /// </summary>
+    public string AdditionalConstraints
     {
-      yield break;
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(AdditionalConstraints));
+        }
+      }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the additional constraints section is expanded in the UI.
+    /// </summary>
+    public bool IsAdditionalConstraintsExpanded
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(IsAdditionalConstraintsExpanded));
+        }
+      }
+    }
+
+
+
+    #endregion
+
 
     /// <summary>
     /// Updates the parameter list from the current document.
@@ -258,6 +299,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       base.Initialize(initData);
 
       OnParametersChanged();
+
+      AdditionalConstraints = string.Join(Environment.NewLine, _doc.AdditionalConstraints);
+      IsAdditionalConstraintsExpanded = _doc.AdditionalConstraints.Any();
     }
 
     /// <inheritdoc/>
@@ -288,7 +332,36 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _doc[i] = new ParameterSetElement(l.Name, l.Value, l.Variance, l.Vary, l.LowerBound, l.IsLowerBoundExclusive, l.UpperBound, l.IsUpperBoundExclusive);
       }
 
+      if (!ApplyAdditionalConstraintsOnly())
+      {
+        return ApplyEnd(false, disposeController);
+      }
+
       return ApplyEnd(true, disposeController);
+    }
+
+    /// <summary>
+    /// Validates and applies only the additional constraints defined for the current context.
+    /// </summary>
+    /// <remarks>If any additional constraint is invalid, an error message is displayed and no constraints are
+    /// applied. This method does not modify other constraints or perform a full validation of all
+    /// constraints.</remarks>
+    /// <returns>true if all additional constraints are valid and applied successfully; otherwise, false.</returns>
+    public bool ApplyAdditionalConstraintsOnly()
+    {
+      var additionalConstraints = AdditionalConstraints.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+      var compiler = new LinearConstraintsCompiler(ParameterList.Select(x => x.Name));
+
+      var res = compiler.Compile(additionalConstraints);
+      if (!res.IsSuccess)
+      {
+        var message = $"Error in additional constraint(s):\n{string.Join("\n", res.Diagnostics.Select(d => d.ToString()))}";
+        Current.Gui.ErrorMessageBox(message, "Constraint error(s)");
+        return false;
+      }
+
+      _doc.AdditionalConstraints = additionalConstraints;
+      return true;
     }
 
     /// <summary>
@@ -442,16 +515,48 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <returns>A <see cref="StringBuilder"/> containing warnings and errors, and a flag indicating if any inconsistence could not be corrected automatically.</returns>
-    public static (StringBuilder Message, bool isFatal) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
+    public static (StringBuilder Message, bool IsFatal, LinearConstraintsProjector? projector) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
     {
       var stb = new StringBuilder();
       bool isFatal = false;
+
 
       for (int i = 0; i < parameters.Count; i++)
       {
         parameters[i] = parameters[i].TestAndCorrectParameterAndBoundaries(stb, ref isFatal);
       }
-      return (stb, isFatal);
+      if (isFatal)
+      {
+        return (stb, isFatal, null);
+      }
+
+      var constraintCompiler = new LinearConstraintsCompiler(parameters);
+      var result = constraintCompiler.Compile(parameters.AdditionalConstraints);
+      if (!result.IsSuccess)
+      {
+        stb.AppendLine($"Error in additional constraint(s):\n{string.Join("\n", result.Diagnostics.Select(d => d.ToString()))}");
+        return (stb, true, null);
+      }
+
+      var (linearConstraints, errorMessage) = result.TryConvertToProjector();
+
+      if (linearConstraints is null)
+      {
+        stb.AppendLine($"Warning: The constraints are too tight, they do not allow a feasible set of parameters:\n{errorMessage}");
+        return (stb, true, null);
+      }
+
+      var feasibleParameters = linearConstraints.Project(CreateVector.DenseOfEnumerable<double>(parameters.Select(p => p.Parameter)));
+
+      for (int i = 0; i < parameters.Count; i++)
+      {
+        if (parameters[i].Parameter != feasibleParameters[i])
+        {
+          parameters[i] = parameters[i] with { Parameter = feasibleParameters[i] };
+        }
+      }
+
+      return (stb, false, linearConstraints);
     }
   }
 }

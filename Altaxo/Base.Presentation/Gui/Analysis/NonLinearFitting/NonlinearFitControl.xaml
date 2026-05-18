@@ -74,6 +74,9 @@
                         <MenuItem Header="Merge sensible limits"
                                   Command="{Binding CmdBoundsLoadSensibleLimits}"
                                   ToolTip="Merges the sensible limits of the fit function with the limits already given" />
+                        <MenuItem Header="Coerce to linear constraints"
+                                  Command="{Binding CmdCoerceLinearConstraints}"
+                                  ToolTip="Coerces the parameter values to the linear constraints." />
                     </MenuItem>
                 </Menu>
 				<ContentControl Grid.Row="1" Content="{Binding ParameterController.ViewObject}" />

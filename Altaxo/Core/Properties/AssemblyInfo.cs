@@ -51,6 +51,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
 [assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
 
+[assembly: InternalsVisibleTo("AltaxoCoreTest")]
+
 //
 // In order to sign your assembly you must specify a key to use. Refer to the
 // Microsoft .NET Framework documentation for more information on assembly signing.
