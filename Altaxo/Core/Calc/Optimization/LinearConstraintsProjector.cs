@@ -306,18 +306,25 @@ namespace Altaxo.Calc.Optimization
       _n = A?.ColumnCount ?? C!.ColumnCount;
 
       // First, eliminate empty rows
+      // in the equality constraints,
       if (A is not null && b is not null)
-        (A, b) = EliminateEmptyRows(A, b);
+        (A, b) = EliminateEmptyRows(A, b, isEqualitySystem: true);
+
+      // and in the inequality constraints.
       if (C is not null && d is not null)
-        (C, d) = EliminateEmptyRows(C, d);
+        (C, d) = EliminateEmptyRows(C, d, isEqualitySystem: false);
 
       // Second, eliminate trivial fixed constraints (equality constraints where only one column of the matrix has a nonzero entry)
       _valuesFixedByConstraints = new double?[_n];
       _columnIndexToExternalIndex = Enumerable.Range(0, _n).ToArray();
       (A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex) = EliminateTrivialFixedConstraints(A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex);
+
+      // Third, eliminate fully free parameters (columns that contain only zeros and therefore do not affect feasibility and can vary freely). This is not only a simplification but also improves numerical stability of the projection.
+      _parametersFullyFree = new bool[_n];
+      (A, b, C, d, _columnIndexToExternalIndex, _parametersFullyFree) = EliminateFullyFreeParameters(A, b, C, d, _columnIndexToExternalIndex, _parametersFullyFree);
+
       _externalIndexToColumnIndex = Enumerable.Range(0, _n).Select(i => _columnIndexToExternalIndex.IndexOf(i)).ToArray();
 
-      _parametersFullyFree = new bool[_n];
       _preferConstructedFeasibleStartForProjection = preferConstructedFeasibleStartForProjection;
 
       _inputEqualityRowCount = A?.RowCount ?? 0;
@@ -1353,6 +1360,58 @@ namespace Altaxo.Calc.Optimization
       return externalParameters;
     }
 
+    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, int[] columnIndexToExternalIndex, bool[] parametersFullyFree) EliminateFullyFreeParameters(Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, int[] columnIndexToExternalIndex, bool[] parametersFullyFree)
+    {
+      int internalParameterCount = columnIndexToExternalIndex.Length;
+      if (internalParameterCount == 0)
+        return (A, b, C, d, columnIndexToExternalIndex, parametersFullyFree);
+
+      var keepColumnIndices = new List<int>(internalParameterCount);
+      for (int columnIndex = 0; columnIndex < internalParameterCount; columnIndex++)
+      {
+        bool occursInEquality = ColumnHasNonZeroEntry(A, columnIndex, tol: 0);
+        bool occursInInequality = ColumnHasNonZeroEntry(C, columnIndex, tol: 0);
+
+        if (occursInEquality || occursInInequality)
+        {
+          keepColumnIndices.Add(columnIndex);
+        }
+        else
+        {
+          int externalIndex = columnIndexToExternalIndex[columnIndex];
+          parametersFullyFree[externalIndex] = true;
+        }
+      }
+
+      if (keepColumnIndices.Count == internalParameterCount)
+        return (A, b, C, d, columnIndexToExternalIndex, parametersFullyFree);
+
+      var newColumnIndexToExternalIndex = new int[keepColumnIndices.Count];
+      for (int newColumnIndex = 0; newColumnIndex < keepColumnIndices.Count; newColumnIndex++)
+      {
+        int oldColumnIndex = keepColumnIndices[newColumnIndex];
+        int externalIndex = columnIndexToExternalIndex[oldColumnIndex];
+        newColumnIndexToExternalIndex[newColumnIndex] = externalIndex;
+      }
+
+      A = RetainConstraintColumns(A, keepColumnIndices);
+      C = RetainConstraintColumns(C, keepColumnIndices);
+
+      if (A is not null && A.ColumnCount == 0)
+      {
+        A = null;
+        b = null;
+      }
+
+      if (C is not null && C.ColumnCount == 0)
+      {
+        C = null;
+        d = null;
+      }
+
+      return (A, b, C, d, newColumnIndexToExternalIndex, parametersFullyFree);
+    }
+
     /// <summary>
     /// Eliminates parameters that are fully free because they do not occur in any equality or inequality constraint.
     /// </summary>
@@ -1926,12 +1985,13 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="A">The matrix to process for empty rows.</param>
     /// <param name="b">The vector associated with the matrix rows.</param>
+    /// <param name="isEqualitySystem">Indicates whether the matrix/vector system is the equality system or not.</param>
     /// <param name="matrixNameForDiagnostics">The name of the matrix parameter for diagnostic messages.</param>
     /// <param name="vectorNameForDiagnostics">The name of the vector parameter for diagnostic messages.</param>
     /// <returns>A tuple containing the matrix and vector with empty rows removed.</returns>
     /// <exception cref="InvalidDataException">Thrown when an empty matrix row corresponds to a nonzero vector element.</exception>
     /// <remarks>If no elements were needed to remove, the original matrix and vector is returned; otherwise, shrinked copies are returned.</remarks>
-    private static (Matrix<double> A, Vector<double> b) EliminateEmptyRows(Matrix<double> A, Vector<double> b, [CallerArgumentExpression(nameof(A))] string matrixNameForDiagnostics = "", [CallerArgumentExpression(nameof(b))] string vectorNameForDiagnostics = "")
+    private static (Matrix<double>? A, Vector<double>? b) EliminateEmptyRows(Matrix<double> A, Vector<double> b, bool isEqualitySystem, [CallerArgumentExpression(nameof(A))] string matrixNameForDiagnostics = "", [CallerArgumentExpression(nameof(b))] string vectorNameForDiagnostics = "")
     {
       var isRowEmpty = new bool[A.RowCount];
 
@@ -1950,8 +2010,16 @@ namespace Altaxo.Calc.Optimization
         {
           ++numberOfEmptyRows;
 
-          if (!(b[iR] == 0))
-            throw new InvalidDataException($"Unfeasible: The row [{iR}] of matrix {matrixNameForDiagnostics} is empty, but the vector element {vectorNameForDiagnostics}[{iR}] contains a value of {b[iR]}");
+          if (isEqualitySystem)
+          {
+            if (!(b[iR] == 0))
+              throw new InvalidDataException($"Unfeasible: The row [{iR}] of matrix {matrixNameForDiagnostics} is empty, but the vector element {vectorNameForDiagnostics}[{iR}] contains a value of {b[iR]}");
+          }
+          else
+          {
+            if (!(b[iR] >= 0))
+              throw new InvalidDataException($"Unfeasible: The row [{iR}] of matrix {matrixNameForDiagnostics} is empty, but the vector element {vectorNameForDiagnostics}[{iR}] contains a value of {b[iR]}");
+          }
         }
       }
 
@@ -1977,7 +2045,7 @@ namespace Altaxo.Calc.Optimization
           ++iRn;
         }
 
-        return (An, bn);
+        return An.RowCount == 0 ? (null, null) : (An, bn);
       }
     }
 
@@ -2106,6 +2174,26 @@ namespace Altaxo.Calc.Optimization
             }
           }
         }
+      }
+
+      if (An.ColumnCount == 0 || An.RowCount == 0)
+      {
+        // all values in bn should be zero then, otherwise the equality constraints would not be feasible
+        if (bn.Any(x => !(x == 0)))
+          throw new InvalidDataException($"Infeasible: the equality constraints do not allow a feasible solution");
+
+        An = null;
+        bn = null;
+      }
+
+      if (Cn is not null && (Cn.ColumnCount == 0 || Cn.RowCount == 0))
+      {
+        // all values in dn should be zero or positive then, otherwise the inequality constraints would not be feasible
+        if (dn.Any(x => !(x >= 0)))
+          throw new InvalidDataException($"Infeasible: the inequality constraints do not allow a feasible solution");
+
+        Cn = null;
+        dn = null;
       }
 
       return (An, bn, Cn, dn, valuesFixedByConstraints, columnIndexToExternalIndexNew);
