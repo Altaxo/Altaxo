@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 
 namespace Altaxo.AddInItems
 {
@@ -28,6 +29,7 @@ namespace Altaxo.AddInItems
   /// </summary>
   internal static class AssemblyLocator
   {
+    private static readonly Lock _assemblyLocker = new();
     private static Dictionary<string, Assembly> _assemblies = new Dictionary<string, Assembly>();
     private static bool _isInitialized;
 
@@ -36,7 +38,7 @@ namespace Altaxo.AddInItems
     /// </summary>
     public static void Init()
     {
-      lock (_assemblies)
+      lock (_assemblyLocker)
       {
         if (_isInitialized)
           return;
@@ -57,7 +59,7 @@ namespace Altaxo.AddInItems
       if (string.IsNullOrEmpty(args.Name))
         return null;
 
-      lock (_assemblies)
+      lock (_assemblyLocker)
       {
         if (_assemblies.TryGetValue(args.Name, out var assembly))
           return assembly;
@@ -122,7 +124,7 @@ namespace Altaxo.AddInItems
 
       if (!(assembly.FullName is null))
       {
-        lock (_assemblies)
+        lock (_assemblyLocker)
         {
           _assemblies[assembly.FullName] = assembly;
         }

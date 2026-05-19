@@ -24,9 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Altaxo.Main
 {
@@ -40,31 +39,31 @@ namespace Altaxo.Main
   {
     /// <summary>Writes the specified string value to the text backed console.</summary>
     /// <param name="value">The string to write. </param>
-    void Write(string value);
+    public void Write(string value);
 
     /// <summary>Writes the text representation of the specified array of objects to the text backed console using the specified format information.</summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using <paramref name="format" />. </param>
-    void Write(string format, params object[] args);
+    public void Write(string format, params object[] args);
 
     /// <summary>Writes the current line terminator to the text backed console.</summary>
-    void WriteLine();
+    public void WriteLine();
 
     /// <summary>Writes the specified string value, followed by the current line terminator, to the text backed console.</summary>
     /// <param name="value">The value to write. </param>
-    void WriteLine(string value);
+    public void WriteLine(string value);
 
     /// <summary>Writes the text representation of the specified array of objects, followed by the current line terminator, to the text backed console using the specified format information.</summary>
     /// <param name="format">A composite format string. </param>
     /// <param name="args">An array of objects to write using <paramref name="format" />. </param>
-    void WriteLine(string format, params object[] args);
+    public void WriteLine(string format, params object[] args);
 
     /// <summary>Removes all characters from the current text backed console.</summary>
-    void Clear();
+    public void Clear();
 
     /// <summary>Gets or sets the entire text of the text backed console. If setting the text, and if the text is different from the text that is currently stored in the instance, a property changed event (see <see cref="System.ComponentModel.PropertyChangedEventHandler"/>) is fired with 'Text' as parameter.</summary>
     /// <value>The text of this console.</value>
-    string Text { get; set; }
+    public string Text { get; set; }
   }
 
   /// <summary>
@@ -75,7 +74,7 @@ namespace Altaxo.Main
     Main.SuspendableDocumentLeafNodeWithEventArgs,
     ITextBackedConsole
   {
-    private object _synchronizingObject;
+    private readonly Lock _synchronizingObject = new();
     private StringBuilder _stb;
 
     /// <summary>Support for binding to a view. At least this event must be called when the Text property has changed.</summary>
@@ -87,7 +86,6 @@ namespace Altaxo.Main
     /// </summary>
     public TextBackedConsole()
     {
-      _synchronizingObject = new object();
       _stb = new StringBuilder();
     }
 
@@ -97,7 +95,6 @@ namespace Altaxo.Main
     /// <param name="from">The instance to copy the text from.</param>
     public TextBackedConsole(TextBackedConsole from)
     {
-      _synchronizingObject = new object();
       _stb = new StringBuilder(from._stb.ToString());
     }
 

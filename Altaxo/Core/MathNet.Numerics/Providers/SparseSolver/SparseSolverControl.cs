@@ -28,6 +28,7 @@
 // </copyright>
 
 using System;
+using System.Threading;
 
 namespace Altaxo.Calc.Providers.SparseSolver
 {
@@ -38,7 +39,7 @@ namespace Altaxo.Calc.Providers.SparseSolver
   {
     private const string EnvVarSSProvider = "AltaxoCoreSSProvider";
     private static ISparseSolverProvider _sparseSolverProvider;
-    private static readonly object StaticLock = new object();
+    private static readonly Lock StaticLock = new();
     private const string MklTypeName = "Altaxo.Calc.Providers.MKL.SparseSolver.MklSparseSolverControl, AltaxoCore.Providers.MKL";
     private static readonly ProviderProbe<ISparseSolverProvider> MklProbe = new ProviderProbe<ISparseSolverProvider>(MklTypeName, AppSwitches.DisableMklNativeProvider);
 

@@ -33,7 +33,7 @@ namespace Altaxo.Workbench
     private readonly ISynchronizeInvoke _eventThread;
     private readonly MonitorImpl _root;
     private readonly LinkedList<string> _namedMonitors = new LinkedList<string>();
-    private readonly object _updateLock = new object();
+    private readonly Lock _updateLock = new();
 
     private string? _taskName;
     private double _progress;

@@ -25,7 +25,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
@@ -45,7 +44,7 @@ namespace Altaxo.Main.Services
     private string _resourceDirectory;
     private IPropertyService _propertyService;
 
-    private readonly object _loadLock = new object();
+    private readonly Lock _loadLock = new();
 
     /// <summary>English strings (list of resource managers)</summary>
     private List<(string Prefix, ResourceManager Manager, string DebugInfo)> _neutralStringsResMgrs = new List<(string Prefix, ResourceManager Manager, string DebugInfo)>();
@@ -453,7 +452,7 @@ namespace Altaxo.Main.Services
                   break;
                 }
               }
-              if(iconobj is not null)
+              if (iconobj is not null)
               {
                 _neutralImages.Add(name, iconobj);
               }

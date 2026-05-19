@@ -28,6 +28,7 @@
 // </copyright>
 
 using System;
+using System.Threading;
 
 namespace Altaxo.Calc.Providers.FourierTransform
 {
@@ -38,7 +39,7 @@ namespace Altaxo.Calc.Providers.FourierTransform
   {
     private const string EnvVarFFTProvider = "AltaxoCoreFFTProvider";
     private static IFourierTransformProvider _fourierTransformProvider;
-    private static readonly object StaticLock = new object();
+    private static readonly Lock StaticLock = new();
     private const string MklTypeName = "Altaxo.Calc.Providers.MKL.FourierTransform.MklFourierTransformControl, AltaxoCore.Providers.MKL";
     private static readonly ProviderProbe<IFourierTransformProvider> MklProbe = new ProviderProbe<IFourierTransformProvider>(MklTypeName, AppSwitches.DisableMklNativeProvider);
 

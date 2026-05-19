@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 using Altaxo.Main.Services;
 
@@ -48,7 +49,7 @@ namespace Altaxo.AddInItems
     private IAddInTree _addInTree;
     private bool _isActive = true;
     private bool _isAssemblyLoaded;
-    private readonly object _lockObj = new object(); // used to protect mutable parts of runtime
+    private readonly Lock _lockObj = new(); // used to protect mutable parts of runtime
 
     /// <summary>
     /// Gets a value indicating whether this runtime is active.

@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Workbench
     private sealed class AsyncResult : IAsyncResult
     {
       internal readonly DispatcherOperation _dispatcherOperation;
-      private readonly object _lockObj = new object();
+      private readonly Lock _lockObj = new();
       private ManualResetEvent? _resetEvent;
 
       public AsyncResult(DispatcherOperation op)

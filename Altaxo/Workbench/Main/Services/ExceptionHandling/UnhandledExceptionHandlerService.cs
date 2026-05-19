@@ -25,10 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ExceptionHandling
 {
@@ -40,7 +37,7 @@ namespace Altaxo.Main.Services.ExceptionHandling
   public class UnhandledExceptionHandlerService : IUnhandledExceptionHandlerService
   {
     private List<(IUnhandledExceptionHandler Handler, bool IsExclusive)> _handlerList;
-    private object _listLocker;
+    private readonly Lock _listLocker = new();
 
     /// <summary>
     /// Registers a handler and puts them on top of the list. If the flag <paramref name="isExclusive" /> is set to true, all
@@ -93,7 +90,6 @@ namespace Altaxo.Main.Services.ExceptionHandling
     public UnhandledExceptionHandlerService()
     {
       _handlerList = new List<(IUnhandledExceptionHandler Handler, bool IsExclusive)>();
-      _listLocker = new object();
       System.Windows.Forms.Application.ThreadException += EhFormsApplication_ThreadException;
       AppDomain.CurrentDomain.UnhandledException += EhCurrentDomain_UnhandledException;
       System.Windows.Threading.Dispatcher.CurrentDispatcher.UnhandledException += EhWpfDispatcher_UnhandledException;

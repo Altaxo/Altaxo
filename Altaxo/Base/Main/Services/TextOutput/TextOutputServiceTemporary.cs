@@ -23,10 +23,8 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Altaxo.Main.Services
 {
@@ -36,7 +34,7 @@ namespace Altaxo.Main.Services
   public class TextOutputServiceTemporary : TextOutputServiceBase
   {
     private StringBuilder _stb = new StringBuilder();
-    private object _locker = new object();
+    private Lock _locker = new Lock();
 
     /// <summary>
     /// Gets the accumulated text.

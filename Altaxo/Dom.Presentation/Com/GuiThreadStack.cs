@@ -25,9 +25,7 @@
 #nullable disable warnings
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Altaxo.Com
@@ -46,7 +44,7 @@ namespace Altaxo.Com
 
     private ConcurrentStack<InvokeData> _invokerQueue = new ConcurrentStack<InvokeData>();
 
-    private object _syncObject = new object();
+    private readonly Lock _syncObject = new();
 
     private Func<bool> _isInvokeRequiredForGuiThread;
     private Action<Action> _invokeGuiThread;

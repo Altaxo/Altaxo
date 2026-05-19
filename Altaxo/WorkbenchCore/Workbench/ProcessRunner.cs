@@ -30,7 +30,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
-using Altaxo.Main.Services;
 using Microsoft.Win32.SafeHandles;
 
 namespace Altaxo.Workbench
@@ -69,83 +68,83 @@ namespace Altaxo.Workbench
     /// <param name="program">The program to start.</param>
     /// <param name="arguments">The program arguments.</param>
     /// <returns>A task returning the process exit code.</returns>
-    Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments);
+    public Task<int> RunInOutputPadAsync(IOutputCategory outputCategory, string program, params string[] arguments);
 
     /// <summary>
     /// Gets or sets the process working directory.
     /// </summary>
-    string? WorkingDirectory { get; set; }
+    public string? WorkingDirectory { get; set; }
 
     /// <summary>
     /// Gets or sets the process creation flags.
     /// </summary>
-    ProcessCreationFlags CreationFlags { get; set; }
+    public ProcessCreationFlags CreationFlags { get; set; }
 
     /// <summary>
     /// Gets the environment variables for the process.
     /// </summary>
-    IDictionary<string, string?> EnvironmentVariables { get; }
+    public IDictionary<string, string?> EnvironmentVariables { get; }
 
     /// <summary>
     /// Gets or sets a value indicating whether standard output is redirected.
     /// </summary>
-    bool RedirectStandardOutput { get; set; }
+    public bool RedirectStandardOutput { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether standard error is redirected.
     /// </summary>
-    bool RedirectStandardError { get; set; }
+    public bool RedirectStandardError { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether standard output and standard error share one stream.
     /// </summary>
-    bool RedirectStandardOutputAndErrorToSingleStream { get; set; }
+    public bool RedirectStandardOutputAndErrorToSingleStream { get; set; }
 
     /// <summary>
     /// Starts the specified program.
     /// </summary>
     /// <param name="program">The program to start.</param>
     /// <param name="arguments">The program arguments.</param>
-    void Start(string program, params string[] arguments);
+    public void Start(string program, params string[] arguments);
 
     /// <summary>
     /// Starts a process from a command line string.
     /// </summary>
     /// <param name="commandLine">The full command line.</param>
-    void StartCommandLine(string commandLine);
+    public void StartCommandLine(string commandLine);
 
     /// <summary>
     /// Terminates the process.
     /// </summary>
-    void Kill();
+    public void Kill();
 
     /// <summary>
     /// Asynchronously waits until the process exits.
     /// </summary>
     /// <returns>A task that completes when the process has exited.</returns>
-    Task WaitForExitAsync();
+    public Task WaitForExitAsync();
 
     /// <summary>
     /// Gets the redirected standard output stream.
     /// </summary>
-    Stream StandardOutput { get; }
+    public Stream StandardOutput { get; }
 
     /// <summary>
     /// Gets the redirected standard error stream.
     /// </summary>
-    Stream StandardError { get; }
+    public Stream StandardError { get; }
 
     /// <summary>
     /// Opens a text reader for the redirected standard output.
     /// </summary>
     /// <returns>A text reader for standard output.</returns>
-    StreamReader OpenStandardOutputReader();
+    public StreamReader OpenStandardOutputReader();
 
     /// <summary>
     /// Opens a text reader for the redirected standard error.
     /// </summary>
     /// <returns>A text reader for standard error.</returns>
-    StreamReader OpenStandardErrorReader();
+    public StreamReader OpenStandardErrorReader();
   }
 
   /// <summary>
@@ -770,7 +769,7 @@ namespace Altaxo.Workbench
       return hasExited;
     }
 
-    private readonly object _lockObj = new object();
+    private readonly Lock _lockObj = new();
     private TaskCompletionSource<object?>? _waitForExitTCS;
     private ProcessWaitHandle? _waitForExitAsyncWaitHandle;
     private RegisteredWaitHandle? _waitForExitAsyncRegisteredWaitHandle;

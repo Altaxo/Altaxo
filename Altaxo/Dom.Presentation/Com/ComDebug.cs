@@ -24,10 +24,9 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Altaxo.Com
 {
@@ -40,7 +39,7 @@ namespace Altaxo.Com
 
     private static string _fullFileName;
 
-    private static object _syncContext = new object();
+    private static readonly Lock _syncContext = new();
 
     static ComDebug()
     {

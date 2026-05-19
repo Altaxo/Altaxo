@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 
 namespace Altaxo.AddInItems
 {
@@ -29,7 +30,7 @@ namespace Altaxo.AddInItems
   /// </summary>
   public sealed class AddInTreeNode
   {
-    private readonly object lockObj = new object();
+    private readonly Lock _lockObj = new();
     private Dictionary<string, AddInTreeNode> childNodes = new Dictionary<string, AddInTreeNode>();
     private ReadOnlyCollection<Codon>? codons;
     private List<IEnumerable<Codon>>? codonInput;
@@ -53,7 +54,7 @@ namespace Altaxo.AddInItems
     {
       if (newCodons is null)
         throw new ArgumentNullException(nameof(newCodons));
-      lock (lockObj)
+      lock (_lockObj)
       {
         if (codonInput is null)
         {
@@ -72,7 +73,7 @@ namespace Altaxo.AddInItems
     {
       get
       {
-        lock (lockObj)
+        lock (_lockObj)
         {
           if (codons is null)
           {

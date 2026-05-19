@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Altaxo.Calc.Threading
@@ -195,7 +196,7 @@ namespace Altaxo.Calc.Threading
 
       // Common case
       var intermediateResults = new List<T>();
-      var syncLock = new object();
+      var syncLock = new Lock();
       Parallel.ForEach(
           Partitioner.Create(fromInclusive, toExclusive),
           CreateParallelOptions(),

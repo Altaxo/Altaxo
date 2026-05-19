@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Altaxo.Collections
 {
@@ -52,7 +53,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Synchronization object for thread safety.
     /// </summary>
-    private object _syncObject;
+    private readonly Lock _syncObject = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RingBufferEnqueueableOnly{T}"/> class.
@@ -65,7 +66,6 @@ namespace Altaxo.Collections
         throw new ArgumentOutOfRangeException(nameof(capacity));
 
       _arr = new T[capacity];
-      _syncObject = new object();
     }
 
     /// <summary>

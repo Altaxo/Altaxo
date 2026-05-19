@@ -21,7 +21,7 @@ public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
 {
   private readonly Workspace _workspace;
   private readonly IDiagnosticAnalyzerService _diagnosticAnalyzerService;
-  private readonly object _lock = new();
+  private readonly Lock _lock = new();
   private readonly AsyncBatchingWorkQueue<DocumentId> _workQueue;
   private readonly CancellationTokenSource _cts;
 

@@ -43,11 +43,11 @@ namespace Altaxo
     /// <summary>
     /// Synchronization object for thread safety.
     /// </summary>
-    object _locker = new();
+    private readonly Lock _locker = new();
     /// <summary>
     /// List of weak references to subscribed event handlers.
     /// </summary>
-    List<WeakReference> _list = new();
+    private List<WeakReference> _list = new();
 
     /// <summary>
     /// Subscribes the event handler to the event.
@@ -113,7 +113,7 @@ namespace Altaxo
         }
       }
 
-      if(array.Count==0)
+      if (array.Count == 0)
       {
         return Task.CompletedTask;
       }
@@ -145,25 +145,25 @@ namespace Altaxo
         }
       }
 
-      if(array.Count==0)
+      if (array.Count == 0)
       {
         return;
       }
 
       // Make sure that if one or more handler are faulty, the other handlers are executed nevertheless
       var exceptionList = new List<Exception>();
-      foreach(var task in array)
+      foreach (var task in array)
       {
         token.ThrowIfCancellationRequested();
         try
         {
           await task(token).ConfigureAwait(false);
         }
-        catch(TaskCanceledException)
+        catch (TaskCanceledException)
         {
           throw;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           exceptionList.Add(ex);
         }

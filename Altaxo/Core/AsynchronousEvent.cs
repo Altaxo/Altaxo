@@ -42,11 +42,11 @@ namespace Altaxo
     /// <summary>
     /// Synchronization object for thread safety.
     /// </summary>
-    object _locker = new();
+    private readonly Lock _locker = new();
     /// <summary>
     /// Set of subscribed event handlers.
     /// </summary>
-    HashSet<Func<CancellationToken, Task>> _list = [];
+    private HashSet<Func<CancellationToken, Task>> _list = [];
 
     /// <summary>
     /// Subscribes the event handler to the event.

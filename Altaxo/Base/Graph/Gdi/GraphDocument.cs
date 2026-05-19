@@ -28,10 +28,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Geometry;
@@ -528,7 +526,7 @@ typeof(GraphDocument),
       get { return _rootLayer; }
     }
 
-    private object _paintLock = new object();
+    private readonly Lock _paintLock = new();
 
     /// <summary>
     /// Paints the graph.

@@ -23,9 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Windows.Threading;
 
 namespace Altaxo.Main.Services
@@ -44,7 +42,7 @@ namespace Altaxo.Main.Services
     private GuiTimerServiceHandler? _tickEvery1000ms;
     private int _tick1000ms_Milliseconds_till_Tick;
 
-    private object _timerCreatorLock = new object();
+    private readonly Lock _timerCreatorLock = new();
 
     /// <summary>
     /// A Gui timer tick that occurs every 10 ms.

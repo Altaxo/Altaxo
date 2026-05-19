@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
   public class SystemRequirementsHelper
   {
-    public static object ServiceLocker { get; } = new object();
+    public static readonly Lock ServiceLocker = new();
   }
 
   public class SystemRequirements_DotNet9IsNotInstalled : ISystemRequirementsDetermination

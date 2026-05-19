@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace Altaxo.Calc.Random
 {
@@ -43,7 +44,7 @@ namespace Altaxo.Calc.Random
   public abstract class RandomSource : System.Random
   {
     private readonly bool _threadSafe;
-    private readonly object _lock = new object();
+    private readonly Lock _lock = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RandomSource"/> class using

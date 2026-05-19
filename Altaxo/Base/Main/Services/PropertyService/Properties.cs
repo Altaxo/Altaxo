@@ -45,13 +45,13 @@ namespace Altaxo.Main.Services
     /// Creates a new memento from the state.
     /// </summary>
     /// <returns>An object representing the state. This object should be serializable.</returns>
-    object CreateMemento();
+    public object CreateMemento();
 
     /// <summary>
     /// Sets the state, using the given memento.
     /// </summary>
     /// <param name="memento">The memento to set the state from.</param>
-    void SetMemento(object memento);
+    public void SetMemento(object memento);
   }
 
   /// <summary>
@@ -68,7 +68,7 @@ namespace Altaxo.Main.Services
     // Properties instances form a tree due to the nested properties containers.
     // All nodes in such a tree share the same syncRoot in order to simplify synchronization.
     // When an existing node is added to a tree, its syncRoot needs to change.
-    private object _syncRoot;
+    private Lock _syncRoot;
 
     private Properties? _parent;
 
@@ -106,7 +106,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     public Properties()
     {
-      _syncRoot = new object();
+      _syncRoot = new Lock();
     }
 
     private Properties(Properties parent)
@@ -657,7 +657,7 @@ namespace Altaxo.Main.Services
       OnPropertyChanged(key);
     }
 
-    private void SetSyncRoot(object newSyncRoot)
+    private void SetSyncRoot(Lock newSyncRoot)
     {
       _syncRoot = newSyncRoot;
       foreach (var properties in _dict.Values.OfType<Properties>())

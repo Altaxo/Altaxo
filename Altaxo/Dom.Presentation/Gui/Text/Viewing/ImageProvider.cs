@@ -24,11 +24,8 @@
 
 #nullable disable warnings
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -290,7 +287,7 @@ namespace Altaxo.Gui.Text.Viewing
 
     #region UrlCollector
 
-    private object _lockUrlCollector = new object();
+    private readonly Lock _lockUrlCollector = new();
     private long _lastUsn;
     private UrlCollector _lastCollectedUrls;
 

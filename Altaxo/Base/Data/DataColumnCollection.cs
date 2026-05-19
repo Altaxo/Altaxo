@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Altaxo.Collections;
 using Altaxo.Main;
 using Altaxo.Main.Services;
@@ -600,7 +601,7 @@ namespace Altaxo.Data
         TryLoadDeferredData();
     }
 
-    private object _deferredLock = new object();
+    private readonly Lock _deferredLock = new();
     private void TryLoadDeferredData()
     {
       object? deferredDataLoader = null;

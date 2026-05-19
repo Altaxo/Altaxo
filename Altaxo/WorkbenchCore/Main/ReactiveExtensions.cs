@@ -108,7 +108,7 @@ namespace Altaxo.Main
     private sealed class TaskToObserverSubscription<T> : IDisposable
     {
       private readonly CancellationTokenSource cts = new CancellationTokenSource();
-      private readonly object syncLock = new object();
+      private readonly Lock syncLock = new();
       private readonly IObserver<T> observer;
       private readonly IProgressMonitor? childProgressMonitor;
       private readonly IProgressMonitor? progressMonitor;

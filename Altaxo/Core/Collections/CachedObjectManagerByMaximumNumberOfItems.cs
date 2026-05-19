@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 
 namespace Altaxo.Collections
 {
@@ -49,7 +50,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Synchronization object for thread safety.
     /// </summary>
-    private object _syncObj;
+    private readonly Lock _syncObj = new();
 
     /// <summary>
     /// Saves the LinkedListNodes that are associated with a key in a HashSet that is accessible by the key.
@@ -76,7 +77,6 @@ namespace Altaxo.Collections
       if (maximumNumberOfItems <= 0)
         throw new ArgumentException("maxItemsAllowedToStore must be > 0");
 
-      _syncObj = new object();
       _maxItemsAllowedToStore = maximumNumberOfItems;
       _keyDictionary = new Dictionary<TKey, HashSet<LinkedListNode<KeyValuePair<TKey, TValue>>>>();
       _valueList = new LinkedList<KeyValuePair<TKey, TValue>>();

@@ -13,7 +13,7 @@ namespace Altaxo.Serialization.AutoUpdates
   public class PackageDownloaderParallel
   {
     private string _storagePath;
-    private readonly object _consoleSynchronizationObject = new object();
+    private readonly Lock _consoleSynchronizationObject = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PackageDownloaderParallel"/> class.
