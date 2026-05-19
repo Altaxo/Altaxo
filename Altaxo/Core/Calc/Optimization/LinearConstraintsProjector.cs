@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -240,7 +239,7 @@ namespace Altaxo.Calc.Optimization
     public LinearConstraintsProjector(
         Matrix<double>? A = null, Vector<double>? b = null,
         Matrix<double>? C = null, Vector<double>? d = null)
-      : this(A, b, C, d, validateCompatibility: true, reduceFixedColumns: true, preferConstructedFeasibleStartForProjection: true)
+      : this(A, b, C, d, validateCompatibility: true, preferConstructedFeasibleStartForProjection: true)
     {
     }
 
@@ -253,7 +252,6 @@ namespace Altaxo.Calc.Optimization
     /// <param name="C">Inequality matrix for C·x &lt;= d (nLeq × n).</param>
     /// <param name="d">Inequality RHS (nLeq).</param>
     /// <param name="validateCompatibility">If <see langword="true"/>, checks whether the constraint set is feasible.</param>
-    /// <param name="reduceFixedColumns">If <see langword="true"/>, eliminates columns that correspond to parameters already fixed by the constraints.</param>
     /// <param name="preferConstructedFeasibleStartForProjection">If <see langword="true"/>, inequality-only projections prefer an explicitly constructed feasible start over heuristic snapping.</param>
     /// <returns>A projector created with the supplied internal construction options.</returns>
     internal static LinearConstraintsProjector CreateForDiagnostics(
@@ -262,10 +260,9 @@ namespace Altaxo.Calc.Optimization
       Matrix<double>? C,
       Vector<double>? d,
       bool validateCompatibility = true,
-      bool reduceFixedColumns = false,
       bool preferConstructedFeasibleStartForProjection = false)
     {
-      return new LinearConstraintsProjector(A, b, C, d, validateCompatibility, reduceFixedColumns, preferConstructedFeasibleStartForProjection);
+      return new LinearConstraintsProjector(A, b, C, d, validateCompatibility, preferConstructedFeasibleStartForProjection);
     }
 
     /// <summary>
@@ -276,13 +273,11 @@ namespace Altaxo.Calc.Optimization
     /// <param name="C">Inequality matrix for C·x &lt;= d (nLeq × n). The columns of the matrix correspond to the parameters to be projected. The rows correspond to the different inequality constraints.</param>
     /// <param name="d">Inequality RHS (nLeq). The elements of the vector correspond to the right-hand side values of the inequality constraints.</param>
     /// <param name="validateCompatibility">If <see langword="true"/>, checks whether the constraint set is feasible.</param>
-    /// <param name="reduceFixedColumns">If <see langword="true"/>, eliminates columns that correspond to parameters already fixed by the constraints.</param>
     /// <param name="preferConstructedFeasibleStartForProjection">If <see langword="true"/>, inequality-only projections prefer an explicitly constructed feasible start over heuristic snapping.</param>
     private LinearConstraintsProjector(
         Matrix<double>? A, Vector<double>? b,
         Matrix<double>? C, Vector<double>? d,
         bool validateCompatibility,
-        bool reduceFixedColumns,
         bool preferConstructedFeasibleStartForProjection)
     {
 
@@ -304,6 +299,8 @@ namespace Altaxo.Calc.Optimization
         throw new ArgumentException("Inequality constraint matrix row count must match the size of the inequality right-hand side vector.");
 
       _n = A?.ColumnCount ?? C!.ColumnCount;
+      _inputEqualityRowCount = A?.RowCount ?? 0;
+      _inputInequalityRowCount = C?.RowCount ?? 0;
 
       // First, eliminate empty rows
       // in the equality constraints,
@@ -317,57 +314,36 @@ namespace Altaxo.Calc.Optimization
       // Second, eliminate trivial fixed constraints (equality constraints where only one column of the matrix has a nonzero entry)
       _valuesFixedByConstraints = new double?[_n];
       _columnIndexToExternalIndex = Enumerable.Range(0, _n).ToArray();
-      (A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex) = EliminateTrivialFixedConstraints(A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex);
+      (A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex) = EliminateTrivialFixedParameters(A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex);
 
       // Third, eliminate fully free parameters (columns that contain only zeros and therefore do not affect feasibility and can vary freely). This is not only a simplification but also improves numerical stability of the projection.
       _parametersFullyFree = new bool[_n];
       (A, b, C, d, _columnIndexToExternalIndex, _parametersFullyFree) = EliminateFullyFreeParameters(A, b, C, d, _columnIndexToExternalIndex, _parametersFullyFree);
 
-      _externalIndexToColumnIndex = Enumerable.Range(0, _n).Select(i => _columnIndexToExternalIndex.IndexOf(i)).ToArray();
-
       _preferConstructedFeasibleStartForProjection = preferConstructedFeasibleStartForProjection;
 
-      _inputEqualityRowCount = A?.RowCount ?? 0;
-      _inputInequalityRowCount = C?.RowCount ?? 0;
+      // Fourth, normalize the constraints
+      (A, b, C, d) = NormalizeConstraints(A, b, C, d);
+
+      // After normalization, eliminate fixed parameters again
+      (A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex) = EliminateTrivialFixedParameters(A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex);
+
+      // Sixth, detect fixed parameters maybe fixed by straight inequalities etc.
+      (A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex) = EliminateParametersFixedByEqualities(A, b, C, d, _valuesFixedByConstraints, _columnIndexToExternalIndex);
+
+      int internalParameterCount = GetConstraintColumnCount(A, C);
 
 
-      var constraints = NormalizeConstraints(A, b, C, d);
-      _initialNormalizedEqualityRowCount = constraints.A?.RowCount ?? 0;
-      _initialNormalizedInequalityRowCount = constraints.C?.RowCount ?? 0;
+      _initialNormalizedEqualityRowCount = A?.RowCount ?? 0;
+      _initialNormalizedInequalityRowCount = C?.RowCount ?? 0;
 
 
+      _externalIndexToColumnIndex = Enumerable.Range(0, _n).Select(i => _columnIndexToExternalIndex.IndexOf(i)).ToArray();
 
-      if (reduceFixedColumns)
-      {
-        int columnCountBeforeFullyFreeElimination = GetConstraintColumnCount(constraints.A, constraints.C);
-        EliminateFullyFreeParameters(ref constraints.A, ref constraints.b, ref constraints.C, ref constraints.d);
-        int columnCountAfterFullyFreeElimination = GetConstraintColumnCount(constraints.A, constraints.C);
-        _preprocessingEliminatedFullyFreeParameterCount = Math.Max(0, columnCountBeforeFullyFreeElimination - columnCountAfterFullyFreeElimination);
-        constraints = NormalizeConstraints(constraints.A, constraints.b, constraints.C, constraints.d);
-
-        int columnCountBeforeEqualityFixedElimination = GetConstraintColumnCount(constraints.A, constraints.C);
-        var equalityFixedValues = GetParametersFixedByEqualities(GetConstraintColumnCount(constraints.A, constraints.C), constraints.A, constraints.b);
-        EliminateFixedParameters(ref constraints.A, ref constraints.b, ref constraints.C, ref constraints.d, equalityFixedValues);
-        int columnCountAfterEqualityFixedElimination = GetConstraintColumnCount(constraints.A, constraints.C);
-        _preprocessingEliminatedFixedParameterCount += Math.Max(0, columnCountBeforeEqualityFixedElimination - columnCountAfterEqualityFixedElimination);
-        constraints = NormalizeConstraints(constraints.A, constraints.b, constraints.C, constraints.d);
-
-        int internalParameterCount = GetConstraintColumnCount(constraints.A, constraints.C);
-        if (internalParameterCount > 0 && !HasIncompatibleConstraints(internalParameterCount, constraints.A, constraints.b, constraints.C, constraints.d, out var remainingFixedValues))
-        {
-          int columnCountBeforeRemainingFixedElimination = internalParameterCount;
-          EliminateFixedParameters(ref constraints.A, ref constraints.b, ref constraints.C, ref constraints.d, remainingFixedValues);
-          int columnCountAfterRemainingFixedElimination = GetConstraintColumnCount(constraints.A, constraints.C);
-          _preprocessingEliminatedFixedParameterCount += Math.Max(0, columnCountBeforeRemainingFixedElimination - columnCountAfterRemainingFixedElimination);
-          constraints = NormalizeConstraints(constraints.A, constraints.b, constraints.C, constraints.d);
-        }
-      }
-
-      (_A, _b, _C, _d) = constraints;
-
-      int reducedParameterCount = _columnIndexToExternalIndex.Length;
-      if (validateCompatibility && HasIncompatibleConstraints(reducedParameterCount, _A, _b, _C, _d, out _, determineFixedParameters: false))
+      if (validateCompatibility && HasIncompatibleConstraints(_columnIndexToExternalIndex.Length, A, b, C, d))
         throw new InvalidDataException("The specified constraints are incompatible.");
+
+      (_A, _b, _C, _d) = (A, b, C, d);
     }
 
 
@@ -383,7 +359,7 @@ namespace Altaxo.Calc.Optimization
     /// <exception cref="InvalidOperationException">Thrown if any fixed parameters remain after elimination, indicating an unexpected state.</exception>
     public (LinearConstraintsProjector Projector, IReadOnlyList<double?> FixedParameters) ToProjectorWithoutFixedParameters()
     {
-      var result = new LinearConstraintsProjector(A: _A?.Clone(), b: _b?.Clone(), C: _C?.Clone(), d: _d?.Clone(), true, true, _preferConstructedFeasibleStartForProjection);
+      var result = new LinearConstraintsProjector(A: _A?.Clone(), b: _b?.Clone(), C: _C?.Clone(), d: _d?.Clone(), true, _preferConstructedFeasibleStartForProjection);
 
       if (result._valuesFixedByConstraints.Any(v => v.HasValue))
         throw new InvalidProgramException("Unexpected fixed parameters remain after elimination. That should not happen. Try to add a test for it!");
@@ -448,22 +424,13 @@ namespace Altaxo.Calc.Optimization
     public static (LinearConstraintsProjector? Projector, string? ErrorMessage) TryCreate(Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d)
     {
 
-      var projector = new LinearConstraintsProjector(A, b, C, d, validateCompatibility: false, reduceFixedColumns: true, preferConstructedFeasibleStartForProjection: true);
-      if (HasIncompatibleConstraints(projector._columnIndexToExternalIndex.Length, projector._A, projector._b, projector._C, projector._d, out _, determineFixedParameters: false))
+      var projector = new LinearConstraintsProjector(A, b, C, d, validateCompatibility: false, preferConstructedFeasibleStartForProjection: true);
+      if (HasIncompatibleConstraints(projector._columnIndexToExternalIndex.Length, projector._A, projector._b, projector._C, projector._d))
         return (null, "The specified constraints are incompatible.");
       else
         return (projector, null);
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LinearConstraintsProjector"/> class
-    /// from a number of parameters and a prepared inequality definition.
-    /// </summary>
-    /// <param name="inequalities">Prepared inequality matrix and right-hand side vector.</param>
-    private LinearConstraintsProjector((Matrix<double>? C, Vector<double>? d) inequalities)
-      : this(C: inequalities.C, d: inequalities.d)
-    {
-    }
 
     // ---------------------------------------------------------------
     // Public API
@@ -1283,24 +1250,14 @@ namespace Altaxo.Calc.Optimization
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Gets the number of parameters from the specified fit function.
-    /// </summary>
-    /// <param name="fitFunction">The fit function.</param>
-    /// <returns>The number of parameters.</returns>
-    private static int GetParameterCount(IFitFunction fitFunction)
-    {
-      return fitFunction?.NumberOfParameters ?? throw new ArgumentNullException(nameof(fitFunction));
-    }
-
-    /// <summary>
     /// Simplifies the constraint system and promotes tight opposing inequalities to equalities.
     /// </summary>
     /// <param name="A">The equality-constraint matrix.</param>
     /// <param name="b">The equality-constraint right-hand side vector.</param>
     /// <param name="C">The inequality-constraint matrix.</param>
     /// <param name="d">The inequality-constraint right-hand side vector.</param>
-    /// <returns>The normalized constraint system.</returns>
-    private static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d) NormalizeConstraints(
+    /// <returns>The normalized constraint system, with the same number of columns, but maybe fewer rows in the inequality system. In the equality system, they can be larger.</returns>
+    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d) NormalizeConstraints(
       Matrix<double>? A,
       Vector<double>? b,
       Matrix<double>? C,
@@ -1413,55 +1370,6 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Eliminates parameters that are fully free because they do not occur in any equality or inequality constraint.
-    /// </summary>
-    /// <param name="A">The equality-constraint matrix.</param>
-    /// <param name="b">The equality-constraint right-hand side vector.</param>
-    /// <param name="C">The inequality-constraint matrix.</param>
-    /// <param name="d">The inequality-constraint right-hand side vector.</param>
-    /// <param name="tol">The tolerance used to decide whether a matrix entry is treated as non-zero.</param>
-    private void EliminateFullyFreeParameters(ref Matrix<double>? A, ref Vector<double>? b, ref Matrix<double>? C, ref Vector<double>? d, double tol = 1e-12)
-    {
-      int internalParameterCount = _columnIndexToExternalIndex.Length;
-      if (internalParameterCount == 0)
-        return;
-
-      var keepColumnIndices = new List<int>(internalParameterCount);
-      for (int columnIndex = 0; columnIndex < internalParameterCount; columnIndex++)
-      {
-        bool occursInEquality = ColumnHasNonZeroEntry(A, columnIndex, tol);
-        bool occursInInequality = ColumnHasNonZeroEntry(C, columnIndex, tol);
-
-        if (occursInEquality || occursInInequality)
-        {
-          keepColumnIndices.Add(columnIndex);
-        }
-        else
-        {
-          int externalIndex = _columnIndexToExternalIndex[columnIndex];
-          _parametersFullyFree[externalIndex] = true;
-          _externalIndexToColumnIndex[externalIndex] = -1;
-        }
-      }
-
-      if (keepColumnIndices.Count == internalParameterCount)
-        return;
-
-      var newColumnIndexToExternalIndex = new int[keepColumnIndices.Count];
-      for (int newColumnIndex = 0; newColumnIndex < keepColumnIndices.Count; newColumnIndex++)
-      {
-        int oldColumnIndex = keepColumnIndices[newColumnIndex];
-        int externalIndex = _columnIndexToExternalIndex[oldColumnIndex];
-        newColumnIndexToExternalIndex[newColumnIndex] = externalIndex;
-        _externalIndexToColumnIndex[externalIndex] = newColumnIndex;
-      }
-
-      _columnIndexToExternalIndex = newColumnIndexToExternalIndex;
-      A = RetainConstraintColumns(A, keepColumnIndices);
-      C = RetainConstraintColumns(C, keepColumnIndices);
-    }
-
-    /// <summary>
     /// Determines whether a reduced parameter vector satisfies the retained constraints within the given tolerance.
     /// </summary>
     /// <param name="internalParameters">The reduced parameter vector.</param>
@@ -1490,45 +1398,65 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Gets the parameters that are already fixed by the equality constraints alone.
+    /// Eliminates parameters that are fixed by the equality constraints alone.
     /// </summary>
-    /// <param name="parameterCount">The number of parameters in the current matrix representation.</param>
     /// <param name="A">The equality-constraint matrix.</param>
     /// <param name="b">The equality-constraint right-hand side vector.</param>
+    /// <param name="C">The inequality-constraint matrix.</param>
+    /// <param name="d">The inequality-constraint right-hand side vector.</param>
+    /// <param name="valuesFixedByConstraints">The externally indexed array that stores parameter values fixed by constraints.</param>
+    /// <param name="columnIndexToExternalIndex">The mapping from retained internal column indices to external parameter indices.</param>
     /// <param name="tol">The comparison tolerance.</param>
-    /// <returns>An array whose entries contain fixed parameter values or <see langword="null"/> for unfixed parameters.</returns>
-    private static double?[] GetParametersFixedByEqualities(int parameterCount, Matrix<double>? A, Vector<double>? b, double tol = 1e-12)
+    /// <returns>The reduced constraint system together with the updated externally indexed fixed values and column mapping.</returns>
+    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex) EliminateParametersFixedByEqualities(
+      Matrix<double>? A,
+      Vector<double>? b,
+      Matrix<double>? C,
+      Vector<double>? d,
+      double?[] valuesFixedByConstraints,
+      int[] columnIndexToExternalIndex,
+      double tol = 1e-12)
     {
-      var fixedValues = new double?[parameterCount];
-
       if (A is null || b is null || A.RowCount == 0)
-        return fixedValues;
+        return (A, b, C, d, valuesFixedByConstraints, columnIndexToExternalIndex);
 
+      var fixedValues = new double?[A.ColumnCount];
       var feasibilityTolerance = Math.Max(1e-8, 100 * tol);
       var equalityPoint = A.PseudoInverse() * b;
       if ((A * equalityPoint - b).L2Norm() > feasibilityTolerance)
-        return fixedValues;
+        return (A, b, C, d, valuesFixedByConstraints, columnIndexToExternalIndex);
 
       var svd = A.Svd(true);
       int rank = svd.Rank;
       int nullity = A.ColumnCount - rank;
       var equalityNullSpaceBasis = BuildNullSpaceBasis(A.ColumnCount, svd.VT, rank, nullity);
       MarkParametersFixedByNullSpace(fixedValues, equalityPoint, equalityNullSpaceBasis, tol);
-      return fixedValues;
+
+      return EliminateParametersWithKnownFixedValues(A, b, C, d, fixedValues, valuesFixedByConstraints, columnIndexToExternalIndex);
     }
 
     /// <summary>
-    /// Eliminates parameters that are fixed in the current matrix representation.
+    /// Eliminates parameters whose fixed values are already known in the current matrix representation.
     /// </summary>
     /// <param name="A">The equality-constraint matrix.</param>
     /// <param name="b">The equality-constraint right-hand side vector.</param>
     /// <param name="C">The inequality-constraint matrix.</param>
     /// <param name="d">The inequality-constraint right-hand side vector.</param>
     /// <param name="fixedValues">The fixed parameter values in the current matrix representation.</param>
-    private void EliminateFixedParameters(ref Matrix<double>? A, ref Vector<double>? b, ref Matrix<double>? C, ref Vector<double>? d, double?[] fixedValues)
+    /// <param name="valuesFixedByConstraints">The externally indexed array that stores parameter values fixed by constraints.</param>
+    /// <param name="columnIndexToExternalIndex">The mapping from retained internal column indices to external parameter indices.</param>
+    /// <returns>The reduced constraint system together with the updated externally indexed fixed values and column mapping.</returns>
+    private static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex) EliminateParametersWithKnownFixedValues(
+      Matrix<double>? A,
+      Vector<double>? b,
+      Matrix<double>? C,
+      Vector<double>? d,
+      double?[] fixedValues,
+      double?[] valuesFixedByConstraints,
+      int[] columnIndexToExternalIndex)
     {
       if (!fixedValues.Any(value => value.HasValue))
-        return;
+        return (A, b, C, d, valuesFixedByConstraints, columnIndexToExternalIndex);
 
       var keepColumnIndices = Enumerable.Range(0, fixedValues.Length)
         .Where(columnIndex => !fixedValues[columnIndex].HasValue)
@@ -1539,23 +1467,21 @@ namespace Altaxo.Calc.Optimization
         if (!fixedValues[columnIndex].HasValue)
           continue;
 
-        int externalIndex = _columnIndexToExternalIndex[columnIndex];
-        _valuesFixedByConstraints[externalIndex] = fixedValues[columnIndex]!.Value;
-        _externalIndexToColumnIndex[externalIndex] = -1;
+        int externalIndex = columnIndexToExternalIndex[columnIndex];
+        valuesFixedByConstraints[externalIndex] = fixedValues[columnIndex]!.Value;
       }
 
       var newColumnIndexToExternalIndex = new int[keepColumnIndices.Count];
       for (int newColumnIndex = 0; newColumnIndex < keepColumnIndices.Count; newColumnIndex++)
       {
         int oldColumnIndex = keepColumnIndices[newColumnIndex];
-        int externalIndex = _columnIndexToExternalIndex[oldColumnIndex];
+        int externalIndex = columnIndexToExternalIndex[oldColumnIndex];
         newColumnIndexToExternalIndex[newColumnIndex] = externalIndex;
-        _externalIndexToColumnIndex[externalIndex] = newColumnIndex;
       }
 
-      _columnIndexToExternalIndex = newColumnIndexToExternalIndex;
       (A, b) = EliminateFixedColumnsFromConstraints(A, b, fixedValues, keepColumnIndices);
       (C, d) = EliminateFixedColumnsFromConstraints(C, d, fixedValues, keepColumnIndices);
+      return (A, b, C, d, valuesFixedByConstraints, newColumnIndexToExternalIndex);
     }
 
     /// <summary>
@@ -1649,8 +1575,8 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="A">The equality-constraint matrix.</param>
     /// <param name="b">The equality-constraint right-hand side vector.</param>
-    /// <returns>The simplified equality-constraint system.</returns>
-    private static (Matrix<double>? A, Vector<double>? b) SimplifyEqualityConstraints(Matrix<double>? A, Vector<double>? b)
+    /// <returns>The simplified equality-constraint system, with the same number of columns, but maybe fewer rows.</returns>
+    internal static (Matrix<double>? A, Vector<double>? b) SimplifyEqualityConstraints(Matrix<double>? A, Vector<double>? b)
     {
       ValidateConstraintDimensions(A, b, nameof(A), nameof(b));
 
@@ -1720,8 +1646,8 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="C">The inequality-constraint matrix.</param>
     /// <param name="d">The inequality-constraint right-hand side vector.</param>
-    /// <returns>The simplified inequality-constraint system.</returns>
-    private static (Matrix<double>? C, Vector<double>? d) SimplifyInequalityConstraints(Matrix<double>? C, Vector<double>? d)
+    /// <returns>The simplified inequality-constraint system, with the same number of columns, but maybe fewer rows.</returns>
+    internal static (Matrix<double>? C, Vector<double>? d) SimplifyInequalityConstraints(Matrix<double>? C, Vector<double>? d)
     {
       ValidateConstraintDimensions(C, d, nameof(C), nameof(d));
 
@@ -1782,14 +1708,10 @@ namespace Altaxo.Calc.Optimization
     /// <param name="b">The equality-constraint right-hand side vector.</param>
     /// <param name="C">The inequality-constraint matrix in <c>C·x &lt;= d</c>.</param>
     /// <param name="d">The inequality-constraint right-hand side vector.</param>
-    /// <param name="fixedValues">An array that is filled with the values of parameters that are fixed throughout the feasible set.</param>
     /// <param name="tol">The tolerance used for proportionality, bound, and feasibility comparisons.</param>
-    /// <param name="determineFixedParameters">If <see langword="true"/>, computes which parameters are fixed throughout the feasible set.</param>
     /// <returns><see langword="true"/> if incompatible constraints are detected; otherwise, <see langword="false"/>.</returns>
-    private static bool HasIncompatibleConstraints(int n, Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, out double?[] fixedValues, double tol = 1e-12, bool determineFixedParameters = true)
+    internal static bool HasIncompatibleConstraints(int n, Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double tol = 1e-12)
     {
-      fixedValues = new double?[n];
-
       ValidateConstraintDimensions(A, b, nameof(A), nameof(b));
       ValidateConstraintDimensions(C, d, nameof(C), nameof(d));
 
@@ -1801,27 +1723,35 @@ namespace Altaxo.Calc.Optimization
       if ((A is null || b is null || A.RowCount == 0) && (C is null || d is null || C.RowCount == 0))
         return false;
 
-      if (n == 0)
+      if (b is not null && (A is null || A.ColumnCount == 0))
       {
-        if (A is not null && b is not null)
+        for (int rowIndex = 0; rowIndex < b.Count; rowIndex++)
         {
-          for (int rowIndex = 0; rowIndex < A.RowCount; rowIndex++)
-          {
-            if (A.Row(rowIndex).L2Norm() <= tol && Math.Abs(b[rowIndex]) > feasibilityTolerance)
-              return true;
-          }
+          if (Math.Abs(b[rowIndex]) > feasibilityTolerance)
+            return true;
         }
+      }
 
-        if (C is not null && d is not null)
+      if (b is not null && (A is null || A.ColumnCount == 0 || A.RowCount == 0))
+      {
+        A = null;
+        b = null;
+      }
+
+
+      if (d is not null && (C is null || C.ColumnCount == 0))
+      {
+        for (int rowIndex = 0; rowIndex < d.Count; rowIndex++)
         {
-          for (int rowIndex = 0; rowIndex < C.RowCount; rowIndex++)
-          {
-            if (C.Row(rowIndex).L2Norm() <= tol && d[rowIndex] < -feasibilityTolerance)
-              return true;
-          }
+          if (d[rowIndex] < -feasibilityTolerance)
+            return true;
         }
+      }
 
-        return false;
+      if (d is not null && (C is null || C.ColumnCount == 0 || C.RowCount == 0))
+      {
+        C = null;
+        d = null;
       }
 
       Matrix<double>? equalityNullSpaceBasis = null;
@@ -1837,8 +1767,6 @@ namespace Altaxo.Calc.Optimization
         int nullity = A.ColumnCount - rank;
 
         equalityNullSpaceBasis = BuildNullSpaceBasis(A.ColumnCount, svd.VT, rank, nullity);
-        if (determineFixedParameters)
-          MarkParametersFixedByNullSpace(fixedValues, equalityPoint, equalityNullSpaceBasis, tol);
 
         if (C is null || d is null || C.RowCount == 0)
           return false;
@@ -1860,29 +1788,17 @@ namespace Altaxo.Calc.Optimization
 
         var feasiblePointWithEqualities = equalityPoint + equalityNullSpaceBasis * reducedFeasiblePoint;
 
-        if (determineFixedParameters)
-        {
-          var projectorWithEqualities = new LinearConstraintsProjector(A, b, C, d, validateCompatibility: false, reduceFixedColumns: false, preferConstructedFeasibleStartForProjection: false);
-          if (!projectorWithEqualities.IsFeasible(feasiblePointWithEqualities))
-            return true;
-
-          DetermineFixedParametersFromReducedSystem(fixedValues, equalityPoint, equalityNullSpaceBasis, reducedFeasiblePoint, reducedC, reducedRhs, feasibilityTolerance);
-        }
-
         return false;
       }
 
-      if (HasDirectlyIncompatibleInequalities(C, d, tol))
-        return true;
-
-      var feasiblePoint = FindFeasiblePointForInequalities(n, C!, d!, feasibilityTolerance);
-      if (feasiblePoint is null)
-        return true;
-
-      if (determineFixedParameters)
+      if (C is not null && d is not null)
       {
-        var projector = new LinearConstraintsProjector(A, b, C, d, validateCompatibility: false, reduceFixedColumns: false, preferConstructedFeasibleStartForProjection: false);
-        DetermineFixedParameters(projector, feasiblePoint, fixedValues, feasibilityTolerance);
+        if (HasDirectlyIncompatibleInequalities(C, d, tol))
+          return true;
+
+        var feasiblePoint = FindFeasiblePointForInequalities(n, C, d, feasibilityTolerance);
+        if (feasiblePoint is null)
+          return true;
       }
 
       return false;
@@ -2062,7 +1978,7 @@ namespace Altaxo.Calc.Optimization
     /// <returns>A tuple containing the updated equality and inequality constraint matrices and vectors, the updated fixed values
     /// array, and the updated column index mapping.</returns>
     /// <exception cref="InvalidDataException">Thrown when conflicting constraints lead to infeasible fixed values for a variable.</exception>
-    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex) EliminateTrivialFixedConstraints(Matrix<double>? A, Vector<double>? b, Matrix<double> C, Vector<double> d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex)
+    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex) EliminateTrivialFixedParameters(Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d, double?[] valuesFixedByConstraints, int[] columnIndexToExternalIndex)
     {
       if (A is null || b is null || A.ColumnCount == 0)
         return (A, b, C, d, valuesFixedByConstraints, columnIndexToExternalIndex); // nothing to do because no equality constraints are present
@@ -2199,123 +2115,6 @@ namespace Altaxo.Calc.Optimization
       return (An, bn, Cn, dn, valuesFixedByConstraints, columnIndexToExternalIndexNew);
     }
 
-
-
-    /// <summary>
-    /// Determines which parameters are fixed throughout the feasible set by probing the projector along each coordinate axis.
-    /// </summary>
-    /// <param name="projector">The projector representing the feasible set.</param>
-    /// <param name="feasiblePoint">A feasible point in the constraint set.</param>
-    /// <param name="fixedValues">The fixed-value array to update.</param>
-    /// <param name="tol">The tolerance used to decide whether a parameter value changes.</param>
-    private static void DetermineFixedParameters(LinearConstraintsProjector projector, Vector<double> feasiblePoint, double?[] fixedValues, double tol)
-    {
-      double initialStep = Math.Max(1.0, feasiblePoint.L2Norm() + 1.0);
-
-      for (int parameterIndex = 0; parameterIndex < feasiblePoint.Count; parameterIndex++)
-      {
-        if (fixedValues[parameterIndex].HasValue)
-          continue;
-
-        double baseValue = feasiblePoint[parameterIndex];
-        double step = initialStep;
-        bool canVary = false;
-
-        for (int attempt = 0; attempt < 24; attempt++)
-        {
-          var positiveProbe = feasiblePoint.Clone();
-          positiveProbe[parameterIndex] += step;
-          if (Math.Abs(projector.Project(positiveProbe)[parameterIndex] - baseValue) > tol)
-          {
-            canVary = true;
-            break;
-          }
-
-          var negativeProbe = feasiblePoint.Clone();
-          negativeProbe[parameterIndex] -= step;
-          if (Math.Abs(projector.Project(negativeProbe)[parameterIndex] - baseValue) > tol)
-          {
-            canVary = true;
-            break;
-          }
-
-          step *= 2;
-        }
-
-        if (!canVary)
-          fixedValues[parameterIndex] = baseValue;
-      }
-    }
-
-    /// <summary>
-    /// Determines which parameters remain fixed after combining equality constraints with inequalities in reduced null-space coordinates.
-    /// </summary>
-    /// <param name="fixedValues">The fixed-value array to update.</param>
-    /// <param name="equalityPoint">A point satisfying the equality constraints.</param>
-    /// <param name="equalityNullSpaceBasis">The basis of the equality-constraint null space.</param>
-    /// <param name="reducedFeasiblePoint">A feasible point in the reduced null-space coordinates.</param>
-    /// <param name="reducedC">The reduced inequality matrix in null-space coordinates.</param>
-    /// <param name="reducedRhs">The reduced inequality right-hand side vector.</param>
-    /// <param name="tol">The tolerance used to decide whether a parameter value changes.</param>
-    private static void DetermineFixedParametersFromReducedSystem(
-      double?[] fixedValues,
-      Vector<double> equalityPoint,
-      Matrix<double> equalityNullSpaceBasis,
-      Vector<double> reducedFeasiblePoint,
-      Matrix<double> reducedC,
-      Vector<double> reducedRhs,
-      double tol)
-    {
-      var reducedProjector = new LinearConstraintsProjector(A: null, b: null, C: reducedC, d: reducedRhs, validateCompatibility: false, reduceFixedColumns: false, preferConstructedFeasibleStartForProjection: false);
-      double initialStep = Math.Max(1.0, reducedFeasiblePoint.L2Norm() + 1.0);
-
-      for (int parameterIndex = 0; parameterIndex < fixedValues.Length; parameterIndex++)
-      {
-        if (fixedValues[parameterIndex].HasValue)
-          continue;
-
-        var parameterDirection = equalityNullSpaceBasis.Row(parameterIndex);
-        double directionNorm = parameterDirection.L2Norm();
-        if (directionNorm <= tol)
-        {
-          fixedValues[parameterIndex] = equalityPoint[parameterIndex];
-          continue;
-        }
-
-        double baseValue = equalityPoint[parameterIndex] + parameterDirection * reducedFeasiblePoint;
-        double step = initialStep;
-        bool canVary = false;
-
-        for (int attempt = 0; attempt < 24; attempt++)
-        {
-          var positiveProbe = reducedFeasiblePoint.Clone();
-          positiveProbe += (step / directionNorm) * parameterDirection;
-          var positiveProjected = reducedProjector.Project(positiveProbe);
-          double positiveValue = equalityPoint[parameterIndex] + parameterDirection * positiveProjected;
-          if (double.IsFinite(positiveValue) && Math.Abs(positiveValue - baseValue) > tol)
-          {
-            canVary = true;
-            break;
-          }
-
-          var negativeProbe = reducedFeasiblePoint.Clone();
-          negativeProbe -= (step / directionNorm) * parameterDirection;
-          var negativeProjected = reducedProjector.Project(negativeProbe);
-          double negativeValue = equalityPoint[parameterIndex] + parameterDirection * negativeProjected;
-          if (double.IsFinite(negativeValue) && Math.Abs(negativeValue - baseValue) > tol)
-          {
-            canVary = true;
-            break;
-          }
-
-          step *= 2;
-        }
-
-        if (!canVary)
-          fixedValues[parameterIndex] = baseValue;
-      }
-    }
-
     /// <summary>
     /// Converts pairs of tight opposing inequalities into equalities.
     /// </summary>
@@ -2324,8 +2123,8 @@ namespace Altaxo.Calc.Optimization
     /// <param name="C">The inequality-constraint matrix.</param>
     /// <param name="d">The inequality-constraint right-hand side vector.</param>
     /// <param name="tol">The proportionality tolerance.</param>
-    /// <returns>The combined constraint system with promoted equalities.</returns>
-    private static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d) PromoteTightOpposingInequalitiesToEqualities(
+    /// <returns>The combined constraint system with promoted equalities, with the same number of columns, but maybe fewer rows.</returns>
+    internal static (Matrix<double>? A, Vector<double>? b, Matrix<double>? C, Vector<double>? d) PromoteTightOpposingInequalitiesToEqualities(
       Matrix<double>? A,
       Vector<double>? b,
       Matrix<double>? C,
@@ -2677,93 +2476,6 @@ namespace Altaxo.Calc.Optimization
       return Math.Abs(scale) > tol;
     }
 
-    /// <summary>
-    /// Creates inequality constraints from the hard and optional soft parameter bounds of a fit function.
-    /// </summary>
-    /// <param name="fitFunction">The fit function providing the parameter bounds.</param>
-    /// <param name="includeSoftLimits">
-    /// If <see langword="true"/>, the soft parameter limits are added in addition to the hard limits.
-    /// </param>
-    /// <returns>A tuple containing the inequality matrix and right-hand side vector.</returns>
-    private static (Matrix<double>? C, Vector<double>? d) CreateBoxConstraints(IFitFunction fitFunction, bool includeSoftLimits)
-    {
-      if (fitFunction is null)
-        throw new ArgumentNullException(nameof(fitFunction));
-
-      int parameterCount = fitFunction.NumberOfParameters;
-      var rows = new List<double[]>();
-      var rhs = new List<double>();
-
-      var hardLimits = fitFunction.GetParameterBoundariesHardLimit();
-      AddBoundsToInequalities(parameterCount, hardLimits.LowerBounds, hardLimits.UpperBounds, rows, rhs);
-
-      if (includeSoftLimits)
-      {
-        var softLimits = fitFunction.GetParameterBoundariesSoftLimit();
-        AddBoundsToInequalities(parameterCount, softLimits.LowerBounds, softLimits.UpperBounds, rows, rhs);
-      }
-
-      if (rows.Count == 0)
-        return (null, null);
-
-      var C = Matrix<double>.Build.Dense(rows.Count, parameterCount);
-      for (int r = 0; r < rows.Count; r++)
-        for (int c = 0; c < parameterCount; c++)
-          C[r, c] = rows[r][c];
-
-      var d = Vector<double>.Build.DenseOfEnumerable(rhs);
-      return (C, d);
-    }
-
-    /// <summary>
-    /// Adds lower and upper parameter bounds as inequality rows of the form <c>C·x &lt;= d</c>.
-    /// </summary>
-    /// <param name="parameterCount">The number of parameters.</param>
-    /// <param name="lowerBounds">The lower parameter bounds.</param>
-    /// <param name="upperBounds">The upper parameter bounds.</param>
-    /// <param name="rows">The target collection of inequality rows.</param>
-    /// <param name="rhs">The target collection of right-hand side values.</param>
-    private static void AddBoundsToInequalities(
-      int parameterCount,
-      IReadOnlyList<double?>? lowerBounds,
-      IReadOnlyList<double?>? upperBounds,
-      List<double[]> rows,
-      List<double> rhs)
-    {
-      if (lowerBounds is not null && lowerBounds.Count != parameterCount)
-        throw new ArgumentException("The number of lower bounds must match the number of parameters.", nameof(lowerBounds));
-
-      if (upperBounds is not null && upperBounds.Count != parameterCount)
-        throw new ArgumentException("The number of upper bounds must match the number of parameters.", nameof(upperBounds));
-
-      if (lowerBounds is not null)
-      {
-        for (int i = 0; i < parameterCount; i++)
-        {
-          if (!lowerBounds[i].HasValue)
-            continue;
-
-          var row = new double[parameterCount];
-          row[i] = -1.0;
-          rows.Add(row);
-          rhs.Add(-lowerBounds[i]!.Value);
-        }
-      }
-
-      if (upperBounds is not null)
-      {
-        for (int i = 0; i < parameterCount; i++)
-        {
-          if (!upperBounds[i].HasValue)
-            continue;
-
-          var row = new double[parameterCount];
-          row[i] = 1.0;
-          rows.Add(row);
-          rhs.Add(upperBounds[i]!.Value);
-        }
-      }
-    }
 
     /// <summary>
     /// Extracts the active inequality rows and their right-hand side values.

@@ -224,10 +224,9 @@ namespace Altaxo.Calc.Optimization
       Matrix<double>? C,
       Vector<double>? d,
       bool validateCompatibility = true,
-      bool reduceFixedColumns = false,
       bool preferConstructedFeasibleStartForProjection = false)
     {
-      return LinearConstraintsProjector.CreateForDiagnostics(A, b, C, d, validateCompatibility, reduceFixedColumns, preferConstructedFeasibleStartForProjection);
+      return LinearConstraintsProjector.CreateForDiagnostics(A, b, C, d, validateCompatibility, preferConstructedFeasibleStartForProjection);
     }
 
     private static void AssertProjectorPropertiesConsistent(LinearConstraintsProjector proj)
@@ -1654,16 +1653,15 @@ namespace Altaxo.Calc.Optimization
       // We have six inequality constraints, leading to x[1] = 7 - 2 x[0] and x[2] == (83 - 7 x[0] - 8 x[1])/9
       const int NumberOfParameters = 3;
 
-      var C = TestHelpers.M(new double[,]
-        {
-                { 1, 2, 3 },
-                { 4, 5, 6 },
-                { 7, 8, 9 },
-                { -2, -4, -6 },
-                { -8, -10, -12 },
-                { -14, -16, -18 },
-        });
-      var d = TestHelpers.V(23, 53, 83, -46, -106, -166);
+      var (C, d) = TestHelpers.MV(
+       [
+                [ 1, 2, 3 ], [23],
+                [ 4, 5, 6 ], [53],
+                [ 7, 8, 9 ], [83],
+                [ -2, -4, -6 ], [-46],
+                [ -8, -10, -12 ], [-106],
+                [ -14, -16, -18 ], [-166]
+        ]);
 
       // The paired upper and lower bounds force a singleton feasible point.
       var proj = new LinearConstraintsProjector(C: C, d: d);
@@ -1683,16 +1681,35 @@ namespace Altaxo.Calc.Optimization
       Assert.True(proj.IsFeasible(result.Parameters));
       Assert.Equal(7, 2 * result.Parameters[0] + result.Parameters[1], precision: 7);
       Assert.Equal(83, 7 * result.Parameters[0] + 8 * result.Parameters[1] + 9 * result.Parameters[2], precision: 7);
+    }
 
-      // now one more equality constraint should fix it all, for instance x[0] == 1
+    /// <summary>
+    /// Six just compatible constraints, three parameters, leading to all parameters fixed.
+    /// </summary>
+    [Fact]
+    public void Six_CompatibleConstraints_OneEquality_3Parameter_LeadingToZeroDOF()
+    {
+      // We have six inequality constraints, leading to x[1] = 7 - 2 x[0] and x[2] == (83 - 7 x[0] - 8 x[1])/9
+      // And one equality constraint x[0] == 1, leading to x[1] = 5 and x[2] = 4
+      const int NumberOfParameters = 3;
 
-      var A = TestHelpers.M(new double[,]
-        {
-                { 1, 0, 0 }
-        });
-      var b = TestHelpers.V(1);
+      var (C, d) = TestHelpers.MV(
+       [
+                [ 1, 2, 3 ], [23],
+                [ 4, 5, 6 ], [53],
+                [ 7, 8, 9 ], [83],
+                [ -2, -4, -6 ], [-46],
+                [ -8, -10, -12 ], [-106],
+                [ -14, -16, -18 ], [-166]
+        ]);
 
-      proj = new LinearConstraintsProjector(A: A, b: b, C: C, d: d);
+      var (A, b) = TestHelpers.MV(
+        [
+
+                [ 1, 0, 0 ], [1]
+        ]);
+
+      var proj = new LinearConstraintsProjector(A: A, b: b, C: C, d: d);
       // rule: The proj.ValuesFixedByConstraints should either be null (not fixed) or they should contain a value that is not NaN.
       Assert.Equal(NumberOfParameters, proj.ValuesFixedByConstraints.Count);
       for (int i = 0; i < NumberOfParameters; i++)
@@ -1800,27 +1817,29 @@ namespace Altaxo.Calc.Optimization
     [Fact]
     public void InequalityFixedParameter_IsHandledAfterEqualityColumnElimination()
     {
-      var A = TestHelpers.M(new double[,]
-      {
-                { 1, 0, 0 }, // x[0] == 3
-      });
-      var b = TestHelpers.V(3.0);
+      var (A, b) = TestHelpers.MV(
+      [
+                [ 1, 0, 0 ], [3] // x[0] == 3
+      ]);
 
-      var C = TestHelpers.M(new double[,]
-      {
-                { 0, 1, 0 },
-                { 0, -1, 0 },
-                { 0, 0, 1 },
-      });
-      var d = TestHelpers.V(2.0, -2.0, 5.0);
+
+
+      var (C, d) = TestHelpers.MV(
+      [
+                [ 0, 1, 0 ],  [2], // x[1] <= 2
+                [ 0, -1, 0 ], [-2], // x[1] >= 2
+                [ 0, 0, 1 ],  [5], // x[2] <= 5
+      ]);
+
       var proj = new LinearConstraintsProjector(A: A, b: b, C: C, d: d);
 
-      var result = ProjectWithCheckedProperties(proj, TestHelpers.V(0.0, 10.0, 7.0));
 
-      TestHelpers.AssertVector(result.Parameters, TestHelpers.V(3.0, 2.0, 5.0));
+      var result = ProjectWithCheckedProperties(proj, TestHelpers.V(0.0, 10.0, 7.0));
       Assert.Equal(3.0, proj.ValuesFixedByConstraints[0]);
       Assert.Equal(2.0, proj.ValuesFixedByConstraints[1]);
       Assert.Null(proj.ValuesFixedByConstraints[2]);
+
+      TestHelpers.AssertVector(result.Parameters, TestHelpers.V(3.0, 2.0, 5.0));
       Assert.True(proj.IsFeasible(result.Parameters));
       Assert.False(proj.IsFeasible(TestHelpers.V(3.0, 1.5, 5.0)));
     }
@@ -1868,6 +1887,85 @@ namespace Altaxo.Calc.Optimization
       Assert.False(result.IsConstrained[2]);
       Assert.Contains(2, result.FreeParameterIndices);
       Assert.True(proj.IsFeasible(result.Parameters));
+    }
+
+    /// <summary>
+    /// Verifies that normalization can be invoked directly through the internal helper and promotes tight opposing inequalities.
+    /// </summary>
+    [Fact]
+    public void NormalizeConstraints_InternalHelper_PromotesTightOpposingInequalities()
+    {
+      var C = TestHelpers.M(new double[,]
+      {
+                { 1, 0 },
+                { -1, 0 },
+      });
+      var d = TestHelpers.V(2.0, -2.0);
+
+      var (A, b, normalizedC, normalizedD) = LinearConstraintsProjector.NormalizeConstraints(null, null, C, d);
+
+      Assert.NotNull(A);
+      Assert.NotNull(b);
+      Assert.Single(b!);
+      Assert.Equal(2, A!.ColumnCount);
+      Assert.Equal(1.0, A[0, 0]);
+      Assert.Equal(0.0, A[0, 1]);
+      Assert.Equal(2.0, b[0]);
+      Assert.Null(normalizedC);
+      Assert.Null(normalizedD);
+    }
+
+    /// <summary>
+    /// Verifies that parameters fixed by equality constraints can be detected and eliminated through the combined internal helper.
+    /// </summary>
+    [Fact]
+    public void EliminateParametersFixedByEqualities_InternalHelper_ReducesMatricesAndUpdatesMapping()
+    {
+      var A = TestHelpers.M(new double[,]
+      {
+                { 1, 0, 0 },
+                { 0, 1, 1 },
+      });
+      var b = TestHelpers.V(2.0, 10.0);
+      var C = TestHelpers.M(new double[,]
+      {
+                { 0, -1, 0 },
+      });
+      var d = TestHelpers.V(-1.0);
+      var valuesFixedByConstraints = new double?[4];
+      var columnIndexToExternalIndex = new[] { 1, 2, 3 };
+
+      var (reducedA, reducedB, reducedC, reducedD, updatedFixedValues, updatedColumnIndexToExternalIndex) = LinearConstraintsProjector.EliminateParametersFixedByEqualities(
+        A,
+        b,
+        C,
+        d,
+        valuesFixedByConstraints,
+        columnIndexToExternalIndex);
+
+      Assert.NotNull(reducedA);
+      Assert.NotNull(reducedB);
+      Assert.NotNull(reducedC);
+      Assert.NotNull(reducedD);
+      Assert.Equal(new[] { 2, 3 }, updatedColumnIndexToExternalIndex);
+      Assert.Null(updatedFixedValues[0]);
+      Assert.Equal(2.0, updatedFixedValues[1]);
+      Assert.Null(updatedFixedValues[2]);
+      Assert.Null(updatedFixedValues[3]);
+
+      Assert.Equal(2, reducedA!.RowCount);
+      Assert.Equal(2, reducedA.ColumnCount);
+      Assert.Equal(0.0, reducedA[0, 0]);
+      Assert.Equal(0.0, reducedA[0, 1]);
+      Assert.Equal(1.0, reducedA[1, 0]);
+      Assert.Equal(1.0, reducedA[1, 1]);
+      TestHelpers.AssertVector(reducedB!, TestHelpers.V(0.0, 10.0));
+
+      Assert.Equal(1, reducedC!.RowCount);
+      Assert.Equal(2, reducedC.ColumnCount);
+      Assert.Equal(-1.0, reducedC[0, 0]);
+      Assert.Equal(0.0, reducedC[0, 1]);
+      TestHelpers.AssertVector(reducedD!, TestHelpers.V(-1.0));
     }
 
 
