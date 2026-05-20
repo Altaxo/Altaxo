@@ -23,15 +23,14 @@
 #endregion Copyright
 
 using System;
-using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// Constrained linear least-squares fit via SVD, using a
-  /// <see cref="LinearConstraintsProjector"/> to enforce equality and
+  /// Constrained linear least-squares fit via SVD, using an
+  /// <see cref="IConstraintsProjector"/> to enforce equality and
   /// inequality constraints on the parameter vector.
   ///
   /// The method iterates:
@@ -55,7 +54,7 @@ namespace Altaxo.Calc.Regression
   /// var C_ineq = Matrix<double>.Build.DenseOfArray(new double[,] { { 0, 0, -1 } });
   /// var d_ineq = Vector<double>.Build.Dense(new double[] { 0.0 });
   /// 
-  /// var projector = new LinearConstraintProjector(A_eq, b_eq, C_ineq, d_ineq);
+  /// var projector = new LinearConstraintsProjector(A_eq, b_eq, C_ineq, d_ineq);
   /// 
   /// // Design matrix and observations
   /// var A = Matrix<double>.Build.DenseOfArray(new double[,] {
@@ -94,10 +93,24 @@ namespace Altaxo.Calc.Regression
     public static Vector<double> Fit(
         Matrix<double> A,
         Vector<double> y,
-        LinearConstraintsProjector projector,
+        IConstraintsProjector projector,
         double svdTolerance = 1e-10,
         int maxOuterIterations = 50,
         double convergenceTol = 1e-12)
+    {
+      if (projector is LinearConstraintsProjector linearProjector)
+        return Fit(A, y, linearProjector, svdTolerance, maxOuterIterations, convergenceTol);
+
+      return FitWithGenericProjector(A, y, projector, maxOuterIterations, convergenceTol);
+    }
+
+    private static Vector<double> Fit(
+        Matrix<double> A,
+        Vector<double> y,
+        LinearConstraintsProjector projector,
+        double svdTolerance,
+        int maxOuterIterations,
+        double convergenceTol)
     {
       int p = A.ColumnCount;
 
@@ -106,20 +119,23 @@ namespace Altaxo.Calc.Regression
       //         that fixed parameters get their constraint values and
       //         inequality constraints are satisfied.
       // ----------------------------------------------------------------
-      var beta = projector.Project(Vector<double>.Build.Dense(p));
+      var beta = Project(projector, Vector<double>.Build.Dense(p));
 
       for (int iter = 0; iter < maxOuterIterations; iter++)
       {
         // ------------------------------------------------------------
         // Step 1: project current beta and learn the active structure.
         // ------------------------------------------------------------
-        var projection = projector.ProjectWithInfo(beta);
-        beta = projection.Parameters;   // make sure beta is feasible
+        beta = Project(projector, beta, out var isConstrained); // make sure beta is feasible
 
         // Indices of parameters that are completely free to vary here.
-        // "Free" = not fixed by any constraint AND not touched by any
-        // currently active constraint.
-        var freeIndices = projection.FreeParameterIndices;
+        var freeIndices = new int[p];
+        int nFree = 0;
+        for (int i = 0; i < p; i++)
+        {
+          if (!isConstrained[i])
+            freeIndices[nFree++] = i;
+        }
 
         // ------------------------------------------------------------
         // Step 2: build the reduced design matrix A_free that acts
@@ -132,11 +148,9 @@ namespace Altaxo.Calc.Regression
         for (int j = 0; j < p; j++)
         {
           // Subtract every non-free column's contribution
-          if (!freeIndices.Contains(j))
+          if (isConstrained[j])
             r -= A.Column(j) * beta[j];
         }
-
-        int nFree = freeIndices.Count;
 
         if (nFree == 0)
           break;  // all parameters are constrained — nothing to optimise
@@ -163,13 +177,63 @@ namespace Altaxo.Calc.Regression
         //         (the SVD step may have slightly violated inequality
         //         constraints that weren't active in Step 1).
         // ------------------------------------------------------------
-        betaNew = projector.Project(betaNew);
+        betaNew = Project(projector, betaNew);
 
         // ------------------------------------------------------------
         // Step 6: check convergence.
         // ------------------------------------------------------------
         double delta = (betaNew - beta).L2Norm();
         beta = betaNew;
+
+        if (delta < convergenceTol)
+          break;
+      }
+
+      return beta;
+    }
+
+    private static Vector<double> FitWithGenericProjector(
+        Matrix<double> A,
+        Vector<double> y,
+        IConstraintsProjector projector,
+        int maxOuterIterations,
+        double convergenceTol)
+    {
+      var beta = Project(projector, Vector<double>.Build.Dense(A.ColumnCount));
+      var residual = A * beta - y;
+      double objective = residual.DotProduct(residual);
+
+      for (int iter = 0; iter < maxOuterIterations; iter++)
+      {
+        var gradient = A.TransposeThisAndMultiply(residual);
+        double gradientNorm = gradient.L2Norm();
+        if (gradientNorm < convergenceTol)
+          break;
+
+        double stepSize = 1.0;
+        Vector<double>? betaNew = null;
+        Vector<double>? residualNew = null;
+        double objectiveNew = objective;
+
+        while (stepSize > 1e-12)
+        {
+          betaNew = Project(projector, beta - stepSize * gradient);
+          residualNew = A * betaNew - y;
+          objectiveNew = residualNew.DotProduct(residualNew);
+
+          if (objectiveNew <= objective)
+            break;
+
+          stepSize *= 0.5;
+        }
+
+        if (betaNew is null || residualNew is null)
+          break;
+
+        double delta = (betaNew - beta).L2Norm();
+        beta = betaNew;
+        residual = residualNew;
+        objective = objectiveNew;
 
         if (delta < convergenceTol)
           break;
@@ -193,13 +257,15 @@ namespace Altaxo.Calc.Regression
       var S = svd.S;
       var VT = svd.VT;
 
-      // U^T * b  (only the first S.Count rows are non-zero in thin SVD)
+      int singularValueCount = S.Count;
+
+      // U^T * b  (only the first singularValueCount rows are non-zero in thin SVD)
       var Utb = U.TransposeThisAndMultiply(b);
 
-      double sMax = S.Count > 0 ? S[0] : 0.0;
+      double sMax = singularValueCount > 0 ? S[0] : 0.0;
       var SinvUtb = Vector<double>.Build.Dense(VT.RowCount);
 
-      for (int i = 0; i < S.Count; i++)
+      for (int i = 0; i < singularValueCount; i++)
       {
         if (S[i] > relativeTolerance * sMax)
           SinvUtb[i] = Utb[i] / S[i];
@@ -208,6 +274,21 @@ namespace Altaxo.Calc.Regression
 
       // x = V * SinvUtb
       return VT.TransposeThisAndMultiply(SinvUtb);
+    }
+
+    private static Vector<double> Project(IConstraintsProjector projector, Vector<double> inputValues)
+    {
+      var projectedValues = Vector<double>.Build.Dense(inputValues.Count);
+      projector.Project(inputValues, projectedValues, new bool[inputValues.Count]);
+      return projectedValues;
+    }
+
+    private static Vector<double> Project(IConstraintsProjector projector, Vector<double> inputValues, out bool[] isConstrained)
+    {
+      var projectedValues = Vector<double>.Build.Dense(inputValues.Count);
+      isConstrained = new bool[inputValues.Count];
+      projector.Project(inputValues, projectedValues, isConstrained);
+      return projectedValues;
     }
   }
 }
