@@ -189,20 +189,20 @@ namespace Altaxo.Serialization.AutoUpdates
 
       PackageInfo pkg;
       // inject service
-      lock (SystemRequirementsHelper.ServiceLocker)
+      lock (ServiceHelper.ServiceLocker)
       {
         Current.Services = new AltaxoServiceContainer();
-        Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNet9IsNotInstalled());
+        Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNetIsNotInstalled_NetFrameworkIsInstalled());
         pkg = SystemRequirements.TryGetHighestVersion(packages);
       }
 
       Assert.NotNull(pkg);
       Assert.Equal("AltaxoBinaries-4.8.3243.0-WINDOWS-X64-Net4.8.zip", pkg.FileNameOfPackageZipFile);
 
-      lock (SystemRequirementsHelper.ServiceLocker)
+      lock (ServiceHelper.ServiceLocker)
       {
         Current.Services = new AltaxoServiceContainer();
-        Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNet9IsInstalled());
+        Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNetIsInstalled_NetFrameworkIsInstalled());
         pkg = SystemRequirements.TryGetHighestVersion(packages);
       }
 

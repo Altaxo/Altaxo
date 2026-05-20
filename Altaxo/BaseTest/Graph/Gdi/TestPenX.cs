@@ -81,31 +81,39 @@ namespace Altaxo.Drawing
     [Fact]
     public void TestHash_PenX()
     {
-      Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
-      Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
-
-      Assert.NotNull(Current.GetService<IProjectService>());
-      Assert.NotNull(Current.GetService<IPropertyService>());
-      foreach (var entry in TestGenerator())
+      lock (ServiceHelper.ServiceLocker)
       {
-        Tester(entry.pen1, entry.pen2, entry.comment);
+        Current.Services = new AltaxoServiceContainer();
+        Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
+        Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
+
+        Assert.NotNull(Current.GetService<IProjectService>());
+        Assert.NotNull(Current.GetService<IPropertyService>());
+        foreach (var entry in TestGenerator())
+        {
+          Tester(entry.pen1, entry.pen2, entry.comment);
+        }
       }
     }
 
     [Fact]
     public void TestHash_PenXEnv()
     {
-      Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
-      Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
-
-      Assert.NotNull(Current.GetService<IProjectService>());
-      Assert.NotNull(Current.GetService<IPropertyService>());
-      foreach (var entry in TestGenerator())
+      lock (ServiceHelper.ServiceLocker)
       {
-        var env1 = new PenXEnv(entry.pen1, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
-        var env2 = new PenXEnv(entry.pen2, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
+        Current.Services = new AltaxoServiceContainer();
+        Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
+        Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
 
-        Tester(env1, env2, entry.comment);
+        Assert.NotNull(Current.GetService<IProjectService>());
+        Assert.NotNull(Current.GetService<IPropertyService>());
+        foreach (var entry in TestGenerator())
+        {
+          var env1 = new PenXEnv(entry.pen1, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
+          var env2 = new PenXEnv(entry.pen2, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
+
+          Tester(env1, env2, entry.comment);
+        }
       }
     }
   }

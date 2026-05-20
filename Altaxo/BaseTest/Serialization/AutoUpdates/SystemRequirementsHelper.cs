@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-  public class SystemRequirementsHelper
-  {
-    public static readonly Lock ServiceLocker = new();
-  }
-
-  public class SystemRequirements_DotNet9IsNotInstalled : ISystemRequirementsDetermination
+  public class SystemRequirements_DotNetIsNotInstalled_NetFrameworkIsInstalled : ISystemRequirementsDetermination
   {
     public bool IsNetCoreVersionInstalled(Version version)
     {
@@ -21,7 +15,7 @@ namespace Altaxo.Serialization.AutoUpdates
     }
   }
 
-  public class SystemRequirements_DotNet9IsInstalled : ISystemRequirementsDetermination
+  public class SystemRequirements_DotNetIsInstalled_NetFrameworkIsInstalled : ISystemRequirementsDetermination
   {
     public bool IsNetCoreVersionInstalled(Version version)
     {
