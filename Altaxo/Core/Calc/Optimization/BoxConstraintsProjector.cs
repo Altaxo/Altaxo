@@ -90,6 +90,69 @@ namespace Altaxo.Calc.Optimization
       _upperBounds = upperBounds;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the BoxConstraintsProjector class with specified fixed values, bounds, and
+    /// exclusivity settings.
+    /// </summary>
+    /// <param name="fixedValues">Array of fixed values for each dimension, or null to indicate no fixed value.</param>
+    /// <param name="lowerBounds">Array of lower bounds for each dimension, or null if not specified.</param>
+    /// <param name="lowerBoundsExclusive">Array indicating whether each lower bound is exclusive, or null if not specified.</param>
+    /// <param name="upperBounds">Array of upper bounds for each dimension, or null if not specified.</param>
+    /// <param name="upperBoundsExclusive">Array indicating whether each upper bound is exclusive, or null if not specified.</param>
+
+    public BoxConstraintsProjector(double?[] fixedValues, double?[]? lowerBounds, bool?[]? lowerBoundsExclusive, double?[]? upperBounds, bool?[]? upperBoundsExclusive)
+      : this(fixedValues, GetModifiedLowerBounds(lowerBounds, lowerBoundsExclusive), GetModifiedUpperBounds(upperBounds, upperBoundsExclusive))
+    {
+    }
+
+    /// <summary>
+    /// Returns a modified copy of the lower bounds array, incrementing values where the corresponding exclusive flag is
+    /// true.
+    /// </summary>
+    /// <param name="lowerBounds">An array of nullable lower bound values to be modified.</param>
+    /// <param name="lowerBoundsExclusive">An array of nullable Boolean values indicating whether the corresponding lower bound is exclusive.</param>
+    /// <returns>A new array with modified lower bounds, or null if the input is null.</returns>
+    private static double?[]? GetModifiedLowerBounds(double?[]? lowerBounds, bool?[]? lowerBoundsExclusive)
+    {
+      if (lowerBounds is not null && lowerBoundsExclusive is not null)
+      {
+        lowerBounds = (double?[])lowerBounds.Clone();
+        for (int i = 0; i < lowerBounds.Length; i++)
+        {
+          if (lowerBoundsExclusive[i] is { } exclusive && exclusive && lowerBounds[i] is { } value)
+          {
+            lowerBounds[i] = Math.BitIncrement(value) + double.Epsilon;
+          }
+        }
+      }
+      return lowerBounds;
+    }
+
+    /// <summary>
+    /// Returns a modified copy of the upper bounds array, decrementing values where the corresponding exclusive flag is
+    /// true.
+    /// </summary>
+    /// <remarks>Each upper bound marked as exclusive is decremented using Math.BitDecrement and adjusted by
+    /// subtracting double.Epsilon.</remarks>
+    /// <param name="upperBounds">An array of nullable upper bound values to be potentially modified.</param>
+    /// <param name="upperBoundsExclusive">An array of nullable boolean flags indicating which upper bounds are exclusive.</param>
+    /// <returns>A new array with modified upper bounds, or null if the input is null.</returns>
+    private static double?[]? GetModifiedUpperBounds(double?[]? upperBounds, bool?[]? upperBoundsExclusive)
+    {
+      if (upperBounds is not null && upperBoundsExclusive is not null)
+      {
+        upperBounds = (double?[])upperBounds.Clone();
+        for (int i = 0; i < upperBounds.Length; i++)
+        {
+          if (upperBoundsExclusive[i] is { } exclusive && exclusive && upperBounds[i] is { } value)
+          {
+            upperBounds[i] = Math.BitDecrement(value) - double.Epsilon;
+          }
+        }
+      }
+      return upperBounds;
+    }
+
     /// <inheritdoc/>
     public bool IsFeasible(Vector<double> inputValues)
     {
