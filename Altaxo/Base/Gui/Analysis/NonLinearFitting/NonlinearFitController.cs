@@ -636,6 +636,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var (linearConstraintsWithoutFixedParameters, fixedParameters) = linearConstraints.ToProjectorWithoutFixedParameters();
 
         var newParameterSet = _doc.CurrentParameters.WithParametersSetToFixed(fixedParameters);
+
+        if (fixedParameters.Any(x => x.HasValue))
+        {
+          for (int i = 0; i < fixedParameters.Count; i++)
+          {
+            if (fixedParameters[i].HasValue)
+            {
+              _doc.CurrentParameters[i] = newParameterSet[i];
+            }
+          }
+        }
+
         fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, newParameterSet);
 
         var fit = new LevenbergMarquardtMinimizerWithConstraintsNonAllocating()
@@ -647,7 +659,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         var initialGuessA = linearConstraintsWithoutFixedParameters.Project(CreateVector.DenseOfEnumerable(initialGuess));
 
-        if (initialGuess.Any(x => double.IsNaN(x)))
+        if (initialGuessA.Any(x => double.IsNaN(x)))
         {
           Current.Gui.ErrorMessageBox("After applying the linear constraints, at least one of the parameter is NaN. Please try to start with valid initial parameter values");
           return;
