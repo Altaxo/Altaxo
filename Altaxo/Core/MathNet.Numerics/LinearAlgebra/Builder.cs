@@ -65,6 +65,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double
     }
 
     /// <inheritdoc />
+    public override Matrix<double> Band(BandMatrixStorage<double> storage)
+    {
+      return new BandMatrix(storage);
+    }
+
+    /// <inheritdoc />
     public override Matrix<double> Random(int rows, int columns, IContinuousDistribution distribution)
     {
       return Dense(rows, columns, Generate.Random(rows * columns, distribution));
@@ -145,6 +151,12 @@ namespace Altaxo.Calc.LinearAlgebra.Single
     public override Matrix<float> Diagonal(DiagonalMatrixStorage<float> storage)
     {
       return new DiagonalMatrix(storage);
+    }
+
+    /// <inheritdoc />
+    public override Matrix<float> Band(BandMatrixStorage<float> storage)
+    {
+      return new DenseMatrix(DenseColumnMajorMatrixStorage<float>.OfMatrix(storage));
     }
 
     /// <inheritdoc />
@@ -233,6 +245,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex
     }
 
     /// <inheritdoc />
+    public override Matrix<Complex> Band(BandMatrixStorage<Complex> storage)
+    {
+      return new DenseMatrix(DenseColumnMajorMatrixStorage<Complex>.OfMatrix(storage));
+    }
+
+    /// <inheritdoc />
     public override Matrix<Complex> Random(int rows, int columns, IContinuousDistribution distribution)
     {
       return Dense(rows, columns, Generate.RandomComplex(rows * columns, distribution));
@@ -313,6 +331,12 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32
     public override Matrix<Calc.Complex32> Diagonal(DiagonalMatrixStorage<Calc.Complex32> storage)
     {
       return new DiagonalMatrix(storage);
+    }
+
+    /// <inheritdoc />
+    public override Matrix<Calc.Complex32> Band(BandMatrixStorage<Calc.Complex32> storage)
+    {
+      return new DenseMatrix(DenseColumnMajorMatrixStorage<Calc.Complex32>.OfMatrix(storage));
     }
 
     /// <inheritdoc />
@@ -410,8 +434,9 @@ namespace Altaxo.Calc.LinearAlgebra
       if (storage is DenseColumnMajorMatrixStorage<T> dense) return Dense(dense);
       if (storage is SparseCompressedRowMatrixStorage<T> sparse) return Sparse(sparse);
       if (storage is DiagonalMatrixStorage<T> diagonal) return Diagonal(diagonal);
+      if (storage is BandMatrixStorage<T> band) return Band(band);
 
-      throw new NotSupportedException(FormattableString.Invariant($"Matrix storage type '{storage.GetType().Name}' is not supported. Only DenseColumnMajorMatrixStorage, SparseCompressedRowMatrixStorage and DiagonalMatrixStorage are supported as this point."));
+      throw new NotSupportedException(FormattableString.Invariant($"Matrix storage type '{storage.GetType().Name}' is not supported. Only DenseColumnMajorMatrixStorage, SparseCompressedRowMatrixStorage, DiagonalMatrixStorage and BandMatrixStorage are supported as this point."));
     }
 
     /// <summary>
@@ -429,6 +454,7 @@ namespace Altaxo.Calc.LinearAlgebra
       var storage = example.Storage;
       if (storage is DenseColumnMajorMatrixStorage<T>) return Dense(rows, columns);
       if (storage is DiagonalMatrixStorage<T>) return fullyMutable ? Sparse(rows, columns) : Diagonal(rows, columns);
+      if (storage is BandMatrixStorage<T> band) return fullyMutable ? Sparse(rows, columns) : Band(rows, columns, band.LowerBandwidth, band.UpperBandwidth);
       if (storage is SparseCompressedRowMatrixStorage<T>) return Sparse(rows, columns);
       return Dense(rows, columns);
     }
@@ -472,6 +498,10 @@ namespace Altaxo.Calc.LinearAlgebra
       var storage2 = otherExample.Storage;
       if (storage1 is DenseColumnMajorMatrixStorage<T> || storage2 is DenseColumnMajorMatrixStorage<T>) return Dense(rows, columns);
       if (storage1 is DiagonalMatrixStorage<T> && storage2 is DiagonalMatrixStorage<T>) return fullyMutable ? Sparse(rows, columns) : Diagonal(rows, columns);
+      if (storage1 is BandMatrixStorage<T> band1 && storage2 is BandMatrixStorage<T> band2 && band1.LowerBandwidth == band2.LowerBandwidth && band1.UpperBandwidth == band2.UpperBandwidth)
+      {
+        return fullyMutable ? Sparse(rows, columns) : Band(rows, columns, band1.LowerBandwidth, band1.UpperBandwidth);
+      }
       if (storage1 is SparseCompressedRowMatrixStorage<T> || storage2 is SparseCompressedRowMatrixStorage<T>) return Sparse(rows, columns);
       return Dense(rows, columns);
     }
@@ -1566,6 +1596,125 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="storage">The DiagonalMatrixStorage</param>
     /// <returns>The created matrix.</returns>
     public abstract Matrix<T> Diagonal(DiagonalMatrixStorage<T> storage);
+
+    /// <summary>
+    /// Create a new band matrix straight from an initialized matrix storage instance.
+    /// The storage is used directly without copying.
+    /// Intended for advanced scenarios where you're working directly with
+    /// storage for performance or interop reasons.
+    /// </summary>
+    /// <param name="storage">The BandMatrixStorage.</param>
+    /// <returns>The created matrix.</returns>
+    public abstract Matrix<T> Band(BandMatrixStorage<T> storage);
+
+    /// <summary>
+    /// Create a new band matrix with the given number of rows, columns, and bandwidths.
+    /// All stored cells of the matrix will be initialized to zero.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> Band(int rows, int columns, int lowerBandwidth, int upperBandwidth)
+    {
+      return Band(new BandMatrixStorage<T>(rows, columns, lowerBandwidth, upperBandwidth));
+    }
+
+    /// <summary>
+    /// Create a new band matrix with the given number of rows, columns, and bandwidths directly binding to a raw compact band array.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <param name="storage">The raw compact band storage.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> Band(int rows, int columns, int lowerBandwidth, int upperBandwidth, T[] storage)
+    {
+      return Band(new BandMatrixStorage<T>(rows, columns, lowerBandwidth, upperBandwidth, storage));
+    }
+
+    /// <summary>
+    /// Create a new band matrix and initialize each stored value to the same provided value.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <param name="value">The value to initialize each stored entry to.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> Band(int rows, int columns, int lowerBandwidth, int upperBandwidth, T value)
+    {
+      if (Zero.Equals(value)) return Band(rows, columns, lowerBandwidth, upperBandwidth);
+      return Band(BandMatrixStorage<T>.OfValue(rows, columns, lowerBandwidth, upperBandwidth, value));
+    }
+
+    /// <summary>
+    /// Create a new band matrix and initialize each stored value using the provided init function.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <param name="init">The initialization function.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> Band(int rows, int columns, int lowerBandwidth, int upperBandwidth, Func<int, int, T> init)
+    {
+      return Band(BandMatrixStorage<T>.OfInit(rows, columns, lowerBandwidth, upperBandwidth, init));
+    }
+
+    /// <summary>
+    /// Create a new band matrix as a copy of the given other matrix.
+    /// </summary>
+    /// <param name="matrix">The matrix to copy.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> BandOfMatrix(Matrix<T> matrix, int lowerBandwidth, int upperBandwidth)
+    {
+      return Band(BandMatrixStorage<T>.OfMatrix(matrix.Storage, lowerBandwidth, upperBandwidth));
+    }
+
+    /// <summary>
+    /// Create a new band matrix as a copy of the given array.
+    /// </summary>
+    /// <param name="array">The array to copy.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> BandOfArray(T[,] array, int lowerBandwidth, int upperBandwidth)
+    {
+      return Band(BandMatrixStorage<T>.OfArray(array, lowerBandwidth, upperBandwidth));
+    }
+
+    /// <summary>
+    /// Create a new band matrix as a copy of the given indexed enumerable.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> BandOfIndexed(int rows, int columns, int lowerBandwidth, int upperBandwidth, IEnumerable<Tuple<int, int, T>> enumerable)
+    {
+      return Band(BandMatrixStorage<T>.OfIndexedEnumerable(rows, columns, lowerBandwidth, upperBandwidth, enumerable));
+    }
+
+    /// <summary>
+    /// Create a new band matrix as a copy of the given indexed enumerable.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <param name="lowerBandwidth">The lower bandwidth.</param>
+    /// <param name="upperBandwidth">The upper bandwidth.</param>
+    /// <param name="enumerable">The indexed enumerable to copy.</param>
+    /// <returns>The created matrix.</returns>
+    public Matrix<T> BandOfIndexed(int rows, int columns, int lowerBandwidth, int upperBandwidth, IEnumerable<(int, int, T)> enumerable)
+    {
+      return Band(BandMatrixStorage<T>.OfIndexedEnumerable(rows, columns, lowerBandwidth, upperBandwidth, enumerable));
+    }
 
     /// <summary>
     /// Create a new diagonal matrix with the given number of rows and columns.

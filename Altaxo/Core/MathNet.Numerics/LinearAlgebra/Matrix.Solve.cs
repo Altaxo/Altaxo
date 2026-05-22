@@ -89,7 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="input">The right hand side vector, <b>b</b>.</param>
     /// <param name="result">The left hand side <see cref="Matrix{T}"/>, <b>x</b>.</param>
-    public void Solve(Vector<T> input, Vector<T> result)
+    public virtual void Solve(Vector<T> input, Vector<T> result)
     {
       if (ColumnCount == RowCount)
       {
