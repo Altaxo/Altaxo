@@ -228,12 +228,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="fixedParameters">A list of parameter values to fix. If an element is not null, the corresponding parameter is set to this value
     /// and marked as not varying.</param>
-    /// <param name="boundsInclusive">A tuple containing arrays of inclusive lower and upper bounds. If a bound is specified for a parameter, it
-    /// replaces the existing bound and is treated as inclusive.</param>
+    /// <param name="lowerBounds">An array of nullable double values representing the inclusive lower bounds for each parameter. If an element is not null, the corresponding parameter's lower bound is set to this value and marked as inclusive.</param>
+    /// <param name="lowerBoundsExclusive">An array of boolean values indicating whether each lower bound is exclusive. If an element is true, the corresponding parameter's lower bound is exclusive.</param>
+    /// <param name="upperBounds">An array of nullable double values representing the inclusive upper bounds for each parameter. If an element is not null, the corresponding parameter's upper bound is set to this value and marked as inclusive.</param>
+    /// <param name="upperBoundsExclusive">An array of boolean values indicating whether each upper bound is exclusive. If an element is true, the corresponding parameter's upper bound is exclusive.</param>  
     /// <returns>A new ParameterSet instance with the specified fixed parameters and updated inclusive bounds applied.</returns>
     /// <remarks>The returned ParameterSet is a copy of the original with modifications applied. Parameters
     /// not specified in the input lists retain their original values and bounds.</remarks>
-    public ParameterSet WithUpdatedFixedParametersAndBoundaries(IReadOnlyList<double?> fixedParameters, (double?[]? LowerBounds, double?[]? UpperBounds) boundsInclusive)
+    public ParameterSet WithUpdatedFixedParametersAndBoundaries(IReadOnlyList<double?> fixedParameters, double?[]? lowerBounds, bool[]? lowerBoundsExclusive, double?[]? upperBounds, bool[]? upperBoundsExclusive)
     {
       var result = (ParameterSet)this.Clone();
 
@@ -251,15 +253,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
           value = fixedParam;
           vary = false;
         }
-        if (boundsInclusive.LowerBounds is { } lowerBounds && lowerBounds[i] is { } lbValue)
+        if (lowerBounds is not null && lowerBounds[i] is { } lbValue)
         {
           lb = lbValue;
-          lbExcl = false;
+          lbExcl = lowerBoundsExclusive is not null && lowerBoundsExclusive[i];
         }
-        if (boundsInclusive.UpperBounds is { } upperBounds && upperBounds[i] is { } ubValue)
+        if (upperBounds is not null && upperBounds[i] is { } ubValue)
         {
           ub = ubValue;
-          ubExcl = false;
+          ubExcl = upperBoundsExclusive is not null && upperBoundsExclusive[i];
         }
 
         result[i] = result[i] with { Parameter = value, Vary = vary, LowerBound = lb, IsLowerBoundExclusive = lbExcl, UpperBound = ub, IsUpperBoundExclusive = ubExcl };

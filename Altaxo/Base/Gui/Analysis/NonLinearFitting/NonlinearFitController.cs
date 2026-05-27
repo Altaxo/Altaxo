@@ -620,7 +620,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         return;
       }
 
-      var backConvertedToBoundaryConstraints = linearConstraints.TryConvertToBoundaryConstraints();
+      var backConvertedToBoundaryConstraints = linearConstraints.TryConvertToBoxConstraints();
 
 
       // now we have to decide:
@@ -639,7 +639,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         if (fixedParameters.Any(x => x.HasValue))
         {
-          for (int i = 0; i < fixedParameters.Count; i++)
+          for (int i = 0; i < fixedParameters.Length; i++)
           {
             if (fixedParameters[i].HasValue)
             {
@@ -657,7 +657,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         var (initialGuess, lowerBounds, upperBounds) = ParameterSetElement.CollectVaryingParametersAndBoundaries(newParameterSet);
 
-        var initialGuessA = linearConstraintsWithoutFixedParameters.Project(CreateVector.DenseOfEnumerable(initialGuess));
+        var initialGuessA = CreateVector.DenseOfEnumerable(initialGuess);
+
+        Span<bool> isConstrained = stackalloc bool[initialGuess.Count];
+
+        linearConstraintsWithoutFixedParameters.Project(CreateVector.DenseOfEnumerable(initialGuess), initialGuessA, isConstrained);
 
         if (initialGuessA.Any(x => double.IsNaN(x)))
         {
@@ -682,7 +686,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         if (backConvertedToBoundaryConstraints.HasValue)
         {
-          currentParameters = currentParameters.WithUpdatedFixedParametersAndBoundaries(linearConstraints.ValuesFixedByConstraints, backConvertedToBoundaryConstraints.Value);
+          currentParameters = currentParameters.WithUpdatedFixedParametersAndBoundaries(backConvertedToBoundaryConstraints.Value.fixedValues, backConvertedToBoundaryConstraints.Value.LowerBounds, backConvertedToBoundaryConstraints.Value.isLowerBoundExclusive, backConvertedToBoundaryConstraints.Value.UpperBounds, backConvertedToBoundaryConstraints.Value.isLowerBoundExclusive);
         }
 
 

@@ -515,7 +515,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <returns>A <see cref="StringBuilder"/> containing warnings and errors, and a flag indicating if any inconsistence could not be corrected automatically.</returns>
-    public static (StringBuilder Message, bool IsFatal, LinearConstraintsProjector? projector) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
+    public static (StringBuilder Message, bool IsFatal, IConstraintsProjector? projector) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
     {
       var stb = new StringBuilder();
       bool isFatal = false;
@@ -528,6 +528,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (isFatal)
       {
         return (stb, isFatal, null);
+      }
+
+      if (parameters.AdditionalConstraints is null || parameters.AdditionalConstraints.Length == 0)
+      {
+        var boxConstraints = new BoxConstraintsProjector(
+          parameters.Select(e => e.Vary ? null : (double?)e.Parameter).ToArray(),
+          parameters.Select(e => e.LowerBound).ToArray(),
+          parameters.Select(e => e.IsLowerBoundExclusive).ToArray(),
+          parameters.Select(e => e.UpperBound).ToArray(),
+          parameters.Select(e => e.IsUpperBoundExclusive).ToArray()
+          );
+
+        return (stb, false, boxConstraints);
       }
 
       var constraintCompiler = new LinearConstraintsCompiler(parameters);

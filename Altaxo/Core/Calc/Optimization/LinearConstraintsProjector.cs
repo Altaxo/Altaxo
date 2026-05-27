@@ -357,7 +357,7 @@ namespace Altaxo.Calc.Optimization
     /// <returns>A tuple containing the new linear constraint projector with fixed parameters removed, and an array of nullable
     /// doubles representing the values of the fixed parameters.</returns>
     /// <exception cref="InvalidOperationException">Thrown if any fixed parameters remain after elimination, indicating an unexpected state.</exception>
-    public (LinearConstraintsProjector Projector, IReadOnlyList<double?> FixedParameters) ToProjectorWithoutFixedParameters()
+    public (IConstraintsProjector Projector, double?[] FixedParameters) ToProjectorWithoutFixedParameters()
     {
       var result = new LinearConstraintsProjector(A: _A?.Clone(), b: _b?.Clone(), C: _C?.Clone(), d: _d?.Clone(), true, _preferConstructedFeasibleStartForProjection);
 
@@ -400,7 +400,7 @@ namespace Altaxo.Calc.Optimization
       result._externalIndexToColumnIndex = newExternalIndexToColumnIndex;
       result._columnIndexToExternalIndex = newColumnIndexToExternalIndex;
 
-      return (result, this.ValuesFixedByConstraints);
+      return (result, (double?[])this._valuesFixedByConstraints.Clone());
     }
 
 
@@ -606,23 +606,27 @@ namespace Altaxo.Calc.Optimization
     /// <remarks>The conversion succeeds only if there are no equality constraints and each inequality
     /// constraint involves exactly one parameter. If there are no inequality constraints, all parameters are considered
     /// unconstrained.</remarks>
-    public (double?[]? LowerBounds, double?[]? UpperBounds)? TryConvertToBoundaryConstraints(double tolerance = 1e-12)
+    public (double?[] fixedValues, double?[]? LowerBounds, bool[]? isLowerBoundExclusive, double?[]? UpperBounds, bool[]? isUpperBoundExclusive)? TryConvertToBoxConstraints(double tolerance = 1e-12)
     {
+      if ((_A is null || _A.RowCount == 0) && (_C is null || _C.RowCount == 0))
+      {
+        // no constraints at all, all parameters are fully free
+        return (fixedValues: _valuesFixedByConstraints, LowerBounds: null, isLowerBoundExclusive: null, UpperBounds: null, isUpperBoundExclusive: null);
+      }
+
       if (_A is not null && _A.RowCount > 0) // there should be no equality constraints, because the fixed constraints should have been eliminated in the constructor
       {
         return null;
-      }
-
-      if (_C is null || _C.RowCount == 0) // if there are no inequality constraints, we can treat all parameters as fully free (unconstrained)
-      {
-        return (null, null); // no constraints at all
       }
 
 
       // now, in order to be able to convert the constraints to simple boundary constraints, each row of _C must have exactly one non-zero entry,
 
       var lb = new double?[_n];
+      var lbExclusive = new bool[_n];
       var ub = new double?[_n];
+      var ubExclusive = new bool[_n];
+
       var rowNorms = _C.RowNorms(2);
       for (int iR = 0; iR < _C.RowCount; ++iR)
       {
@@ -650,23 +654,35 @@ namespace Altaxo.Calc.Optimization
             if (_C[iR, iCNonZeroElement] > 0)
             {
               if (!ub[externalIndex].HasValue || bound < ub[externalIndex]!.Value)
+              {
                 ub[externalIndex] = bound;
+                ubExclusive[externalIndex] = false;
+              }
             }
             else
             {
               if (!lb[externalIndex].HasValue || bound > lb[externalIndex]!.Value)
+              {
                 lb[externalIndex] = bound;
+                lbExclusive[externalIndex] = false;
+              }
             }
           }
         }
       }
 
       if (!lb.Any(x => x.HasValue))
+      {
         lb = null;
+        lbExclusive = null;
+      }
       if (!ub.Any(x => x.HasValue))
+      {
         ub = null;
+        ubExclusive = null;
+      }
 
-      return (lb, ub);
+      return (_valuesFixedByConstraints, lb, lbExclusive, ub, ubExclusive);
     }
 
 

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
@@ -37,7 +38,12 @@ namespace Altaxo.Calc.Optimization
   {
     double?[] _fixedValues;
     double?[]? _lowerBounds;
+    bool[]? _lowerBoundsExclusive;
     double?[]? _upperBounds;
+    bool[]? _upperBoundsExclusive;
+    double?[]? _effectiveLowerBounds;
+    double?[]? _effectiveUpperBounds;
+
 
     /// <summary>
     /// Initializes a new instance of the BoundaryConstraintProjector class with specified fixed values and optional
@@ -62,32 +68,17 @@ namespace Altaxo.Calc.Optimization
           throw new ArgumentException($"Length of {nameof(upperBounds)} must match length of {nameof(fixedValues)}.", nameof(upperBounds));
       }
 
-
-      { // check feasibility
-        for (int i = 0; i < fixedValues.Length; i++)
-        {
-          if (fixedValues[i] is { } fixedValue)
-          {
-            if (double.IsNaN(fixedValue))
-              throw new ArgumentException($"Fixed value at index {i} is NaN.", nameof(fixedValues));
-
-            if (lowerBounds is { } lb && lb[i] is { } lowerBound && !(fixedValue >= lowerBound))
-              throw new ArgumentException($"Fixed value at index {i} is less than the corresponding lower bound.", nameof(fixedValues));
-
-            if (upperBounds is { } ub && ub[i] is { } upperBound && !(fixedValue <= upperBound))
-              throw new ArgumentException($"Fixed value at index {i} is greater than the corresponding upper bound.", nameof(fixedValues));
-          }
-          else
-          {
-            if (lowerBounds is { } lb && lb[i] is { } lowerBound && upperBounds is { } ub && ub[i] is { } upperBound && !(lowerBound <= upperBound))
-              throw new ArgumentException($"Lower bound at index {i} is greater than the corresponding upper bound.", nameof(lowerBounds));
-          }
-        }
-      }
-
       _fixedValues = fixedValues;
       _lowerBounds = lowerBounds;
       _upperBounds = upperBounds;
+
+      _lowerBoundsExclusive = lowerBounds is null ? null : new bool[lowerBounds.Length];
+      _upperBoundsExclusive = upperBounds is null ? null : new bool[upperBounds.Length];
+
+      _effectiveLowerBounds = lowerBounds;
+      _effectiveUpperBounds = upperBounds;
+
+      CheckFeasibility();
     }
 
     /// <summary>
@@ -100,10 +91,75 @@ namespace Altaxo.Calc.Optimization
     /// <param name="upperBounds">Array of upper bounds for each dimension, or null if not specified.</param>
     /// <param name="upperBoundsExclusive">Array indicating whether each upper bound is exclusive, or null if not specified.</param>
 
-    public BoxConstraintsProjector(double?[] fixedValues, double?[]? lowerBounds, bool?[]? lowerBoundsExclusive, double?[]? upperBounds, bool?[]? upperBoundsExclusive)
-      : this(fixedValues, GetModifiedLowerBounds(lowerBounds, lowerBoundsExclusive), GetModifiedUpperBounds(upperBounds, upperBoundsExclusive))
+    public BoxConstraintsProjector(double?[] fixedValues, double?[]? lowerBounds, bool[]? lowerBoundsExclusive, double?[]? upperBounds, bool[]? upperBoundsExclusive)
     {
+      { // check arguments
+        ArgumentNullException.ThrowIfNull(fixedValues, nameof(fixedValues));
+
+        if (lowerBounds is { } lb)
+        {
+          if (lb.Length != fixedValues.Length)
+            throw new ArgumentException($"Length of {nameof(lowerBounds)} must match length of {nameof(fixedValues)}.", nameof(lowerBounds));
+
+          ArgumentNullException.ThrowIfNull(lowerBoundsExclusive, nameof(lowerBoundsExclusive));
+
+          if (lowerBoundsExclusive.Length != fixedValues.Length)
+            throw new ArgumentException($"Length of {nameof(lowerBoundsExclusive)} must match length of {nameof(fixedValues)}.", nameof(lowerBoundsExclusive));
+
+        }
+
+        if (upperBounds is { } ub)
+        {
+          if (ub.Length != fixedValues.Length)
+            throw new ArgumentException($"Length of {nameof(upperBounds)} must match length of {nameof(fixedValues)}.", nameof(upperBounds));
+
+          ArgumentNullException.ThrowIfNull(upperBoundsExclusive, nameof(upperBoundsExclusive));
+
+          if (upperBoundsExclusive.Length != fixedValues.Length)
+            throw new ArgumentException($"Length of {nameof(upperBoundsExclusive)} must match length of {nameof(fixedValues)}.", nameof(upperBoundsExclusive));
+        }
+      }
+
+      _fixedValues = fixedValues;
+      _lowerBounds = lowerBounds;
+      _upperBounds = upperBounds;
+
+      _lowerBoundsExclusive = lowerBoundsExclusive;
+      _upperBoundsExclusive = upperBoundsExclusive;
+
+      _effectiveLowerBounds = GetModifiedLowerBounds(lowerBounds, lowerBoundsExclusive);
+      _effectiveUpperBounds = GetModifiedUpperBounds(upperBounds, upperBoundsExclusive);
+
+      CheckFeasibility();
     }
+
+    void CheckFeasibility()
+    {
+      { // check feasibility
+        for (int i = 0; i < _fixedValues.Length; i++)
+        {
+          if (_fixedValues[i] is { } fixedValue)
+          {
+            if (double.IsNaN(fixedValue))
+              throw new ArgumentException($"Fixed value at index {i} is NaN.", nameof(_fixedValues));
+
+            if (_effectiveLowerBounds is { } lb && lb[i] is { } lowerBound && !(fixedValue >= lowerBound))
+              throw new ArgumentException($"Fixed value at index {i} is less than the corresponding lower bound.", nameof(_fixedValues));
+
+            if (_effectiveUpperBounds is { } ub && ub[i] is { } upperBound && !(fixedValue <= upperBound))
+              throw new ArgumentException($"Fixed value at index {i} is greater than the corresponding upper bound.", nameof(_fixedValues));
+          }
+          else
+          {
+            if (_effectiveLowerBounds is { } lb && lb[i] is { } lowerBound && _effectiveUpperBounds is { } ub && ub[i] is { } upperBound && !(lowerBound <= upperBound))
+              throw new ArgumentException($"Lower bound at index {i} is greater than the corresponding upper bound.", nameof(_effectiveLowerBounds));
+          }
+        }
+      }
+    }
+
+    /// <inheritdoc/>
+    public bool AreAllParametersFixed => _fixedValues.All(v => v.HasValue);
 
     /// <summary>
     /// Returns a modified copy of the lower bounds array, incrementing values where the corresponding exclusive flag is
@@ -112,7 +168,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="lowerBounds">An array of nullable lower bound values to be modified.</param>
     /// <param name="lowerBoundsExclusive">An array of nullable Boolean values indicating whether the corresponding lower bound is exclusive.</param>
     /// <returns>A new array with modified lower bounds, or null if the input is null.</returns>
-    private static double?[]? GetModifiedLowerBounds(double?[]? lowerBounds, bool?[]? lowerBoundsExclusive)
+    private static double?[]? GetModifiedLowerBounds(double?[]? lowerBounds, bool[]? lowerBoundsExclusive)
     {
       if (lowerBounds is not null && lowerBoundsExclusive is not null)
       {
@@ -135,9 +191,9 @@ namespace Altaxo.Calc.Optimization
     /// <remarks>Each upper bound marked as exclusive is decremented using Math.BitDecrement and adjusted by
     /// subtracting double.Epsilon.</remarks>
     /// <param name="upperBounds">An array of nullable upper bound values to be potentially modified.</param>
-    /// <param name="upperBoundsExclusive">An array of nullable boolean flags indicating which upper bounds are exclusive.</param>
+    /// <param name="upperBoundsExclusive">An array of boolean flags indicating which upper bounds are exclusive.</param>
     /// <returns>A new array with modified upper bounds, or null if the input is null.</returns>
-    private static double?[]? GetModifiedUpperBounds(double?[]? upperBounds, bool?[]? upperBoundsExclusive)
+    private static double?[]? GetModifiedUpperBounds(double?[]? upperBounds, bool[]? upperBoundsExclusive)
     {
       if (upperBounds is not null && upperBoundsExclusive is not null)
       {
@@ -165,9 +221,9 @@ namespace Altaxo.Calc.Optimization
         }
         else
         {
-          if (_lowerBounds is { } lowerBounds && lowerBounds[i] is { } lowerBound && !(value >= lowerBound))
+          if (_effectiveLowerBounds is { } lowerBounds && lowerBounds[i] is { } lowerBound && !(value >= lowerBound))
             return false;
-          if (_upperBounds is { } upperBounds && upperBounds[i] is { } upperBound && !(value <= upperBound))
+          if (_effectiveUpperBounds is { } upperBounds && upperBounds[i] is { } upperBound && !(value <= upperBound))
             return false;
         }
       }
@@ -187,12 +243,12 @@ namespace Altaxo.Calc.Optimization
         else
         {
           double value = inputValues[i];
-          if (_lowerBounds is { } lowerBounds && lowerBounds[i] is { } lowerBound)
+          if (_effectiveLowerBounds is { } lowerBounds && lowerBounds[i] is { } lowerBound)
           {
             value = Math.Max(value, lowerBound);
             valuesConstrained[i] = true;
           }
-          if (_upperBounds is { } upperBounds && upperBounds[i] is { } upperBound)
+          if (_effectiveUpperBounds is { } upperBounds && upperBounds[i] is { } upperBound)
           {
             value = Math.Min(value, upperBound);
             valuesConstrained[i] = true;
@@ -200,6 +256,43 @@ namespace Altaxo.Calc.Optimization
           projectedValues[i] = value;
         }
       }
+    }
+
+    /// <inheritdoc/>
+    public (double?[] fixedValues, double?[]? LowerBounds, bool[]? isLowerBoundExclusive, double?[]? UpperBounds, bool[]? isUpperBoundExclusive)? TryConvertToBoxConstraints(double tolerance = 1E-12)
+    {
+      return (_fixedValues, _lowerBounds, _lowerBoundsExclusive, _upperBounds, _upperBoundsExclusive);
+    }
+
+    /// <inheritdoc/>
+    public (IConstraintsProjector Projector, double?[] FixedParameters) ToProjectorWithoutFixedParameters()
+    {
+      int nnew = _fixedValues.Count(v => !v.HasValue);
+
+      double?[] newFixedValues = new double?[nnew];
+
+      double?[]? newLowerBounds = _lowerBounds is null ? null : new double?[nnew];
+      bool[]? newLowerBoundsExclusive = _lowerBoundsExclusive is null ? null : new bool[nnew];
+      double?[]? newUpperBounds = _upperBounds is null ? null : new double?[nnew];
+      bool[]? newUpperBoundsExclusive = _upperBoundsExclusive is null ? null : new bool[nnew];
+
+      for (int i = 0, j = 0; i < _fixedValues.Length; i++)
+      {
+        if (!_fixedValues[i].HasValue)
+        {
+          newFixedValues[j] = _fixedValues[i];
+          if (newLowerBounds is not null)
+            newLowerBounds[j] = _lowerBounds[i];
+          if (newLowerBoundsExclusive is not null)
+            newLowerBoundsExclusive[j] = _lowerBoundsExclusive[i];
+          if (newUpperBounds is not null)
+            newUpperBounds[j] = _upperBounds[i];
+          if (newUpperBoundsExclusive is not null)
+            newUpperBoundsExclusive[j] = _upperBoundsExclusive[i];
+          j++;
+        }
+      }
+      return (new BoxConstraintsProjector(newFixedValues, newLowerBounds, newLowerBoundsExclusive, newUpperBounds, newUpperBoundsExclusive), (double?[])_fixedValues.Clone());
     }
   }
 }

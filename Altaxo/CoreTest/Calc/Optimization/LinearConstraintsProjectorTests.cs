@@ -978,7 +978,7 @@ namespace Altaxo.Calc.Optimization
       var d = TestHelpers.V(5.0, -1.0, 7.0, -2.0);
       var proj = new LinearConstraintsProjector(C: C, d: d);
 
-      var bounds = proj.TryConvertToBoundaryConstraints();
+      var bounds = proj.TryConvertToBoxConstraints();
 
       Assert.NotNull(bounds);
       Assert.NotNull(bounds.Value.LowerBounds);
@@ -1005,7 +1005,7 @@ namespace Altaxo.Calc.Optimization
       var d = TestHelpers.V(5.0, 3.0, -1.0, -2.0);
       var proj = new LinearConstraintsProjector(C: C, d: d);
 
-      var bounds = proj.TryConvertToBoundaryConstraints();
+      var bounds = proj.TryConvertToBoxConstraints();
 
       Assert.NotNull(bounds);
       Assert.NotNull(bounds.Value.LowerBounds);
@@ -1033,7 +1033,7 @@ namespace Altaxo.Calc.Optimization
       var d = TestHelpers.V(6.0, -2.0);
       var proj = new LinearConstraintsProjector(A: A, b: b, C: C, d: d);
 
-      var bounds = proj.TryConvertToBoundaryConstraints();
+      var bounds = proj.TryConvertToBoxConstraints();
 
       Assert.NotNull(bounds);
       Assert.NotNull(bounds.Value.LowerBounds);
@@ -1060,7 +1060,7 @@ namespace Altaxo.Calc.Optimization
       var d = TestHelpers.V(0.0);
       var proj = new LinearConstraintsProjector(C: C, d: d);
 
-      var bounds = proj.TryConvertToBoundaryConstraints();
+      var bounds = proj.TryConvertToBoxConstraints();
 
       Assert.Null(bounds);
     }
