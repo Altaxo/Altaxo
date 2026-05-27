@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Optimization
       _effectiveLowerBounds = lowerBounds;
       _effectiveUpperBounds = upperBounds;
 
-      CheckFeasibility();
+      CheckFeasibility(fixedValues, _effectiveLowerBounds, _effectiveUpperBounds);
     }
 
     /// <summary>
@@ -130,29 +130,29 @@ namespace Altaxo.Calc.Optimization
       _effectiveLowerBounds = GetModifiedLowerBounds(lowerBounds, lowerBoundsExclusive);
       _effectiveUpperBounds = GetModifiedUpperBounds(upperBounds, upperBoundsExclusive);
 
-      CheckFeasibility();
+      CheckFeasibility(fixedValues, _effectiveLowerBounds, _effectiveUpperBounds);
     }
 
-    void CheckFeasibility()
+    static void CheckFeasibility(double?[] fixedValues, double?[]? lowerBounds, double?[]? upperBounds)
     {
       { // check feasibility
-        for (int i = 0; i < _fixedValues.Length; i++)
+        for (int i = 0; i < fixedValues.Length; i++)
         {
-          if (_fixedValues[i] is { } fixedValue)
+          if (fixedValues[i] is { } fixedValue)
           {
             if (double.IsNaN(fixedValue))
-              throw new ArgumentException($"Fixed value at index {i} is NaN.", nameof(_fixedValues));
+              throw new ArgumentException($"Fixed value at index {i} is NaN.", nameof(fixedValues));
 
-            if (_effectiveLowerBounds is { } lb && lb[i] is { } lowerBound && !(fixedValue >= lowerBound))
-              throw new ArgumentException($"Fixed value at index {i} is less than the corresponding lower bound.", nameof(_fixedValues));
+            if (lowerBounds is { } lb && lb[i] is { } lowerBound && !(fixedValue >= lowerBound))
+              throw new ArgumentException($"Fixed value at index {i} is less than the corresponding lower bound.", nameof(fixedValues));
 
-            if (_effectiveUpperBounds is { } ub && ub[i] is { } upperBound && !(fixedValue <= upperBound))
-              throw new ArgumentException($"Fixed value at index {i} is greater than the corresponding upper bound.", nameof(_fixedValues));
+            if (upperBounds is { } ub && ub[i] is { } upperBound && !(fixedValue <= upperBound))
+              throw new ArgumentException($"Fixed value at index {i} is greater than the corresponding upper bound.", nameof(fixedValues));
           }
           else
           {
-            if (_effectiveLowerBounds is { } lb && lb[i] is { } lowerBound && _effectiveUpperBounds is { } ub && ub[i] is { } upperBound && !(lowerBound <= upperBound))
-              throw new ArgumentException($"Lower bound at index {i} is greater than the corresponding upper bound.", nameof(_effectiveLowerBounds));
+            if (lowerBounds is { } lb && lb[i] is { } lowerBound && upperBounds is { } ub && ub[i] is { } upperBound && !(lowerBound <= upperBound))
+              throw new ArgumentException($"Lower bound at index {i} is greater than the corresponding upper bound.", nameof(lowerBounds));
           }
         }
       }

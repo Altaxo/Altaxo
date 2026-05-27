@@ -197,9 +197,9 @@ namespace Altaxo.Calc.Optimization
       var projector = new BoxConstraintsProjector(
         new double?[] { null, null },
         new double?[] { lowerBound, null },
-        new bool?[] { true, null },
+        new bool[] { true, false },
         new double?[] { null, upperBound },
-        new bool?[] { null, true });
+        new bool[] { false, true });
 
       Assert.False(projector.IsFeasible(V(lowerBound, upperBound)));
       Assert.True(projector.IsFeasible(V(expectedLower, expectedUpper)));
@@ -218,8 +218,8 @@ namespace Altaxo.Calc.Optimization
     {
       var lowerBounds = new double?[] { 1.0 };
       var upperBounds = new double?[] { 5.0 };
-      var lowerBoundsExclusive = new bool?[] { true };
-      var upperBoundsExclusive = new bool?[] { true };
+      var lowerBoundsExclusive = new bool[] { true };
+      var upperBoundsExclusive = new bool[] { true };
 
       _ = new BoxConstraintsProjector(
         new double?[] { null },
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.Optimization
       var exception = Assert.Throws<ArgumentException>(() => new BoxConstraintsProjector(
         new double?[] { 1.0 },
         new double?[] { 1.0 },
-        new bool?[] { true },
+        new bool[] { true },
         null,
         null));
 
