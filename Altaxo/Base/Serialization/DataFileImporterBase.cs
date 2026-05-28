@@ -35,6 +35,16 @@ namespace Altaxo.Serialization
     /// <inheritdoc />
     public abstract string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true);
 
+    /// <inheritdoc/>
+    public string? Import(string fileName, object importOptions)
+    {
+      var fileExtension = Path.GetExtension(fileName).ToLowerInvariant();
+      var table = new DataTable(Path.GetFileNameWithoutExtension(Path.GetFileName(fileName)));
+      var errorMessage = Import(new[] { fileName }, table, importOptions, attachDataSource: true);
+      Current.ProjectService.CreateNewWorksheet(table);
+      return errorMessage;
+    }
+
     /// <summary>
     /// Imports the provided files using the given initial options, optionally distributing the result into separate tables.
     /// </summary>

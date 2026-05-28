@@ -29,7 +29,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Altaxo.Collections;
-using Altaxo.Data;
 using Altaxo.Main.Services;
 using Altaxo.Serialization;
 
@@ -268,10 +267,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
     /// </summary>
     public void EhView_ActivateSelectedItems()
     {
-      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
-                      .Select(t => (IDataFileImporter)Activator.CreateInstance(t))
-                      .ToArray();
-
       foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
       {
         var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
@@ -283,11 +278,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
         }
       }
 
+      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IFileImporter))
+                      .Select(t => (IFileImporter)Activator.CreateInstance(t))
+                      .ToArray();
+
       // if it is not a project file, then maybe a data file...
       foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
       {
         var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
-        var table = new DataTable(Path.GetFileNameWithoutExtension(Path.GetFileName(item.FullName)));
 
         bool wasHandled = false;
         bool wasImported = false;
@@ -298,8 +296,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
             wasHandled = true;
             try
             {
-              imp.Import([item.FullName], table, imp.CheckOrCreateImportOptions(null), true);
-              Current.ProjectService.CreateNewWorksheet(table);
+              imp.Import(item.FullName, imp.CheckOrCreateImportOptions(null));
               wasImported = true;
               break;
             }
@@ -323,9 +320,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
           wasHandled |= true;
           try
           {
-            importers[maxIdx].Import([item.FullName], table, importers[maxIdx].CheckOrCreateImportOptions(null), true);
-            Current.Project.DataTableCollection.Add(table);
-            Current.ProjectService.CreateNewWorksheet(table);
+            importers[maxIdx].Import(item.FullName, importers[maxIdx].CheckOrCreateImportOptions(null));
             wasImported = true;
             continue;
           }
