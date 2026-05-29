@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Altaxo.Calc.FitFunctions.Chemistry;
 using Altaxo.Calc.FitFunctions.General;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
@@ -66,6 +65,9 @@ namespace Altaxo.Calc.FitFunctions
     private static readonly (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
       _fitData = new (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
       {
+        (() => new Chemistry.MassBasedFloryDistribution(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
+        (() => new Chemistry.MassBasedFloryDistributionOfMPeak(1, 1){ IndependentVariableIsDecadicLogarithm=false}, 32787, new double[]{7,6*2047d,5,-1/5000d}, 0.64819841810231585472),
+        (() => new Chemistry.MassBasedFloryDistributionWithFixedGaussianBroadening(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false, PolynomialCoefficientsForSigma=[0]}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
         (() => new Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel(), 2/3d, new double[]{1/7d,1/5d,11}, 577/805d),
         (() => new Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerModel(), 2/3d, new double[]{1/7d,1/5d,11,17/19d}, 194881/319585d),
         (() => new Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerSimplifiedModel(), 1/2d, new double[]{1/3d,225/100d,146/100d,112/100d}, 913/864d),
@@ -121,8 +123,6 @@ namespace Altaxo.Calc.FitFunctions
         (() => new VoigtArea(1,1), 4, new double[]{17,2,3,5,1,3 }, 13.809882936322777226),
         (() => new VoigtAreaParametrizationNu(1,1), 3, new double[]{17,1,3,5/7d,4,-1 }, 1.72519653836887579809275+4-1*3),
         (() => new PearsonIVArea(1,1), 4, new double[]{17E6,2,3,5,11,1,3 }, 5.94700744472337464654413 + 1 + 3*4),
-        (() => new MassBasedFloryDistribution(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
-        (() => new MassBasedFloryDistributionWithFixedGaussianBroadening(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false, PolynomialCoefficientsForSigma=[0]}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1}, 2*Math.Exp(-3*0.5)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1.5}, Math.Pow(3*(1.5-1)*0.5 + Math.Pow(2, 1-1.5), 1/(1-1.5))),
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 1-Math.Exp(3*(2-3.5))),
