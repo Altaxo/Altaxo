@@ -324,9 +324,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    /// <inheritdoc/>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion IFitFunction Members
 
 

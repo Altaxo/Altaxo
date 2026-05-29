@@ -297,12 +297,6 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
-
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion IFitFunction Members
 
     /// <summary>

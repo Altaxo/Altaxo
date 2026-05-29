@@ -256,9 +256,6 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1 };
 
-    /// <inheritdoc/>
-    public event EventHandler? Changed { add { } remove { } }
-
     /// <summary>
     /// Evaluates the mass based Flory distribution in dependency of the molecular mass M. ATTENTION: the first argument is always M, not log10(M)!
     /// </summary>

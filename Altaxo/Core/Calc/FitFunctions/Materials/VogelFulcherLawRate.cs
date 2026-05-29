@@ -337,13 +337,6 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
-    /// <summary>
-    /// Not used (instance is immutable).
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-
-
     #endregion IFitFunction Members
 
     /// <inheritdoc/>

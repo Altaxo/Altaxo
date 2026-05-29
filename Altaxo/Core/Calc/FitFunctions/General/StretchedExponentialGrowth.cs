@@ -101,11 +101,6 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <summary>
-    /// Event that would be raised when the instance changes. Not functional since this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-    /// <summary>
     /// Gets the number of exponential terms. Must be greater than or equal to 1.
     /// </summary>
     /// <value>The number of terms.</value>

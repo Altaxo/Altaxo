@@ -267,16 +267,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-    /// <summary>
-    /// Called when anything in this fit function has changed.
-    /// </summary>
-
-
-    /// <summary>
-    /// Unused because this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion IFitFunction Members
 
     /// <inheritdoc/>

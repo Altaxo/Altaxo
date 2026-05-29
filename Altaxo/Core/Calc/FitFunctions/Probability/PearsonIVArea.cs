@@ -361,15 +361,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
             DF[r, j] = xn;
             xn *= x;
           }
-          }
         }
-        }
-
-
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
+      }
+    }
 
     #endregion IFitFunction Members
 

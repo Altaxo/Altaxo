@@ -100,13 +100,6 @@ namespace Altaxo.Calc.FitFunctions.General
       return new StretchedExponentialEquilibration(1);
     }
 
-
-
-    /// <summary>
-    /// Not functional since this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     /// <summary>
     /// Gets the number of exponential terms. Must be greater than or equal to 1.
     /// </summary>

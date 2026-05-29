@@ -81,11 +81,6 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       return new RateOfConversionNthOrder();
     }
 
-    /// <summary>
-    /// Not functional since this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {

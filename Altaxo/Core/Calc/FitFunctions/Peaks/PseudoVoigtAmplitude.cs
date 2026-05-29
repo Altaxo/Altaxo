@@ -372,12 +372,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
-
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion IFitFunction Members
 
 

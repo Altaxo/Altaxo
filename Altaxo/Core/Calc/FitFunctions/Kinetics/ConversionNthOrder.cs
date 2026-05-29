@@ -81,11 +81,6 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       return new ConversionNthOrder();
     }
 
-    /// <summary>
-    /// Event that would be raised when the instance changes. Not functional since this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
