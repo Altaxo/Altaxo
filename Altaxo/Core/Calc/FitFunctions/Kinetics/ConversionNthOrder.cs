@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// Represents solutions related to the differential equation y'=k*(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="EvaluateConversion"/>.
   /// </summary>
   [FitFunctionClass]
-  public class ConversionNthOrder : IFitFunctionWithDerivative, IImmutable
+  public record ConversionNthOrder : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = parameters[1] * EvaluateConversion(independent[0], parameters[0], parameters[2], parameters[3]);
     }

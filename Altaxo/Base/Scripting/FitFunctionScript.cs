@@ -101,7 +101,7 @@ namespace Altaxo.Scripting
   /// <summary>
   /// Holds the text, compiled module, and metadata of a fit-function script.
   /// </summary>
-  public class FitFunctionScript : AbstractScript, IFitFunctionScriptText, IFitFunction
+  public class FitFunctionScript : AbstractScript, IFitFunctionScriptText, IFitFunction, Main.IChangedEventSource
   {
     /// <summary>
     /// True if we use user defined parameter names in the script.
@@ -573,7 +573,7 @@ namespace Altaxo.Scripting
             DefinitionRegionIndentation + ParameterDefinitionRegionEnd +
             "\t\t}\r\n" +
             "\r\n" +
-            "\t\tpublic override void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
+            "\t\tpublic override void Evaluate(ReadOnlySpan<double> X, ReadOnlySpan<double> P, Span<double> Y)\r\n" +
             "\t\t{\r\n" +
             AssignmentRegionIndentation + IndependentAssignmentRegionStart +
             IndependentAssignmentRegionCore +
@@ -1314,7 +1314,7 @@ namespace Altaxo.Scripting
     }
 
     /// <inheritdoc/>
-    void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] dependent)
+    void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       MakeSureWasTriedToCompile();
 

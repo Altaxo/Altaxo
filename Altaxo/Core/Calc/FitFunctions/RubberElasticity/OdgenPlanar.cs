@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
@@ -37,11 +38,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <para>Reference: [1] R. W. Ogden, „Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids“, Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, Bd. 326, Nr. 1567, S. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record OdgenPlanar : IFitFunctionWithDerivative
+  public record OdgenPlanar : IFitFunctionWithDerivative, IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
@@ -178,7 +176,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       var epsilon = independent[0];
       var sum = 0d;

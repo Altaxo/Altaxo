@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// Quotient of two polynomials, with coefficients a1..an (nominator) and b0..bm (denominator). The coefficent a0 of the nominator polynom is fixed to 1.
   /// </summary>
   [FitFunctionClass]
-  public class RationalInverse
+  public record RationalInverse
         : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The order of the polynomial in the nominator.</summary>
@@ -229,7 +229,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of nominator terms a0*x^0 .. an*x^n
       double nominator;

@@ -339,7 +339,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of gaussian terms
       double sumGauss = 0, sumPolynomial = 0;

@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class SmoothedPercolation : IFitFunction, Main.IImmutable
+  public record SmoothedPercolation : IFitFunction, Main.IImmutable
   {
     #region Serialization
 
@@ -150,7 +150,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
@@ -316,11 +316,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         return lgsp1 + (lgsp2 - lgsp1) * (p - p1) / (p2 - p1);
       }
     }
-
-    /// <summary>
-    /// Unused because this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
 

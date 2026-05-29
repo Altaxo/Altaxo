@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// but the parametrization is different (modulus values instead of susceptibilities).
   /// </summary>
   [FitFunctionClass]
-  public class HavriliakNegamiModulusRetardation : IFitFunction, Main.IImmutable
+  public record HavriliakNegamiModulusRetardation : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOfOmega;
     private bool _useFlowTerm;
@@ -383,13 +383,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion parameter definition
 
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double x = independent[0];
       if (_useFrequencyInsteadOfOmega)

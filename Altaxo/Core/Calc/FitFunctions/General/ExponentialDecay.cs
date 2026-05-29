@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class ExponentialDecay : IFitFunctionWithDerivative, IImmutable
+  public record ExponentialDecay : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
@@ -223,7 +223,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double sum = parameters[0];
       for (int i = 1; i < parameters.Length; i += 2)

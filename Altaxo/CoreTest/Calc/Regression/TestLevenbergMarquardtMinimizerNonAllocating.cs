@@ -225,7 +225,7 @@ namespace Altaxo.Calc.Regression
         throw new NotImplementedException();
       }
 
-      public void Evaluate(double[] independent, double[] parameters, double[] FV)
+      public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> FV)
       {
         throw new NotImplementedException();
       }

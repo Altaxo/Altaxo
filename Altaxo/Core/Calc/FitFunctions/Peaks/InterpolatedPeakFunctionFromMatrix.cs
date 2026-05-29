@@ -254,9 +254,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public int NumberOfParameters => NumberOfTerms * NumberOfParametersPerPeak + OrderOfBaselinePolynomial + 1;
 
     /// <inheritdoc/>
-    public event EventHandler? Changed;
-
-    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * NumberOfTerms;
@@ -376,7 +373,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       if (Spline is null)
         Initialize();

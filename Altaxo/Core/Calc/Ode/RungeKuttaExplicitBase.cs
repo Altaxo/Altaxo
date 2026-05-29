@@ -15,10 +15,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Science.Thermodynamics.Fluids;
 
 namespace Altaxo.Calc.Ode
 {
@@ -103,7 +99,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="f">Calculation of the derivatives. First argument is the x value; the second argument are the current y values; the third argument is an array that stores the derivatives.</param>
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
     [MemberNotNull(nameof(_core))]
-    public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
+    public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, ReadOnlySpan<double>, Span<double>> f)
     {
       _core = new Core(Order, NumberOfStages, NumberOfAdditionalStagesForDenseOutput, A, BH, BHML, C, x, y, f);
       if (InterpolationCoefficients is not null)
@@ -129,7 +125,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. You have to consume the values immediately because the content of the y array is changed in the further course of the evaluation.</returns>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatileForStepSize(
-         double x0, double[] y0, Action<double, double[], double[]> f, double stepSize)
+         double x0, double[] y0, Action<double, ReadOnlySpan<double>, Span<double>> f, double stepSize)
     {
       Initialize(x0, y0, f);
       for (long i = 1; ; ++i)
@@ -142,7 +138,7 @@ namespace Altaxo.Calc.Ode
 
     /// <summary>
     /// Gets volatile solution points for constant step size.
-    /// The method has to be initialized (see <see cref="Initialize(double, double[], Action{double, double[], double[]})"/>) before.
+    /// The method has to be initialized (see <see cref="Initialize(double, double[], Action{double, ReadOnlySpan{double}, Span{double}})"/>) before.
     /// </summary>
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. You have to consume the values immediately because the content of the y array is changed in the further course of the evaluation.</returns>
@@ -164,7 +160,7 @@ namespace Altaxo.Calc.Ode
 
     /// <summary>
     /// Gets solution points for constant step size.
-    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
+    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, ReadOnlySpan{double}, Span{double}}, double)"/>,
     /// but the returned solution point already contains a copy of the y array.
     /// </summary>
     /// <param name="x0">The initial x value.</param>
@@ -173,14 +169,14 @@ namespace Altaxo.Calc.Ode
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. It is safe to store the returned y array permanently.</returns>
     public virtual IEnumerable<(double x, double[] y)> GetSolutionPointsForStepSize(
-      double x0, double[] y0, Action<double, double[], double[]> f, double stepSize)
+      double x0, double[] y0, Action<double, ReadOnlySpan<double>, Span<double>> f, double stepSize)
     {
       return GetSolutionPointsVolatileForStepSize(x0, y0, f, stepSize).Select(sp => (sp.X, Clone(sp.Y_volatile)));
     }
 
     /// <summary>
     /// Gets solution points for constant step size.
-    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
+    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, ReadOnlySpan{double}, Span{double}}, double)"/>,
     /// but the returned solution point already contains a copy of the y array.
     /// </summary>
     /// <param name="stepSize">Size of a step.</param>
@@ -682,7 +678,7 @@ namespace Altaxo.Calc.Ode
         }
         else
         {
-          throw new InvalidOperationException($"The case that it1.Current is {it1.Current} and it2.Current is {it2.Current } is not supported.");
+          throw new InvalidOperationException($"The case that it1.Current is {it1.Current} and it2.Current is {it2.Current} is not supported.");
         }
         return true;
       }

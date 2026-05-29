@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Summary description for KohlrauschDecay.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschDecay : IFitFunction, IImmutable
+  public record KohlrauschDecay : IFitFunction, IImmutable
   {
     private int _numberOfRelaxations = 1;
     private bool _logarithmizeResult;
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double sum = parameters[0];
 

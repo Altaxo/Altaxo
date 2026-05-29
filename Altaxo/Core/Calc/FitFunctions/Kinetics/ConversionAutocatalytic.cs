@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// Represents solutions related to the differential equation y'=(k1+k2*y^m)(1-y)^n with the initial condition y(t0)=0./>.
   /// </summary>
   [FitFunctionClass]
-  public class ConversionAutocatalytic : IFitFunction, IImmutable
+  public record ConversionAutocatalytic : IFitFunction, IImmutable
   {
     #region Serialization
 
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public virtual void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       EvaluateConversion(independent, parameters, dependent);
       dependent[0] *= parameters[1];
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// <param name="X">The x value.</param>
     /// <param name="P">The parameter array.</param>
     /// <param name="Y">Outputs the y value.</param>
-    public virtual void EvaluateConversionRate(double[] X, double[] P, double[] Y)
+    public virtual void EvaluateConversionRate(ReadOnlySpan<double> X, double[] P, double[] Y)
     {
       if (!(X[0] >= P[0]))
       {
@@ -260,7 +260,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// <param name="X">The x value.</param>
     /// <param name="P">The parameter array.</param>
     /// <param name="Y">Outputs the y value.</param>
-    public virtual void EvaluateConversion(double[] X, double[] P, double[] Y)
+    public virtual void EvaluateConversion(ReadOnlySpan<double> X, ReadOnlySpan<double> P, Span<double> Y)
     {
       var x = X[0] - P[0];
       if (!(x >= 0))
@@ -341,7 +341,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <summary>
       /// Initializes the evaluator with the parameter set.</summary>
       /// <param name="P">The parameter set.</param>
-      public void Initialize(double[] P)
+      public void Initialize(ReadOnlySpan<double> P)
       {
         t0 = P[0];
         A0 = P[1];
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// </summary>
       /// <param name="P">The parameter set to compare.</param>
       /// <returns><see langword="true"/> if the provided parameter set matches the current evaluator state; otherwise, <see langword="false"/>.</returns>
-      public bool IsSameParameterSet(double[] P)
+      public bool IsSameParameterSet(ReadOnlySpan<double> P)
       {
         return
         t0 == P[0] &&
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       /// <param name="x">The independent variable.</param>
       /// <param name="y">The state vector.</param>
       /// <param name="dy">The derivative vector receiving the rate.</param>
-      public void EvaluateRate(double x, double[] y, double[] dy)
+      public void EvaluateRate(double x, ReadOnlySpan<double> y, Span<double> dy)
       {
         double yy = y[0];
         if (!(0 <= yy && yy < 1))

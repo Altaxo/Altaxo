@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
@@ -37,11 +38,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <para>Reference: [1] O. H. Yeoh, „Some Forms of the Strain Energy Function for Rubber“, Rubber Chemistry and Technology, Bd. 66, Nr. 5, S. 754–771, Nov. 1993, doi: 10.5254/1.3538343.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record YeohBiaxial : IFitFunctionWithDerivative
+  public record YeohBiaxial : IFitFunctionWithDerivative, IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
@@ -164,7 +162,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
     }

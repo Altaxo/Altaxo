@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   [FitFunctionClass]
   [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
-  public class Polynomial
+  public record Polynomial
         : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The order of the polynomial with positive exponents.</summary>
@@ -248,7 +248,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of terms x^0 .. x^n
       double sum = parameters[_order_n];

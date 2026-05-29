@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// Represents the Arrhenius law for rates. Describes the temperature dependence of reaction rates or similar quantities that increase with temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawRate : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
+  public record ArrheniusLawRate : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
@@ -240,18 +240,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       return null;
     }
-
-
-
-    /// <summary>
-    /// Not used (instance is immutable).
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion Change event
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double temperature = Temperature.ToKelvin(independent[0], _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(parameters[1], _paramEnergyUnit);

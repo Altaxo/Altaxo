@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   [FitFunctionClass]
   [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialOfPolynomial}")]
-  public class ExponentialOfPolynomial : IFitFunctionWithDerivative, IImmutable
+  public record ExponentialOfPolynomial : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The order of the polynomial with positive exponents.</summary>
     private readonly int _order_n;
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.General
         var order_m = info.GetInt32("OrderNegative");
         return new ExponentialOfPolynomial(order_n, order_m);
       }
-     }
+    }
 
 
     #endregion Serialization
@@ -226,7 +226,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of terms x^0 .. x^n
       double sum = parameters[_order_n + 1];

@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Base class providing utilities for Fermi-Dirac style transitions and a common
   /// implementation of the <see cref="IFitFunction"/> interface.
   /// </summary>
-  public abstract class FermiDiracTransitionBase : IFitFunction
+  public abstract record FermiDiracTransitionBase : IFitFunction
   {
     /// <summary>
     /// Returns a value which is 1 for p=0 and is 0 for p=1.
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <param name="independent">Array containing the independent variable(s).</param>
     /// <param name="parameters">Array of parameters.</param>
     /// <param name="dependent">Output array for the function value(s).</param>
-    public abstract void Evaluate(double[] independent, double[] parameters, double[] dependent);
+    public abstract void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent);
 
     /// <summary>
     /// Evaluates the function for multiple input rows.
@@ -172,11 +172,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <param name="dependent">Output vector for function values.</param>
     /// <param name="dependentVariableChoice">Optional selection of dependent variables.</param>
     public abstract void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice);
-
-    /// <summary>
-    /// Unused because this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
 
@@ -197,7 +192,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Linear scaled Fermi-Dirac transition implementation.
   /// </summary>
   [FitFunctionClass]
-  public class LinearFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
+  public record LinearFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
     #region Serialization
 
@@ -242,7 +237,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public override void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
@@ -268,7 +263,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Logarithmically scaled Fermi-Dirac transition implementation.
   /// </summary>
   [FitFunctionClass]
-  public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
+  public record LogarithmicFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
     #region Serialization
 
@@ -313,7 +308,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public override void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }

@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// Represents the Arrhenius law for times. Describes the temperature dependence of relaxation time, viscosity, etc., i.e. quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawTime : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
+  public record ArrheniusLawTime : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
@@ -247,33 +247,26 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       return null;
     }
-
-
-
-    /// <summary>
-    /// Not used (instance is immutable).
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
     #endregion Change event
 
     /// <summary>
     /// Evaluates the Arrhenius time law for a single X value and parameter list.
     /// </summary>
     /// <param name="X">The independent variable value (temperature).</param>
-    /// <param name="P">Parameters array, where P[0] is prefactor and P[1] is activation energy.</param>
+    /// <param name="prefactor">The prefactor parameter.</param>
+    /// <param name="activationEnergy">The activation energy parameter.</param>
     /// <returns>The evaluated value.</returns>
-    public virtual double Evaluate(double X, IReadOnlyList<double> P)
+    public virtual double Evaluate(double X, double prefactor, double activationEnergy)
     {
       double temperature = Temperature.ToKelvin(X, _temperatureUnitOfX);
-      double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      return Math.Exp(Math.Log(P[0]) + energyAsTemperature / temperature);
+      double energyAsTemperature = Energy.ToTemperatureSI(activationEnergy, _paramEnergyUnit);
+      return Math.Exp(Math.Log(prefactor) + energyAsTemperature / temperature);
     }
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public virtual void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      dependent[0] = Evaluate(independent[0], parameters);
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1]);
     }
 
     /// <inheritdoc/>
@@ -284,7 +277,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       {
         var x = independent[r, 0];
 
-        dependent[r] = Evaluate(x, parameters);
+        dependent[r] = Evaluate(x, parameters[0], parameters[1]);
       }
     }
 

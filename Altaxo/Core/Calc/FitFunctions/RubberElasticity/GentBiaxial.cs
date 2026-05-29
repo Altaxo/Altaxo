@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
@@ -38,11 +39,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <para>[1] A. N. Gent, „A New Constitutive Relation for Rubber“, Rubber Chemistry and Technology, Bd. 69, Nr. 1, S. 59–61, März 1996, doi: 10.5254/1.3538357.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record GentBiaxial : IFitFunctionWithDerivative
+  public record GentBiaxial : IFitFunctionWithDerivative, IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
@@ -157,7 +155,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1]);
     }

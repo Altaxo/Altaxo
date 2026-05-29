@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class GeneralEffectiveMedium : IFitFunction, Main.IImmutable
+  public record GeneralEffectiveMedium : IFitFunction, Main.IImmutable
   {
     #region Serialization
 
@@ -154,17 +154,12 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// Unused because this instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-    /// <summary>
     /// Evaluates the model for a single independent input.
     /// </summary>
-    /// <param name="independent">Array containing the independent variable.</param>
-    /// <param name="parameters">Array of parameters.</param>
-    /// <param name="dependent">Output array for the dependent variable.</param>
-    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    /// <param name="independent">Span containing the independent variable.</param>
+    /// <param name="parameters">Span of parameters.</param>
+    /// <param name="dependent">Output span for the dependent variable.</param>
+    public virtual void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }
@@ -378,7 +373,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class GeneralEffectiveMediumLog10 : GeneralEffectiveMedium
+  public record GeneralEffectiveMediumLog10 : GeneralEffectiveMedium
   {
     #region Serialization
 
@@ -423,7 +418,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public override void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = EvaluateLog10(independent[0], parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
     }

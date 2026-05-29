@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
@@ -40,11 +41,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <para>[3] M. C. Boyce und E. M. Arruda, „Constitutive Models of Rubber Elasticity: A Review“, Rubber Chemistry and Technology, Bd. 73, Nr. 3, S. 504–523, Juli 2000, doi: 10.5254/1.3547602.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record MooneyRivlinPlanar : IFitFunctionWithDerivative
+  public record MooneyRivlinPlanar : IFitFunctionWithDerivative, IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
@@ -160,7 +158,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1]);
     }

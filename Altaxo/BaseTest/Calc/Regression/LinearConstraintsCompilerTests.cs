@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Regression
       public IVarianceScaling? DefaultVarianceScaling(int i) => null;
 
       /// <inheritdoc/>
-      public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+      public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
           => throw new NotSupportedException();
 
       /// <inheritdoc/>

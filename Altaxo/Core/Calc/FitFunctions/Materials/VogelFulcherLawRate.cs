@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// i.e. quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class VogelFulcherLawRate
+  public record VogelFulcherLawRate
         : IFitFunction, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
@@ -308,7 +308,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// <param name="independent">Array where X[0] is the temperature in the unit represented by <see cref="IndependentVariableRepresentation"/>.</param>
     /// <param name="parameters">Parameter array where P[0]=y0, P[1]=B and P[2]=T0.</param>
     /// <param name="dependent">Array that receives the evaluated function value at index 0.</param>
-    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public virtual void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double temperature = Temperature.ToKelvin(independent[0], _temperatureUnitOfX);
       double B = Temperature.ToKelvin(parameters[1], _temperatureUnitOfB);

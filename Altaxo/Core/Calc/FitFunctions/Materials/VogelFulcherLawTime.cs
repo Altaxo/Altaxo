@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// i.e. quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class VogelFulcherLawTime
+  public record VogelFulcherLawTime
         : IFitFunction, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
@@ -306,20 +306,22 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// Evaluates the Vogel-Fulcher law for time-like quantities at the specified temperature.
     /// </summary>
     /// <param name="x">The temperature value in the unit represented by <see cref="IndependentVariableRepresentation"/>.</param>
-    /// <param name="P">Parameter array where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="y0">The y0 parameter.</param>
+    /// <param name="B">The B parameter.</param>
+    /// <param name="T0">The T0 parameter.</param>
     /// <returns>The evaluated function value.</returns>
-    public virtual double Evaluate(double x, IReadOnlyList<double> P)
+    public virtual double Evaluate(double x, double y0, double B, double T0)
     {
       double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
-      double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
-      double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-      return P[0] * Math.Exp(B / (temperature - T0));
+      double B_K = Temperature.ToKelvin(B, _temperatureUnitOfB);
+      double T0_K = Temperature.ToKelvin(T0, _temperatureUnitOfT0);
+      return y0 * Math.Exp(B_K / (temperature - T0_K));
     }
 
     /// <inheritdoc/>
-    public virtual void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public virtual void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      dependent[0] = Evaluate(independent[0], parameters);
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
     }
 
     /// <inheritdoc/>

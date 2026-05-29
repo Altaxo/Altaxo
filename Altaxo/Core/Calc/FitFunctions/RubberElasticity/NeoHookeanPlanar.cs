@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
@@ -37,11 +38,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <para>Reference: [1] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record NeoHookeanPlanar : IFitFunctionWithDerivative
+  public record NeoHookeanPlanar : IFitFunctionWithDerivative, IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
@@ -154,7 +152,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = CrossSectionArea * Evaluate(independent[0], parameters[0]);
     }

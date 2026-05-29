@@ -13,11 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Probability;
 using Altaxo.Collections;
 using Xunit;
 
@@ -322,7 +318,7 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(10, listOfX.Count);
       for (int i = 0; i < 10; ++i)
-        Assert.Equal((1+i)/8d, listOfX[i]);
+        Assert.Equal((1 + i) / 8d, listOfX[i]);
 
       AssertEx.Less(maxRelErr, 5E-9);
     }
@@ -379,7 +375,7 @@ namespace Altaxo.Calc.Ode
     [Fact]
     public void Test_ASSC_Diffusion()
     {
-      void CalcRates(double x, double[] y, double[] rates)
+      void CalcRates(double x, ReadOnlySpan<double> y, Span<double> rates)
       {
         for (int i = 0; i < y.Length; ++i)
         {

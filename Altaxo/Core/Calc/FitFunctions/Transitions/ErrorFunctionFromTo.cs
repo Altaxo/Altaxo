@@ -173,9 +173,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     public int NumberOfParameters => 4 + _order_l + _order_r;
 
     /// <inheritdoc/>
-    public event EventHandler? Changed;
-
-    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (i == 0)
@@ -269,9 +266,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.AsSpan(2, _order_l + 1), parameters.AsSpan(2 + _order_l + 1, _order_r + 1));
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.Slice(2, _order_l + 1), parameters.Slice(2 + _order_l + 1, _order_r + 1));
     }
 
     /// <inheritdoc/>

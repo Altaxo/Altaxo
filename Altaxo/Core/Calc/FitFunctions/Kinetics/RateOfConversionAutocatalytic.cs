@@ -23,6 +23,7 @@
 #endregion Copyright
 
 #nullable enable
+using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -34,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// In this class, not the conversion y(t), but the conversion rate y'(t) is the dependent variable.
   /// </summary>
   [FitFunctionClass]
-  public class RateOfConversionAutocatalytic : ConversionAutocatalytic
+  public record RateOfConversionAutocatalytic : ConversionAutocatalytic
   {
     #region Serialization
 
@@ -74,12 +75,10 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public override void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-
-      base.EvaluateConversionRate(independent, parameters, dependent);
+      base.EvaluateConversionRate(independent, parameters.ToArray(), dependent.ToArray());
       dependent[0] *= parameters[1];
-
     }
 
     /// <summary>

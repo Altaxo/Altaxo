@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Ode
       /// the second argument is the array of current <c>y</c> values, and the third argument is the array that receives
       /// the derivatives <c>dy/dx</c> calculated by this function.
       /// </remarks>
-      protected Action<double, double[], double[]> _f;
+      protected Action<double, ReadOnlySpan<double>, Span<double>> _f;
 
       /// <summary>
       /// The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/> for which the result was false (non-stiff).
@@ -427,7 +427,7 @@ namespace Altaxo.Calc.Ode
       /// <param name="x0">The initial x value.</param>
       /// <param name="y">The initial y values.</param>
       /// <param name="f">Evaluation function to calculate the derivatives. 1st arg: x, 2nd arg: y, 3rd arg: array to hold the resulting derivatives.</param>
-      public Core(int order, int numberOfStages, int numberOfAdditionalStagesForDenseOutput, double[][] a, double[] b, double[]? bhml, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
+      public Core(int order, int numberOfStages, int numberOfAdditionalStagesForDenseOutput, double[][] a, double[] b, double[]? bhml, double[] c, double x0, double[] y, Action<double, ReadOnlySpan<double>, Span<double>> f)
       {
         _order = order;
         _numberOfStages = numberOfStages;

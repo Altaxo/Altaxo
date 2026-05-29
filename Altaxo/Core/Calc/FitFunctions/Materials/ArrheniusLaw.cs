@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Altaxo.Science;
 
@@ -34,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// Obsolete wrapper for Arrhenius fit functions. Use <see cref="ArrheniusLawTime"/> or <see cref="ArrheniusLawRate"/> instead.
   /// </summary>
   [Obsolete("Please use ArrheniusLawTime or ArrheniusLawRate")]
-  public class ArrheniusLaw : ArrheniusLawTime
+  public record ArrheniusLaw : ArrheniusLawTime
   {
     private TransformedValueRepresentation _dependentVariableTransform;
 
@@ -69,9 +68,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     /// <inheritdoc/>
-    public override double Evaluate(double X, IReadOnlyList<double> P)
+    public override double Evaluate(double X, double prefactor, double activationEnergy)
     {
-      var y = base.Evaluate(X, P);
+      var y = base.Evaluate(X, prefactor, activationEnergy);
       return TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
     }
 

@@ -13,11 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Probability;
 using Altaxo.Collections;
 using Xunit;
 
@@ -272,7 +268,7 @@ namespace Altaxo.Calc.Ode
       foreach (var sp in points.TakeWhile(sp => sp.X <= 10))
       {
         var currentStepSize = sp.X - previousX;
-        AssertEx.GreaterOrEqual(currentStepSize, previousStepSize*0.5);
+        AssertEx.GreaterOrEqual(currentStepSize, previousStepSize * 0.5);
         previousX = sp.X;
         previousStepSize = currentStepSize;
 
@@ -379,7 +375,7 @@ namespace Altaxo.Calc.Ode
     [Fact]
     public void Test_ASSC_Diffusion()
     {
-      void CalcRates(double x, double[] y, double[] rates)
+      void CalcRates(double x, ReadOnlySpan<double> y, Span<double> rates)
       {
         for (int i = 0; i < y.Length; ++i)
         {

@@ -15,9 +15,6 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
   [FitFunctionClass]
   public record CrossModel : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     #region Serialization
 
     /// <summary>
@@ -123,7 +120,7 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }

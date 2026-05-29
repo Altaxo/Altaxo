@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     #region Inner classes
 
-    private class DummyFitFunc : IFitFunction
+    private class DummyFitFunc : IFitFunction, Main.IChangedEventSource
     {
       private FitEvaluationFunction _func;
       private double[] _defaultParameter;
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
 
       /// <inheritdoc/>
-      public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+      public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
       {
         _func(independent, parameters, dependent);
       }
@@ -111,15 +111,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// <inheritdoc/>
       public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
       {
-        var XX = new double[1];
-        var YY = new double[1];
+        Span<double> XX = stackalloc double[1];
+        Span<double> YY = stackalloc double[1];
         var PP = parameters.ToArray();
         var rowCount = independent.RowCount;
         for (int r = 0; r < rowCount; ++r)
         {
           XX[0] = independent[r, 0];
-
-          _func(XX, PP, YY);
+          double s = 0;
+          _func(XX, (ReadOnlySpan<double>)PP, (Span<double>)YY);
           dependent[r] = YY[0];
         }
       }

@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// Represents solutions related to the differential equation y'=-k*y^n. For the direct solution of this equation, see <see cref="CoreSolution"/>.
   /// </summary>
   [FitFunctionClass]
-  public class KineticsNthOrder : IFitFunctionWithDerivative, IImmutable
+  public record KineticsNthOrder : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       dependent[0] = CoreSolution(independent[0], parameters[0], parameters[1], parameters[2]);
     }

@@ -1718,7 +1718,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// Base class for script-defined fit functions.
   /// </summary>
-  public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction
+  public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction, Main.IChangedEventSource
   {
     private static readonly string[] _emptyStringArray = new string[0];
     /// <summary>
@@ -1826,9 +1826,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="independent">The independent variables.</param>
     /// <param name="parameters">Parameters for evaluation.</param>
-    /// <param name="dependent">On return, this array contains the one (or more) evaluated
+    /// <param name="dependent">On return, this span contains the one (or more) evaluated
     /// function values at the point (independent).</param>
-    public abstract void Evaluate(double[] independent, double[] parameters, double[] dependent);
+    public abstract void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent);
 
     /// <inheritdoc/>
     public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)

@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   [FitFunctionClass]
   [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.TwoPolynomialSegments}")]
-  public class TwoPolynomialSegments
+  public record TwoPolynomialSegments
         : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The order of the polynomial on the left segment.</summary>
@@ -267,9 +267,9 @@ namespace Altaxo.Calc.FitFunctions.General
 
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.AsSpan(2, _order_n), parameters.AsSpan(2 + _order_n, _order_m));
+      dependent[0] = Evaluate(independent[0], parameters[0], parameters[1], parameters.Slice(2, _order_n), parameters.Slice(2 + _order_n, _order_m));
     }
 
 

@@ -430,7 +430,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, independent[0]) : independent[0];
 

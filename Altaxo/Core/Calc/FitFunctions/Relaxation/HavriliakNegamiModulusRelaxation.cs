@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class HavriliakNegamiModulusRelaxation : IFitFunction
+  public record HavriliakNegamiModulusRelaxation : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
@@ -418,12 +418,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion parameter definition
 
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-
     /// <inheritdoc/>
     /// <remarks>
     /// Parameters are interpreted as follows:
@@ -433,7 +427,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// P[3]: beta,
     /// P[4]: invviscosity.
     /// </remarks>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double x = independent[0];
       if (_useFrequencyInsteadOmega)

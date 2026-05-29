@@ -39,7 +39,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Reference: <see href="https://en.wikipedia.org/wiki/Sigmoid_function"/>
   /// </remarks>
   [FitFunctionClass]
-  public class GeneralizedLogisticIncreasing
+  public record GeneralizedLogisticIncreasing
         : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The number of logistic step terms.</summary>
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of terms
       double sumTerms = 0, sumPolynomial = 0;

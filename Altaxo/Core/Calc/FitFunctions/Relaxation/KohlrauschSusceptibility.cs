@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Kohlrausch function in the frequency domain to fit compliance or dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschSusceptibility : IFitFunction, Main.IImmutable
+  public record KohlrauschSusceptibility : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
@@ -534,7 +534,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion parameter definition
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double x = independent[0];
       if (_useFrequencyInsteadOmega)
@@ -652,10 +652,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         }
       }
     }
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
 

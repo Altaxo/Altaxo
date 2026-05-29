@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// </summary>
   /// <seealso cref="Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime" />
   [Obsolete("Please use VogelFulcherLawTime or VogelFulcherLawRate")]
-  public class VogelFulcherLaw : VogelFulcherLawTime
+  public record VogelFulcherLaw : VogelFulcherLawTime
   {
     private TransformedValueRepresentation _dependentVariableTransform;
 
@@ -77,9 +77,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
     /// <inheritdoc/>
-    public override void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public override void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      var y = base.Evaluate(independent[0], parameters);
+      var y = base.Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
       dependent[0] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
     }
 
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       {
         var x = independent[r, 0];
 
-        var y = base.Evaluate(x, P);
+        var y = base.Evaluate(x, P[0], P[1], P[2]);
         FV[r] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
       }
     }

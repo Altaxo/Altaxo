@@ -11,7 +11,6 @@
 #endregion Copyright
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.Ode
 {
@@ -57,7 +56,7 @@ namespace Altaxo.Calc.Ode
       /// <param name="x0">The initial <c>x</c> value.</param>
       /// <param name="y">The initial <c>y</c> values.</param>
       /// <param name="f">The function evaluating the derivatives.</param>
-      public CoreDOP853(int order, int numberOfStages, int numberOfAdditionalStagesForDenseOutput, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
+      public CoreDOP853(int order, int numberOfStages, int numberOfAdditionalStagesForDenseOutput, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, ReadOnlySpan<double>, Span<double>> f)
         : base(order, numberOfStages, numberOfAdditionalStagesForDenseOutput, a, b, bl, c, x0, y, f)
       {
       }
@@ -315,7 +314,7 @@ namespace Altaxo.Calc.Ode
 
 
     /// <inheritdoc/>
-    public override RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
+    public override RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, ReadOnlySpan<double>, Span<double>> f)
     {
       _core = new CoreDOP853(Order, NumberOfStages, NumberOfAdditionalStagesForDenseOutput, A, BH, BHML, C, x, y, f);
       if (InterpolationCoefficients is not null)

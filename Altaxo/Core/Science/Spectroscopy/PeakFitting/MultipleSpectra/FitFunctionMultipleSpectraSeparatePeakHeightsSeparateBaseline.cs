@@ -42,7 +42,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>
     /// The wrapped fit function for a single spectrum.
     /// </summary>
-    public IFitFunctionPeak _underlyingFitFunction;
+    private IFitFunctionPeak _underlyingFitFunction;
     private int _numberOfSpectra;
     private int _numberOfParametersPerPeakLocal;
     private int _numberOfPeaks;
@@ -108,9 +108,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       _numberOfSpectra * (_underlyingFitFunction.OrderOfBaselinePolynomial + 1) + // Parameters for the baseline
       _numberOfPeaks * (_numberOfParametersPerPeakLocal - 1 + _numberOfSpectra); // the height parameters (one for each spectrum)
 
-    /// <inheritdoc/>
-    public event EventHandler? Changed;
-
     /// <summary>Not implemented.</summary>
     /// <param name="i">The parameter index.</param>
     /// <returns>The default parameter value (not implemented).</returns>
@@ -163,11 +160,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      var x = MatrixMath.ToROMatrixWithOneRow(independent);
-      var y = VectorMath.ToVector(dependent);
-      Evaluate(x, parameters, y, null);
+      TransferGlobalToLocalParameters(0, parameters);
+      _underlyingFitFunction.Evaluate(independent, _parametersLocal, dependent);
     }
 
     /// <inheritdoc/>
@@ -223,6 +219,37 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <para>For each spectrum: a block of baseline parameters.</para>
     /// </remarks>
     private void TransferGlobalToLocalParameters(int indexOfSpectrum, IReadOnlyList<double> parameters)
+    {
+      int globalParametersPerPeak = _numberOfSpectra + _numberOfParametersPerPeakLocal - 1;
+
+      for (int it = 0; it < _underlyingFitFunction.NumberOfTerms; ++it) // for each peak term
+      {
+        // the first local parameter is always the amplitude
+        _parametersLocal[_numberOfParametersPerPeakLocal * it] = parameters[it * globalParametersPerPeak + indexOfSpectrum]; // the height parameters of the spectrum #ic
+
+        for (int i = 1; i < _numberOfParametersPerPeakLocal; ++i) // for each peak term parameter except the 1st one (which is the height or area)
+        {
+          _parametersLocal[it * _numberOfParametersPerPeakLocal + i] = parameters[it * globalParametersPerPeak + _numberOfSpectra + i - 1];
+        }
+      }
+
+      for (int ib = 0; ib <= _underlyingFitFunction.OrderOfBaselinePolynomial; ++ib)
+      {
+        _parametersLocal[_offsetToBaselineParametersLocal + ib] = parameters[_offsetToBaselineParametersGlobal + indexOfSpectrum * (_underlyingFitFunction.OrderOfBaselinePolynomial + 1) + ib];
+      }
+    }
+
+    /// <summary>
+    /// Transfers the global parameter set to local parameters that can be used by the underlying peak fit function.
+    /// </summary>
+    /// <param name="indexOfSpectrum">The index of the spectrum.</param>
+    /// <param name="parameters">The global parameter vector.</param>
+    /// <remarks>
+    /// The layout of the global parameter vector is as follows:
+    /// <para>For each peak: all amplitudes of the spectra, followed by the other parameters of the peak.</para>
+    /// <para>For each spectrum: a block of baseline parameters.</para>
+    /// </remarks>
+    private void TransferGlobalToLocalParameters(int indexOfSpectrum, ReadOnlySpan<double> parameters)
     {
       int globalParametersPerPeak = _numberOfSpectra + _numberOfParametersPerPeakLocal - 1;
 

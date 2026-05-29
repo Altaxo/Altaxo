@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// i.e. tau is the retardation time (and not the relaxation time!).
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschModulusRetardation : IFitFunction
+  public record KohlrauschModulusRetardation : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
@@ -417,7 +417,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion parameter definition
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       double x = independent[0];
       if (_useFrequencyInsteadOmega)
@@ -507,19 +507,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       }
     }
-    /// <summary>
-    /// Called when anything in this fit function has changed.
-    /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
     #endregion IFitFunction Members
 
     /// <inheritdoc/>

@@ -371,8 +371,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _fitFunction = from._fitFunction;
       }
 
-      if (_fitFunction is not null)
-        _fitFunction.Changed += EhFitFunctionChanged;
+      if (_fitFunction is Main.IChangedEventSource changedEventSource)
+        changedEventSource.Changed += EhFitFunctionChanged;
 
       ChildCopyToMember<DataTableProxy>(ref _dataTable, from._dataTable);
       _groupNumber = from._groupNumber;
@@ -798,9 +798,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         if (!object.ReferenceEquals(_fitFunction, value))
         {
-          if (_fitFunction is not null)
+          if (_fitFunction is Main.IChangedEventSource changedEventSource1)
           {
-            _fitFunction.Changed -= EhFitFunctionChanged;
+            changedEventSource1.Changed -= EhFitFunctionChanged;
           }
 
           if (value is ICloneable fromFitFunc1)
@@ -814,9 +814,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
             _fitFunction = value;
           }
 
-          if (_fitFunction is not null)
+          if (_fitFunction is Main.IChangedEventSource changedEventSource2)
           {
-            _fitFunction.Changed += EhFitFunctionChanged;
+            changedEventSource2.Changed += EhFitFunctionChanged;
           }
 
           InternalCheckAndCorrectArraySize(false, false);

@@ -13,11 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Probability;
 using Altaxo.Collections;
 using Xunit;
 
@@ -286,7 +282,7 @@ namespace Altaxo.Calc.Ode
       var ode = new RK547M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1/8d, 1/8d, 10);
+      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
 
       var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -321,7 +317,7 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(10, listOfX.Count);
       for (int i = 0; i < 10; ++i)
-        Assert.Equal((i+1)/8d, listOfX[i]);
+        Assert.Equal((i + 1) / 8d, listOfX[i]);
 
       AssertEx.Less(maxRelErr, 2E-8);
     }
@@ -332,8 +328,8 @@ namespace Altaxo.Calc.Ode
       var ode = new RK547M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1/8d, 1/8d, 10);
-      var optionalPoints = OdeMethodOptions.GetEquidistantSequence(1/64d, 1/64d, 80);
+      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
+      var optionalPoints = OdeMethodOptions.GetEquidistantSequence(1 / 64d, 1 / 64d, 80);
 
       var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -368,7 +364,7 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(80, listOfX.Count);
       for (int i = 0; i < 80; ++i)
-        AssertEx.Equal((i+1)/64d, listOfX[i], 1E-12);
+        AssertEx.Equal((i + 1) / 64d, listOfX[i], 1E-12);
 
       AssertEx.Less(maxRelErr, 1.5E-8);
       AssertEx.Less(maxAbsErr, 1.2E-8);
@@ -377,7 +373,7 @@ namespace Altaxo.Calc.Ode
     [Fact]
     public void Test_ASSC_Diffusion()
     {
-      void CalcRates(double x, double[] y, double[] rates)
+      void CalcRates(double x, ReadOnlySpan<double> y, Span<double> rates)
       {
         for (int i = 0; i < y.Length; ++i)
         {

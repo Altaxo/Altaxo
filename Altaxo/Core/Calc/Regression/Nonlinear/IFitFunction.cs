@@ -34,9 +34,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// </summary>
   /// <param name="independent">The independent variables.</param>
   /// <param name="parameters">Parameters for evaluation.</param>
-  /// <param name="FV">On return, this array contains the one (or more) evaluated
+  /// <param name="FV">On return, this span contains the one (or more) evaluated
   /// function value(s) at the point designated by <paramref name="independent"/>.</param>
-  public delegate void FitEvaluationFunction(double[] independent, double[] parameters, double[] FV);
+  public delegate void FitEvaluationFunction(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> FV);
 
   /// <summary>
   /// Represents the interface to a fitting function.
@@ -100,9 +100,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="independent">The independent variables.</param>
     /// <param name="parameters">Parameters for evaluation.</param>
-    /// <param name="dependent">On return, this array contains the one (or more) evaluated
+    /// <param name="dependent">On return, this span contains the one (or more) evaluated
     /// function values at the point (independent).</param>
-    void Evaluate(double[] independent, double[] parameters, double[] dependent);
+    void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent);
 
     /// <summary>
     /// Evaluates the function values at multiple x-points.
@@ -118,11 +118,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// If this parameter is not null, only those dependent variables, for which the value is true, are included in the output vector (at least one element of this array must be true).
     /// </remarks>
     void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice);
-
-    /// <summary>
-    /// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.
-    /// </summary>
-    event EventHandler? Changed;
 
     /// <summary>
     /// Gets the parameter boundaries that are really a hard limit, i.e. outside those limits,

@@ -272,7 +272,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    public void Evaluate(double[] independent, double[] parameters, double[] dependent)
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
