@@ -102,6 +102,48 @@ References:
 
 </value>
   </data>
+  <data name="Chemistry.MassBasedFloryDistributionOfMPeak" xml:space="preserve">
+    <value>##### MassBasedFloryDistributionOfMPeak
+
+The molecular weight $M$ of a polymer which is synthesized in a reactor is often distributed according to a Flory distribution. The only parameter of this distribution (besides the area $A$) is the ratio $\tau$ of the probabilities of the termination step with respect to the chain prolongation step.
+
+This function evaluates a sum of mass based Flory distribution terms, plus a baseline polynomial with one or multiple terms, according to
+
+$$
+y(M) = A_0 \ln(10) \left ( \frac{2 M}{M_{Peak,0}} \right )^2 \exp\left ( -\frac{2 M}{M_{Peak,0}} \right ) + ... + A_{n-1} \ln(10) \left ( \frac{2 M}{M_{Peak,n-1}} \right )^2 \exp\left ( -\frac{2 M}{M_{Peak,n-1}} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas of the Flory terms (ATTENTION: only if integrated over the $log_{10}M$ x-axis!)
+
+- $\M_{Peak,0} ... \M_{Peak,n-1}$ are the molecular weights at the maximum value of the distributions.
+
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
+
+- $n$ is the number of Flory distribution terms ($n \geq 1$)
+
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
+
+The the number of Flory distribution terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$, corresponding to 1 term and no baseline. 
+
+There is an additional property named `IndependentVariableIsDecadicLogarithm`. If this property is set to true, it is assumed that the x-axis is not the molecular weight, but the decadic logarithm of the molecular weight $\log_{10}(M)$, which is often used in chemistry.
+
+The domain of the function is  $0 \leq M &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == false`) or $-\infty &lt; \log_{10}(M) &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == true`). 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistributionOfMPeak.Fig1.png){width=15cm}  
+^^^ Fig. 1: MassBasedFloryDistributionOfMPeak ($n=1$, $m=-1$) with $A_0=5$ and $M_{Peak,0}=10^6$.
+---
+
+References:  
+[1] [Flory-Schulz distribution in Wikipedia](https://en.wikipedia.org/wiki/Flory%E2%80%93Schulz_distribution)  
+[2] João B. P. Soares, 'Polyolefin microstructural deconvolution methods: The good, the bad, and the ugly', [ https://doi.org/10.1002/cjce.24833]( https://doi.org/10.1002/cjce.24833)
+
+
+
+</value>
+  </data>
   <data name="Chemistry.MassBasedFloryDistributionWithFixedGaussianBroadening" xml:space="preserve">
     <value>##### MassBasedFloryDistributionWithFixedGaussianBroadening
 

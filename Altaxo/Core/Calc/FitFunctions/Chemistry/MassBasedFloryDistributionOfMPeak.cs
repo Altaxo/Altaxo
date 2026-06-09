@@ -33,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 {
   /// <summary>
   /// Mass based Flory distribution based on the decadic logarithm of the molecular weight. It designates the mass based distribution of the molecular
-  /// weight after a polymerization reaction. The two parameters are the area A and the position of the highest value MPeak.
+  /// weight after a polymerization reaction. The two parameters are the area A and the molecular weight of the highest value MPeak.
   /// </summary>
   [FitFunctionClass]
   public record MassBasedFloryDistributionOfMPeak : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
