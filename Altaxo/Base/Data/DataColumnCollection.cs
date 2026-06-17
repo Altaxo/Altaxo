@@ -1200,6 +1200,23 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Copy all columns (but without data) from the source table.
+    /// </summary>
+    /// <param name="src">The source collection to copy the columns from.</param>
+    public void AddAllColumnsWithoutDataFrom(DataColumnCollection src)
+    {
+      using (var suspendToken = SuspendGetToken())
+      {
+        for (int i = 0; i < src.ColumnCount; i++)
+        {
+          var newCol = (DataColumn)Activator.CreateInstance(src[i].GetType())!;
+          Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+        }
+        suspendToken.Dispose();
+      }
+    }
+
+    /// <summary>
     /// Appends data columns from DataTable src to the data in this table.
     /// </summary>
     /// <param name="src">Source table.</param>
