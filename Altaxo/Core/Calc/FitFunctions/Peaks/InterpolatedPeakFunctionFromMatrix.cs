@@ -638,19 +638,27 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var width = parameters[2];
         var widthErr = cv is null ? 0 : SafeSqrt(cv[2, 2]);
         return (
-          position, positionErr,
-          height * AreaSpline.GetYOfX(width), height * Math.Abs(AreaSpline.GetYOfX(width + widthErr) - AreaSpline.GetYOfX(width - widthErr)) + heightErr * AreaSpline.GetYOfX(width),
-          height, heightErr,
-          FwhmSpline.GetYOfX(width), Math.Abs(FwhmSpline.GetYOfX(width + widthErr) - FwhmSpline.GetYOfX(width - widthErr))
+          position,
+          positionErr,
+          height * AreaSpline.GetYOfX(width),
+          height * Math.Abs(AreaSpline.GetYOfX(width + widthErr) - AreaSpline.GetYOfX(width - widthErr)) + heightErr * AreaSpline.GetYOfX(width),
+          height,
+          heightErr,
+          FwhmSpline.GetYOfX(width),
+          Math.Abs(FwhmSpline.GetYOfX(width + widthErr) - FwhmSpline.GetYOfX(width - widthErr))
           );
       }
-      else
+      else // property is peak position
       {
         return (
-          position, positionErr,
-          AreaSpline.GetYOfX(position), Math.Abs(AreaSpline.GetYOfX(position + positionErr) - AreaSpline.GetYOfX(position - positionErr)) + heightErr * AreaSpline.GetYOfX(position),
-          height, heightErr,
-          FwhmSpline.GetYOfX(position), Math.Abs(FwhmSpline.GetYOfX(position + positionErr) - FwhmSpline.GetYOfX(position - positionErr)));
+          position,
+          positionErr,
+          height * AreaSpline.GetYOfX(position),
+          height * Math.Abs(AreaSpline.GetYOfX(position + positionErr) - AreaSpline.GetYOfX(position - positionErr)) + heightErr * AreaSpline.GetYOfX(position),
+          height,
+          heightErr,
+          FwhmSpline.GetYOfX(position),
+          Math.Abs(FwhmSpline.GetYOfX(position + positionErr) - FwhmSpline.GetYOfX(position - positionErr)));
       }
     }
 
