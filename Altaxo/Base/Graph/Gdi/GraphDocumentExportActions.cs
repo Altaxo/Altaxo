@@ -24,17 +24,12 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
-using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main;
-using Altaxo.Main.Commands;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -496,7 +491,7 @@ namespace Altaxo.Graph.Gdi
 
       stream.Position = 0x04;
       var buf4 = new byte[4];
-      stream.Read(buf4, 0, 4);
+      stream.ReadExactly(buf4, 0, 4);
       int headerSize = BitConverter.ToInt32(buf4, 0); // Read the header size to make sure that Metafile header extension 2 is present
 
       // At position 0x08 there are the bounds of the graphic (not the bounding box, but the box for all the graphical elements)

@@ -42,7 +42,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Resets the statistics to their initial state.
     /// </summary>
-    public void Clear()
+    public virtual void Clear()
     {
       _n = 0;
       _ai = 0;
@@ -55,7 +55,7 @@ namespace Altaxo.Calc.Regression
     /// Adds a data point to the statistics.
     /// </summary>
     /// <param name="x">The value of the data point.</param>
-    public void Add(double x)
+    public virtual void Add(double x)
     {
       _n++;
       double aim1 = _ai;

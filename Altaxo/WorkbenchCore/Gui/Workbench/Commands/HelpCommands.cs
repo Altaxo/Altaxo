@@ -43,6 +43,7 @@ namespace Altaxo.Gui.Workbench.Commands
       System.Threading.Thread.Sleep(1000);
       var comMananger = Altaxo.Current.ComManager;
     }
+
   }
 
   /// <summary>

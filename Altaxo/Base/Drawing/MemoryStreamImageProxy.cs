@@ -193,7 +193,7 @@ namespace Altaxo.Drawing
       else
       {
         _streamBuffer = new byte[stream.Length];
-        stream.Read(_streamBuffer, 0, _streamBuffer.Length);
+        stream.ReadExactly(_streamBuffer, 0, _streamBuffer.Length);
       }
 
       if (string.IsNullOrEmpty(hash))

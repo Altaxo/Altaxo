@@ -33,6 +33,7 @@ using Altaxo.Gui.Common;
 using Altaxo.Gui.Data.Sorting;
 using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 using Altaxo.Scripting;
 using Altaxo.Serialization;
 using Altaxo.Serialization.BrukerOpus;
@@ -138,6 +139,27 @@ namespace Altaxo.Worksheet.Commands
         activeViewContent = Current.Workbench.ActiveViewContent;
 
       DataFileImporterBase.ImportShowReducedDialogsForAllTypes(activeViewContent);
+    }
+  }
+
+  /// <summary>
+  /// Shows a document that let the user bulk import data files and extract properties from the file names.
+  /// </summary>
+  public class ImportWithFileNameDerivedProperties : SimpleCommand
+  {
+    /// <inheritdoc/>
+    public override bool CanExecute(object? parameter)
+    {
+      return true;
+    }
+
+    /// <inheritdoc/>
+    public override void Execute(object? parameter)
+    {
+      var action = new Altaxo.Serialization.NamePropertyExtraction.ImportWithFileNameDerivedPropertiesAction();
+      var doc = new ActionDocument(Current.Project.Actions.FindNewItemName(), action);
+      Current.Project.Actions.Add(doc);
+      Current.ProjectService.ShowDocumentView(doc);
     }
   }
 

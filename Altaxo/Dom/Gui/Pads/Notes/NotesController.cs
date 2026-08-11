@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -146,6 +146,9 @@ namespace Altaxo.Gui.Pads.Notes
           break;
         case Altaxo.Gui.Text.Viewing.TextDocumentController ctrl4:
           notes = ctrl4.TextDocument.Notes;
+          break;
+        case Altaxo.Gui.Actions.Viewing.ActionDocumentController ctrl5:
+          notes = ctrl5.ActionDocument.Notes;
           break;
         default:
           notes = null;

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -59,6 +59,9 @@ namespace Altaxo
     /// <summary>Collection of all fit function scripts in this document.</summary>
     private Altaxo.Scripting.FitFunctionScriptCollection _fitFunctionScripts;
 
+    /// <summary>Collection of all action documents in this document.</summary>
+    private Altaxo.Main.ActionDocumentCollection _actionDocuments;
+
     /// <summary>A short string to identify the document. This string can be shown for instance in the graph windows.</summary>
     private DocumentInformation _documentInformation = new DocumentInformation();
 
@@ -76,6 +79,7 @@ namespace Altaxo
 
       _tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
       _fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection(this);
+      _actionDocuments = new ActionDocumentCollection(this);
       _projectFolders = new ProjectFolders(this);
     }
 
@@ -289,6 +293,27 @@ namespace Altaxo
       }
 
       // -------------------------------------------------------------------------------------------------
+      // Save all action documents
+      // -------------------------------------------------------------------------------------------------
+      foreach (var item in _actionDocuments)
+      {
+        try
+        {
+          var zipEntry = archiveToSaveTo.CreateEntry("Actions/" + FileIOHelper.GetValidPathNameFragment(item.Name) + ".xml");
+          using (var zs = zipEntry.OpenForWriting())
+          {
+            info.BeginWriting(zs);
+            info.AddValue("Action", item);
+            info.EndWriting();
+          }
+        }
+        catch (Exception exc)
+        {
+          errorText.Append(exc.ToString());
+        }
+      }
+
+      // -------------------------------------------------------------------------------------------------
       // Save all TableLayouts into the TableLayouts subdirectory
       // -------------------------------------------------------------------------------------------------
       foreach (Altaxo.Worksheet.WorksheetLayout layout in _tableLayouts)
@@ -411,6 +436,17 @@ namespace Altaxo
               info.EndReading();
             }
           }
+          else if (zipEntry.FullName.StartsWith("Actions/", StringComparison.Ordinal))
+          {
+            using (var zipinpstream = zipEntry.OpenForReading())
+            {
+              info.BeginReading(zipinpstream);
+              object readedobject = info.GetValue("Action", null);
+              if (readedobject is Altaxo.Main.ActionDocument actionDoc)
+                _actionDocuments.Add(actionDoc);
+              info.EndReading();
+            }
+          }
           else if (zipEntry.FullName.StartsWith("TableLayouts/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
@@ -521,6 +557,14 @@ namespace Altaxo
     public Altaxo.Text.TextDocumentCollection TextDocumentCollection
     {
       get { return _textDocuments; }
+    }
+
+    /// <summary>
+    /// Gets the collection of action documents stored in the document.
+    /// </summary>
+    public Altaxo.Main.ActionDocumentCollection Actions
+    {
+      get { return _actionDocuments; }
     }
 
     /// <summary>
@@ -670,6 +714,9 @@ namespace Altaxo
         case "Texts":
           return _textDocuments;
 
+        case "Actions":
+          return _actionDocuments;
+
         case "TableLayouts":
           return _tableLayouts;
 
@@ -698,6 +745,8 @@ namespace Altaxo
         return "Graphs3D";
       else if (object.ReferenceEquals(o, _textDocuments))
         return "Texts";
+      else if (object.ReferenceEquals(o, _actionDocuments))
+        return "Actions";
       else if (object.ReferenceEquals(o, _tableLayouts))
         return "TableLayouts";
       else if (object.ReferenceEquals(o, _fitFunctionScripts))
@@ -724,6 +773,9 @@ namespace Altaxo
 
       if (_textDocuments is not null)
         yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null!, "Text");
+
+      if (_actionDocuments is not null)
+        yield return new Main.DocumentNodeAndName(_actionDocuments, () => _actionDocuments = null!, "Actions");
 
       if (_tableLayouts is not null)
         yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null!, "TableLayouts");
@@ -757,6 +809,7 @@ namespace Altaxo
         yield return typeof(Altaxo.Graph.Gdi.GraphDocument);
         yield return typeof(Altaxo.Graph.Graph3D.GraphDocument);
         yield return typeof(Altaxo.Text.TextDocument);
+        yield return typeof(Altaxo.Main.ActionDocument);
         yield return typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument);
       }
     }
@@ -772,6 +825,7 @@ namespace Altaxo
         yield return GraphDocumentCollection;
         yield return Graph3DDocumentCollection;
         yield return TextDocumentCollection;
+        yield return Actions;
         yield return ProjectFolderProperties;
       }
     }
@@ -792,6 +846,8 @@ namespace Altaxo
         return Graph3DDocumentCollection;
       else if (type == typeof(Altaxo.Text.TextDocument))
         return TextDocumentCollection;
+      else if (type == typeof(Altaxo.Main.ActionDocument))
+        return Actions;
       else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
         return ProjectFolderProperties;
       else

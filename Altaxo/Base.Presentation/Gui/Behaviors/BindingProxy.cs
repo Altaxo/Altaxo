@@ -30,6 +30,18 @@ namespace Altaxo.Gui.Behaviors
   /// Binding proxy can be used to bind for instance commands to context menu items in listviews and treeviews.
   /// </summary>
   /// <remarks>
+  /// How to use: i) declare a resource at the place where the datacontext is available:
+  /// <code><![CDATA[
+  /// <DataGrid.Resources>
+  ///   <local:BindingProxy x:Key="proxy" Data="{Binding}" />
+  /// </DataGrid.Resources>
+  /// ]]>
+  /// </code>
+  /// Now, you can use the proxy in your context menu item bindings:
+  /// <code><![CDATA[
+  /// <MenuItem Header="Do something" Command="{Binding Source={StaticResource proxy}, Path=Data.YourCommand}" />
+  /// ]]>
+  /// </code>
   /// See also <see href="https://thomaslevesque.com/2011/03/21/wpf-how-to-bind-to-data-when-the-datacontext-is-not-inherited/"/>
   /// </remarks>
   public class BindingProxy : Freezable

@@ -196,7 +196,7 @@ namespace Altaxo.Drawing
         if (imgObject is Stream stream)
         {
           var streamBuffer = new byte[stream.Length];
-          stream.Read(streamBuffer, 0, streamBuffer.Length);
+          stream.ReadExactly(streamBuffer, 0, streamBuffer.Length);
           _streamBuffer ??= streamBuffer;
           stream.Dispose();
         }

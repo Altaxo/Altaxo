@@ -1179,4 +1179,18 @@
      	&lt;/DrawingImage.Drawing&gt;
 &lt;/DrawingImage&gt;</value>
   </data>
+  <data name="Icons.16x16.Action" xml:space="preserve">
+    <value>&lt;DrawingImage  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+ &lt;DrawingImage.Drawing&gt;
+          &lt;DrawingGroup&gt;
+            &lt;DrawingGroup.Children&gt;
+              &lt;GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" /&gt;
+              &lt;GeometryDrawing Brush="#FF212121" Geometry="F1M3,3V13H2V3ZM14,3V13H13V3Z" /&gt;
+              &lt;GeometryDrawing Brush="#19005dba" Geometry="F1M11.5,8l-7,4.375V3.625Z" /&gt;
+              &lt;GeometryDrawing Brush="#FF005dba" Geometry="F1M4.765,3.2,4,3.625v8.75l.765.424,7-4.375V7.576ZM5,11.473V4.527L10.557,8Z" /&gt;
+            &lt;/DrawingGroup.Children&gt;
+          &lt;/DrawingGroup&gt;
+     &lt;/DrawingImage.Drawing&gt;
+&lt;/DrawingImage&gt;</value>
+  </data>
 </root>

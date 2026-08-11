@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
+using Altaxo.Main;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -487,6 +489,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         // nothing to do, any name is possible here
       }
+      else if (item is IProjectItem pi && pi.ParentObject is IProjectItemCollection pic && pi is not ProjectFolderPropertyDocument)
+      {
+        if (pic.ContainsAnyName(fullName))
+          return "An item with the same name is already present in the project";
+      }
+
       else
       {
         return "Item renaming not supported!";
@@ -547,6 +555,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           Current.Project.Folders.RenameFolder(item.Name, fullName);
           return true;
         }
+        else if (item is IProjectItem pi && pi.ParentObject is IProjectItemCollection pic && pi is not ProjectFolderPropertyDocument)
+        {
+          if (!pic.ContainsAnyName(fullName))
+          {
+            pi.Name = fullName;
+            return true;
+          }
+        }
       }
       return false;
     }
@@ -590,6 +606,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     PropertyBag = 5,
     /// <summary>The text document image.</summary>
     TextDocument = 6,
+    /// <summary>The action document image.</summary>
+    ActionDocument = 7,
   }
 
   /// <summary>

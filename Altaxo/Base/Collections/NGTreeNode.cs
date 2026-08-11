@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -268,6 +267,18 @@ namespace Altaxo.Collections
         return _nodes is not null && _nodes.Count > 0;
       }
     }
+
+    /// <summary>
+    /// Return the number of child nodes.
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        return _nodes is not null ? _nodes.Count : 0;
+      }
+    }
+
 
     /// <summary>
     /// Collection of the child nodes of this node.
@@ -633,6 +644,19 @@ namespace Altaxo.Collections
       {
         int idx = selNodes[i].Index;
         parent._nodes!.Swap(idx, idx + 1);
+      }
+    }
+
+    /// <summary>
+    /// Limits the number of child nodes to the specified count. If there are more child nodes than the specified count, the excess nodes are removed from the end of the collection.
+    /// </summary>
+    /// <param name="count">The maximum number of child nodes allowed.</param>
+    public void LimitChildCountTo(int count)
+    {
+      if (_nodes is not null)
+      {
+        while (_nodes.Count > count)
+          _nodes.RemoveAt(_nodes.Count - 1);
       }
     }
 
