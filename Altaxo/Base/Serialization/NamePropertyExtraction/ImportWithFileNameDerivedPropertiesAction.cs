@@ -43,7 +43,12 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <summary>
     /// List of file names to import. The file names can contain wildcard characters (* and ?), which will be resolved to actual file paths.
     /// </summary>
-    public ImmutableList<string> FileNamesUnresolved { get; init; } = ImmutableList<string>.Empty;
+    public ImmutableList<string> FileNamePatternsIncluded { get; init; } = ImmutableList<string>.Empty;
+
+    /// <summary>
+    /// List of file names to import. The file names can contain wildcard characters (* and ?), which will be resolved to actual file paths.
+    /// </summary>
+    public ImmutableList<string> FileNamePatternsExcluded { get; init; } = ImmutableList<string>.Empty;
 
 
     /// <summary>
@@ -61,6 +66,11 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// Designate, which properties should be put into which property bag. The level indicates the level of the property bag, where 0 is the property bag of the target table, -1 is the property bag of the parent folder, -2 is the property bag of the grandparent folder, and so on.
     /// </summary>
     public ImmutableList<ActionPutToPropertyBag> ActionsOnProperties { get; init; } = ImmutableList<ActionPutToPropertyBag>.Empty;
+
+    /// <summary>
+    /// Gets or sets the behavior when there is a conflict with existing properties in the target property bag. The default is to override the existing properties with the new values.
+    /// </summary>
+    public BehaviorOnConflictWithExistingProperties BehaviorOnConflictWithExistingProperties { get; init; } = BehaviorOnConflictWithExistingProperties.Override;
 
     /// <summary>
     /// Gets or sets the name of a folder or atable that is used as a template if the target table does not exist.
@@ -81,35 +91,43 @@ namespace Altaxo.Serialization.NamePropertyExtraction
       public void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ImportWithFileNameDerivedPropertiesAction)o;
-        info.AddArray("FileNamesUnresolved", s.FileNamesUnresolved, s.FileNamesUnresolved.Count);
+        info.AddArray("FileNamesIncluded", s.FileNamePatternsIncluded, s.FileNamePatternsIncluded.Count);
+        info.AddArray("FileNamesExcluded", s.FileNamePatternsExcluded, s.FileNamePatternsExcluded.Count);
         info.AddValue("TargetTableNameTemplate", s.TargetTableNameTemplate);
         info.AddValue("NameSplitter", s.NameSplitter);
         info.AddArray("ActionsOnProperties", s.ActionsOnProperties, s.ActionsOnProperties.Count);
+        info.AddEnum("BehaviorOnConflictWithExistingProperties", s.BehaviorOnConflictWithExistingProperties);
         info.AddValue("FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing", s.FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing);
       }
 
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var fileNamesUnresolved = info.GetArrayOfStrings("FileNamesUnresolved").ToImmutableList();
+        var fileNamesUnresolved = info.GetArrayOfStrings("FileNamesIncluded").ToImmutableList();
+        var fileNamesExcluded = info.GetArrayOfStrings("FileNamesExcluded").ToImmutableList();
         var targetTableNameTemplate = info.GetString("TargetTableNameTemplate");
         var nameSplitter = info.GetValue<IPropertyExtractionTreeNode>("NameSplitter", null);
         var actionsOnProperties = info.GetArrayOfValues<ActionPutToPropertyBag>("ActionsOnProperties", null).ToImmutableList();
+        var behaviorOnConflictWithExistingProperties = info.GetEnum<BehaviorOnConflictWithExistingProperties>("BehaviorOnConflictWithExistingProperties");
         var folderOrTableNameUsedAsTemplateIfTargetTableIsMissing = info.GetString("FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing");
 
         return o is null ? new ImportWithFileNameDerivedPropertiesAction
         {
-          FileNamesUnresolved = fileNamesUnresolved,
+          FileNamePatternsIncluded = fileNamesUnresolved,
+          FileNamePatternsExcluded = fileNamesExcluded,
           TargetTableNameTemplate = targetTableNameTemplate,
           NameSplitter = nameSplitter,
           ActionsOnProperties = actionsOnProperties,
+          BehaviorOnConflictWithExistingProperties = behaviorOnConflictWithExistingProperties,
           FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = folderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
         } : ((ImportWithFileNameDerivedPropertiesAction)o) with
         {
-          FileNamesUnresolved = fileNamesUnresolved,
+          FileNamePatternsIncluded = fileNamesUnresolved,
+          FileNamePatternsExcluded = fileNamesExcluded,
           TargetTableNameTemplate = targetTableNameTemplate,
           NameSplitter = nameSplitter,
           ActionsOnProperties = actionsOnProperties,
+          BehaviorOnConflictWithExistingProperties = behaviorOnConflictWithExistingProperties,
           FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = folderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
         };
       }
@@ -322,7 +340,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     public void Execute(IProgressReporter reporter, params object[] args)
     {
       reporter?.ReportProgress("Scan file system and resolve file names", 0d);
-      var files = ResolveFileNames(FileNamesUnresolved, reporter.CancellationToken);
+      var files = ResolveFileNames(FileNamePatternsIncluded, reporter.CancellationToken);
       BulkImportFiles(files, reporter.CancellationToken, reporter);
     }
 

@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         if (!(field == value))
         {
           field = value;
-          _doc = _doc with { FileNamesUnresolved = GetUnresolvedFileNames().ToImmutableList() };
+          _doc = _doc with { FileNamePatternsIncluded = GetUnresolvedFileNames().ToImmutableList() };
           OnPropertyChanged(nameof(FileNames));
           OnMadeDirty();
           EhResolveFileNames();
@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       if (initData)
       {
-        FileNames = string.Join(Environment.NewLine, _doc.FileNamesUnresolved);
+        FileNames = string.Join(Environment.NewLine, _doc.FileNamePatternsIncluded);
         TableTargetName = _doc.TargetTableNameTemplate;
         var treeController = new PropertyExtractionTreeController();
         treeController.InitializeDocument(_doc.NameSplitter);
@@ -579,7 +579,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       _doc = _doc with
       {
-        FileNamesUnresolved = GetUnresolvedFileNames().ToImmutableList(),
+        FileNamePatternsIncluded = GetUnresolvedFileNames().ToImmutableList(),
         NameSplitter = (IPropertyExtractionTreeNode)TreeController.ModelObject,
         TargetTableNameTemplate = TableTargetName,
         FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
