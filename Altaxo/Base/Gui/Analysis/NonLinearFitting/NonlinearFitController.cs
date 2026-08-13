@@ -533,7 +533,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void EhFitEnsemble_Changed(object sender, EventArgs e)
     {
-      _parameterController?.InitializeDocument(_doc.CurrentParameters);
+      // by bubbling up from changed events when simulating the fit curve,
+      // the thread here may not be the GUI thread, so we have to check if we are on the GUI thread and if not, we have to invoke the initialization of the parameter controller on the GUI thread
+      if (Current.Dispatcher.CheckAccess())
+      {
+        _parameterController?.InitializeDocument(_doc.CurrentParameters);
+      }
+      else
+      {
+        Current.Dispatcher.BeginInvoke(new Action(() => _parameterController?.InitializeDocument(_doc.CurrentParameters)), null);
+      }
 
     }
 
@@ -919,6 +928,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       simulationThread.Start();
       Current.Gui.ShowBackgroundCancelDialog(10000, simulationThread, null);
+
+      Current.Gui.InfoMessageBox("Simulation finished. The data are located in the same worksheet tables as the fit data.");
     }
 
     private enum SelectionChoice { SelectAsOnly, SelectAsAdditional, SelectAsReplacementForAllExisting };
@@ -1429,19 +1440,22 @@ Label_EditScript:
         }
         else // use only the used dependent variables
         {
-          int[] inUse = fitAdapter.GetDependentVariablesInUse(i);
+          bool[] inUse = fitAdapter.GetDependentVariablesInUse(i);
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < inUse.Length; ++k)
           {
+            if (!inUse[k])
+              continue;
+
             var col = new DoubleColumn();
             for (int j = 0; j < validRows.Count; j++)
               col[validRows[j]] = resultingValues[startOfDependentValues + k + j * inUse.Length];
 
             string name = null;
             int groupNumber = 0;
-            if (fitEle.DependentVariables(inUse[k]) is DataColumn)
+            if (fitEle.DependentVariables(k) is DataColumn)
             {
-              var srcCol = (DataColumn)fitEle.DependentVariables(inUse[k]);
+              var srcCol = (DataColumn)fitEle.DependentVariables(k);
               var srcTable = DataColumnCollection.GetParentDataColumnCollectionOf(srcCol);
               if (srcTable is not null)
               {
@@ -1450,7 +1464,7 @@ Label_EditScript:
               }
             }
             if (name is null)
-              fitEle.FitFunction.DependentVariableName(inUse[k]);
+              fitEle.FitFunction.DependentVariableName(k);
 
             parentTable.DataColumns.Add(col, name + ".Sim", ColumnKind.V, groupNumber);
           }
@@ -1516,10 +1530,15 @@ Label_EditScript:
         }
         else // use only the used dependent variables
         {
-          int[] inUse = fitAdapter.GetDependentVariablesInUse(i);
+          bool[] inUse = fitAdapter.GetDependentVariablesInUse(i);
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < inUse.Length; ++k)
-            parentTable.DataColumns.Add(yCols[inUse[k]], fitEle.FitFunction.DependentVariableName(inUse[k]) + ".Sim", ColumnKind.V, newGroup);
+          {
+            if (inUse[k])
+            {
+              parentTable.DataColumns.Add(yCols[k], fitEle.FitFunction.DependentVariableName(k) + ".Sim", ColumnKind.V, newGroup);
+            }
+          }
         }
       }
     }
