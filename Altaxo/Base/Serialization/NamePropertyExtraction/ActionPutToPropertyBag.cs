@@ -30,7 +30,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
   /// <summary>
   /// Represents an action to put a property into a property bag at a specified level during the import process. The level indicates the hierarchy of the property bag, where 0 is the property bag of the target table, -1 is the property bag of the parent folder, -2 is the property bag of the grandparent folder, and so on.
   /// </summary>
-  public record ActionPutToPropertyBag
+  public record ActionPutToPropertyBag : IActionOnProperty
   {
     /// <summary>
     /// Gets or sets the name of the property to be put into the property bag.
@@ -52,6 +52,10 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         field = value;
       }
     }
+
+    /// <inheritdoc/>
+    public string Description => $"Put property to {(Level switch { 0 => "target table", -1 => "target folder", _ => $"folder level {Level}" })}";
+
 
     #region Serialization
 

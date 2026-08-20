@@ -195,6 +195,9 @@
     <Compile Update="Gui\Science\Thermorheology\MasterCurveImprovementOptionsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Serialization\NamePropertyExtraction\ActionPutToPropertyBagControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Serialization\NamePropertyExtraction\NameSplitterBySeparatorStringControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

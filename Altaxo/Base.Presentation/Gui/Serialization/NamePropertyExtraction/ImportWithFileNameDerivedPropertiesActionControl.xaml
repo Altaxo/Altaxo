@@ -101,28 +101,29 @@
 
             <Label Grid.Row="20" Grid.Column="0" Content="Actions to put properties into the property bag:" />
 
-            <DataGrid Grid.Row="22"
+            <ListView Grid.Row="22"
                   Grid.Column="0"
                   MinHeight="80"
-                  ItemsSource="{Binding ActionsPutToPropertyBag}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="True"
-                  CanUserDeleteRows="True"
-                  CanUserResizeColumns="True"
+                  ItemsSource="{Binding ActionsPutToPropertyBag.Items}"
+                      SelectedItem="{Binding ActionsPutToPropertyBag.SelectedItem}"
                   >
-                <DataGrid.Columns>
-                    <DataGridComboBoxColumn Header="Property name"  
-                                        ItemsSource="{Binding Source={StaticResource gcontext}, Path=Data.PropertyNames}"
-                                        SelectedValueBinding="{Binding Name}" />
-                    <DataGridTemplateColumn Header="Level">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <axogc:Int32UpDown Value="{Binding Level}" Minimum="-1000" Maximum="0" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Add 'Put to Property Bag'" Command="{Binding Source={StaticResource gcontext}, Path=Data.CmdAddActionPutToPropertyBag}" />
+                        <MenuItem Header="Add conditional template" Command="{Binding Source={StaticResource gcontext}, Path=Data.CmdAddActionConditionalTemplate}" />
+                        <MenuItem Header="Edit..." Command="{Binding Source={StaticResource gcontext}, Path=Data.CmdEditAction}" />
+                        <MenuItem Header="Delete" Command="{Binding Source={StaticResource gcontext}, Path=Data.CmdDeleteAction}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="Property name" DisplayMemberBinding="{Binding Text}" />
+                            <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Tag.Description}" />
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
             <Expander Header="Property bag preview" Grid.Row="24">
                 <DataGrid ItemsSource="{Binding RowsOfPropertyBagPreview}"

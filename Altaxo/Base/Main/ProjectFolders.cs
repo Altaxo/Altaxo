@@ -883,9 +883,9 @@ namespace Altaxo.Main
     /// <param name="destinationFolderName">Name of the destination folder.</param>
     /// <param name="includeSubfolders">If set to <c>true</c>, items in subfolders are included in the operation, too.</param>
     /// <param name="relocateReferences">If set to <c>true</c>, the references inbetween the copied items are maintained.</param>
-    /// <param name="overwriteExistingItemsOfSameType">If set to <c>true</c>, existing items of same type will be overwritten. If set to <c>false</c>, and an items of same type and name already exists, a new name is given to the copied item.</param>
+    /// <param name="overwriteExistingItems">Specifies the action to take when a item already exists in the target location during the copy operation.</param>
     /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
-    public void CopyItemsFromFolderToFolder(string sourceFolderName, string destinationFolderName, bool includeSubfolders = true, bool relocateReferences = true, bool overwriteExistingItemsOfSameType = false, bool throwIfFolderDoesNotExists = true)
+    public void CopyItemsFromFolderToFolder(string sourceFolderName, string destinationFolderName, bool includeSubfolders = true, bool relocateReferences = true, OverwriteBehavior overwriteExistingItems = OverwriteBehavior.Rename, bool throwIfFolderDoesNotExists = true)
     {
       var items = includeSubfolders ? new List<object>(GetItemsAndSubfoldersInFolder(sourceFolderName, throwIfFolderDoesNotExists)) : new List<object>(GetItemsInFolder(sourceFolderName, throwIfFolderDoesNotExists));
 
@@ -895,7 +895,7 @@ namespace Altaxo.Main
         relocateOptions = new Altaxo.Main.DocNodePathReplacementOptions();
         relocateOptions.AddPathReplacementsForAllProjectItemTypes(sourceFolderName, destinationFolderName);
       }
-      CopyItemsToFolder(items, destinationFolderName, relocateOptions is null ? null : relocateOptions.Visit, overwriteExistingItemsOfSameType: overwriteExistingItemsOfSameType);
+      CopyItemsToFolder(items, destinationFolderName, relocateOptions is null ? null : relocateOptions.Visit, overwriteExistingItems: overwriteExistingItems);
     }
 
     /// <summary>
@@ -946,14 +946,14 @@ namespace Altaxo.Main
     /// <param name="list">List of items to copy.</param>
     /// <param name="destinationFolderName">Destination folder name.</param>
     /// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-    /// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
-    public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter? ReportProxies, bool overwriteExistingItemsOfSameType)
+    /// <param name="overwriteExistingItems">Specifies the action to take when an item with the same name already exists in the target location.</param>
+    public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter? ReportProxies, OverwriteBehavior overwriteExistingItems)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
       foreach (object item in list)
       {
-        CopyItemToFolder(item, destinationFolderName, ReportProxies, overwriteExistingItemsOfSameType);
+        CopyItemToFolder(item, destinationFolderName, ReportProxies, overwriteExistingItems);
       }
     }
 
@@ -963,8 +963,8 @@ namespace Altaxo.Main
     /// <param name="item">Item to copy. Has to be either a <see cref="ProjectFolder"/>, or a project item (<see cref="IProjectItem"/>).</param>
     /// <param name="destinationFolderName">Destination folder name.</param>
     /// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-    /// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
-    public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter? ReportProxies, bool overwriteExistingItemsOfSameType)
+    /// <param name="overwriteExistingItems">Specifies the action to take when an item with the same name already exists in the target location.</param>
+    public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter? ReportProxies, OverwriteBehavior overwriteExistingItems)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
@@ -979,18 +979,25 @@ namespace Altaxo.Main
         {
           var oldItemFolder = ProjectFolder.GetFolderPart(subitem.Name);
           var newItemFolder = oldItemFolder.Replace(orgName, destName);
-          CopyItemToFolder(subitem, newItemFolder, ReportProxies, overwriteExistingItemsOfSameType);
+          CopyItemToFolder(subitem, newItemFolder, ReportProxies, overwriteExistingItems);
         }
       }
       else if (item is IProjectItem projectItem)
       {
         var orgName = projectItem.Name;
+        var destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+
+        if (overwriteExistingItems == OverwriteBehavior.Skip && AltaxoDocument.TryGetExistingItemWithSameTypeAndName(projectItem, out var existingItem))
+        {
+          return; // skip this item
+        }
+
         var clonedItem = (IProjectItem)projectItem.Clone();
         clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 
-        if (overwriteExistingItemsOfSameType)
+        if (overwriteExistingItems == OverwriteBehavior.Overwrite)
         {
-          if (AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem, out var existingItem))
+          if (AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem, out existingItem))
           {
             Current.IProjectService.DeleteDocument(existingItem, true);
           }
@@ -1072,6 +1079,23 @@ namespace Altaxo.Main
         parentNode.Nodes.Add(folderNode);
       }
       return folderNode;
+    }
+
+    /// <summary>
+    /// Get all project items with the specified name.
+    /// </summary>
+    /// <param name="itemName">The name of the project items to retrieve.</param>
+    /// <returns>A list of project items with the specified name.</returns>
+    public List<IProjectItem> GetProjectItemsByName(string itemName)
+    {
+      var items = new List<IProjectItem>();
+
+      foreach (var coll in AltaxoDocument.ProjectItemCollections)
+      {
+        if (coll.ContainsAnyName(itemName))
+          items.Add(coll[itemName]);
+      }
+      return items;
     }
 
     #endregion Helper Gui Functions

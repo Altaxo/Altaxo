@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Altaxo.Data;
+using Altaxo.Main;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Serialization.NamePropertyExtraction
@@ -65,7 +66,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <summary>
     /// Designate, which properties should be put into which property bag. The level indicates the level of the property bag, where 0 is the property bag of the target table, -1 is the property bag of the parent folder, -2 is the property bag of the grandparent folder, and so on.
     /// </summary>
-    public ImmutableList<ActionPutToPropertyBag> ActionsOnProperties { get; init; } = ImmutableList<ActionPutToPropertyBag>.Empty;
+    public ImmutableList<IActionOnProperty> ActionsOnProperties { get; init; } = ImmutableList<IActionOnProperty>.Empty;
 
     /// <summary>
     /// Gets or sets the behavior when there is a conflict with existing properties in the target property bag. The default is to override the existing properties with the new values.
@@ -78,6 +79,12 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// if the string represents a table, the table is copied to the target table before importing the files.
     /// </summary>
     public string FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether existing items in the target folder should be overridden when copying the project items using <see cref="FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing"/>.
+    /// </summary>
+    public OverwriteBehavior OverwriteProjectItems { get; init; } = OverwriteBehavior.Overwrite;
+
 
     #region Serialization
 
@@ -98,6 +105,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         info.AddArray("ActionsOnProperties", s.ActionsOnProperties, s.ActionsOnProperties.Count);
         info.AddEnum("BehaviorOnConflictWithExistingProperties", s.BehaviorOnConflictWithExistingProperties);
         info.AddValue("FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing", s.FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing);
+        info.AddEnum("OverwriteProjectItems", s.OverwriteProjectItems);
       }
 
       /// <inheritdoc/>
@@ -107,9 +115,12 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         var fileNamesExcluded = info.GetArrayOfStrings("FileNamesExcluded").ToImmutableList();
         var targetTableNameTemplate = info.GetString("TargetTableNameTemplate");
         var nameSplitter = info.GetValue<IPropertyExtractionTreeNode>("NameSplitter", null);
-        var actionsOnProperties = info.GetArrayOfValues<ActionPutToPropertyBag>("ActionsOnProperties", null).ToImmutableList();
+        var actionsOnProperties = info.GetArrayOfValues<IActionOnProperty>("ActionsOnProperties", null).ToImmutableList();
         var behaviorOnConflictWithExistingProperties = info.GetEnum<BehaviorOnConflictWithExistingProperties>("BehaviorOnConflictWithExistingProperties");
         var folderOrTableNameUsedAsTemplateIfTargetTableIsMissing = info.GetString("FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing");
+        OverwriteBehavior overwriteProjectItems = OverwriteBehavior.Overwrite;
+        if (info.CurrentElementName == "OverwriteProjectItems")
+          overwriteProjectItems = info.GetEnum<OverwriteBehavior>("OverwriteProjectItems");
 
         return o is null ? new ImportWithFileNameDerivedPropertiesAction
         {
@@ -120,6 +131,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
           ActionsOnProperties = actionsOnProperties,
           BehaviorOnConflictWithExistingProperties = behaviorOnConflictWithExistingProperties,
           FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = folderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
+          OverwriteProjectItems = overwriteProjectItems,
         } : ((ImportWithFileNameDerivedPropertiesAction)o) with
         {
           FileNamePatternsIncluded = fileNamesUnresolved,
@@ -129,6 +141,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
           ActionsOnProperties = actionsOnProperties,
           BehaviorOnConflictWithExistingProperties = behaviorOnConflictWithExistingProperties,
           FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = folderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
+          OverwriteProjectItems = overwriteProjectItems,
         };
       }
     }
@@ -141,7 +154,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="properties">The enumeration of property names and values to replace the placeholders.</param>
     /// <returns>The target table name with placeholders replaced by actual property values.</returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static string GetTableName(string targetTemplateName, IEnumerable<(string PropertyName, object PropertyValue)> properties)
+    public static string GetProjectItemNameFromTemplateName(string targetTemplateName, IEnumerable<(string PropertyName, object PropertyValue)> properties)
     {
       // assume that the TargetName is a string in interpolated string format, even with the usual C# syntax
       // e.g. "MyTable_{Date}_{Experiment}
@@ -190,19 +203,38 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="targetTemplateName">The target template name with placeholders.</param>
     /// <param name="nameSplitter">The name splitter used to extract properties from file names.</param>
     /// <returns>A dictionary mapping target table names to lists of file paths.</returns>
-    public static Dictionary<string, List<string>> GetTableNamesToFileNamesRelationship(IEnumerable<string> filePaths, string targetTemplateName, IPropertyExtractionTreeNode nameSplitter)
+    public static Dictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)> GetTableNamesToFileNamesRelationship(IEnumerable<string> filePaths, string targetTemplateName, IPropertyExtractionTreeNode nameSplitter)
     {
-      var relationship = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+      var relationship = new Dictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)>(StringComparer.OrdinalIgnoreCase);
       foreach (var filePath in filePaths)
       {
         var properties = nameSplitter.ExtractProperties(filePath);
-        var targetTableName = GetTableName(targetTemplateName, properties);
-        if (!relationship.TryGetValue(targetTableName, out var files))
+        var targetTableName = GetProjectItemNameFromTemplateName(targetTemplateName, properties);
+        if (!relationship.TryGetValue(targetTableName, out var filesAndProps))
         {
-          files = new List<string>();
-          relationship[targetTableName] = files;
+          filesAndProps = (new List<string>(), new Dictionary<string, object>());
+          relationship[targetTableName] = filesAndProps;
         }
-        files.Add(filePath);
+        if (!filesAndProps.FileNames.Contains(filePath, StringComparer.OrdinalIgnoreCase))
+        {
+          filesAndProps.FileNames.Add(filePath);
+        }
+
+        foreach (var prop in properties)
+        {
+          if (!filesAndProps.CommonProperties.ContainsKey(prop.PropertyName))
+          {
+            filesAndProps.CommonProperties[prop.PropertyName] = prop.PropertyValue;
+          }
+          else
+          {
+            // If the property already exists, check if the value is the same. If not, remove it from common properties.
+            if (!object.Equals(filesAndProps.CommonProperties[prop.PropertyName], prop.PropertyValue))
+            {
+              filesAndProps.CommonProperties.Remove(prop.PropertyName);
+            }
+          }
+        }
       }
       return relationship;
     }
@@ -237,14 +269,14 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="actionsOnProperties">The actions to perform on the extracted properties.</param>
     /// <returns>A list of tuples containing the target item kind, project item name, property name, and property value.</returns>
     /// <exception cref="Exception"></exception>
-    public static List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue)> GetPropertiesPlacedInProjectItems(IEnumerable<string> filePaths, IPropertyExtractionTreeNode nameSplitter, string targetTemplateName, IEnumerable<ActionPutToPropertyBag> actionsOnProperties)
+    public static List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue)> GetPropertiesPlacedInProjectItems(IEnumerable<string> filePaths, IPropertyExtractionTreeNode nameSplitter, string targetTemplateName, IEnumerable<IActionOnProperty> actionsOnProperties)
     {
       var result = new List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue)>();
       foreach (var filePath in filePaths)
       {
         var properties = nameSplitter.ExtractProperties(filePath);
-        var targetTableName = GetTableName(targetTemplateName, properties);
-        foreach (var action in actionsOnProperties)
+        var targetTableName = GetProjectItemNameFromTemplateName(targetTemplateName, properties);
+        foreach (var action in actionsOnProperties.OfType<ActionPutToPropertyBag>())
         {
           // get the property value from the properties extracted from the file name
 
@@ -293,7 +325,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="targetTemplateName">The target template name to use for determining the target table name.</param>
     /// <param name="actionsOnProperties">The actions to perform on the extracted properties.</param>
     /// <returns>A list of tuples containing the target item kind, project item name, property name, property value, and diagnostic message.</returns>
-    public static List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue, string Diagnostic)> GetPropertiesPlacedInProjectItemsWithDiagnostics(IEnumerable<string> filePaths, IPropertyExtractionTreeNode nameSplitter, string targetTemplateName, IEnumerable<ActionPutToPropertyBag> actionsOnProperties)
+    public static List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue, string Diagnostic)> GetPropertiesPlacedInProjectItemsWithDiagnostics(IEnumerable<string> filePaths, IPropertyExtractionTreeNode nameSplitter, string targetTemplateName, IEnumerable<IActionOnProperty> actionsOnProperties)
     {
       // Test the consistency of the property values: each tuple of(TargetItemKind, ProjectItemName, PropertyName) should have the same property value for all file paths. If not, we will add a diagnostic message to the result.
       var dict1 = new Dictionary<(TargetItemKind Kind, string ProjectItemName, string PropertyName), (object PropertyValue, string Diagnostic)>();
@@ -348,14 +380,13 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// Ensures the existence of the target table with the specified name. If the table does not exist, it will be created. If a folder or table is specified as a template, it will be used to create the target table if it is missing.
     /// </summary>
     /// <param name="targetTableName">The name of the target table.</param>
+    /// <param name="properties">The properties to be used for conditional template matching.</param>
     /// <returns>The existing or newly created target table.</returns>
-    public Altaxo.Data.DataTable EnsureExistenceOfTargetTable(string targetTableName)
+    public Altaxo.Data.DataTable EnsureExistenceOfTargetTable(string targetTableName, IReadOnlyDictionary<string, object> properties)
     {
-      if (Current.Project.DataTableCollection.TryGetValue(targetTableName, out var targetTable))
-      {
-        return targetTable;
-      }
+      var targetFolder = Altaxo.Main.ProjectFolder.GetFolderPart(targetTableName);
 
+      // First of all, use the common template
       if (!string.IsNullOrEmpty(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing))
       {
         if (Current.Project.DataTableCollection.TryGetValue(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing, out var templateTable))
@@ -366,7 +397,6 @@ namespace Altaxo.Serialization.NamePropertyExtraction
           return newTable;
         }
 
-        var targetFolder = Altaxo.Main.ProjectFolder.GetFolderPart(targetTableName);
         if (Altaxo.Main.ProjectFolder.IsValidFolderName(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing) &&
             Current.Project.Folders.GetItemsInFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing).Any() &&
             !Current.Project.Folders.GetItemsInFolder(targetFolder).Any())
@@ -375,8 +405,38 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         }
       }
 
+      // Second, lets see if we have conditional templates
+      var conditionalTemplates = ActionsOnProperties.OfType<IActionConditionForTemplate>().ToList();
 
-      if (Current.Project.DataTableCollection.TryGetValue(targetTableName, out targetTable))
+      if (conditionalTemplates.Count > 0)
+      {
+        foreach (var conditionalTemplate in conditionalTemplates)
+        {
+          if (conditionalTemplate.Matches(properties))
+          {
+            foreach (var itemNameTemplate in conditionalTemplate.ProjectItemsUsedAsTemplate)
+            {
+              var itemName = GetProjectItemNameFromTemplateName(itemNameTemplate, properties.Select(kvp => (kvp.Key, kvp.Value)));
+
+              if (ProjectFolder.IsValidFolderName(itemName))
+              {
+
+              }
+              else
+              {
+                var sourceItems = Current.Project.Folders.GetProjectItemsByName(itemName);
+                if (sourceItems.Count == 0)
+                {
+                  continue;
+                }
+                Current.Project.Folders.CopyItemsToFolder(sourceItems.ToList<object>(), targetFolder, null, conditionalTemplate.OverwriteProjectItems);
+              }
+            }
+          }
+        }
+      }
+
+      if (Current.Project.DataTableCollection.TryGetValue(targetTableName, out var targetTable))
       {
         return targetTable;
       }
@@ -410,12 +470,12 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         progressReporter?.Report(($"Import into table '{tableNameToFileNames.Key}'", index / tableNamesToFileNames.Count));
         ++index;
 
-        var targetTable = EnsureExistenceOfTargetTable(tableNameToFileNames.Key);
+        var targetTable = EnsureExistenceOfTargetTable(tableNameToFileNames.Key, tableNameToFileNames.Value.CommonProperties);
         tableNamesToTables[tableNameToFileNames.Key] = targetTable;
 
         if (targetTable.DataSource is FileImportTableDataSourceBase fitds)
         {
-          fitds.SourceFileNames = tableNameToFileNames.Value;
+          fitds.SourceFileNames = tableNameToFileNames.Value.FileNames;
           fitds.FillData(targetTable, DummyProgressReporter.Instance);
         }
         else
@@ -424,11 +484,11 @@ namespace Altaxo.Serialization.NamePropertyExtraction
                    .Select(x => (IDataFileImporter)Activator.CreateInstance(x))
                    .ToList();
 
-          var importer = DataFileImporterBase.GetDataFileImporterForFile(tableNameToFileNames.Value.First(), importers);
+          var importer = DataFileImporterBase.GetDataFileImporterForFile(tableNameToFileNames.Value.FileNames.First(), importers);
 
           var importOptions = importer.CheckOrCreateImportOptions(null);
 
-          var newDS = importer.CreateTableDataSource(tableNameToFileNames.Value, importOptions);
+          var newDS = importer.CreateTableDataSource(tableNameToFileNames.Value.FileNames, importOptions);
           targetTable.DataSource = newDS;
           newDS?.FillData(targetTable, DummyProgressReporter.Instance);
         }
@@ -442,7 +502,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         {
           throw new Exception($"Inconsistent property value for {entry.Kind} '{entry.ProjectItemName}', property '{entry.PropertyName}': {entry.Diagnostic}");
         }
-        Main.Properties.PropertyBag pb;
+        Main.Properties.PropertyBag? pb = null;
         switch (entry.Kind)
         {
           case TargetItemKind.PropertyDocument:
@@ -454,19 +514,17 @@ namespace Altaxo.Serialization.NamePropertyExtraction
             pb = pbdoc.PropertyBagNotNull;
             break;
           case TargetItemKind.Table:
-            if (!tableNamesToTables.TryGetValue(entry.ProjectItemName, out var targetTable))
+            if (tableNamesToTables.TryGetValue(entry.ProjectItemName, out var targetTable))
             {
-              targetTable = EnsureExistenceOfTargetTable(entry.ProjectItemName);
-              tableNamesToTables[entry.ProjectItemName] = targetTable;
+              pb = targetTable.PropertyBagNotNull;
             }
-            pb = targetTable.PropertyBagNotNull;
             break;
           case TargetItemKind.TableColumns:
             throw new NotImplementedException("Setting properties on table columns is not implemented yet.");
           default:
             throw new Exception($"Unknown TargetItemKind: {entry.Kind}");
         }
-        pb.SetValue(entry.PropertyName, entry.PropertyValue);
+        pb?.SetValue(entry.PropertyName, entry.PropertyValue);
       }
       ;
 

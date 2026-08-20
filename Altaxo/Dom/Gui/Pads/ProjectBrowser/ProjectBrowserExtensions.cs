@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           relocateOptions = new DocNodePathReplacementOptions();
           relocateOptions.AddPathReplacementsForAllProjectItemTypes(originalFolderName, newFolderName);
         }
-        Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, dlgDoc.OverwriteExistingItems);
+        Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, dlgDoc.OverwriteExistingItems ? OverwriteBehavior.Overwrite : OverwriteBehavior.Rename);
       }
     }
 
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
       }
 
-      Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
+      Current.Project.Folders.CopyItemsToFolder(list, newFolderName, relocateOptions is not null ? relocateOptions.Visit : (DocNodeProxyReporter)null, OverwriteBehavior.Rename);
     }
 
     /// <summary>

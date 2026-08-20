@@ -26,12 +26,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization.NamePropertyExtraction;
 
 namespace Altaxo.Gui.Serialization.NamePropertyExtraction
@@ -206,62 +207,12 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       }
     }
 
-
-
-    /// <summary>
-    /// Gets or sets the list of actions to be performed on properties during the import process. 
-    /// </summary>
-    public class EditableTuple : INotifyPropertyChanged
-    {
-      /// <inheritdoc />
-      public event PropertyChangedEventHandler? PropertyChanged;
-
-      private void OnPropertyChanged(string propertyName)
-      {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-      }
-
-      /// <summary>
-      /// Gets or sets the level of the property bag where the property should be put. A level of 0 indicates the property bag of the target table, -1 indicates the property bag of the parent folder, -2 indicates the property bag of the grandparent folder, and so on.
-      /// </summary>
-
-      public int Level
-      {
-        get => field;
-        set
-        {
-          if (!(field == value))
-          {
-            field = value;
-            OnPropertyChanged(nameof(Level));
-          }
-        }
-      }
-
-      /// <summary>
-      /// Gets or sets the name of the property to be put into the property bag. This property is bound to the view and is used to specify the name of the property that will be extracted from the file names and added to the appropriate property bag during the import process.
-      /// </summary>
-
-      public String Name
-      {
-        get => field;
-        set
-        {
-          if (!(field == value))
-          {
-            field = value;
-            OnPropertyChanged(nameof(Name));
-          }
-        }
-      }
-
-    }
-
     /// <summary>
     /// Gets or sets the collection of actions to be performed on properties during the import process. Each action specifies a property name and the level of the property bag where the property should be put. This collection is bound to the view and allows users to manage the actions that will be applied to properties extracted from file names during the import process.
     /// </summary>
 
-    public Altaxo.Collections.ObservableCollectionWithItemsNotifyPropertyChanged<EditableTuple> ActionsPutToPropertyBag
+
+    public ItemsController<IActionOnProperty> ActionsPutToPropertyBag
     {
       get => field;
       set
@@ -273,6 +224,80 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         }
       }
     }
+
+    /// <summary>
+    /// Gets the command to add an action to put a property into the property bag. This command is bound to the view and is triggered when the user initiates the action to add a new property action. The command executes the EhCmdAddActionPutToPropertyBag method, which handles the logic for adding a new action to the collection of actions that will be applied during the import process.
+    /// </summary>
+    public ICommand CmdAddActionPutToPropertyBag => field ??= new RelayCommand(EhCmdAddActionPutToPropertyBag);
+
+    private void EhCmdAddActionPutToPropertyBag()
+    {
+      var item = new ActionPutToPropertyBag
+      {
+        PropertyName = PropertyNames.FirstOrDefault() ?? string.Empty,
+        Level = 0,
+      };
+
+      if (Current.Gui.ShowDialog(ref item, "Add action to put property to property bag", showApplyButton: false))
+      {
+        ActionsPutToPropertyBag.Items.Add(new SelectableListNode(item.PropertyName, item, false));
+      }
+    }
+
+    /// <summary>
+    /// Gets the command to add an action that conditionally copies project items to a target folder based on a specified condition. This command is bound to the view and is triggered when the user initiates the action to add a new conditional action. The command executes the EhCmdAddActionConditionalTemplate method, which handles the logic for adding a new conditional action to the collection of actions that will be applied during the import process.
+    /// </summary>
+    public ICommand CmdAddActionConditionalTemplate => field ??= new RelayCommand(EhCmdAddActionConditionalTemplate);
+
+    private void EhCmdAddActionConditionalTemplate()
+    {
+      var item = new ActionTextConditionForTemplate
+      {
+        PropertyName = PropertyNames.FirstOrDefault() ?? string.Empty,
+        Condition = string.Empty,
+        ProjectItemsUsedAsTemplate = ImmutableList<string>.Empty,
+      };
+
+      if (Current.Gui.ShowDialog(ref item, "Use condition for template", showApplyButton: false))
+      {
+        ActionsPutToPropertyBag.Items.Add(new SelectableListNode(item.PropertyName, item, false));
+      }
+    }
+
+    /// <summary>
+    /// Gets the command to delete the selected action from the collection of actions that will be applied during the import process. This command is bound to the view and is triggered when the user initiates the action to delete an existing action. The command executes the EhCmdDeleteAction method, which handles the logic for removing the selected action from the collection.
+    /// </summary>
+    public ICommand CmdDeleteAction => field ??= new RelayCommand(EhCmdDeleteAction);
+
+    private void EhCmdDeleteAction()
+    {
+      ActionsPutToPropertyBag.Items.Remove(ActionsPutToPropertyBag.SelectedItem);
+    }
+
+    /// <summary>
+    /// Gets the command to edit the selected action in the collection of actions that will be applied during the import process. This command is bound to the view and is triggered when the user initiates the action to edit an existing action. The command executes the EhCmdEditAction method, which handles the logic for editing the selected action and updating its properties based on user input.
+    /// </summary>
+    public ICommand CmdEditAction => field ??= new RelayCommand(EhCmdEditAction);
+
+    private void EhCmdEditAction()
+    {
+      var selectedNode = ActionsPutToPropertyBag.SelectedItem;
+      if (selectedNode is null)
+      {
+        return;
+      }
+      var item = selectedNode.Tag as IActionOnProperty;
+      if (item is not null)
+      {
+        if (Current.Gui.ShowDialog(ref item, "Edit action", showApplyButton: false))
+        {
+          selectedNode.Tag = item;
+          selectedNode.Text = item.PropertyName;
+        }
+      }
+    }
+
+
 
     /// <summary>
     /// Gets or sets the name of a folder or atable that is used as a template if the target table does not exist.
@@ -298,6 +323,18 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
     #endregion Bindings
 
+    class ActionListNode : SelectableListNode
+    {
+      public ActionListNode(IActionOnProperty action)
+      {
+        Text = action.PropertyName;
+        Tag = action;
+      }
+
+
+      public override string? Text0 => (Tag as IActionOnProperty)?.Description;
+    }
+
 
     /// <inheritdoc />
     protected override void Initialize(bool initData)
@@ -316,14 +353,14 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = _doc.FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing;
 
         PropertyNames = new ObservableCollection<string>(_doc.NameSplitter.EnumeratePropertyNames());
-        var actionsPutToPropertyBag = new Altaxo.Collections.ObservableCollectionWithItemsNotifyPropertyChanged<EditableTuple>();
+        var actionsPutToPropertyBag = new SelectableListNodeList();
         foreach (var action in _doc.ActionsOnProperties)
         {
-          actionsPutToPropertyBag.Add(new EditableTuple() { Name = action.PropertyName, Level = action.Level });
+
+          actionsPutToPropertyBag.Add(new SelectableListNode(action.PropertyName, action, false));
         }
         actionsPutToPropertyBag.CollectionChanged += (s, e) => EhActionsPutToPropertyBagChanged();
-        actionsPutToPropertyBag.ItemPropertyChanged += (s, e) => EhActionsPutToPropertyBagChanged();
-        ActionsPutToPropertyBag = actionsPutToPropertyBag;
+        ActionsPutToPropertyBag = new ItemsController<IActionOnProperty>(actionsPutToPropertyBag);
       }
     }
 
@@ -476,7 +513,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       var tablesToFileNames = ImportWithFileNameDerivedPropertiesAction.GetTableNamesToFileNamesRelationship(fileNames, TableTargetName, tree);
 
-      var fileNamesToTables = tablesToFileNames.SelectMany(kvp => kvp.Value.Select(fileName => (fileName, tableName: kvp.Key))).ToDictionary(x => x.fileName, x => x.tableName);
+      var fileNamesToTables = tablesToFileNames.SelectMany(kvp => kvp.Value.FileNames.Select(fileName => (fileName, tableName: kvp.Key))).ToDictionary(x => x.fileName, x => x.tableName);
 
       foreach (var fileName in fileNames)
       {
@@ -495,7 +532,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
           diagnostics = "ERROR: The derived table name ends with a backslash, which is not allowed.";
         }
 
-        if (tablesToFileNames[tableName].Count > 1)
+        if (tablesToFileNames[tableName].FileNames.Count > 1)
         {
           diagnostics = "WARNING: Multiple files are mapped to the same table name.";
         }
@@ -520,7 +557,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       {
         _doc = _doc with
         {
-          ActionsOnProperties = ActionsPutToPropertyBag.Select(a => new ActionPutToPropertyBag { Level = a.Level, PropertyName = a.Name }).ToImmutableList(),
+          ActionsOnProperties = ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList(),
         };
         OnMadeDirty();
       }
@@ -544,12 +581,12 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       table.Columns.Add(DiagnosticsProperty, typeof(object));
 
-      foreach (var name in ActionsPutToPropertyBag.Select(x => x.Name).Distinct())
+      foreach (var name in ActionsPutToPropertyBag.Items.Select(x => (IActionOnProperty)x.Tag).Select(x => x.PropertyName).Distinct())
       {
         table.Columns.Add($"'{name}'", typeof(object));
       }
 
-      ImportWithFileNameDerivedPropertiesAction.GetPropertiesPlacedInProjectItemsWithDiagnostics(GetResolvedFileNames(), tree, TableTargetName, ActionsPutToPropertyBag.Select(a => new ActionPutToPropertyBag { Level = a.Level, PropertyName = a.Name }).ToImmutableList())
+      ImportWithFileNameDerivedPropertiesAction.GetPropertiesPlacedInProjectItemsWithDiagnostics(GetResolvedFileNames(), tree, TableTargetName, ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList())
         .ForEach(item =>
         {
           var row = table.NewRow();
@@ -583,7 +620,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         NameSplitter = (IPropertyExtractionTreeNode)TreeController.ModelObject,
         TargetTableNameTemplate = TableTargetName,
         FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
-        ActionsOnProperties = ActionsPutToPropertyBag.Select(a => new ActionPutToPropertyBag { Level = a.Level, PropertyName = a.Name }).ToImmutableList(),
+        ActionsOnProperties = ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList(),
       };
 
 
