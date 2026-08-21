@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
+using Altaxo.Main;
 using Altaxo.Serialization.NamePropertyExtraction;
 
 namespace Altaxo.Gui.Serialization.NamePropertyExtraction
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
     /// <summary>
     /// Gets or sets the file names to be imported. This property is bound to the view and is used to specify the files that will be processed for property extraction and import into the target table.
     /// </summary>
-    public string FileNames
+    public string FileNamePatternsIncluded
     {
       get => field;
       set
@@ -76,13 +77,33 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         if (!(field == value))
         {
           field = value;
-          _doc = _doc with { FileNamePatternsIncluded = GetUnresolvedFileNames().ToImmutableList() };
-          OnPropertyChanged(nameof(FileNames));
+          _doc = _doc with { FileNamePatternsIncluded = GetFileNamePatternsIncluded().ToImmutableList() };
+          OnPropertyChanged(nameof(FileNamePatternsIncluded));
           OnMadeDirty();
-          EhResolveFileNames();
+          ResolveFileNames();
         }
       }
-    }
+    } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the file names to be excluded from the import process.
+    /// </summary>
+    public string FileNamePatternsExcluded
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          _doc = _doc with { FileNamePatternsExcluded = GetFileNamePatternsExcluded().ToImmutableList() };
+          OnPropertyChanged(nameof(FileNamePatternsExcluded));
+          OnMadeDirty();
+          ResolveFileNames();
+        }
+      }
+    } = string.Empty;
+
 
 
 
@@ -94,7 +115,10 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
     public ICommand CmdAddFiles => field ??= new RelayCommand(EhCmdAddFiles);
 
-
+    /// <summary>
+    /// Gets the command to rescan the file system. This command is bound to the view and is triggered when the user initiates the action to rescan the file system. The command executes the EhCmdRescanFileSystem method, which handles the logic for rescanning the file system.
+    /// </summary>
+    public ICommand CmdRescanFileSystem => field ??= new RelayCommand(ResolveFileNames);
 
     /// <summary>
     /// Gets or sets the target table name for the import process. Can contain placeholders for properties extracted from the file names. 
@@ -319,6 +343,22 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       }
     }
 
+    /// <summary>
+    /// Gets or sets the overwrite behavior for copying project items.
+    /// </summary>
+    public ItemsController<OverwriteBehavior> OverwriteProjectItems
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(OverwriteProjectItems));
+        }
+      }
+    }
+
 
 
     #endregion Bindings
@@ -344,13 +384,15 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       if (initData)
       {
-        FileNames = string.Join(Environment.NewLine, _doc.FileNamePatternsIncluded);
+        FileNamePatternsIncluded = string.Join(Environment.NewLine, _doc.FileNamePatternsIncluded);
+        FileNamePatternsExcluded = string.Join(Environment.NewLine, _doc.FileNamePatternsExcluded);
         TableTargetName = _doc.TargetTableNameTemplate;
         var treeController = new PropertyExtractionTreeController();
         treeController.InitializeDocument(_doc.NameSplitter);
         Current.Gui.FindAndAttachControlTo(treeController);
         TreeController = treeController;
         FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = _doc.FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing;
+        OverwriteProjectItems = new ItemsController<OverwriteBehavior>(new SelectableListNodeList(_doc.OverwriteProjectItems), EhOverwriteProjectItemsChanged);
 
         PropertyNames = new ObservableCollection<string>(_doc.NameSplitter.EnumeratePropertyNames());
         var actionsPutToPropertyBag = new SelectableListNodeList();
@@ -364,42 +406,35 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       }
     }
 
+    private void EhOverwriteProjectItemsChanged(OverwriteBehavior behavior)
+    {
+      _doc = _doc with { OverwriteProjectItems = behavior };
+      OnMadeDirty();
+    }
+
     /// <summary>
-    /// Gets the file names of the GUI as a list of strings.
+    /// Gets the file name patterns that are included as a list of strings.
     /// Please note that the names can contain joker chars, and must be resolved before use.
     /// </summary>
     /// <returns></returns>
-    public List<string> GetUnresolvedFileNames()
+    public List<string> GetFileNamePatternsIncluded()
     {
-      return FileNames.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+      return FileNamePatternsIncluded.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
     }
 
-
-    CancellationTokenSource _ctsResolveFileNames = new CancellationTokenSource();
+    /// <summary>
+    /// Gets the file name patterns that are excluded as a list of strings.
+    /// Please note that the names can contain joker chars, and must be resolved before use.
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetFileNamePatternsExcluded()
+    {
+      return FileNamePatternsExcluded.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+    }
 
     private ImmutableList<string> _resolvedFileNames = ImmutableList<string>.Empty;
 
-    private void EhResolveFileNames()
-    {
-      _ctsResolveFileNames?.Cancel();
-      _ctsResolveFileNames?.Dispose();
 
-      _ctsResolveFileNames = new CancellationTokenSource();
-
-      var task = Task.Run(() =>
-      {
-        _resolvedFileNames = ImmutableList<string>.Empty;
-        _resolvedFileNames = ImportWithFileNameDerivedPropertiesAction.ResolveFileNames(GetUnresolvedFileNames(), _ctsResolveFileNames.Token).Select(f => f.FullName).ToImmutableList();
-      }).ContinueWith(t =>
-      {
-        if (t.IsCompletedSuccessfully)
-        {
-          UpdatePropertyPreview();
-          UpdateTargetTablePreview();
-          UpdatePropertyBagPreview();
-        }
-      }, TaskScheduler.FromCurrentSynchronizationContext());
-    }
 
     /// <summary>
     /// Gets the resolved file names of the GUI as a list of strings. This method resolves any wildcard characters in the file names and returns the full paths of the files that match the specified patterns.
@@ -426,10 +461,10 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         var fileNames = dlg.FileNames;
         if (fileNames.Length > 0)
         {
-          if (string.IsNullOrWhiteSpace(FileNames))
-            FileNames += string.Join(Environment.NewLine, fileNames);
+          if (string.IsNullOrWhiteSpace(FileNamePatternsIncluded))
+            FileNamePatternsIncluded += string.Join(Environment.NewLine, fileNames);
           else
-            FileNames += Environment.NewLine + string.Join(Environment.NewLine, fileNames);
+            FileNamePatternsIncluded += Environment.NewLine + string.Join(Environment.NewLine, fileNames);
         }
       }
     }
@@ -447,7 +482,42 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       }
     }
 
+    CancellationTokenSource _ctsResolveFileNames = new CancellationTokenSource();
+
+    private void ResolveFileNames()
+    {
+      _ctsResolveFileNames?.Cancel();
+      _ctsResolveFileNames?.Dispose();
+      _ctsResolveFileNames = new CancellationTokenSource();
+
+      var task = Task.Run(() =>
+      {
+        ResolveFileNames(_ctsResolveFileNames.Token);
+      }, _ctsResolveFileNames.Token)
+        .ContinueWith(t => UpdatePropertyPreview());
+    }
+
+    void ResolveFileNames(CancellationToken cancellationToken)
+    {
+      var fileInfos = ImportWithFileNameDerivedPropertiesAction.ResolveFileNames(GetFileNamePatternsIncluded(), GetFileNamePatternsExcluded(), cancellationToken);
+      _resolvedFileNames = fileInfos.Select(f => f.FullName).ToImmutableList();
+    }
+
+    CancellationTokenSource _ctsUpdatePropertyPreview = new CancellationTokenSource();
+
     private void UpdatePropertyPreview()
+    {
+      _ctsUpdatePropertyPreview?.Cancel();
+      _ctsUpdatePropertyPreview?.Dispose();
+      _ctsUpdatePropertyPreview = new CancellationTokenSource();
+      var task = Task.Run(() =>
+      {
+        UpdatePropertyPreview(_ctsUpdatePropertyPreview.Token);
+      }, _ctsUpdatePropertyPreview.Token)
+        .ContinueWith(t => UpdateTargetTablePreview());
+    }
+
+    private void UpdatePropertyPreview(CancellationToken cancellationToken)
     {
       if (TreeController is { } ctrl)
       {
@@ -468,10 +538,16 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
         foreach (var fileName in GetResolvedFileNames())
         {
+          if (cancellationToken.IsCancellationRequested)
+            return;
+
           var row = table.NewRow();
           var entries = tree.ExtractProperties(fileName);
           foreach (var entry in entries)
           {
+            if (cancellationToken.IsCancellationRequested)
+              return;
+
             row[entry.PropertyName] = entry.PropertyValue;
           }
 
@@ -481,11 +557,28 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
           table.Rows.Add(row);
         }
 
+        if (cancellationToken.IsCancellationRequested)
+          return;
+
         RowsOfPropertyPreview = table.DefaultView;
       }
     }
 
-    void UpdateTargetTablePreview()
+    CancellationTokenSource _ctsUpdateTargetTablePreview = new CancellationTokenSource();
+
+    private void UpdateTargetTablePreview()
+    {
+      _ctsUpdateTargetTablePreview?.Cancel();
+      _ctsUpdateTargetTablePreview?.Dispose();
+      _ctsUpdateTargetTablePreview = new CancellationTokenSource();
+      var task = Task.Run(() =>
+      {
+        UpdateTargetTablePreview(_ctsUpdateTargetTablePreview.Token);
+      }, _ctsUpdateTargetTablePreview.Token)
+        .ContinueWith(t => UpdatePropertyBagPreview());
+    }
+
+    void UpdateTargetTablePreview(CancellationToken cancellationToken)
     {
       if (string.IsNullOrEmpty(TableTargetName) || TreeController is not { } ctrl)
       {
@@ -509,14 +602,29 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       // now add the rows
 
+      if (cancellationToken.IsCancellationRequested)
+        return;
+
       var fileNames = GetResolvedFileNames();
+
+      if (cancellationToken.IsCancellationRequested)
+        return;
 
       var tablesToFileNames = ImportWithFileNameDerivedPropertiesAction.GetTableNamesToFileNamesRelationship(fileNames, TableTargetName, tree);
 
+      if (cancellationToken.IsCancellationRequested)
+        return;
+
       var fileNamesToTables = tablesToFileNames.SelectMany(kvp => kvp.Value.FileNames.Select(fileName => (fileName, tableName: kvp.Key))).ToDictionary(x => x.fileName, x => x.tableName);
+
+      if (cancellationToken.IsCancellationRequested)
+        return;
 
       foreach (var fileName in fileNames)
       {
+        if (cancellationToken.IsCancellationRequested)
+          return;
+
         var row = table.NewRow();
 
         var tableName = fileNamesToTables.ContainsKey(fileName) ? fileNamesToTables[fileName] : string.Empty;
@@ -547,25 +655,26 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         table.Rows.Add(row);
       }
 
+      if (cancellationToken.IsCancellationRequested)
+        return;
+
       RowsOfTargetTablePreview = table.DefaultView;
-
     }
 
-    void EhActionsPutToPropertyBagChanged()
-    {
-      if (ActionsPutToPropertyBag is not null)
-      {
-        _doc = _doc with
-        {
-          ActionsOnProperties = ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList(),
-        };
-        OnMadeDirty();
-      }
-
-      UpdatePropertyBagPreview();
-    }
+    CancellationTokenSource? _ctsUpdatePropertyBagPreview;
 
     void UpdatePropertyBagPreview()
+    {
+      _ctsUpdatePropertyBagPreview?.Cancel();
+      _ctsUpdatePropertyBagPreview?.Dispose();
+      _ctsUpdatePropertyBagPreview = new CancellationTokenSource();
+      var task = Task.Run(() =>
+      {
+        UpdatePropertyBagPreview(_ctsUpdatePropertyBagPreview.Token);
+      }, _ctsUpdatePropertyBagPreview.Token);
+    }
+
+    void UpdatePropertyBagPreview(CancellationToken cancellationToken)
     {
       if (TreeController is null || string.IsNullOrEmpty(TableTargetName))
         return;
@@ -583,12 +692,18 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       foreach (var name in ActionsPutToPropertyBag.Items.Select(x => (IActionOnProperty)x.Tag).Select(x => x.PropertyName).Distinct())
       {
+        if (cancellationToken.IsCancellationRequested)
+          return;
+
         table.Columns.Add($"'{name}'", typeof(object));
       }
 
       ImportWithFileNameDerivedPropertiesAction.GetPropertiesPlacedInProjectItemsWithDiagnostics(GetResolvedFileNames(), tree, TableTargetName, ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList())
         .ForEach(item =>
         {
+          if (cancellationToken.IsCancellationRequested)
+            return;
+
           var row = table.NewRow();
           row[KindProperty] = item.Kind.ToString();
           row[ItemNameProperty] = item.ProjectItemName;
@@ -599,10 +714,27 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
           table.Rows.Add(row);
         });
 
-
+      if (cancellationToken.IsCancellationRequested)
+        return;
 
       RowsOfPropertyBagPreview = table.DefaultView;
     }
+
+    void EhActionsPutToPropertyBagChanged()
+    {
+      if (ActionsPutToPropertyBag is not null)
+      {
+        _doc = _doc with
+        {
+          ActionsOnProperties = ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList(),
+        };
+        OnMadeDirty();
+      }
+
+      UpdatePropertyBagPreview();
+    }
+
+
 
 
 
@@ -616,10 +748,11 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       _doc = _doc with
       {
-        FileNamePatternsIncluded = GetUnresolvedFileNames().ToImmutableList(),
+        FileNamePatternsIncluded = GetFileNamePatternsIncluded().ToImmutableList(),
         NameSplitter = (IPropertyExtractionTreeNode)TreeController.ModelObject,
         TargetTableNameTemplate = TableTargetName,
         FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing,
+        OverwriteProjectItems = OverwriteProjectItems.SelectedValue,
         ActionsOnProperties = ActionsPutToPropertyBag.Items.Select(a => (IActionOnProperty)a.Tag).ToImmutableList(),
       };
 

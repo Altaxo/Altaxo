@@ -53,55 +53,78 @@
                 <RowDefinition Height="4" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="4" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="4" />
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="File names:" />
+            <Label Grid.Row="0" Grid.Column="0" Content="File name patterns included:" />
 
             <TextBox Grid.Row="2"
                  Grid.Column="0" 
-                 Text="{Binding FileNames, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding FileNamePatternsIncluded, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True"
-                 ToolTip="Enter the file names to be imported, separated by new lines. The file names may contain joker characters * and/or ?."
+                 ToolTip="Enter the file name patterns to be included, separated by new lines. The file patterns may contain joker characters * and/or ?."
                  />
 
             <Button Grid.Row="2" Grid.Column="2" Content="Add files ..." Command="{Binding CmdAddFiles}"/>
 
-            <Label Grid.Row="4" Grid.Column="0" Content="Property extraction:" />
+            <Label Grid.Row="4" Grid.Column="0" Content="File name patterns excluded:" />
 
-            <ContentControl Grid.Row="6" Grid.Column="0" MinHeight="80" Content="{Binding TreeController.ViewObject}" />
+            <TextBox Grid.Row="6"
+                 Grid.Column="0" 
+                 Text="{Binding FileNamePatternsExcluded, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True"
+                 ToolTip="Enter the file name patterns to be excluded, separated by new lines. The file patterns may contain joker characters * and/or ?."
+                 />
 
-            <Expander Header="Property Preview" Grid.Row="8">
+            <Button Grid.Row="6" Grid.Column="2" Content="Rescan file system" Command="{Binding CmdRescanFileSystem}"/>
+
+
+            <Label Grid.Row="8" Grid.Column="0" Content="Property extraction:" />
+
+            <ContentControl Grid.Row="10" Grid.Column="0" MinHeight="80" Content="{Binding TreeController.ViewObject}" />
+
+            <Expander Header="Property Preview" Grid.Row="12">
                 <DataGrid ItemsSource="{Binding RowsOfPropertyPreview}"
           AutoGenerateColumns="True"
           IsReadOnly="True" />
             </Expander>
 
-            <Label Grid.Row="10" Grid.Column="0" Content="Target table name template (use property names in curly braces {}, like {SampleName} :" />
+            <Label Grid.Row="14" Grid.Column="0" Content="Target table name template (use property names in curly braces {}, like {SampleName} :" />
 
 
-            <TextBox Grid.Row="12"
+            <TextBox Grid.Row="16"
             Grid.Column="0" 
             Text="{Binding TableTargetName, UpdateSourceTrigger=PropertyChanged}"
             AcceptsReturn="True"
             ToolTip="Enter the full target table names. Use the properties, e.g. 'SampleName' like this: Foo\Bar\{SampleName}\WData"
             />
 
-            <Expander Header="Target table name preview" Grid.Row="14">
+            <Expander Header="Target table name preview" Grid.Row="18">
                 <DataGrid ItemsSource="{Binding RowsOfTargetTablePreview}"
                           AutoGenerateColumns="True"
                           IsReadOnly="True" />
             </Expander>
             
-            <Label Grid.Row="16" Grid.Column="0" Content="Project folder or table name used as template if target table is missing:" />
-            <TextBox Grid.Row="18"
+            <Label Grid.Row="20" Grid.Column="0" Content="Project folder or table name used as template if target table is missing:" />
+            <TextBox Grid.Row="22"
                      Grid.Column="0"
                      Text="{Binding FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing, UpdateSourceTrigger=PropertyChanged}"
                      ToolTip="Enter the project folder name (with trailing backslash) or table name to be used as a template if the target table is missing."
                      />
 
-            <Label Grid.Row="20" Grid.Column="0" Content="Actions to put properties into the property bag:" />
+            <GroupBox Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="7" Header="If project items already exist in the target folder, then:">
+                <axogc:SingleChoiceRadioStackPanel Orientation="Horizontal" ItemsSource="{Binding OverwriteProjectItems.Items}" SelectedItem="{Binding OverwriteProjectItems.SelectedItem, Mode=TwoWay}" />
+            </GroupBox>
 
-            <ListView Grid.Row="22"
+
+            <Label Grid.Row="26" Grid.Column="0" Content="Actions to put properties into the property bag:" />
+
+            <ListView Grid.Row="28"
                   Grid.Column="0"
                   MinHeight="80"
                   ItemsSource="{Binding ActionsPutToPropertyBag.Items}"
@@ -125,7 +148,7 @@
                 </ListView.View>
             </ListView>
 
-            <Expander Header="Property bag preview" Grid.Row="24">
+            <Expander Header="Property bag preview" Grid.Row="30">
                 <DataGrid ItemsSource="{Binding RowsOfPropertyBagPreview}"
           AutoGenerateColumns="True"
           IsReadOnly="True" />

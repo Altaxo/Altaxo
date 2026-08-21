@@ -372,7 +372,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     public void Execute(IProgressReporter reporter, params object[] args)
     {
       reporter?.ReportProgress("Scan file system and resolve file names", 0d);
-      var files = ResolveFileNames(FileNamePatternsIncluded, reporter.CancellationToken);
+      var files = ResolveFileNames(FileNamePatternsIncluded, FileNamePatternsExcluded, reporter.CancellationToken);
       BulkImportFiles(files, reporter.CancellationToken, reporter);
     }
 
@@ -401,7 +401,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
             Current.Project.Folders.GetItemsInFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing).Any() &&
             !Current.Project.Folders.GetItemsInFolder(targetFolder).Any())
         {
-          Current.Project.Folders.CopyItemsFromFolderToFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing, targetFolder);
+          Current.Project.Folders.CopyItemsFromFolderToFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing, targetFolder, includeSubfolders: true, relocateReferences: true, OverwriteProjectItems);
         }
       }
 
@@ -414,23 +414,29 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         {
           if (conditionalTemplate.Matches(properties))
           {
+
+            var projectItemList = new List<IProjectItem>();
+
             foreach (var itemNameTemplate in conditionalTemplate.ProjectItemsUsedAsTemplate)
             {
               var itemName = GetProjectItemNameFromTemplateName(itemNameTemplate, properties.Select(kvp => (kvp.Key, kvp.Value)));
 
               if (ProjectFolder.IsValidFolderName(itemName))
               {
-
+                Current.Project.Folders.CopyItemsFromFolderToFolder(itemName, targetFolder, includeSubfolders: true, relocateReferences: true, conditionalTemplate.OverwriteProjectItems);
               }
               else
               {
-                var sourceItems = Current.Project.Folders.GetProjectItemsByName(itemName);
-                if (sourceItems.Count == 0)
-                {
-                  continue;
-                }
-                Current.Project.Folders.CopyItemsToFolder(sourceItems.ToList<object>(), targetFolder, null, conditionalTemplate.OverwriteProjectItems);
+                projectItemList.AddRange(Current.Project.Folders.GetProjectItemsByName(itemName));
               }
+            }
+
+            if (projectItemList.Count > 0)
+            {
+              var sourceFolderName = ProjectFolder.GetCommonFolderOfNames(projectItemList.Select(pi => pi.Name));
+              var relocateOptions = new Altaxo.Main.DocNodePathReplacementOptions();
+              relocateOptions.AddPathReplacementsForAllProjectItemTypes(sourceFolderName, targetFolder);
+              Current.Project.Folders.CopyItemsToFolder(projectItemList.ToList<object>(), targetFolder, relocateOptions.Visit, conditionalTemplate.OverwriteProjectItems);
             }
           }
         }
@@ -532,128 +538,18 @@ namespace Altaxo.Serialization.NamePropertyExtraction
 
     #region File name resolution
 
-    static IEnumerable<FileInfo> ResolvePathWithJokerChars(string path, CancellationToken cancellationToken)
-    {
-      if (path is null)
-        throw new ArgumentNullException(nameof(path));
-
-      var normalizedPath = path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-      var root = Path.GetPathRoot(normalizedPath);
-      var relativePath = root is not null && normalizedPath.StartsWith(root, StringComparison.OrdinalIgnoreCase) ? normalizedPath[root.Length..] : normalizedPath;
-      var segments = relativePath.Split(new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-      var startDirectory = string.IsNullOrEmpty(root) ? Directory.GetCurrentDirectory() : root;
-
-      foreach (var file in MatchPath(startDirectory, segments, 0, cancellationToken))
-      {
-        yield return file;
-      }
-    }
-
-    static IEnumerable<FileInfo> MatchPath(string currentPath, IReadOnlyList<string> segments, int segmentIndex, CancellationToken cancellationToken)
-    {
-      if (!Directory.Exists(currentPath))
-        yield break;
-
-      if (segmentIndex >= segments.Count)
-      {
-        if (File.Exists(currentPath))
-          yield return new FileInfo(currentPath);
-        yield break;
-      }
-
-      var segment = segments[segmentIndex];
-      if (segment == "**")
-      {
-        foreach (var match in MatchPath(currentPath, segments, segmentIndex + 1, cancellationToken))
-        {
-          yield return match;
-        }
-
-        foreach (var subDirectory in Directory.EnumerateDirectories(currentPath))
-        {
-          cancellationToken.ThrowIfCancellationRequested();
-          foreach (var match in MatchPath(subDirectory, segments, segmentIndex, cancellationToken))
-          {
-            yield return match;
-          }
-        }
-
-        if (segmentIndex == segments.Count - 1)
-        {
-          foreach (var file in Directory.EnumerateFiles(currentPath))
-          {
-            yield return new FileInfo(file);
-          }
-        }
-
-        yield break;
-      }
-
-      foreach (var entry in Directory.EnumerateFileSystemEntries(currentPath))
-      {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var entryName = Path.GetFileName(entry);
-        if (!MatchesWildcardSegment(segment, entryName))
-          continue;
-
-        if (segmentIndex == segments.Count - 1)
-        {
-          if (File.Exists(entry))
-            yield return new FileInfo(entry);
-        }
-        else if (Directory.Exists(entry))
-        {
-          foreach (var match in MatchPath(entry, segments, segmentIndex + 1, cancellationToken))
-          {
-            yield return match;
-          }
-        }
-      }
-    }
-
-    static bool MatchesWildcardSegment(string pattern, string value)
-    {
-      var regexPattern = "^" + Regex.Escape(pattern)
-        .Replace("\\*", ".*")
-        .Replace("\\?", ".") + "$";
-      return Regex.IsMatch(value, regexPattern, RegexOptions.IgnoreCase);
-    }
-
     /// <summary>
     /// Resolves a list of file names, which may contain wildcard characters (* and ?), into a list of FileInfo objects. If a file name does not exist, a FileNotFoundException is thrown.
     /// </summary>
-    /// <param name="unresolvedFileNames">The list of file names to resolve.</param>
+    /// <param name="positivePatterns">The list of positive glob patterns to resolve.</param>
+    /// <param name="negativePatterns">The list of negative glob patterns to exclude.</param>
     /// <param name="cancellationToken">A cancellation token to observe while resolving file names.</param>
     /// <returns>A list of FileInfo objects representing the resolved files.</returns>
     /// <exception cref="FileNotFoundException">Thrown if a file does not exist.</exception>
-    public static IEnumerable<FileInfo> ResolveFileNames(IEnumerable<string> unresolvedFileNames, CancellationToken cancellationToken)
+    public static IEnumerable<FileInfo> ResolveFileNames(IEnumerable<string> positivePatterns, IEnumerable<string> negativePatterns, CancellationToken cancellationToken)
     {
-      var result = new List<FileInfo>();
-
-      foreach (var fileName in unresolvedFileNames)
-      {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var trimmedFileName = fileName.Trim();
-
-        if (trimmedFileName.Contains('*') || trimmedFileName.Contains('?'))
-        {
-          foreach (var file in ResolvePathWithJokerChars(trimmedFileName, cancellationToken))
-          {
-            cancellationToken.ThrowIfCancellationRequested();
-            result.Add(file);
-          }
-        }
-        else
-        {
-          if (File.Exists(trimmedFileName))
-          {
-            result.Add(new FileInfo(trimmedFileName));
-          }
-        }
-      }
-      return result;
+      var globMatcher = new GlobMatcher(positivePatterns, negativePatterns, caseSensitive: false);
+      return globMatcher.GetMatchingFiles(cancellationToken);
     }
 
     #endregion File name resolution

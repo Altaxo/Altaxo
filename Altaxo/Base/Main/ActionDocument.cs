@@ -398,10 +398,10 @@ namespace Altaxo.Main
         if (value is null)
           throw new ArgumentNullException("Action cannot be null");
 
-        if (!object.ReferenceEquals(value, this))
+        if (!object.ReferenceEquals(_action, value))
         {
           _action = value;
-          OnChanged(EventArgs.Empty);
+          EhSelfChanged(EventArgs.Empty);
         }
       }
     }
