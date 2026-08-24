@@ -96,9 +96,9 @@ namespace Altaxo.Serialization
     /// </summary>
     /// <returns>A list of matching files.</returns>
     /// <exception cref="InvalidOperationException">Thrown when at least one include pattern is not an absolute path.</exception>
-    public List<FileInfo> GetMatchingFiles(CancellationToken cancellationToken = default)
+    public List<string> GetMatchingFiles(CancellationToken cancellationToken = default)
     {
-      var result = new HashSet<FileInfo>();
+      var result = new HashSet<string>();
 
       // check if all positive patterns are absolute paths
       foreach (var path in PositivePatterns)
@@ -136,7 +136,7 @@ namespace Altaxo.Serialization
             cancellationToken.ThrowIfCancellationRequested();
             if (IsMatch(fileInfo.FullName))
             {
-              result.Add(fileInfo);
+              result.Add(fileInfo.FullName);
             }
           }
         }

@@ -152,9 +152,11 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// </summary>
     /// <param name="targetTemplateName">The target template name containing placeholders.</param>
     /// <param name="properties">The enumeration of property names and values to replace the placeholders.</param>
+    /// <param name="globalIndexOfTable">The global index of the table, used for generating unique names.</param>
+    /// <param name="folderToProjectItemNames">A dictionary mapping folder names to the set of project item names within each folder.</param>
     /// <returns>The target table name with placeholders replaced by actual property values.</returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static string GetProjectItemNameFromTemplateName(string targetTemplateName, IEnumerable<(string PropertyName, object PropertyValue)> properties)
+    public static string GetProjectItemNameFromTemplateName(string targetTemplateName, IEnumerable<(string PropertyName, object PropertyValue)> properties, int globalIndexOfTable, Dictionary<string, HashSet<string>> folderToProjectItemNames)
     {
       // assume that the TargetName is a string in interpolated string format, even with the usual C# syntax
       // e.g. "MyTable_{Date}_{Experiment}
@@ -169,8 +171,22 @@ namespace Altaxo.Serialization.NamePropertyExtraction
           .GroupBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase)
           .ToDictionary(g => g.Key, g => g.First().PropertyValue, StringComparer.OrdinalIgnoreCase);
 
+
+      // add the global index of the table to the dictionary, if it is not already present
+      propDict["_GlobalTableNumber"] = globalIndexOfTable;
+      propDict["_GlobalTableNumberPlus1"] = globalIndexOfTable + 1;
+
+
+
+      int localTableIndex = 0;
+
+RecalculateResult:
+
+      propDict["_LocalTableNumber"] = localTableIndex;
+      propDict["_LocalTableNumberPlus1"] = localTableIndex + 1;
+
       // Matches placeholders in the format {PropertyName} or {PropertyName:FormatSpecifier}
-      return Regex.Replace(targetTemplateName, @"\{([a-zA-Z0-9_]+)(?::([^}]+))?\}", match =>
+      var result = Regex.Replace(targetTemplateName, @"\{([a-zA-Z0-9_]+)(?::([^}]+))?\}", match =>
       {
         string propName = match.Groups[1].Value;
         string format = match.Groups[2].Success ? match.Groups[2].Value : null;
@@ -194,6 +210,25 @@ namespace Altaxo.Serialization.NamePropertyExtraction
         // Keep original placeholder if property name is not found in the enumeration
         return match.Value;
       });
+
+      var folder = Altaxo.Main.ProjectFolder.GetFolderPart(result);
+
+      if (localTableIndex != 0)
+      {
+        folderToProjectItemNames[folder].Add(result);
+        return result;
+      }
+
+      if (!folderToProjectItemNames.TryGetValue(folder, out var itemsAlreadyExisting))
+      {
+        folderToProjectItemNames[folder] = new HashSet<string> { result };
+        return result;
+      }
+      else
+      {
+        localTableIndex = itemsAlreadyExisting.Count;
+        goto RecalculateResult;
+      }
     }
 
     /// <summary>
@@ -203,13 +238,19 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="targetTemplateName">The target template name with placeholders.</param>
     /// <param name="nameSplitter">The name splitter used to extract properties from file names.</param>
     /// <returns>A dictionary mapping target table names to lists of file paths.</returns>
-    public static Dictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)> GetTableNamesToFileNamesRelationship(IEnumerable<string> filePaths, string targetTemplateName, IPropertyExtractionTreeNode nameSplitter)
+    public static IDictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)> GetTableNamesToFileNamesRelationship(IEnumerable<string> filePaths, string targetTemplateName, IPropertyExtractionTreeNode nameSplitter)
     {
-      var relationship = new Dictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)>(StringComparer.OrdinalIgnoreCase);
+      // Create a dictionary to hold the relationship between target table names and their corresponding file paths and common properties
+      // key: target table name, value: tuple of (list of file paths, dictionary of common properties)
+      var relationship = new SortedDictionary<string, (List<string> FileNames, Dictionary<string, object> CommonProperties)>(StringComparer.OrdinalIgnoreCase);
+
+
+      var folderNameToProjectItemNames = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+
       foreach (var filePath in filePaths)
       {
         var properties = nameSplitter.ExtractProperties(filePath);
-        var targetTableName = GetProjectItemNameFromTemplateName(targetTemplateName, properties);
+        var targetTableName = GetProjectItemNameFromTemplateName(targetTemplateName, properties, relationship.Count, folderNameToProjectItemNames);
         if (!relationship.TryGetValue(targetTableName, out var filesAndProps))
         {
           filesAndProps = (new List<string>(), new Dictionary<string, object>());
@@ -272,45 +313,51 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     public static List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue)> GetPropertiesPlacedInProjectItems(IEnumerable<string> filePaths, IPropertyExtractionTreeNode nameSplitter, string targetTemplateName, IEnumerable<IActionOnProperty> actionsOnProperties)
     {
       var result = new List<(TargetItemKind Kind, string ProjectItemName, string PropertyName, object PropertyValue)>();
-      foreach (var filePath in filePaths)
+      var tableNamesToFileNames = GetTableNamesToFileNamesRelationship(filePaths, targetTemplateName, nameSplitter);
+
+      foreach (var tableAndFiles in tableNamesToFileNames)
       {
-        var properties = nameSplitter.ExtractProperties(filePath);
-        var targetTableName = GetProjectItemNameFromTemplateName(targetTemplateName, properties);
-        foreach (var action in actionsOnProperties.OfType<ActionPutToPropertyBag>())
+
+        foreach (var filePath in tableAndFiles.Value.FileNames)
         {
-          // get the property value from the properties extracted from the file name
-
-          var propertyValue = properties.FirstOrDefault(p => p.PropertyName == action.PropertyName).PropertyValue;
-
-          if (propertyValue is null)
-            continue;
-
-
-          // find the property bag depending on the level
-          if (action.Level == 1)
+          var properties = nameSplitter.ExtractProperties(filePath);
+          var targetTableName = tableAndFiles.Key;
+          foreach (var action in actionsOnProperties.OfType<ActionPutToPropertyBag>())
           {
-            result.Add((TargetItemKind.TableColumns, targetTableName, action.PropertyName, propertyValue));
-          }
-          if (action.Level == 0)
-          {
-            result.Add((TargetItemKind.Table, targetTableName, action.PropertyName, propertyValue));
-          }
-          else
-          {
-            var folder = Altaxo.Main.ProjectFolder.GetFolderPart(targetTableName);
-            for (int i = -1; i > action.Level; i--)
+            // get the property value from the properties extracted from the file name
+
+            var propertyValue = properties.FirstOrDefault(p => p.PropertyName == action.PropertyName).PropertyValue;
+
+            if (propertyValue is null)
+              continue;
+
+
+            // find the property bag depending on the level
+            if (action.Level == 1)
             {
-              var newfolder = Altaxo.Main.ProjectFolder.GetFoldersParentFolder(folder);
-
-              if (newfolder == folder)
+              result.Add((TargetItemKind.TableColumns, targetTableName, action.PropertyName, propertyValue));
+            }
+            if (action.Level == 0)
+            {
+              result.Add((TargetItemKind.Table, targetTableName, action.PropertyName, propertyValue));
+            }
+            else
+            {
+              var folder = Altaxo.Main.ProjectFolder.GetFolderPart(targetTableName);
+              for (int i = -1; i > action.Level; i--)
               {
-                throw new Exception($"Cannot find parent folder for level {action.Level} in target table name {targetTableName}");
+                var newfolder = Altaxo.Main.ProjectFolder.GetFoldersParentFolder(folder);
+
+                if (newfolder == folder)
+                {
+                  throw new Exception($"Cannot find parent folder for level {action.Level} in target table name {targetTableName}");
+                }
+
+                folder = newfolder;
               }
 
-              folder = newfolder;
+              result.Add((TargetItemKind.PropertyDocument, folder, action.PropertyName, propertyValue));
             }
-
-            result.Add((TargetItemKind.PropertyDocument, folder, action.PropertyName, propertyValue));
           }
         }
       }
@@ -419,7 +466,7 @@ namespace Altaxo.Serialization.NamePropertyExtraction
 
             foreach (var itemNameTemplate in conditionalTemplate.ProjectItemsUsedAsTemplate)
             {
-              var itemName = GetProjectItemNameFromTemplateName(itemNameTemplate, properties.Select(kvp => (kvp.Key, kvp.Value)));
+              var itemName = GetProjectItemNameFromTemplateName(itemNameTemplate, properties.Select(kvp => (kvp.Key, kvp.Value)), 0, new Dictionary<string, HashSet<string>>());
 
               if (ProjectFolder.IsValidFolderName(itemName))
               {
@@ -462,10 +509,10 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <param name="progressReporter">The progress reporter.</param>
     /// <exception cref="Exception"></exception>
-    public void BulkImportFiles(IEnumerable<FileInfo> files, CancellationToken cancellationToken, IProgress<(string text, double fraction)>? progressReporter)
+    public void BulkImportFiles(IEnumerable<string> files, CancellationToken cancellationToken, IProgress<(string text, double fraction)>? progressReporter)
     {
-      var tableNamesToFileNames = GetTableNamesToFileNamesRelationship(files.Select(f => f.FullName), TargetTableNameTemplate, NameSplitter);
-      var propertiesPlacedInProjectItems = GetPropertiesPlacedInProjectItemsWithDiagnostics(files.Select(f => f.FullName), NameSplitter, TargetTableNameTemplate, ActionsOnProperties);
+      var tableNamesToFileNames = GetTableNamesToFileNamesRelationship(files, TargetTableNameTemplate, NameSplitter);
+      var propertiesPlacedInProjectItems = GetPropertiesPlacedInProjectItemsWithDiagnostics(files, NameSplitter, TargetTableNameTemplate, ActionsOnProperties);
       var tableNamesToTables = new Dictionary<string, DataTable>();
 
       double index = 0;
@@ -544,12 +591,14 @@ namespace Altaxo.Serialization.NamePropertyExtraction
     /// <param name="positivePatterns">The list of positive glob patterns to resolve.</param>
     /// <param name="negativePatterns">The list of negative glob patterns to exclude.</param>
     /// <param name="cancellationToken">A cancellation token to observe while resolving file names.</param>
-    /// <returns>A list of FileInfo objects representing the resolved files.</returns>
+    /// <returns>A list of full file names representing the resolved files. The result is sorted in ascending order.</returns>
     /// <exception cref="FileNotFoundException">Thrown if a file does not exist.</exception>
-    public static IEnumerable<FileInfo> ResolveFileNames(IEnumerable<string> positivePatterns, IEnumerable<string> negativePatterns, CancellationToken cancellationToken)
+    public static IEnumerable<string> ResolveFileNames(IEnumerable<string> positivePatterns, IEnumerable<string> negativePatterns, CancellationToken cancellationToken)
     {
       var globMatcher = new GlobMatcher(positivePatterns, negativePatterns, caseSensitive: false);
-      return globMatcher.GetMatchingFiles(cancellationToken);
+      var result = globMatcher.GetMatchingFiles(cancellationToken);
+      result.Sort();
+      return result;
     }
 
     #endregion File name resolution

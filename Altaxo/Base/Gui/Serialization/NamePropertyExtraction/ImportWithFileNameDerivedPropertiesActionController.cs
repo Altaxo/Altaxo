@@ -500,7 +500,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
     void ResolveFileNames(CancellationToken cancellationToken)
     {
       var fileInfos = ImportWithFileNameDerivedPropertiesAction.ResolveFileNames(GetFileNamePatternsIncluded(), GetFileNamePatternsExcluded(), cancellationToken);
-      _resolvedFileNames = fileInfos.Select(f => f.FullName).ToImmutableList();
+      _resolvedFileNames = fileInfos.ToImmutableList();
     }
 
     CancellationTokenSource _ctsUpdatePropertyPreview = new CancellationTokenSource();

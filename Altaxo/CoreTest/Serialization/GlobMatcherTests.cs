@@ -109,7 +109,7 @@ namespace Altaxo.Serialization
           caseSensitive: true);
 
         var files = matcher.GetMatchingFiles();
-        var actual = files.Select(f => f.FullName).OrderBy(f => f).ToArray();
+        var actual = files.OrderBy(f => f).ToArray();
 
         Assert.Equal(new[] { keepFile }, actual);
       }
