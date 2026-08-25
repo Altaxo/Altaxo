@@ -65,6 +65,7 @@ namespace Altaxo.Main.Services
     {
       if (e.LoadedAssembly is { } loadedAssembly) // do include only non-null values for assembly
       {
+        System.Diagnostics.Debug.WriteLine($"{e.LoadedAssembly.GetName()} loaded and considered for ReflectionService.");
         ImmutableInterlocked.Update(ref _loadedAssemblies, (coll) => coll.Add(loadedAssembly));
       }
     }

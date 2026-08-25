@@ -133,10 +133,16 @@ namespace Altaxo.AddInItems
     /// <inheritdoc/>
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+      string resultOrigin = "<n.a.>";
+
       // this function is called when dependencies of the pluginAssembly should be loaded
 
       // First of all, we look if such an assembly is loaded already
       var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
+      if (result is not null)
+      {
+        resultOrigin = "AppDomain.CurrentDomain";
+      }
 
       if (result is null)
       {
@@ -148,6 +154,10 @@ namespace Altaxo.AddInItems
           // and not in this context here
           // by this way we avoid that we load the same assembly in different contexts
           result = Instance.LoadFromAssemblyPath(assemblyPath);
+          if (result is not null)
+          {
+            resultOrigin = $"ResolveAssemblyToPath {assemblyPath}";
+          }
         }
         else
         {
@@ -159,11 +169,12 @@ namespace Altaxo.AddInItems
             // and not in this context here
             // by this way we avoid that we load the same assembly in different contexts
             result = Instance.LoadFromAssemblyPath(fileInfo.FullName);
+            if (result is not null) { resultOrigin = $"LoadFromAssemblyPath {fileInfo.FullName}"; }
           }
         }
       }
 
-      System.Diagnostics.Debug.WriteLine($"{assemblyName} resolved to {result?.Location ?? "null"}");
+      System.Diagnostics.Debug.WriteLine($"{assemblyName} resolved to {result?.Location ?? "null"} Version: {result?.GetName().Version} Origin: {resultOrigin}");
       return result;
     }
 

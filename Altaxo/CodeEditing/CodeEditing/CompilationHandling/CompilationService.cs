@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -30,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Altaxo.CodeEditing.ReferenceHandling;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -59,44 +61,84 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
     public static System.Reflection.Assembly Build(Compilation compilation, DiagnosticBag diagnostics, CancellationToken cancellationToken)
     {
-      using (var peStream = new MemoryStream())
-      using (var pdbStream = new MemoryStream())
+      try
       {
-        var emitResult = compilation.Emit(
-            peStream: peStream,
-            pdbStream: pdbStream,
-            cancellationToken: cancellationToken);
-
-        diagnostics.AddRange(emitResult.Diagnostics);
-
-        if (!emitResult.Success)
+        using (var peStream = new MemoryStream())
+        using (var pdbStream = new MemoryStream())
         {
-          return null;
-        }
+          var emitResult = compilation.Emit(
+              peStream: peStream,
+              pdbStream: pdbStream,
+              cancellationToken: cancellationToken);
 
-        foreach (var referencedAssembly in compilation.References)
-        {
-          var path = (referencedAssembly as PortableExecutableReference)?.FilePath;
-          if (path != null)
+          diagnostics.AddRange(emitResult.Diagnostics);
+
+          if (!emitResult.Success)
           {
-            var assemblySymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(referencedAssembly);
-            if (null != assemblySymbol)
+            return null;
+          }
+
+          foreach (var referencedAssembly in compilation.References)
+          {
+            var path = (referencedAssembly as PortableExecutableReference)?.FilePath;
+            if (path != null)
             {
-              _assemblyLoader.RegisterDependency(assemblySymbol.Identity, path);
-            }
-            else
-            {
-              // this can happen if the original reference is to an assembly that is GAC'ed,
-              // in this case the new MetaDataReference points to the assembly in the GAC, so its location
-              // is different from the original one.
+              var assemblySymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(referencedAssembly);
+              if (null != assemblySymbol)
+              {
+                _assemblyLoader.RegisterDependency(assemblySymbol.Identity, path);
+              }
+              else
+              {
+                // this can happen if the original reference is to an assembly that is GAC'ed,
+                // in this case the new MetaDataReference points to the assembly in the GAC, so its location
+                // is different from the original one.
+              }
             }
           }
+
+          peStream.Position = 0;
+          pdbStream.Position = 0;
+
+          return _assemblyLoader.LoadAssemblyFromStream(peStream, pdbStream);
         }
+      }
+      catch (System.MissingMethodException ex)
+      {
+        var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies()
+          .Where(assembly => !assembly.IsDynamic && !string.IsNullOrEmpty(assembly.Location))
+          .Select(assembly => new
+          {
+            assembly.GetName().Name,
+            Version = assembly.GetName().Version?.ToString() ?? "",
+            assembly.Location,
+          })
+          .OrderBy(item => item.Name, System.StringComparer.OrdinalIgnoreCase)
+          .Select(item => $"{item.Name};{item.Version};{item.Location}")
+          .ToList();
 
-        peStream.Position = 0;
-        pdbStream.Position = 0;
+        loadedAssemblies.Insert(0, $"TimeUtc: {System.DateTime.UtcNow:O}");
+        loadedAssemblies.Insert(1, $"Exception: {ex.GetType().FullName}");
+        loadedAssemblies.Insert(2, $"Message: {ex.Message}");
+        loadedAssemblies.Insert(3, $"BaseDirectory: {System.AppDomain.CurrentDomain.BaseDirectory}");
+        loadedAssemblies.Insert(4, "");
 
-        return _assemblyLoader.LoadAssemblyFromStream(peStream, pdbStream);
+        /*
+        foreach (var ass in System.AppDomain.CurrentDomain.GetAssemblies()
+          .Where(assembly => !assembly.IsDynamic && !string.IsNullOrEmpty(assembly.Location)))
+        {
+          var t = ass.GetTypes().FirstOrDefault(t => t.FullName == "Roslyn.Utilities.RoslynParallel");
+          if (t is not null)
+          {
+
+          }
+
+        }
+        */
+
+        MessageBox.Show(string.Join(Environment.NewLine, loadedAssemblies), "Loaded Assemblies", MessageBoxButton.OK, MessageBoxImage.Information);
+
+        throw;
       }
     }
 
@@ -155,7 +197,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
       var assemblyIdentitiesAlreadyLoaded = new HashSet<string>();
 
-      foreach(var assName in referenceAssemblies.Where(ass => !string.IsNullOrEmpty(ass.Location)).Select(ass => ass.GetName()))
+      foreach (var assName in referenceAssemblies.Where(ass => !string.IsNullOrEmpty(ass.Location)).Select(ass => ass.GetName()))
       {
         assemblyIdentitiesAlreadyLoaded.Add(assName.Name);
         // var version = assName.Version;
