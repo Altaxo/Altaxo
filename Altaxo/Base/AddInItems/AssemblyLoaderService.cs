@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #endregion Copyright
-
 #nullable enable
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Altaxo.AddInItems
 {
@@ -46,6 +47,89 @@ namespace Altaxo.AddInItems
     public static AssemblyLoaderService Instance { get; } = new AssemblyLoaderService();
 
     /// <summary>
+    /// Key are possible folder names where DLLs have been located. Value is a dummy value without further meaning.
+    /// </summary>
+    private ConcurrentDictionary<string, bool> _dllFolderNames;
+
+    /// <summary>
+    /// Cache of loaded assemblies. Key is the full name of the assembly, value is the loaded <see cref="Assembly"/> instance.
+    /// </summary>
+    private ConcurrentDictionary<string, Assembly> _loadedAssemblies;
+
+    // Remarks: if needed we could also subscribe to AssemblyLoadContext.Default.Resolving event, but currently we do not need it, because we load all assemblies into the default context.
+    // then we need a bag of AssemblyDependencyResolver instances, one for each loaded assembly, and we need to check the hint path of each resolver to find the right one for the assembly that is being resolved.
+
+    private AssemblyLoaderService()
+    {
+      _dllFolderNames = new ConcurrentDictionary<string, bool>();
+      _loadedAssemblies = new ConcurrentDictionary<string, Assembly>();
+      _dllFolderNames.TryAdd(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), true);
+      // Subscribe to the AssemblyResolve event to handle assembly resolution for dependencies
+      // AssemblyLoadContext.Default.Resolving += EhDefaultAssemblyResolving; // currently not needed
+      AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+      AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+    }
+
+
+    /// <summary>
+    /// Resolves assemblies that were previously loaded through the load-from context.
+    /// </summary>
+    /// <param name="sender">The event source.</param>
+    /// <param name="args">The assembly resolution arguments.</param>
+    /// <returns>The resolved assembly, or <see langword="null"/> if no matching assembly could be found.</returns>
+    private Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
+    {
+      if (string.IsNullOrEmpty(args.Name))
+        return null;
+
+      if (_loadedAssemblies.TryGetValue(args.Name, out var loadedAssembly))
+      {
+        return loadedAssembly;
+      }
+
+      var fileNameParts = args.Name.Split(new char[] { ',' });
+      Assembly? result = null;
+
+
+      // try to load the assembly by the name, from the same directory as the calling assembly
+      string path1 = args.RequestingAssembly is { } requestingAssembly ? System.IO.Path.GetDirectoryName(requestingAssembly.Location) ?? string.Empty : string.Empty;
+
+      if (!string.IsNullOrEmpty(path1))
+      {
+        result = TryGetAssemblyFromFolderAndFileNameWithoutExtension(path1, fileNameParts[0]);
+      }
+
+      if (result is null)
+      {
+        var path2 = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? string.Empty;
+        if (!string.IsNullOrEmpty(path2) && path2 != path1)
+        {
+          result = TryGetAssemblyFromFolderAndFileNameWithoutExtension(path2, fileNameParts[0]);
+        }
+      }
+
+      return result;
+    }
+
+    /// <summary>
+    /// Stores assemblies as they are loaded so they can be reused during later resolution requests.
+    /// </summary>
+    /// <param name="sender">The event source.</param>
+    /// <param name="args">The assembly load event arguments.</param>
+    private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
+    {
+      Assembly assembly = args.LoadedAssembly;
+      if (assembly.FullName is { } fullName)
+      {
+        _loadedAssemblies.TryAdd(fullName, assembly);
+      }
+      if (!string.IsNullOrEmpty(assembly.Location))
+      {
+        _dllFolderNames.TryAdd(Path.GetDirectoryName(assembly.Location), true);
+      }
+    }
+
+    /// <summary>
     /// Loads an assembly, given only the partial name of the assembly, e.g. 'AltaxoCore'. If the assembly is already loaded into
     /// the application domain, the already loaded assembly is returned.
     /// </summary>
@@ -55,10 +139,10 @@ namespace Altaxo.AddInItems
     /// <returns>The assembly that was loaded, or null if the assembly was not found.</returns>
     public Assembly? LoadAssemblyFromPartialName(string assemblyString, string hintPath)
     {
-      // First of all, we look if such an assembly is already loaded 
-      var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
-      if (result is not null)
-        return result;
+      // First of all, we look if such an assembly is already loaded
+      var loadedAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyString).FirstOrDefault();
+      if (loadedAssembly is not null)
+        return loadedAssembly;
 
       FileInfo? resolvedFile = null;
       assemblyString += ".dll";
@@ -68,128 +152,59 @@ namespace Altaxo.AddInItems
         resolvedFile = dirInfo.GetFiles(assemblyString, SearchOption.AllDirectories).FirstOrDefault();
       }
 
-      if (resolvedFile is null)
+      foreach (var folderName in _dllFolderNames.Keys)
       {
-        var entryAssembly = Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Can not retrieve entry assembly!");
-        var dirInfo = new DirectoryInfo(Path.GetDirectoryName(entryAssembly.Location)!);
-        resolvedFile = dirInfo.GetFiles(assemblyString, SearchOption.AllDirectories).FirstOrDefault();
+        var fileName = Path.Combine(folderName, assemblyString);
+        if (File.Exists(fileName))
+        {
+          resolvedFile = new FileInfo(fileName);
+          break;
+        }
       }
 
-      return resolvedFile is null ? null : LoadAssemblyFromFullySpecifiedName(resolvedFile.FullName);
+      var result = resolvedFile is null ? null : LoadAssemblyFromFullySpecifiedFileName(resolvedFile.FullName);
+      return result;
     }
 
     /// <summary>
     /// Loads the assembly, using the full file name of the assembly.
     /// </summary>
-    /// <param name="fullName">The fully qualified file name of the assembly.</param>
+    /// <param name="fullFileName">The fully qualified file name of the assembly.</param>
     /// <returns>The loaded assembly.</returns>
-    public Assembly LoadAssemblyFromFullySpecifiedName(string fullName)
+    public Assembly? LoadAssemblyFromFullySpecifiedFileName(string fullFileName)
     {
-      var context = new LoadContextIntoDefault(fullName);
-      return context.LoadFromAssemblyPath(fullName);
-    }
-  }
-}
-
-namespace Altaxo.AddInItems
-{
-  using System.Runtime.Loader;
-
-  /// <summary>
-  /// Represents an assembly load context intended for plug-in assemblies with dependencies.
-  /// The original plug-in assembly is loaded into a newly created instance of this class,
-  /// but at least all dependencies of the original plug-in assembly are loaded into the same context, namely <see cref="Instance"/>.
-  /// The default context cannot be used because resolution of third-level assemblies would then fail.
-  /// This approach avoids unintentionally loading multiple instances of the same assembly.
-  /// </summary>
-  /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
-  public class LoadContextIntoDefault : AssemblyLoadContext
-  {
-    /// <summary>
-    /// Gets the shared load context used to load dependent assemblies.
-    /// </summary>
-    static LoadContextIntoDefault Instance { get; } = new LoadContextIntoDefault(Assembly.GetEntryAssembly().Location);
-
-    /// <summary>
-    /// Resolves assembly dependencies for the plug-in folder.
-    /// </summary>
-    private AssemblyDependencyResolver _resolver;
-
-    /// <summary>
-    /// Stores the fully qualified file name of the original plug-in assembly.
-    /// </summary>
-    private string _pluginAssemblyFileName;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoadContextIntoDefault"/> class.
-    /// </summary>
-    /// <param name="pluginAssemblyFileName">The full file name of the original plugin assembly file.</param>
-    public LoadContextIntoDefault(string pluginAssemblyFileName)
-    {
-      _pluginAssemblyFileName = pluginAssemblyFileName;
-      _resolver = new AssemblyDependencyResolver(pluginAssemblyFileName);
-    }
-
-    /// <inheritdoc/>
-    protected override Assembly? Load(AssemblyName assemblyName)
-    {
-      string resultOrigin = "<n.a.>";
-
-      // this function is called when dependencies of the pluginAssembly should be loaded
-
-      // First of all, we look if such an assembly is loaded already
-      var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
+      var result = AssemblyLoadContext.Default.LoadFromAssemblyPath(fullFileName);
       if (result is not null)
       {
-        resultOrigin = "AppDomain.CurrentDomain";
+        _loadedAssemblies.TryAdd(result.FullName, result);
+        _dllFolderNames.TryAdd(Path.GetDirectoryName(fullFileName), true);
       }
 
-      if (result is null)
-      {
-        // otherwise, we use the _resolver to resolve the dependent assembly
-        string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        if (assemblyPath is not null)
-        {
-          // note that we load the dependent assemblies into the default load context,
-          // and not in this context here
-          // by this way we avoid that we load the same assembly in different contexts
-          result = Instance.LoadFromAssemblyPath(assemblyPath);
-          if (result is not null)
-          {
-            resultOrigin = $"ResolveAssemblyToPath {assemblyPath}";
-          }
-        }
-        else
-        {
-          var dirInfo = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
-          var fileInfo = dirInfo.EnumerateFiles(assemblyName.Name + ".dll").FirstOrDefault();
-          if (fileInfo is not null)
-          {
-            // note that we load the dependent assemblies into the default load context,
-            // and not in this context here
-            // by this way we avoid that we load the same assembly in different contexts
-            result = Instance.LoadFromAssemblyPath(fileInfo.FullName);
-            if (result is not null) { resultOrigin = $"LoadFromAssemblyPath {fileInfo.FullName}"; }
-          }
-        }
-      }
-
-      System.Diagnostics.Debug.WriteLine($"{assemblyName} resolved to {result?.Location ?? "null"} Version: {result?.GetName().Version} Origin: {resultOrigin}");
       return result;
     }
 
-    /// <inheritdoc/>
-    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+    /// <summary>
+    /// Attempts to load an assembly file from the specified directory.
+    /// </summary>
+    /// <param name="folderPathName">The directory that may contain the assembly.</param>
+    /// <param name="fileNameWithoutExtension">The assembly file name without its extension.</param>
+    /// <returns>The loaded assembly, or <see langword="null"/> if no matching assembly could be loaded.</returns>
+    private Assembly? TryGetAssemblyFromFolderAndFileNameWithoutExtension(string folderPathName, string fileNameWithoutExtension)
     {
-      var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-      if (!(libraryPath is null))
+      var fileName = System.IO.Path.Combine(folderPathName, fileNameWithoutExtension + ".dll");
+      try
       {
-        return LoadUnmanagedDllFromPath(libraryPath);
+        if (System.IO.File.Exists(fileName))
+        {
+          var assembly = LoadAssemblyFromFullySpecifiedFileName(fileName);
+          return assembly;
+        }
       }
-
-      return IntPtr.Zero;
+      catch (Exception)
+      {
+      }
+      return null;
     }
   }
-
 }
 

@@ -161,8 +161,6 @@ namespace Altaxo.AddInItems
       if (!dependenciesLoaded)
       {
         Current.Log.Info("Loading addin " + Name);
-
-        AssemblyLocator.Init();
         foreach (AddInReference r in _manifest.Dependencies)
         {
           if (r.RequirePreload)
