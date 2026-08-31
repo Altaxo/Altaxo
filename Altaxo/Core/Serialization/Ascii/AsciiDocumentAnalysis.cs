@@ -26,7 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -69,6 +71,7 @@ namespace Altaxo.Serialization.Ascii
 
     /// <summary>The index of the caption line determined by the analysis. ATTENTION: this value is zero based! If no caption line is recognized, the value is null.</summary>
     private int? _indexOfCaptionLine;
+
 
     private AsciiDocumentAnalysis()
     {
@@ -135,7 +138,7 @@ namespace Altaxo.Serialization.Ascii
         throw new ArgumentNullException(nameof(importOptions));
 
       // Read-in the lines into _bodyLines. If the number of header lines is already known, those header lines are read into _headerLines
-      ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks);
+      var (usedEncoding, numberOfBomBytes) = ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks);
 
       if (_bodyLines.Count == 0)
         return importOptions; // there is nothing to analyze
@@ -179,48 +182,91 @@ namespace Altaxo.Serialization.Ascii
         SeparationStrategy = _highestScoredLineAnalysisOption.SeparationStrategy,
         NumberFormatCulture = _highestScoredLineAnalysisOption.NumberFormat,
         DateTimeFormatCulture = _highestScoredLineAnalysisOption.DateTimeFormat,
-        RecognizedStructure = _lineAnalysisOptionsScoring[_highestScoredLineAnalysisOption].LineStructure
+        RecognizedStructure = _lineAnalysisOptionsScoring[_highestScoredLineAnalysisOption].LineStructure,
+        CodePage = usedEncoding.CodePage,
       };
 
       return importOptions;
     }
 
     [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]
-    private void ReadLinesToAnalyze(System.IO.Stream stream, int numberOfLinesToAnalyze, int? numberOfMainHeaderLines, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks)
+    private (Encoding usedEncoding, int numberOfBomBytes) ReadLinesToAnalyze(System.IO.Stream stream, int numberOfLinesToAnalyze, int? numberOfMainHeaderLines, System.Text.Encoding importOptionsEncoding, bool importOptionsDetectEncodingFromByteOrderMarks)
     {
       string? sLine;
+      StreamReader sr = null!;
 
-      stream.Position = 0;
-      using var sr = new System.IO.StreamReader(stream, encoding, detectEncodingFromByteOrderMarks, bufferSize: 16 * 1024, leaveOpen: true);
-
-      bool reachingEOF = false;
-      _headerLines = new List<string>();
-      _bodyLines = new List<string>();
-      if (numberOfMainHeaderLines.HasValue)
+      try
       {
-        int numHeaderLines = numberOfMainHeaderLines.Value;
-        for (int i = 0; i < numHeaderLines; ++i)
+        (sr, var usedEncoding, var numberOfBomBytes) = GetStreamReader(stream, importOptionsEncoding, importOptionsDetectEncodingFromByteOrderMarks, numberOfLinesToAnalyze);
+
+        bool reachingEOF = false;
+        _headerLines = new List<string>();
+        _bodyLines = new List<string>();
+        if (numberOfMainHeaderLines.HasValue)
         {
-          sLine = sr.ReadLine();
-          if (sLine is null)
+          int numHeaderLines = numberOfMainHeaderLines.Value;
+          for (int i = 0; i < numHeaderLines; ++i)
           {
-            reachingEOF = true;
-            break;
+            sLine = sr.ReadLine();
+            if (sLine is null)
+            {
+              reachingEOF = true;
+              break;
+            }
+            _headerLines.Add(sLine);
           }
-          _headerLines.Add(sLine);
         }
-      }
 
-      if (!reachingEOF)
-      {
-        for (int i = 0; i < numberOfLinesToAnalyze; i++)
+        if (!reachingEOF)
         {
-          sLine = sr.ReadLine();
-          if (sLine is null)
-            break;
-          _bodyLines.Add(sLine);
+          for (int i = 0; i < numberOfLinesToAnalyze; i++)
+          {
+            sLine = sr.ReadLine();
+            if (sLine is null)
+              break;
+            _bodyLines.Add(sLine);
+          }
         }
+
+        return (usedEncoding, numberOfBomBytes);
       }
+      finally
+      {
+        sr?.Dispose();
+      }
+    }
+
+
+    /// <summary>
+    /// Gets a <see cref="StreamReader"/> along with the detected encoding and the number of BOM bytes.
+    /// </summary>
+    /// <param name="stream">The underlying stream to read from. Is left open, even if the returned <see cref="StreamReader"/> is disposed.</param>
+    /// <param name="importOptionsEncoding">The proposed encoding to use if no BOM is detected.</param>
+    /// <param name="importOptionsDetectEncodingFromByteOrderMarks">Whether to detect the encoding from byte order marks.</param>
+    /// <param name="numberOfLinesToAnalyze">The number of lines to analyze for encoding detection.</param>
+    /// <returns>A tuple containing the <see cref="StreamReader"/>, the detected <see cref="Encoding"/>, and the number of BOM bytes.</returns>
+    public static (StreamReader streamReader, Encoding usedEncoding, int numberOfBomBytes) GetStreamReader(Stream stream, Encoding importOptionsEncoding, bool importOptionsDetectEncodingFromByteOrderMarks, int numberOfLinesToAnalyze)
+    {
+      stream.Position = 0; // rewind the stream to the beginning
+
+      Encoding? usedEncoding = null;
+      int numberOfBomBytes = 0;
+      if (importOptionsDetectEncodingFromByteOrderMarks)
+      {
+        (usedEncoding, numberOfBomBytes) = TryGetEncodingOfStream(stream, numberOfLinesToAnalyze);
+      }
+      else // do not use the byte order marks, but check if there is a BOM anyway, and skip it if existent
+      {
+        var len = (int)Math.Min(stream.Length, 4);
+        var buffer = new byte[len];
+        stream.ReadExactly(buffer, 0, buffer.Length);
+        var bom = DetectBom(buffer);
+        numberOfBomBytes = bom is not null ? bom.GetPreamble().Length : 0;
+      }
+      usedEncoding ??= importOptionsEncoding;
+      stream.Seek(numberOfBomBytes, SeekOrigin.Begin); // rewind the stream to the beginning, but skip the BOM bytes, if existent
+      var sr = new StreamReader(stream, usedEncoding, detectEncodingFromByteOrderMarks: false, bufferSize: 16 * 1024, leaveOpen: true);  // we have already detected the encoding, so we do not want to detect it again
+      return (sr, usedEncoding, numberOfBomBytes);
     }
 
     [MemberNotNull(nameof(_lineAnalysisOptionsToTest))]
@@ -512,6 +558,110 @@ namespace Altaxo.Serialization.Ascii
         }
       }
     }
+
+    /// <summary>
+    /// Tries to detect the encoding of a stream. The stream is read up to <paramref name="maxLines"/> lines, and then the encoding is detected. If no encoding can be detected, null is returned.
+    /// </summary>
+    /// <param name="stream">The stream to detect the encoding from.</param>
+    /// <param name="maxLines">The maximum number of lines to read for detection.</param>
+    /// <returns>The detected encoding and the number of BOM bytes, or null if no encoding can be detected.</returns>
+    /// <remarks>Note that the detected encoding could be UTF-8 and the number of BOM bytes nevertheless is 0. That is because here we have implemented a heuristic UTF-8 detection even if no BOM is present.</remarks>
+    public static (Encoding? detectedEncoding, int numberOfBomBytes) TryGetEncodingOfStream(
+           Stream stream,
+           int maxLines = 1000)
+    {
+
+      long originalPosition = stream.CanSeek ? stream.Position : -1;
+      if (stream.CanSeek)
+        stream.Position = 0;
+
+      byte[] bytes = ReadUpToMaxLines(stream, maxLines);
+
+      Encoding? bomEncoding = DetectBom(bytes);
+      Encoding? detected = bomEncoding ?? DetectUtf8WithoutBom(bytes);
+
+      if (originalPosition >= 0)
+        stream.Position = originalPosition;
+
+      return (detected, bomEncoding is not null ? bomEncoding.GetPreamble().Length : 0);
+    }
+
+    private static byte[] ReadUpToMaxLines(Stream stream, int maxLines)
+    {
+      using var ms = new MemoryStream();
+      byte[] buffer = new byte[8192];
+      int lineCount = 0;
+      int n;
+
+      while (lineCount < maxLines && (n = stream.Read(buffer, 0, buffer.Length)) > 0)
+      {
+        for (int i = 0; i < n; i++)
+        {
+          ms.WriteByte(buffer[i]);
+
+          if (buffer[i] == (byte)'\n')
+          {
+            lineCount++;
+            if (lineCount >= maxLines)
+              break;
+          }
+        }
+      }
+
+      return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Detects the encoding of a byte array by checking for a Byte Order Mark (BOM).
+    /// If a BOM is found, the corresponding encoding is returned. If no BOM is found, null is returned.
+    /// </summary>
+    /// <param name="bytes">The byte array to check for a BOM.</param>
+    /// <returns>The detected encoding if a BOM is found; otherwise, null.</returns>
+    public static Encoding? DetectBom(byte[] bytes)
+    {
+      if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+        return Encoding.UTF8;
+
+      if (bytes.Length >= 4 && bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] == 0x00 && bytes[3] == 0x00)
+        return Encoding.UTF32; // UTF-32 LE
+
+      if (bytes.Length >= 4 && bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xFE && bytes[3] == 0xFF)
+        return new UTF32Encoding(bigEndian: true, byteOrderMark: true); // UTF-32 BE
+
+      if (bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE)
+        return Encoding.Unicode; // UTF-16 LE
+
+      if (bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF)
+        return Encoding.BigEndianUnicode; // UTF-16 BE
+
+      return null;
+    }
+
+    /// <summary>
+    /// Detects if the byte array is valid UTF-8 without a BOM. If it is valid, returns UTF-8 encoding; otherwise, returns null.
+    /// </summary>
+    /// <param name="bytes">The byte array to check.</param>
+    /// <returns>The UTF-8 encoding if the byte array is valid UTF-8 without a BOM; otherwise, null.</returns>
+    private static Encoding? DetectUtf8WithoutBom(byte[] bytes)
+    {
+      var utf8Strict = new UTF8Encoding(
+          encoderShouldEmitUTF8Identifier: false,
+          throwOnInvalidBytes: true);
+
+      try
+      {
+        utf8Strict.GetString(bytes);
+        return Encoding.UTF8;
+      }
+      catch (DecoderFallbackException)
+      {
+        return null;
+      }
+    }
+
+
+
+
     /*
     private static void PutRecognizedStructuresToClipboard(IEnumerable<AsciiLineAnalysis> analysisResults, IEnumerable<AsciiLineAnalysisOption> lineAnalysisOptions)
     {

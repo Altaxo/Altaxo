@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Main;
 
@@ -80,199 +79,164 @@ namespace Altaxo.Serialization.Ascii
       string? sLine;
       stream.Position = 0; // rewind the stream to the beginning
 
-      Encoding? encoding = null;
-      if (importOptions.DetectEncodingFromByteOrderMarks)
+      StreamReader sr = null!;
+      try
       {
-        var analysisOptions = GetDefaultAsciiDocumentAnalysisOptions(dataTable);
-        (encoding, int numberOfBomBytes) = TryGetEncodingOfStream(stream, analysisOptions.NumberOfLinesToAnalyze);
-        if (encoding is not null)
+        (sr, _, _) = AsciiDocumentAnalysis.GetStreamReader(stream, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks, GetDefaultAsciiDocumentAnalysisOptions(dataTable).NumberOfLinesToAnalyze);
+
+        var newcols = new DataColumnCollection();
+
+        var newpropcols = new DataColumnCollection();
+
+        // in case a structure is provided, allocate already the columns
+
+        if (importOptions.RecognizedStructure is not null)
         {
-          importOptions = importOptions with { CodePage = encoding.CodePage };
-          stream.Seek(numberOfBomBytes, SeekOrigin.Begin); // skip the BOM bytes, if existent
-        }
-      }
-      else // do not use the byte order marks, but check if there is a BOM anyway, and skip it if existent
-      {
-        var len = (int)Math.Min(stream.Length, 4);
-        var buffer = new byte[4];
-        stream.ReadExactly(buffer, 0, len);
-        var bom = DetectBom(buffer);
-        stream.Seek(bom is not null ? bom.GetPreamble().Length : 0, SeekOrigin.Begin); // rewind the stream to the beginning, but skip the BOM bytes, if existent
-      }
-
-      encoding ??= importOptions.Encoding;
-      var sr = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: false);  // we have already detected the encoding, so we do not want to detect it again
-      var newcols = new DataColumnCollection();
-
-      var newpropcols = new DataColumnCollection();
-
-      // in case a structure is provided, allocate already the columns
-
-      if (importOptions.RecognizedStructure is not null)
-      {
-        for (int i = 0; i < importOptions.RecognizedStructure.Count; i++)
-        {
-          switch (importOptions.RecognizedStructure[i].ColumnType)
+          for (int i = 0; i < importOptions.RecognizedStructure.Count; i++)
           {
-            case AsciiColumnType.Double:
-              newcols.Add(new DoubleColumn());
+            switch (importOptions.RecognizedStructure[i].ColumnType)
+            {
+              case AsciiColumnType.Double:
+                newcols.Add(new DoubleColumn());
+                break;
+
+              case AsciiColumnType.Int64:
+                newcols.Add(new DoubleColumn());
+                break;
+
+              case AsciiColumnType.DateTime:
+                newcols.Add(new DateTimeColumn());
+                break;
+
+              case AsciiColumnType.Text:
+                newcols.Add(new TextColumn());
+                break;
+
+              case AsciiColumnType.DBNull:
+                newcols.Add(new DBNullColumn());
+                break;
+
+              default:
+                throw new ArgumentOutOfRangeException("Unconsidered AsciiColumnType: " + importOptions.RecognizedStructure[i].ToString());
+            }
+          }
+        }
+
+        // add also additional property columns if not enough there
+        if (importOptions.NumberOfMainHeaderLines.HasValue && importOptions.NumberOfMainHeaderLines.Value > 0) // if there are more than one header line, allocate also property columns
+        {
+          int toAdd = importOptions.NumberOfMainHeaderLines.Value;
+          for (int i = 0; i < toAdd; i++)
+            newpropcols.Add(new Data.TextColumn());
+        }
+
+        // if decimal separator statistics is provided by impopt, create a number format info object
+        System.Globalization.NumberFormatInfo numberFormatInfo = importOptions.NumberFormatCulture!.NumberFormat;
+        System.Globalization.DateTimeFormatInfo dateTimeFormat = importOptions.DateTimeFormatCulture!.DateTimeFormat;
+
+        var notesHeader = new System.Text.StringBuilder();
+        notesHeader.Append("Imported");
+        if (!string.IsNullOrEmpty(streamOriginHint))
+          notesHeader.AppendFormat(" from {0}", streamOriginHint);
+        notesHeader.AppendFormat(" at {0}", DateTime.Now);
+        notesHeader.AppendLine();
+
+        // first of all, read the header if existent
+        for (int i = 0; i < importOptions.NumberOfMainHeaderLines; i++)
+        {
+          sLine = sr.ReadLine();
+          if (sLine is null)
+            break;
+
+          var tokens = new List<string>(importOptions.SeparationStrategy!.GetTokens(sLine));
+          if (i == importOptions.IndexOfCaptionLine) // is it the column name line
+          {
+            for (int k = 0; k < Math.Min(tokens.Count, newcols.ColumnCount); ++k)
+            {
+              var ttoken = tokens[k].Trim();
+              if (!string.IsNullOrEmpty(ttoken))
+              {
+                string newcolname = newcols.FindUniqueColumnName(ttoken);
+                newcols.SetColumnName(k, newcolname);
+              }
+            }
+            continue;
+          }
+
+          switch (importOptions.HeaderLinesDestination)
+          {
+            case AsciiHeaderLinesDestination.Ignore:
               break;
 
-            case AsciiColumnType.Int64:
-              newcols.Add(new DoubleColumn());
+            case AsciiHeaderLinesDestination.ImportToNotes:
+              AppendLineToTableNotes(notesHeader, sLine);
               break;
 
-            case AsciiColumnType.DateTime:
-              newcols.Add(new DateTimeColumn());
+            case AsciiHeaderLinesDestination.ImportToProperties:
+              FillPropertyColumnWithTokens(newpropcols[i], tokens);
               break;
 
-            case AsciiColumnType.Text:
-              newcols.Add(new TextColumn());
+            case AsciiHeaderLinesDestination.ImportToPropertiesOrNotes:
+              if (tokens.Count == importOptions.RecognizedStructure!.Count)
+                FillPropertyColumnWithTokens(newpropcols[i], tokens);
+              else
+                AppendLineToTableNotes(notesHeader, sLine);
               break;
 
-            case AsciiColumnType.DBNull:
-              newcols.Add(new DBNullColumn());
+            case AsciiHeaderLinesDestination.ImportToPropertiesAndNotes:
+              FillPropertyColumnWithTokens(newpropcols[i], tokens);
+              AppendLineToTableNotes(notesHeader, sLine);
               break;
 
             default:
-              throw new ArgumentOutOfRangeException("Unconsidered AsciiColumnType: " + importOptions.RecognizedStructure[i].ToString());
+              throw new ArgumentOutOfRangeException("Unknown switch case: " + importOptions.HeaderLinesDestination.ToString());
           }
         }
-      }
 
-      // add also additional property columns if not enough there
-      if (importOptions.NumberOfMainHeaderLines.HasValue && importOptions.NumberOfMainHeaderLines.Value > 0) // if there are more than one header line, allocate also property columns
-      {
-        int toAdd = importOptions.NumberOfMainHeaderLines.Value;
-        for (int i = 0; i < toAdd; i++)
-          newpropcols.Add(new Data.TextColumn());
-      }
-
-      // if decimal separator statistics is provided by impopt, create a number format info object
-      System.Globalization.NumberFormatInfo numberFormatInfo = importOptions.NumberFormatCulture!.NumberFormat;
-      System.Globalization.DateTimeFormatInfo dateTimeFormat = importOptions.DateTimeFormatCulture!.DateTimeFormat;
-
-      var notesHeader = new System.Text.StringBuilder();
-      notesHeader.Append("Imported");
-      if (!string.IsNullOrEmpty(streamOriginHint))
-        notesHeader.AppendFormat(" from {0}", streamOriginHint);
-      notesHeader.AppendFormat(" at {0}", DateTime.Now);
-      notesHeader.AppendLine();
-
-      // first of all, read the header if existent
-      for (int i = 0; i < importOptions.NumberOfMainHeaderLines; i++)
-      {
-        sLine = sr.ReadLine();
-        if (sLine is null)
-          break;
-
-        var tokens = new List<string>(importOptions.SeparationStrategy!.GetTokens(sLine));
-        if (i == importOptions.IndexOfCaptionLine) // is it the column name line
+        // now the data lines
+        for (int i = 0; true; i++)
         {
-          for (int k = 0; k < Math.Min(tokens.Count, newcols.ColumnCount); ++k)
-          {
-            var ttoken = tokens[k].Trim();
-            if (!string.IsNullOrEmpty(ttoken))
-            {
-              string newcolname = newcols.FindUniqueColumnName(ttoken);
-              newcols.SetColumnName(k, newcolname);
-            }
-          }
-          continue;
-        }
-
-        switch (importOptions.HeaderLinesDestination)
-        {
-          case AsciiHeaderLinesDestination.Ignore:
+          sLine = sr.ReadLine();
+          if (sLine is null)
             break;
-
-          case AsciiHeaderLinesDestination.ImportToNotes:
-            AppendLineToTableNotes(notesHeader, sLine);
-            break;
-
-          case AsciiHeaderLinesDestination.ImportToProperties:
-            FillPropertyColumnWithTokens(newpropcols[i], tokens);
-            break;
-
-          case AsciiHeaderLinesDestination.ImportToPropertiesOrNotes:
-            if (tokens.Count == importOptions.RecognizedStructure!.Count)
-              FillPropertyColumnWithTokens(newpropcols[i], tokens);
-            else
-              AppendLineToTableNotes(notesHeader, sLine);
-            break;
-
-          case AsciiHeaderLinesDestination.ImportToPropertiesAndNotes:
-            FillPropertyColumnWithTokens(newpropcols[i], tokens);
-            AppendLineToTableNotes(notesHeader, sLine);
-            break;
-
-          default:
-            throw new ArgumentOutOfRangeException("Unknown switch case: " + importOptions.HeaderLinesDestination.ToString());
-        }
-      }
-
-      // now the data lines
-      for (int i = 0; true; i++)
-      {
-        sLine = sr.ReadLine();
-        if (sLine is null)
-          break;
-        else if ("\0" == sLine) // if pasting from excel, the stream ends with "\0", so we ignore it.
-          continue;
-
-        int maxcolumns = newcols.ColumnCount;
-
-        int k = -1;
-        foreach (string token in importOptions.SeparationStrategy!.GetTokens(sLine))
-        {
-          k++;
-          if (k >= maxcolumns)
-            break;
-
-          if (string.IsNullOrEmpty(token))
+          else if ("\0" == sLine) // if pasting from excel, the stream ends with "\0", so we ignore it.
             continue;
 
-          if (newcols[k] is DoubleColumn)
-          {
-            if (double.TryParse(token, System.Globalization.NumberStyles.Any, numberFormatInfo, out var val))
-              ((DoubleColumn)newcols[k])[i] = val;
-          }
-          else if (newcols[k] is DateTimeColumn)
-          {
-            if (DateTime.TryParse(token, dateTimeFormat, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out var val))
-              ((DateTimeColumn)newcols[k])[i] = val;
-          }
-          else if (newcols[k] is TextColumn)
-          {
-            ((TextColumn)newcols[k])[i] = token.Trim();
-          }
-          else if (newcols[k] is null || newcols[k] is DBNullColumn)
-          {
-            bool bConverted = false;
-            double val = double.NaN;
-            DateTime valDateTime = DateTime.MinValue;
+          int maxcolumns = newcols.ColumnCount;
 
-            try
+          int k = -1;
+          foreach (string token in importOptions.SeparationStrategy!.GetTokens(sLine))
+          {
+            k++;
+            if (k >= maxcolumns)
+              break;
+
+            if (string.IsNullOrEmpty(token))
+              continue;
+
+            if (newcols[k] is DoubleColumn)
             {
-              val = System.Convert.ToDouble(token);
-              bConverted = true;
+              if (double.TryParse(token, System.Globalization.NumberStyles.Any, numberFormatInfo, out var val))
+                ((DoubleColumn)newcols[k])[i] = val;
             }
-            catch
+            else if (newcols[k] is DateTimeColumn)
             {
+              if (DateTime.TryParse(token, dateTimeFormat, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out var val))
+                ((DateTimeColumn)newcols[k])[i] = val;
             }
-            if (bConverted)
+            else if (newcols[k] is TextColumn)
             {
-              var newc = new DoubleColumn
-              {
-                [i] = val
-              };
-              newcols.Replace(k, newc);
+              ((TextColumn)newcols[k])[i] = token.Trim();
             }
-            else
+            else if (newcols[k] is null || newcols[k] is DBNullColumn)
             {
+              bool bConverted = false;
+              double val = double.NaN;
+              DateTime valDateTime = DateTime.MinValue;
+
               try
               {
-                valDateTime = System.Convert.ToDateTime(token);
+                val = System.Convert.ToDouble(token);
                 bConverted = true;
               }
               catch
@@ -280,55 +244,79 @@ namespace Altaxo.Serialization.Ascii
               }
               if (bConverted)
               {
-                var newc = new DateTimeColumn
+                var newc = new DoubleColumn
                 {
-                  [i] = valDateTime
+                  [i] = val
                 };
-
                 newcols.Replace(k, newc);
               }
               else
               {
-                var newc = new TextColumn
+                try
                 {
-                  [i] = token
-                };
-                newcols.Replace(k, newc);
-              }
-            } // end outer if null==newcol
+                  valDateTime = System.Convert.ToDateTime(token);
+                  bConverted = true;
+                }
+                catch
+                {
+                }
+                if (bConverted)
+                {
+                  var newc = new DateTimeColumn
+                  {
+                    [i] = valDateTime
+                  };
+
+                  newcols.Replace(k, newc);
+                }
+                else
+                {
+                  var newc = new TextColumn
+                  {
+                    [i] = token
+                  };
+                  newcols.Replace(k, newc);
+                }
+              } // end outer if null==newcol
+            }
+          } // end of for all cols
+        } // end of for all lines
+
+        // insert the new columns or replace the old ones
+        using (var suspendToken = dataTable.SuspendGetToken())
+        {
+          bool tableWasEmptyBefore = dataTable.DataColumns.ColumnCount == 0;
+          for (int i = 0; i < newcols.ColumnCount; i++)
+          {
+            if (newcols[i] is DBNullColumn) // if the type is undefined, use a new DoubleColumn
+              dataTable.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
+            else
+              dataTable.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
+
+            // set the first column as x-column if the table was empty before, and there are more than one column
+            if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
+              dataTable.DataColumns.SetColumnKind(0, ColumnKind.X);
+          } // end for loop
+
+          // add the property columns
+          for (int i = 0, j = 0; i < newpropcols.ColumnCount; i++)
+          {
+            if (newpropcols[i].Count == 0)
+              continue;
+            dataTable.PropCols.CopyOrReplaceOrAdd(j, newpropcols[i], newpropcols.GetColumnName(i));
+            ++j;
           }
-        } // end of for all cols
-      } // end of for all lines
 
-      // insert the new columns or replace the old ones
-      using (var suspendToken = dataTable.SuspendGetToken())
-      {
-        bool tableWasEmptyBefore = dataTable.DataColumns.ColumnCount == 0;
-        for (int i = 0; i < newcols.ColumnCount; i++)
-        {
-          if (newcols[i] is DBNullColumn) // if the type is undefined, use a new DoubleColumn
-            dataTable.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
-          else
-            dataTable.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
+          dataTable.Notes.Write(notesHeader.ToString());
 
-          // set the first column as x-column if the table was empty before, and there are more than one column
-          if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
-            dataTable.DataColumns.SetColumnKind(0, ColumnKind.X);
-        } // end for loop
-
-        // add the property columns
-        for (int i = 0, j = 0; i < newpropcols.ColumnCount; i++)
-        {
-          if (newpropcols[i].Count == 0)
-            continue;
-          dataTable.PropCols.CopyOrReplaceOrAdd(j, newpropcols[i], newpropcols.GetColumnName(i));
-          ++j;
+          suspendToken.Dispose();
         }
-
-        dataTable.Notes.Write(notesHeader.ToString());
-
-        suspendToken.Dispose();
       }
+      finally
+      {
+        sr?.Dispose();
+      }
+
     } // end of function ImportAscii
 
     /// <summary>
@@ -1203,110 +1191,10 @@ namespace Altaxo.Serialization.Ascii
       return new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
     }
 
-    /// <summary>
-    /// Tries to detect the encoding of a stream. The stream is read up to <paramref name="maxLines"/> lines, and then the encoding is detected. If no encoding can be detected, null is returned.
-    /// </summary>
-    /// <param name="stream">The stream to detect the encoding from.</param>
-    /// <param name="maxLines">The maximum number of lines to read for detection.</param>
-    /// <returns>The detected encoding and the number of BOM bytes, or null if no encoding can be detected.</returns>
-    /// <remarks>Note that the detected encoding could be UTF-8 and the number of BOM bytes nevertheless is 0. That is because here we have implemented a heuristic UTF-8 detection even if no BOM is present.</remarks>
-    public static (Encoding? detectedEncoding, int numberOfBomBytes) TryGetEncodingOfStream(
-           Stream stream,
-           int maxLines = 1000)
-    {
 
-      long originalPosition = stream.CanSeek ? stream.Position : -1;
-      if (stream.CanSeek)
-        stream.Position = 0;
-
-      byte[] bytes = ReadUpToMaxLines(stream, maxLines);
-
-      Encoding? bomEncoding = DetectBom(bytes);
-      Encoding? detected = bomEncoding ?? DetectUtf8WithoutBom(bytes);
-
-      if (originalPosition >= 0)
-        stream.Position = originalPosition;
-
-      return (detected, bomEncoding is not null ? bomEncoding.GetPreamble().Length : 0);
-    }
     #endregion Public helper functions
 
     #region Private helper functions
-
-    private static byte[] ReadUpToMaxLines(Stream stream, int maxLines)
-    {
-      using var ms = new MemoryStream();
-      byte[] buffer = new byte[8192];
-      int lineCount = 0;
-      int n;
-
-      while (lineCount < maxLines && (n = stream.Read(buffer, 0, buffer.Length)) > 0)
-      {
-        for (int i = 0; i < n; i++)
-        {
-          ms.WriteByte(buffer[i]);
-
-          if (buffer[i] == (byte)'\n')
-          {
-            lineCount++;
-            if (lineCount >= maxLines)
-              break;
-          }
-        }
-      }
-
-      return ms.ToArray();
-    }
-
-    /// <summary>
-    /// Detects the encoding of a byte array by checking for a Byte Order Mark (BOM).
-    /// If a BOM is found, the corresponding encoding is returned. If no BOM is found, null is returned.
-    /// </summary>
-    /// <param name="bytes">The byte array to check for a BOM.</param>
-    /// <returns>The detected encoding if a BOM is found; otherwise, null.</returns>
-    private static Encoding? DetectBom(byte[] bytes)
-    {
-      if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
-        return Encoding.UTF8;
-
-      if (bytes.Length >= 4 && bytes[0] == 0xFF && bytes[1] == 0xFE && bytes[2] == 0x00 && bytes[3] == 0x00)
-        return Encoding.UTF32; // UTF-32 LE
-
-      if (bytes.Length >= 4 && bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0xFE && bytes[3] == 0xFF)
-        return new UTF32Encoding(bigEndian: true, byteOrderMark: true); // UTF-32 BE
-
-      if (bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE)
-        return Encoding.Unicode; // UTF-16 LE
-
-      if (bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF)
-        return Encoding.BigEndianUnicode; // UTF-16 BE
-
-      return null;
-    }
-
-    /// <summary>
-    /// Detects if the byte array is valid UTF-8 without a BOM. If it is valid, returns UTF-8 encoding; otherwise, returns null.
-    /// </summary>
-    /// <param name="bytes">The byte array to check.</param>
-    /// <returns>The UTF-8 encoding if the byte array is valid UTF-8 without a BOM; otherwise, null.</returns>
-    private static Encoding? DetectUtf8WithoutBom(byte[] bytes)
-    {
-      var utf8Strict = new UTF8Encoding(
-          encoderShouldEmitUTF8Identifier: false,
-          throwOnInvalidBytes: true);
-
-      try
-      {
-        utf8Strict.GetString(bytes);
-        return Encoding.UTF8;
-      }
-      catch (DecoderFallbackException)
-      {
-        return null;
-      }
-    }
-
-
 
     /// <summary>
     /// Compare the values in a double array with values in a double column and see if they match.

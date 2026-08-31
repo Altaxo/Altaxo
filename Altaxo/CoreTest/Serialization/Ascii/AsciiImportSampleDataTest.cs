@@ -106,5 +106,47 @@ namespace Altaxo.Serialization.Ascii
         Assert.True(AsciiColumnType.Double == analysis.RecognizedStructure[3].ColumnType || AsciiColumnType.DBNull == analysis.RecognizedStructure[3].ColumnType);
       }
     }
+
+    [Fact]
+    public void TestSampleData3()
+    {
+      var fileName = Path.Combine(GetSampleDataDirectory(), "SampleData3.txt");
+
+      foreach (var linesToAnalyze in new int[] { 30, 300, 5000 })
+      {
+        // we will test the analysis of this sample data both with the German and the invariant culture
+        var GermanCulture = System.Globalization.CultureInfo.GetCultureInfo("de");
+        var analysisOptions = AsciiDocumentAnalysisOptions.GetOptionsForCultures(
+            System.Globalization.CultureInfo.InvariantCulture, GermanCulture);
+        analysisOptions = analysisOptions with { NumberOfLinesToAnalyze = linesToAnalyze };
+
+        AsciiImportOptions analysis;
+        using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+          analysis = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), stream, analysisOptions);
+        }
+
+        Assert.Equal(1, analysis.NumberOfMainHeaderLines);
+        Assert.Equal(0, analysis.IndexOfCaptionLine);
+
+        Assert.IsType<SingleCharSeparationStrategy>(analysis.SeparationStrategy);
+        Assert.Equal(';', ((SingleCharSeparationStrategy)analysis.SeparationStrategy).SeparatorChar); // tab as separator char
+        Assert.Equal(11, analysis.RecognizedStructure.Count); // file consists of 11 columns (last column empty
+        Assert.True("iv" == analysis.NumberFormatCulture.TwoLetterISOLanguageName); // invariant culture
+        Assert.Equal(65001, analysis.CodePage); // file is UTF8 coded, but has no BOM
+        Assert.True(analysis.IsFullySpecified);
+        Assert.Equal(AsciiColumnType.Int64, analysis.RecognizedStructure[0].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[1].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[2].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[3].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[4].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[5].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[6].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[7].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[8].ColumnType);
+        Assert.Equal(AsciiColumnType.Double, analysis.RecognizedStructure[9].ColumnType);
+        Assert.Equal(AsciiColumnType.DBNull, analysis.RecognizedStructure[10].ColumnType);
+      }
+    }
   }
 }
