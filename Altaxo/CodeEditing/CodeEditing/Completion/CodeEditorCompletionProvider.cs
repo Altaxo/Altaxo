@@ -73,9 +73,10 @@ namespace Altaxo.CodeEditing.Completion
         var completionService = CompletionService.GetService(document);
         completionService?.GetCompletionsAsync(document, 0);
 
-        var signatureHelpProvider = _roslynHost.GetService<ISignatureHelpProvider>();
+        var signatureHelpProvider = _roslynHost.GetService<Microsoft.CodeAnalysis.SignatureHelp.ISignatureHelpProvider>();
+        var memberDisplayOptions = new MemberDisplayOptions();
         signatureHelpProvider.GetItemsAsync(document, 0,
-            new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand));
+            new Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerInfo(Microsoft.CodeAnalysis.SignatureHelp.SignatureHelpTriggerReason.InvokeSignatureHelpCommand), memberDisplayOptions, cancellationToken: System.Threading.CancellationToken.None);
       });
     }
 

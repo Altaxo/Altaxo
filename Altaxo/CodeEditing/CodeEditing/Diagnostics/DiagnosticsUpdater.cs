@@ -1,6 +1,8 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticsUpdater.cs
+
+#if !NoDiagnostics
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Collections;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Shared.TestHooks;
@@ -20,7 +23,6 @@ namespace Altaxo.CodeEditing.Diagnostics;
 public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
 {
   private readonly Workspace _workspace;
-  private readonly IDiagnosticAnalyzerService _diagnosticAnalyzerService;
   private readonly Lock _lock = new();
   private readonly AsyncBatchingWorkQueue<DocumentId> _workQueue;
   private readonly CancellationTokenSource _cts;
@@ -31,16 +33,16 @@ public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
 
   [ExportWorkspaceServiceFactory(typeof(IDiagnosticsUpdater))]
   [method: ImportingConstructor]
-  internal class Factory(IDiagnosticAnalyzerService diagnosticAnalyzerService) : IWorkspaceServiceFactory
+  internal class Factory() : IWorkspaceServiceFactory
   {
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {
-      return new DiagnosticsUpdater(workspaceServices.Workspace, diagnosticAnalyzerService);
+      return new DiagnosticsUpdater(workspaceServices.Workspace);
     }
   }
 
   [ImportingConstructor]
-  public DiagnosticsUpdater(Workspace workspace, IDiagnosticAnalyzerService diagnosticAnalyzerService)
+  public DiagnosticsUpdater(Workspace workspace)
   {
     workspace.DocumentOpened += OnDocumentOpened;
     workspace.DocumentActiveContextChanged += OnDocumentActiveContextChanged;
@@ -51,7 +53,6 @@ public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
     }
 
     _workspace = workspace;
-    _diagnosticAnalyzerService = diagnosticAnalyzerService;
     _currentDiagnostics = [];
     _cts = new CancellationTokenSource();
 
@@ -124,11 +125,12 @@ public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
     }
   }
 
-  private async Task<ImmutableArray<DiagnosticData>> GetDiagnostics(Document document, CancellationToken cancellationToken)
+  private async Task<ImmutableArray<Microsoft.CodeAnalysis.Diagnostics.DiagnosticData>> GetDiagnostics(Document document, CancellationToken cancellationToken)
   {
     try
     {
-      return await _diagnosticAnalyzerService.GetDiagnosticsForSpanAsync(document, range: null, cancellationToken).ConfigureAwait(false);
+      var analyzerService = _workspace.CurrentSolution.Services.GetRequiredService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticAnalyzerService>();
+      return await analyzerService.GetDiagnosticsForSpanAsync(document, range: null, DiagnosticKind.All, cancellationToken).ConfigureAwait(false);
     }
     catch
     {
@@ -138,3 +140,4 @@ public class DiagnosticsUpdater : IDiagnosticsUpdater, IDisposable
 
   public event Action<DiagnosticsChangedArgs>? DiagnosticsChanged;
 }
+#endif

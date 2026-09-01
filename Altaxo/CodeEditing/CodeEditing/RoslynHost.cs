@@ -43,7 +43,7 @@ namespace Altaxo.CodeEditing
                 // Microsoft.CodeAnalysis.CSharp.Workspaces
                 typeof(CSharpWorkspaceResources).Assembly,
                 // Microsoft.CodeAnalysis.Features
-                typeof(FeaturesResources).Assembly,
+                typeof(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzerService).Assembly,
                 // Microsoft.CodeAnalysis.CSharp.Features
                 typeof(CSharpFeaturesResources).Assembly,
                 // RoslynPad.Roslyn
@@ -55,7 +55,20 @@ namespace Altaxo.CodeEditing
        .Concat(GetDiagnosticCompositionTypes())
 #endif
        // .Concat(GetEditorFeaturesTypes())
+       .Distinct(TypeIdentityComparer.Instance)
        .ToImmutableArray();
+
+    private sealed class TypeIdentityComparer : IEqualityComparer<Type>
+    {
+      public static readonly TypeIdentityComparer Instance = new();
+
+      public bool Equals(Type x, Type y) =>
+        ReferenceEquals(x, y) ||
+        (x is not null && y is not null && x.Assembly == y.Assembly && x.FullName == y.FullName);
+
+      public int GetHashCode(Type obj) =>
+        obj is null ? 0 : HashCode.Combine(obj.Assembly, obj.FullName);
+    }
 
 #if !NoDiagnostics
 
@@ -113,7 +126,13 @@ namespace Altaxo.CodeEditing
 
       if (additionalAssemblies is not null)
       {
-        partTypes = partTypes.Concat(additionalAssemblies.SelectMany(a => a.DefinedTypes).Select(t => t.AsType()));
+        partTypes = partTypes
+          .Concat(additionalAssemblies.SelectMany(a => a.DefinedTypes).Select(t => t.AsType()))
+          .Distinct(TypeIdentityComparer.Instance);
+      }
+      else
+      {
+        partTypes = partTypes.Distinct(TypeIdentityComparer.Instance);
       }
 
       // the following code is usefull if the composition fails
@@ -272,9 +291,11 @@ namespace Altaxo.CodeEditing
 
     public virtual T RegisterWorkspace<T>(T workspace) where T : AltaxoWorkspaceBase
     {
+#if !NoDiagnostics
       // create the updater before any document is opened
       var diagnosticsUpdater = workspace.Services.GetRequiredService<IDiagnosticsUpdater>();
       diagnosticsUpdater.DisabledDiagnostics = DisabledDiagnostics;
+#endif
       return workspace;
     }
 

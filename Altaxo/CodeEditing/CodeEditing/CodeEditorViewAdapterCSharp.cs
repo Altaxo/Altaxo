@@ -31,7 +31,8 @@ using ICSharpCode.AvalonEdit.Indentation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
-using System.Collections.Immutable;
+using Altaxo.CodeEditing.ReferenceHandling;
+
 
 
 #if !NoBraceMatching
@@ -47,6 +48,8 @@ using Altaxo.CodeEditing.Completion;
 
 #if !NoFolding
 using Altaxo.CodeEditing.Folding;
+using System.Collections.Immutable;
+
 #endif
 
 #if !NoGotoDefinition
@@ -390,7 +393,7 @@ namespace Altaxo.CodeEditing
         SemanticModelChanged?.Invoke(document, semanticModel);
       }
     }
-    
+
 
     private void EhSourceTextAdapter_TextChanged(object sender, TextChangeEventArgs e)
     {

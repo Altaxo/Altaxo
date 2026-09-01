@@ -51,6 +51,11 @@ using Altaxo.CodeEditing.Completion;
 
 #if !NoDiagnostics
 using Altaxo.CodeEditing.Diagnostics;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Shared.Extensions;
+
+
+
 
 #endif
 
@@ -300,7 +305,7 @@ namespace Altaxo.Gui.CodeEditing
 
 
       // Note: I have never seen here args with Kind == DiagnosticsRemoved
-      _textMarkerService.RemoveAll(d => d.Tag is Altaxo.CodeEditing.Diagnostics.DiagnosticData diagnosticData && args.RemovedDiagnostics.Contains(diagnosticData));
+      _textMarkerService.RemoveAll(d => d.Tag is DiagnosticData diagnosticData && args.RemovedDiagnostics.Contains(diagnosticData));
 
       if (args.DocumentId is null)
       {
@@ -320,13 +325,15 @@ namespace Altaxo.Gui.CodeEditing
           continue;
         }
 
-        var span = diagnosticData.GetTextSpan(sourceText);
-        if (span == null)
+
+        var span = diagnosticData.DataLocation.MappedFileSpan.GetClampedTextSpan(sourceText);
+
+        if (span.Length == 0)
         {
           continue;
         }
 
-        var marker = _textMarkerService.TryCreate(span.Value.Start, span.Value.Length);
+        var marker = _textMarkerService.TryCreate(span.Start, span.Length);
         if (marker is not null)
         {
           marker.Tag = diagnosticData;
@@ -336,7 +343,7 @@ namespace Altaxo.Gui.CodeEditing
       }
     }
 
-    private static Color GetDiagnosticsColor(Altaxo.CodeEditing.Diagnostics.DiagnosticData diagnosticData)
+    private static Color GetDiagnosticsColor(DiagnosticData diagnosticData)
     {
       return diagnosticData.Severity switch
       {

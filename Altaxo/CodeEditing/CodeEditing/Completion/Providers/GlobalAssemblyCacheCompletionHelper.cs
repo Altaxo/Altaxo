@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Shared.Utilities;
-using Roslyn.Utilities;
 
 namespace Altaxo.CodeEditing.Completion.Providers;
 
@@ -62,7 +61,7 @@ internal sealed class GlobalAssemblyCacheCompletionHelper(CompletionItemRules it
   private IEnumerable<AssemblyIdentity> GetAssemblyIdentities(string partialName)
   {
     return IOUtilities.PerformIO(() => GlobalAssemblyCache.Instance.GetAssemblyIdentities(partialName),
-        SpecializedCollections.EmptyEnumerable<AssemblyIdentity>());
+        Microsoft.CodeAnalysis.Collections.SpecializedCollections.EmptyEnumerable<AssemblyIdentity>());
   }
 }
 

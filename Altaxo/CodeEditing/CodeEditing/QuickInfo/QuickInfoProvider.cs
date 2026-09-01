@@ -337,7 +337,7 @@ internal sealed class QuickInfoProvider(IDeferredQuickInfoContentProvider conten
         return new ValueTuple<SemanticModel, IList<ISymbol>>(
             semanticModel,
             symbols.First() is ITypeParameterSymbol typeParameter && typeParameter.TypeParameterKind == TypeParameterKind.Cref
-                ? SpecializedCollections.EmptyList<ISymbol>()
+                ? Microsoft.CodeAnalysis.Collections.SpecializedCollections.EmptyList<ISymbol>()
                 : [.. symbols]);
       }
 
@@ -354,7 +354,7 @@ internal sealed class QuickInfoProvider(IDeferredQuickInfoContentProvider conten
       }
     }
 
-    return ValueTuple.Create(semanticModel, SpecializedCollections.EmptyList<ISymbol>());
+    return ValueTuple.Create(semanticModel, Microsoft.CodeAnalysis.Collections.SpecializedCollections.EmptyList<ISymbol>());
   }
 
   private static bool IsOk(ISymbol symbol)

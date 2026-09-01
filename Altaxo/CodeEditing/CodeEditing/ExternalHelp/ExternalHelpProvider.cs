@@ -34,7 +34,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 using Microsoft.CodeAnalysis.LanguageService;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
-using Roslyn.Utilities;
 
 namespace Altaxo.CodeEditing.ExternalHelp
 {
@@ -143,7 +142,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
         return new ValueTuple<SemanticModel, IList<ISymbol>>(
             semanticModel,
             typeParameter != null && typeParameter.TypeParameterKind == TypeParameterKind.Cref
-                ? SpecializedCollections.EmptyList<ISymbol>()
+                ? Microsoft.CodeAnalysis.Collections.SpecializedCollections.EmptyList<ISymbol>()
                 : symbols.ToList());
       }
 
@@ -159,7 +158,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
         }
       }
 
-      return ValueTuple.Create(semanticModel, SpecializedCollections.EmptyList<ISymbol>());
+      return ValueTuple.Create(semanticModel, Microsoft.CodeAnalysis.Collections.SpecializedCollections.EmptyList<ISymbol>());
     }
 
     private static bool IsOk(ISymbol symbol)

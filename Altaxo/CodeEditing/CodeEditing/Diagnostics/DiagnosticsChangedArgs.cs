@@ -3,6 +3,7 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, Diagnostics/DiagnosticsChangedArgs.cs
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Altaxo.CodeEditing.Diagnostics;
 

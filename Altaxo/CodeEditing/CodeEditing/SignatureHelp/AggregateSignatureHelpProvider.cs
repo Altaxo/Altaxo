@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.SignatureHelp;
@@ -26,12 +25,12 @@ internal sealed class AggregateSignatureHelpProvider([ImportMany] IEnumerable<La
 
   public bool IsTriggerCharacter(char ch)
   {
-    return _providers.Any(p => p.IsTriggerCharacter(ch));
+    return _providers.Any(p => p.TriggerCharacters.Any(tc => tc == ch));
   }
 
   public bool IsRetriggerCharacter(char ch)
   {
-    return _providers.Any(p => p.IsRetriggerCharacter(ch));
+    return _providers.Any(p => p.RetriggerCharacters.Any(rc => rc == ch));
   }
 
   public async Task<SignatureHelpItems?> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo trigger, CancellationToken cancellationToken)

@@ -148,7 +148,8 @@ namespace Altaxo.CodeEditing.Completion
             return Glyph.OpenFolder;
 
           case WellKnownTags.Operator:
-            return Glyph.Operator;
+            return Glyph.OperatorPublic;
+
 
           case WellKnownTags.Parameter:
             return Glyph.Parameter;
