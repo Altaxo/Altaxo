@@ -30,17 +30,15 @@ namespace Altaxo.CodeEditing.Completion
   {
     private readonly Document _document;
     private readonly CompletionItem _item;
-    private readonly char? _completionChar;
     private readonly SnippetManager _snippetManager;
     private readonly Glyph? _glyph;
     private readonly Lazy<Task> _descriptionTask;
     private object _description;
 
-    public RoslynCompletionData(Document document, CompletionItem item, char? completionChar, SnippetManager snippetManager)
+    public RoslynCompletionData(Document document, CompletionItem item, SnippetManager snippetManager)
     {
       _document = document;
       _item = item;
-      _completionChar = completionChar;
       _snippetManager = snippetManager;
       Text = item.DisplayTextPrefix + item.DisplayText + item.DisplayTextSuffix;
       Content = Text;
@@ -69,7 +67,10 @@ namespace Altaxo.CodeEditing.Completion
         return; // if this was a snippet and the snippet replacement was successfull, then return
       }
 
-      var changes = await completionService.GetChangeAsync(_document, _item, _completionChar).ConfigureAwait(true);
+      var commitCharacter = e is TextCompositionEventArgs { Text.Length: > 0 } textCompositionEventArgs
+          ? textCompositionEventArgs.Text[0]
+          : (char?)null;
+      var changes = await completionService.GetChangeAsync(_document, _item, commitCharacter).ConfigureAwait(true);
       var textChange = changes.TextChange;
       var document = textArea.Document;
       using (document.RunUpdate())

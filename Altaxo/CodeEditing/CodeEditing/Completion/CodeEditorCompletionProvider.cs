@@ -134,7 +134,7 @@ namespace Altaxo.CodeEditing.Completion
 
           completionData = data.ItemsList
               .Where(item => MatchesFilterText(completionService, document, item, text, textSpanToText))
-              .Select(item => new RoslynCompletionData(document, item, triggerChar, _snippetService.SnippetManager))
+              .Select(item => new RoslynCompletionData(document, item, _snippetService.SnippetManager))
                   .ToArray<ICompletionDataEx>();
         }
         else
