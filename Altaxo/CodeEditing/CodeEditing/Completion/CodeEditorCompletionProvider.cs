@@ -121,6 +121,12 @@ namespace Altaxo.CodeEditing.Completion
       if (overloadProvider == null && CompletionService.GetService(document) is { } completionService)
       {
         var completionTrigger = GetCompletionTrigger(triggerChar);
+        var text = await document.GetTextAsync().ConfigureAwait(false);
+        if (triggerChar is not null && !completionService.ShouldTriggerCompletion(text, position, completionTrigger))
+        {
+          return new CompletionResult(Array.Empty<ICompletionDataEx>(), null, useHardSelection);
+        }
+
         var data = await completionService.GetCompletionsAsync(
             document,
             position,
@@ -129,7 +135,6 @@ namespace Altaxo.CodeEditing.Completion
         if (data != null && data.ItemsList.Any())
         {
           useHardSelection = data.SuggestionModeItem == null;
-          var text = await document.GetTextAsync().ConfigureAwait(false);
           var textSpanToText = new Dictionary<TextSpan, string>();
 
           completionData = data.ItemsList

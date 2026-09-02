@@ -805,7 +805,13 @@ namespace Altaxo.Gui.CodeEditing
         return;
       }
 
-      if (_completionWindow == null && results.CompletionData?.Any() == true)
+      if (results.CompletionData?.Any() != true)
+      {
+        _completionWindow?.Close();
+        return;
+      }
+
+      if (_completionWindow == null)
       {
         _insightWindow?.Close();
 
