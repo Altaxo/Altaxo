@@ -773,6 +773,11 @@ namespace Altaxo.Gui.CodeEditing
 
     private async Task ShowCompletion(TriggerMode triggerMode)
     {
+      if (triggerMode == TriggerMode.Text && _completionWindow != null)
+      {
+        return;
+      }
+
       var adapter = _adapter;
       if (adapter == null)
       {
