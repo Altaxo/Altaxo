@@ -50,7 +50,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
       var diagnosticsBag = new DiagnosticBag();
       var assembly = Build(compilation, diagnosticsBag, CancellationToken.None);
 
-      if (null != assembly)
+      if (assembly is not null)
       {
         var scriptClassTypeInfo = assembly.DefinedTypes.FirstOrDefault(typeInfo => typeInfo.Name == assemblyName || typeInfo.FullName == assemblyName);
         var type = scriptClassTypeInfo?.UnderlyingSystemType;
@@ -190,11 +190,13 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
       // remove the reference directives (#r and #load statements) from the tree, otherwise, the compilation will fail
       var referenceDirectiveRemover = new ReferenceDirectiveFromSyntaxTreeRemover();
-      var treesWithoutReferenceDirectives = treesStillWithReferenceDirectives.Select(tree => referenceDirectiveRemover.RemoveReferenceDirectivesFromSyntaxTree(tree));
-
+      // now reference directives are removed, while keeping (IMPORTANT) the diagnostics, including the original positions
+      // this is important, because when the diagnostics is lost and there is an error in the code, the error message in the build is "Unknown error"
+      // furthermore, we call ToList(). Otherwise, a lazy enumeration is returned, that is evaluated multiple times during compilation then, causing
+      // the syntax tree to be rewritten multiple times, which is not intended.
+      var treesWithoutReferenceDirectives = treesStillWithReferenceDirectives.Select(tree => referenceDirectiveRemover.RemoveReferenceDirectivesFromSyntaxTree(tree)).ToList();
 
       // now we should sort out assemblies referenced in the code, but already loaded in the compilation context
-
       var assemblyIdentitiesAlreadyLoaded = new HashSet<string>();
 
       foreach (var assName in referenceAssemblies.Where(ass => !string.IsNullOrEmpty(ass.Location)).Select(ass => ass.GetName()))
