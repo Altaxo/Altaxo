@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// </summary>
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using a user-chooseable number of terms, each with a prefactor µ and an exponent α.
-  /// <para>Reference: [1] R. W. Ogden, „Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids“, Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, Bd. 326, Nr. 1567, S. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.</para>
+  /// <para>Reference: [1] R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.</para>
   /// </remarks>
   [FitFunctionClass]
   public record OdgenBiaxial : IFitFunctionWithDerivative, IImmutable
@@ -76,14 +76,14 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// V0: 2026-03-19 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OdgenBiaxial), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OdgenBiaxial)o;
-        info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
+        info.AddValue("CrossSectionArea", s.CrossSectionArea);
       }
 
       /// <inheritdoc/>
@@ -91,6 +91,30 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       {
         var crossSectionArea = info.GetDouble(nameof(CrossSectionArea));
         return new OdgenBiaxial() { CrossSectionArea = crossSectionArea };
+      }
+    }
+
+    /// <summary>
+    /// V1: 2026-09-11 NumberOfTerms added
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OdgenBiaxial), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (OdgenBiaxial)o;
+        info.AddValue("NumberOfTerms", s.NumberOfTerms);
+        info.AddValue("CrossSectionArea", s.CrossSectionArea);
+      }
+
+      /// <inheritdoc/>
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        int numberOfTerms = info.GetInt32("NumberOfTerms");
+        var crossSectionArea = info.GetDouble("CrossSectionArea");
+        return new OdgenBiaxial() { NumberOfTerms = numberOfTerms, CrossSectionArea = crossSectionArea };
       }
     }
 

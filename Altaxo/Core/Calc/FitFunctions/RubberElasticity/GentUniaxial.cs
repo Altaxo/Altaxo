@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the two material parameters <c>G</c> and <c>Jm</c>.
   /// <para>References:</para>
-  /// <para>[1] A. N. Gent, „A New Constitutive Relation for Rubber“, Rubber Chemistry and Technology, Bd. 69, Nr. 1, S. 59–61, März 1996, doi: 10.5254/1.3538357.</para>
+  /// <para>[1] A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.</para>
   /// </remarks>
   [FitFunctionClass]
   public record GentUniaxial : IFitFunctionWithDerivative, IImmutable

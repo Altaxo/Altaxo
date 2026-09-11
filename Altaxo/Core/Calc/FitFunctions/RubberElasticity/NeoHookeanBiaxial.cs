@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// </summary>
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the material parameters <c>C10</c>.
-  /// <para>Reference: [1] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
+  /// <para>Reference: [1] R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.</para>
   /// </remarks>
   [FitFunctionClass]
   public record NeoHookeanBiaxial : IFitFunctionWithDerivative, IImmutable
