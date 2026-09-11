@@ -216,12 +216,19 @@ namespace Altaxo.Serialization.Xml
       // one possibility is to add the attribute xml:space="preserve" to make that whitespace significant with:
       // _writer.WriteAttributeString("xml", "space", null, "preserve"); // make this whitespace significant by add the attribute xml:space="preserve"
       // another possiblity would be to code the space as a XML char entity
+      // here we use both
 
       if (char.IsWhiteSpace(val))
       {
+        _writer.WriteStartElement(name);
         _writer.WriteAttributeString("xml", "space", null, "preserve"); // make this whitespace significant by add the attribute xml:space="preserve"
+        _writer.WriteCharEntity(val);
+        _writer.WriteEndElement();
       }
-      _writer.WriteElementString(name, XmlConvert.ToString(val));
+      else
+      {
+        _writer.WriteElementString(name, XmlConvert.ToString(val));
+      }
     }
 
     /// <inheritdoc/>
