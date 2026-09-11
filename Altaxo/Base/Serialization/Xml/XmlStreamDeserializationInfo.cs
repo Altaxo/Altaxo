@@ -263,7 +263,8 @@ namespace Altaxo.Serialization.Xml
     /// <inheritdoc />
     public char GetChar(string name)
     {
-      return XmlConvert.ToChar(_xmlReader.ReadElementString());
+      var a = _xmlReader.ReadElementString();
+      return XmlConvert.ToChar(a);
     }
 
     /// <inheritdoc />

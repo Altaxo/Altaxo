@@ -211,6 +211,16 @@ namespace Altaxo.Serialization.Xml
     /// <inheritdoc/>
     public void AddValue(string name, char val)
     {
+      // here we have a problem if the character is a white space
+      // that space would not be read when deserializing an indented XML document
+      // one possibility is to add the attribute xml:space="preserve" to make that whitespace significant with:
+      // _writer.WriteAttributeString("xml", "space", null, "preserve"); // make this whitespace significant by add the attribute xml:space="preserve"
+      // another possiblity would be to code the space as a XML char entity
+
+      if (char.IsWhiteSpace(val))
+      {
+        _writer.WriteAttributeString("xml", "space", null, "preserve"); // make this whitespace significant by add the attribute xml:space="preserve"
+      }
       _writer.WriteElementString(name, XmlConvert.ToString(val));
     }
 
@@ -240,7 +250,6 @@ namespace Altaxo.Serialization.Xml
     {
       _writer.WriteElementString(name, val);
     }
-
 
     /// <inheritdoc/>
     public void AddAttributeValue(string name, int val)

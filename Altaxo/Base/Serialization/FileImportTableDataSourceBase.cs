@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
+using Altaxo.Serialization.NamePropertyExtraction;
 
 namespace Altaxo.Serialization
 {
@@ -50,6 +51,11 @@ namespace Altaxo.Serialization
     /// The set of resolved absolute file names currently being watched.
     /// </summary>
     private HashSet<string> _resolvedFileNames = [];
+
+    /// <summary>
+    /// Options for deriving properties from the file name(s) during import.
+    /// </summary>
+    protected ImportWithFileNameDerivedPropertiesDataSourceOptions? _derivedPropertiesOptions;
 
     /// <summary>
     /// Indicates whether the data source has unsaved changes.
