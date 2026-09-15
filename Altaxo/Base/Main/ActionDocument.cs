@@ -39,8 +39,9 @@ namespace Altaxo.Main
     /// Executes the action. The action can report progress to the <paramref name="reporter" />. The <paramref name="args" /> are optional arguments that can be used to pass additional information to the action.
     /// </summary>
     /// <param name="reporter">The progress reporter.</param>
+    /// <param name="isInteractiveSession">Indicates whether the execution is being performed in an interactive session. If true, MessageBoxes can appear that will ask the user for approval.</param>
     /// <param name="args">Optional arguments that can be used to pass additional information to the action.</param>
-    public void Execute(IProgressReporter reporter, params object[] args);
+    public void Execute(IProgressReporter reporter, bool isInteractiveSession, params object[] args);
   }
 
   /// <summary>

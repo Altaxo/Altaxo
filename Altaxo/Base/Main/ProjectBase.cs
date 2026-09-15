@@ -257,10 +257,22 @@ namespace Altaxo.Main
       if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      var coll = GetCollectionForProjectItemType(item.GetType());
-      if (coll.Contains(item.Name))
+      return TryGetExistingItemWithSameTypeAndName(item.GetType(), item.Name, out existingItem);
+    }
+
+    /// <summary>
+    /// Tries to get an existing project item with the same type and name as the provided item.
+    /// </summary>
+    /// <param name="projectItemType">The type of the project item to test for.</param>
+    /// <param name="projectItemName">The name of the project item to test for.</param>
+    /// <param name="existingItem">If an item with the same type and name as the provided item exists in the project, that existing item is returned.</param>
+    /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
+    public bool TryGetExistingItemWithSameTypeAndName(Type projectItemType, string projectItemName, [MaybeNullWhen(false)] out IProjectItem existingItem)
+    {
+      var coll = GetCollectionForProjectItemType(projectItemType) ?? throw new InvalidOperationException($"The provided type {projectItemType} is not a type of a project item (no appropriate collection was found in the main document).");
+      if (coll.Contains(projectItemName))
       {
-        existingItem = coll[item.Name];
+        existingItem = coll[projectItemName];
         return true;
       }
       else

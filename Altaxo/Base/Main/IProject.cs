@@ -124,6 +124,16 @@ namespace Altaxo.Main
     public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem);
 
     /// <summary>
+    /// Tries to get an existing project item with the same type and name as the provided item.
+    /// </summary>
+    /// <param name="projectItemType">The type of the project item to test for.</param>
+    /// <param name="projectItemName">The name of the project item to test for.</param>
+    /// <param name="existingItem">If an item with the same type and name as the provided item exists in the project, that existing item is returned.</param>
+    /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
+    public bool TryGetExistingItemWithSameTypeAndName(Type projectItemType, string projectItemName, [MaybeNullWhen(false)] out IProjectItem existingItem);
+
+
+    /// <summary>
     /// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s,
     /// if a document with the same name is already present, the properties are merged.
     /// </summary>

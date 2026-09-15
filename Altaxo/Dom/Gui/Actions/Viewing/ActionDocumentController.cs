@@ -229,7 +229,7 @@ namespace Altaxo.Gui.Actions.Viewing
     private void EhCmdExecute()
     {
       var exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
-        _doc.Action.Execute(reporter)
+        _doc.Action.Execute(reporter, isInteractiveSession: true)
         );
 
       if (exception is not null)

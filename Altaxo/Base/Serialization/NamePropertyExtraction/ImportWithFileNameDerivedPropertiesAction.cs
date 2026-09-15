@@ -416,11 +416,11 @@ RecalculateResult:
     /// <summary>
     /// Bulk import files, by extracting properties from the file name, putting them into property bags at different levels, and importing the file into the target table.
     /// </summary>
-    public void Execute(IProgressReporter reporter, params object[] args)
+    public void Execute(IProgressReporter reporter, bool isInteractiveSession, params object[] args)
     {
       reporter?.ReportProgress("Scan file system and resolve file names", 0d);
       var files = ResolveFileNames(FileNamePatternsIncluded, FileNamePatternsExcluded, reporter.CancellationToken);
-      BulkImportFiles(files, reporter.CancellationToken, reporter);
+      BulkImportFiles(files, isInteractiveSession, reporter.CancellationToken, reporter);
     }
 
     /// <summary>
@@ -506,11 +506,38 @@ RecalculateResult:
     /// Bulk import files, by extracting properties from the file name, putting them into property bags at different levels, and importing the file into the target table.
     /// </summary>
     /// <param name="files">The files to import.</param>
+    /// <param name="isInteractiveSession">Indicates whether the import is being performed in an interactive session. If true, MessageBoxes can appear that will ask the user for approval.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <param name="progressReporter">The progress reporter.</param>
     /// <exception cref="Exception"></exception>
-    public void BulkImportFiles(IEnumerable<string> files, CancellationToken cancellationToken, IProgress<(string text, double fraction)>? progressReporter)
+    public void BulkImportFiles(IEnumerable<string> files, bool isInteractiveSession, CancellationToken cancellationToken, IProgress<(string text, double fraction)>? progressReporter)
     {
+      // check some arguments
+      if (!string.IsNullOrEmpty(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing))
+      {
+        if (!Current.Project.DataTableCollection.Contains(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing) &&
+            !Current.Project.Folders.GetItemsInFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing).Any())
+        {
+          string errorText;
+
+          if (Main.ProjectFolder.IsValidFolderName(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing))
+            errorText = $"The specified template folder '{FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing}' does not exist as a folder in the project.";
+          else
+            errorText = $"The specified template table '{FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing}' does not exist as a table in the project.";
+
+
+          if (isInteractiveSession)
+          {
+            Current.Gui.ErrorMessageBox(errorText, "Template not found");
+            return;
+          }
+          else
+          {
+            throw new Exception($"The specified template '{FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing}' does not exist as a table or folder in the project.");
+          }
+        }
+      }
+
       var tableNamesToFileNames = GetTableNamesToFileNamesRelationship(files, TargetTableNameTemplate, NameSplitter);
       var propertiesPlacedInProjectItems = GetPropertiesPlacedInProjectItemsWithDiagnostics(files, NameSplitter, TargetTableNameTemplate, ActionsOnProperties);
       var tableNamesToTables = new Dictionary<string, DataTable>();

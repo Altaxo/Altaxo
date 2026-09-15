@@ -987,13 +987,13 @@ namespace Altaxo.Main
         var orgName = projectItem.Name;
         var destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 
-        if (overwriteExistingItems == OverwriteBehavior.Skip && AltaxoDocument.TryGetExistingItemWithSameTypeAndName(projectItem, out var existingItem))
+        if (overwriteExistingItems == OverwriteBehavior.Skip && AltaxoDocument.TryGetExistingItemWithSameTypeAndName(projectItem.GetType(), destName, out var existingItem))
         {
           return; // skip this item
         }
 
         var clonedItem = (IProjectItem)projectItem.Clone();
-        clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+        clonedItem.Name = destName;
 
         if (overwriteExistingItems == OverwriteBehavior.Overwrite)
         {
