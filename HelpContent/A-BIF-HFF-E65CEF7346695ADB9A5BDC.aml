@@ -1,0 +1,1760 @@
+﻿
+<topic id="E65CEF7346695ADB9A5BDCD95B085772" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="E771D4FEB3C4838C0A284850BEEFBF46">Retardation fit functions</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="B842FB1B6E4DB3EAEC1F5A6ACBE05B24">
+<title>Arruda-Boyce 8-chain model (biaxial loading)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+
+<para>
+with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C151232A85576132AEA78F9683BFC3A"><img src="../media/2C151232A85576132AEA78F9683BFC3A.png" width="97" height="20" align="texttop"></img></a></markup> is the stretch of each chain in the model
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB8859F25D28AD6A1184B90A9F67FA6D"><img src="../media/FB8859F25D28AD6A1184B90A9F67FA6D.png" width="12" height="13" align="middle"></img></a></markup> is the first stretch invariant, which is for the planar case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1804D4DA50B5F676D56C2BBA0C0BE9A1"><img src="../media/1804D4DA50B5F676D56C2BBA0C0BE9A1.png" width="120" height="17" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FEB34D9FDB598EEB558C0AD48F528846"><img src="../media/FEB34D9FDB598EEB558C0AD48F528846.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7A9E4BEC76057D0D3AC101A2B71DA9F"><img src="../media/E7A9E4BEC76057D0D3AC101A2B71DA9F.png" width="87" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC49C9CFA84258F7E3690F71AD9596BD"><img src="../media/FC49C9CFA84258F7E3690F71AD9596BD.png" width="73" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="3B1AB8AABB4CE1DA6B8EA166C817217E">
+<title>Arruda-Boyce 8-chain model (planar loading)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+
+<para>
+with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C151232A85576132AEA78F9683BFC3A"><img src="../media/2C151232A85576132AEA78F9683BFC3A.png" width="97" height="20" align="texttop"></img></a></markup> is the stretch of each chain in the model
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB8859F25D28AD6A1184B90A9F67FA6D"><img src="../media/FB8859F25D28AD6A1184B90A9F67FA6D.png" width="12" height="13" align="middle"></img></a></markup> is the first stretch invariant, which is for the planar case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6F00E0EB56C268463C4722089B55D023"><img src="../media/6F00E0EB56C268463C4722089B55D023.png" width="102" height="17" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F535396D0BDB900E30DF869878393C7"><img src="../media/4F535396D0BDB900E30DF869878393C7.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's pure shear data (black circles) fitted with the Arruda-Boyce 8-chain model for the planar case (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9775E46975DEC3C04213E477E0AF542"><img src="../media/A9775E46975DEC3C04213E477E0AF542.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#60BE0938429945379E6E5FCDE4D8509F"><img src="../media/60BE0938429945379E6E5FCDE4D8509F.png" width="73" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="0401BAE10043E7921E9EEB0456AD8182">
+<title>Arruda-Boyce 8-chain model (uniaxial loading)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> as a function of engineering strain <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> during the uniaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+
+<para>
+with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C151232A85576132AEA78F9683BFC3A"><img src="../media/2C151232A85576132AEA78F9683BFC3A.png" width="97" height="20" align="texttop"></img></a></markup> is the stretch of each chain in the model
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB8859F25D28AD6A1184B90A9F67FA6D"><img src="../media/FB8859F25D28AD6A1184B90A9F67FA6D.png" width="12" height="13" align="middle"></img></a></markup> is the first stretch invariant, which is for the uniaxial case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12A24996030CC954E0B32A62CEDCE51D"><img src="../media/12A24996030CC954E0B32A62CEDCE51D.png" width="89" height="17" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A7213E9BB1D6056E49C71C37B3504CC7"><img src="../media/A7213E9BB1D6056E49C71C37B3504CC7.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's uniaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the unaxial case (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC4286D007705EC5809F48B52D88DCC1"><img src="../media/DC4286D007705EC5809F48B52D88DCC1.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0B94684EF000627447AD0A91EC64FC10"><img src="../media/0B94684EF000627447AD0A91EC64FC10.png" width="80" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="BE8D3F67113FF52C85FD8F789AB0035A">
+<title>GentBiaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F7D97D51BD4C0750F68AC172FF9CDAC5"><img src="../media/F7D97D51BD4C0750F68AC172FF9CDAC5.png" width="169" height="38"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup> : maximum value of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#22B765739257DAC49BB9A2430D89B51F"><img src="../media/22B765739257DAC49BB9A2430D89B51F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#576D9A3C80DF0242A8A9B5964839BA1C"><img src="../media/576D9A3C80DF0242A8A9B5964839BA1C.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DA133703E394CDF0548EB145FCA481B"><img src="../media/1DA133703E394CDF0548EB145FCA481B.png" width="91" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="F09925CD34C714FB48383B974BDBA77B">
+<title>GentPlanar model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5257C5147109E9294D6FAE366E47144D"><img src="../media/5257C5147109E9294D6FAE366E47144D.png" width="149" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup> : maximum value of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C11E2B8342BEA676904F8F8DBA68962"><img src="../media/2C11E2B8342BEA676904F8F8DBA68962.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's pure shear data (black circles) fitted with the GentPlanar model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#64CABC3A3215BE9F9D8879AA846DEBFC"><img src="../media/64CABC3A3215BE9F9D8879AA846DEBFC.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7F9E07A28AD53BF688E0CDD76D78B787"><img src="../media/7F9E07A28AD53BF688E0CDD76D78B787.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="2A249F516F283591532374502BCD5230">
+<title>GentUniaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F6F90B9758CDCC393F410B90E089EC"><img src="../media/44F6F90B9758CDCC393F410B90E089EC.png" width="169" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup> : maximum value of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D6CCF4BB4E835483A09EA20DC6F7711F"><img src="../media/D6CCF4BB4E835483A09EA20DC6F7711F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's uniaxial data (black circles) fitted with the GentUniaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13462CBB0C4BF790CE2D7425532F3EF4"><img src="../media/13462CBB0C4BF790CE2D7425532F3EF4.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E343E12A1348E4F0E15BD8EA42B1653"><img src="../media/9E343E12A1348E4F0E15BD8EA42B1653.png" width="68" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="6F25714B1DA71A3D7FFFF498233C1C09">
+<title>MooneyRivlinBiaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99329D89E412088D7020D03A0C57FB88"><img src="../media/99329D89E412088D7020D03A0C57FB88.png" width="184" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the second invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7008F1FC29CFAD67DD7B08100D6BF704"><img src="../media/7008F1FC29CFAD67DD7B08100D6BF704.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D9C1EBC07487DD5AB0E86ADAB102CFE"><img src="../media/8D9C1EBC07487DD5AB0E86ADAB102CFE.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F2C91285D6CC5468B6206944392AD88"><img src="../media/4F2C91285D6CC5468B6206944392AD88.png" width="99" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96DD4E75005C7C9CCDCE8B7D50CD81CE"><img src="../media/96DD4E75005C7C9CCDCE8B7D50CD81CE.png" width="108" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="54E959AAED200A0EEE9CB4C3F03FE9FD">
+<title>MooneyRivlinPlanar model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length)  of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#824B09212591781FD8A00BCB6E1B0182"><img src="../media/824B09212591781FD8A00BCB6E1B0182.png" width="160" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the second invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7008F1FC29CFAD67DD7B08100D6BF704"><img src="../media/7008F1FC29CFAD67DD7B08100D6BF704.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+ATTENTION: as can be seen from the formula above, a determination of both <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup> is not possible from a planar experiment as both parameters are covariant. Thus, in a fit, you have to set one of the parameters to a fixed value, which was determined by another experiment (e.g., a uniaxial experiment).
+</para>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3CA16CD287CF94FA079A7D84105A959"><img src="../media/A3CA16CD287CF94FA079A7D84105A959.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinPlanar model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3F2E65A1BE0E96EF7BA124C69843DE5F"><img src="../media/3F2E65A1BE0E96EF7BA124C69843DE5F.png" width="108" height="13" align="middle"></img></a></markup> (fixed);  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#08D5E72B61B0CE8ED12F7E981BF73583"><img src="../media/08D5E72B61B0CE8ED12F7E981BF73583.png" width="101" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="BDE664394F369F5C5CE66321F1806945">
+<title>MooneyRivlinUniaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D51DB33C69474CBDF61E428BED70115B"><img src="../media/D51DB33C69474CBDF61E428BED70115B.png" width="169" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the second invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7008F1FC29CFAD67DD7B08100D6BF704"><img src="../media/7008F1FC29CFAD67DD7B08100D6BF704.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A3F36F5FB4EBB7E4D9A1EC7F47589D8"><img src="../media/7A3F36F5FB4EBB7E4D9A1EC7F47589D8.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinUniaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7C8235B44DD9170CFEA16E09CB86C5B6"><img src="../media/7C8235B44DD9170CFEA16E09CB86C5B6.png" width="108" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07616BF2956CD69AD99BDF9B10943149"><img src="../media/07616BF2956CD69AD99BDF9B10943149.png" width="71" height="13" align="middle"></img></a></markup> (constrained by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A8498CB03064D1F84EAE8478C778CA8C"><img src="../media/A8498CB03064D1F84EAE8478C778CA8C.png" width="53" height="13" align="middle"></img></a></markup>).
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="6AE606643CD89A1A556A4A0D9DB64FBA">
+<title>NeoHookeanBiaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2656F9AAD9B512771F2588321D79D7DB"><img src="../media/2656F9AAD9B512771F2588321D79D7DB.png" width="125" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B3317C915EDC7A4E605A799EE5795D83"><img src="../media/B3317C915EDC7A4E605A799EE5795D83.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33D0F70456AD7B5EA658814BE4F25AB4"><img src="../media/33D0F70456AD7B5EA658814BE4F25AB4.png" width="94" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="1F1053A951FCAE7D9C07877BF1F9A05B">
+<title>NeoHookeanPlanar model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length)  of an elastomeric material using the material parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BAC911414BF68A411BA616B0CD57B92"><img src="../media/0BAC911414BF68A411BA616B0CD57B92.png" width="125" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3CA16CD287CF94FA079A7D84105A959"><img src="../media/A3CA16CD287CF94FA079A7D84105A959.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanPlanar model (green line). The resulting parameter is: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8B8118350E2CCCE98D829EDB030075BE"><img src="../media/8B8118350E2CCCE98D829EDB030075BE.png" width="94" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="3D73D88339DE129C7BED9AC3999C15C2">
+<title>NeoHookeanUniaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the material parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F3B3646BF6A316EB076FD3E5859DCEC"><img src="../media/4F3B3646BF6A316EB076FD3E5859DCEC.png" width="125" height="37"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#623DC85468B8FAE9C3E0CA7883284CFE"><img src="../media/623DC85468B8FAE9C3E0CA7883284CFE.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanUniaxial model (green line). The resulting parameter is: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03CF1722B14AA08F10314C0084C41446"><img src="../media/03CF1722B14AA08F10314C0084C41446.png" width="94" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="1B9178AF246FF76538E52BE7F6DCBE83">
+<title>OdgenBiaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#83557A973D75DD719082BAC08DB1CC7D"><img src="../media/83557A973D75DD719082BAC08DB1CC7D.png" width="180" height="51"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> : prefactor of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup> : exponent of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BEB797C1973E4A73B1655AE00803CA01"><img src="../media/BEB797C1973E4A73B1655AE00803CA01.png" width="12" height="13" align="middle"></img></a></markup> can be configured by double-clicking on the fit function. Default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#15336414F50EAEA250BEDD238460D1DF"><img src="../media/15336414F50EAEA250BEDD238460D1DF.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6F1677FC1CB0DAE8E34BDB5CBC8744E"><img src="../media/F6F1677FC1CB0DAE8E34BDB5CBC8744E.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A62B82A8053498D9ACCC6277B5ACD78E"><img src="../media/A62B82A8053498D9ACCC6277B5ACD78E.png" width="77" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CB1BA4D8D358250A2F564B4893DD95B"><img src="../media/7CB1BA4D8D358250A2F564B4893DD95B.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B10881C2C6EC9181BCEEB41E8243EF89"><img src="../media/B10881C2C6EC9181BCEEB41E8243EF89.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C0E864AA95BA84CCD346CA658E0D2CFA"><img src="../media/C0E864AA95BA84CCD346CA658E0D2CFA.png" width="94" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#31A6FA4E23C380286371672263C4674A"><img src="../media/31A6FA4E23C380286371672263C4674A.png" width="69" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73885912D8F099BA7E1D3F6DE58ECC9D"><img src="../media/73885912D8F099BA7E1D3F6DE58ECC9D.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#32375CE105275D97BAD1F1F880EF5F6A"><img src="../media/32375CE105275D97BAD1F1F880EF5F6A.png" width="77" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="8AB90C6EE9AD23FFD509D999EBA7EF10">
+<title>OdgenPlanar model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6CE449EDE5F9B913CC21A7EB2D8D4611"><img src="../media/6CE449EDE5F9B913CC21A7EB2D8D4611.png" width="175" height="51"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> : prefactor of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup> : exponent of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BEB797C1973E4A73B1655AE00803CA01"><img src="../media/BEB797C1973E4A73B1655AE00803CA01.png" width="12" height="13" align="middle"></img></a></markup> can be configured by double-clicking on the fit function. Default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A35CCBA8EE97306CF871B4D7BFEAD4C"><img src="../media/9A35CCBA8EE97306CF871B4D7BFEAD4C.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's pure shear data (black circles) fitted with the OdgenPlanar model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#81479046AEB4A16039DCF54A0D040B55"><img src="../media/81479046AEB4A16039DCF54A0D040B55.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F84D4F2B427A1338E9B664A2C85BFEEE"><img src="../media/F84D4F2B427A1338E9B664A2C85BFEEE.png" width="77" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E770EDE83154A3105760E7D9F594335"><img src="../media/3E770EDE83154A3105760E7D9F594335.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's pure shear data (black circles) fitted with the OdgenPlanar model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B10881C2C6EC9181BCEEB41E8243EF89"><img src="../media/B10881C2C6EC9181BCEEB41E8243EF89.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#784310449AFAD3D3EC721F3FA4FFBD94"><img src="../media/784310449AFAD3D3EC721F3FA4FFBD94.png" width="94" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EDE559F535389F49C7EEAE358E27223B"><img src="../media/EDE559F535389F49C7EEAE358E27223B.png" width="69" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C150E46E8B41886204CF9C1A2DF49AC1"><img src="../media/C150E46E8B41886204CF9C1A2DF49AC1.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96362CAAD6EA91A63338FB3BAEA11B92"><img src="../media/96362CAAD6EA91A63338FB3BAEA11B92.png" width="69" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="F251C81F2C8C83A0EAC61ACD02C59942">
+<title>OdgenUniaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE56A3A77FCE384E8F9E3A02A0D5C36E"><img src="../media/CE56A3A77FCE384E8F9E3A02A0D5C36E.png" width="186" height="51"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E82AF399DF44A1C24CE2AD7A94FB64C4"><img src="../media/E82AF399DF44A1C24CE2AD7A94FB64C4.png" width="15" height="10" align="bottom"></img></a></markup> : prefactor of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5854A25420AFF156D5A1A8581F0C9975"><img src="../media/5854A25420AFF156D5A1A8581F0C9975.png" width="15" height="11" align="bottom"></img></a></markup> : exponent of term <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5868D51818052F8A97B5E2A2D2D92548"><img src="../media/5868D51818052F8A97B5E2A2D2D92548.png" width="8" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BEB797C1973E4A73B1655AE00803CA01"><img src="../media/BEB797C1973E4A73B1655AE00803CA01.png" width="12" height="13" align="middle"></img></a></markup> can be configured by double-clicking on the fit function. Default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B38B69493F1B6D03A499641D90AB8A83"><img src="../media/B38B69493F1B6D03A499641D90AB8A83.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's uniaxial data (black circles) fitted with the OdgenUniaxial model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4A484E6F95897CED55444C8A7EBE2DF"><img src="../media/D4A484E6F95897CED55444C8A7EBE2DF.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BE862E22F34DB71FCFC7DBC25E39C770"><img src="../media/BE862E22F34DB71FCFC7DBC25E39C770.png" width="101" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07663F7583D21E627252FAF40B893F3E"><img src="../media/07663F7583D21E627252FAF40B893F3E.png" width="69" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13BC929402EA2DA61C29E9A7DCDD49E8"><img src="../media/13BC929402EA2DA61C29E9A7DCDD49E8.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's uniaxial data (black circles) fitted with the OdgenUniaxial model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B10881C2C6EC9181BCEEB41E8243EF89"><img src="../media/B10881C2C6EC9181BCEEB41E8243EF89.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A15F160B23DCE54F306110BC546F0E35"><img src="../media/A15F160B23DCE54F306110BC546F0E35.png" width="101" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6C28656678A6B0D98F391763A208EEA6"><img src="../media/6C28656678A6B0D98F391763A208EEA6.png" width="92" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#80468B1705B68AA679790EECC77411C3"><img src="../media/80468B1705B68AA679790EECC77411C3.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D188C63F26ABB490CBDBA3587104D60F"><img src="../media/D188C63F26ABB490CBDBA3587104D60F.png" width="77" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="64BB16507E7A973C4D7DEFA6A50C928A">
+<title>YeohBiaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the three material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#723083983FE9D4E588F2C70EAAC69C1B"><img src="../media/723083983FE9D4E588F2C70EAAC69C1B.png" width="519" height="40"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> : second order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup> : third order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B73E75F327F25F7A9DF36CF43929C69A"><img src="../media/B73E75F327F25F7A9DF36CF43929C69A.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B137BCB50794AA8916BE475B5EC2E350"><img src="../media/B137BCB50794AA8916BE475B5EC2E350.png" width="108" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33C8B6E62DE8A3568E4CCE658FDDC478"><img src="../media/33C8B6E62DE8A3568E4CCE658FDDC478.png" width="124" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0FBDA57BD645D677F89E52EE5B04E7C4"><img src="../media/0FBDA57BD645D677F89E52EE5B04E7C4.png" width="97" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="0D4FB924B126DF2FE6B69E70BC08EA20">
+<title>YeohPlanar model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the three material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2381EC7AC0FCB2AAEFD1F534B6C01DE8"><img src="../media/2381EC7AC0FCB2AAEFD1F534B6C01DE8.png" width="381" height="40"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> : second order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup> : third order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1838D0AADD3FD835360D94A1AEE7AC7F"><img src="../media/1838D0AADD3FD835360D94A1AEE7AC7F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's pure shear data (black circles) fitted with the YeohPlanar model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD5F5E25495BFDB02C37D7EF1989B098"><img src="../media/DD5F5E25495BFDB02C37D7EF1989B098.png" width="108" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2F19B8E4B1F128FD781011CAFD639C7"><img src="../media/F2F19B8E4B1F128FD781011CAFD639C7.png" width="124" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54415DF66DAD77E49FD906966EA34444"><img src="../media/54415DF66DAD77E49FD906966EA34444.png" width="105" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="63029B955EE256428930F2258E4649BB">
+<title>YeohUniaxial model
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the three material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CFC416F2EAF60C769A2876F8B3139236"><img src="../media/CFC416F2EAF60C769A2876F8B3139236.png" width="456" height="40"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> : first order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> : second order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup> : third order coefficient of the first invariant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FB99C324BF2940C3979E2F29230721C"><img src="../media/9FB99C324BF2940C3979E2F29230721C.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA91E5E85FE63E321E49096F418B865C"><img src="../media/AA91E5E85FE63E321E49096F418B865C.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's uniaxial data (black circles) fitted with the YeohUniaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#229266B8C9EE3C5981F7473B4AA5C603"><img src="../media/229266B8C9EE3C5981F7473B4AA5C603.png" width="108" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4FC276A37C52746342CC256F1B098854"><img src="../media/4FC276A37C52746342CC256F1B098854.png" width="117" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F68CA7B2B773B840D4DFF5E00C485ED3"><img src="../media/F68CA7B2B773B840D4DFF5E00C485ED3.png" width="97" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="CC0F38133338898C0E8F0A706D55FDAA">Fit functions for transitions</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

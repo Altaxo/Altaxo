@@ -4045,6 +4045,670 @@ References:
 - Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
+  <data name="RubberElasticity.ArrudaBoyceEightChainBiaxial" xml:space="preserve">
+    <value>##### Arruda-Boyce 8-chain model (biaxial loading)
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+$$
+
+with the stretch $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus (parameter 1 of the fit function)
+- $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+- $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
+- $L^{-1}()$ is the inverse Langevin function
+- $I_1$ is the first stretch invariant, which is for the planar case $I_1 = 1 + \lambda^2 + 1/\lambda^2$
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ArrudaBoyceEightChainBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: $G=89904 Pa$;  $\lambda_m=5.388$.
+
+---
+References:
+- E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.ArrudaBoyceEightChainPlanar" xml:space="preserve">
+    <value>##### Arruda-Boyce 8-chain model (planar loading)
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+$$
+
+with the stretch $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus (parameter 1 of the fit function)
+- $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+- $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
+- $L^{-1}()$ is the inverse Langevin function
+- $I_1$ is the first stretch invariant, which is for the planar case $I_1 = 2 \lambda^2 + 1/\lambda^4$
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ArrudaBoyceEightChainPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's pure shear data (black circles) fitted with the Arruda-Boyce 8-chain model for the planar case (green line). The resulting parameters are: $G=158513 Pa$;  $\lambda_m=7.336$.
+
+---
+References:
+- E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.ArrudaBoyceEightChainUniaxial" xml:space="preserve">
+    <value>##### Arruda-Boyce 8-chain model (uniaxial loading)
+
+This model evaluates the engineering stress $\sigma$ as a function of engineering strain $\epsilon$ during the uniaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+$$
+
+with the stretch $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus (parameter 1 of the fit function)
+- $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
+- $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
+- $L^{-1}()$ is the inverse Langevin function
+- $I_1$ is the first stretch invariant, which is for the uniaxial case $I_1 = \lambda^2 + 2/\lambda$
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ArrudaBoyceEightChainUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's uniaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the unaxial case (green line). The resulting parameters are: $G=138860 Pa$;  $\lambda_m=5.0514$.
+
+---
+References:
+- E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, doi: 10.1016/0022-5096(93)90013-6.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.GentBiaxial" xml:space="preserve">
+    <value>##### GentBiaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = \frac{-2  G  Jm  (\lambda^6-1)}{\lambda - (Jm+3) \lambda^5 + 2 \lambda^7}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus
+- $Jm$ : maximum value of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.GentBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: $G=181166 Pa$;  $Jm=4283.45$.
+---
+References:
+- A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.GentPlanar" xml:space="preserve">
+    <value>##### GentPlanar model
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = -\frac{G Jm \left(\lambda^4-1 \right)}{\lambda^3(Jm+2)-
+   \lambda^6}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus
+- $Jm$ : maximum value of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.GentPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's pure shear data (black circles) fitted with the GentPlanar model (green line). The resulting parameters are: $G=321062 Pa$;  $Jm=257$.
+---
+References:
+- A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.GentUniaxial" xml:space="preserve">
+    <value>##### GentUniaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+
+$$
+\sigma = -\frac{G Jm \left(1 - \lambda^3\right)}{2-(Jm+3)
+   \lambda +\lambda ^3}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G$ : shear modulus
+- $Jm$ : maximum value of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.GentUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's uniaxial data (black circles) fitted with the GentUniaxial model (green line). The resulting parameters are: $G=248139 Pa$;  $Jm=79.4$.
+---
+References:
+- A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
+
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.MooneyRivlinBiaxial" xml:space="preserve">
+    <value>##### MooneyRivlinBiaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $C10$ and $C01$  according to the following  equation:
+
+$$
+\sigma = \frac{4 (C10 + C01 \lambda^2)(\lambda^6-1)}{\lambda^5}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C01$ : first order coefficient of the second invariant $J_2$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: $G=85859.7 Pa$;  $Jm=2270.65 Pa$.
+---
+References:
+- M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+- M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.MooneyRivlinPlanar" xml:space="preserve">
+    <value>##### MooneyRivlinPlanar model
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length)  of an elastomeric material using the two material parameters $C10$ and $C01$  according to the following  equation:
+
+$$
+\sigma = 2 (C10 + C01)  \frac{\lambda^4 - 1}{\lambda^3}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C01$ : first order coefficient of the second invariant $J_2$
+
+ATTENTION: as can be seen from the formula above, a determination of both $C10$ and $C01$ is not possible from a planar experiment as both parameters are covariant. Thus, in a fit, you have to set one of the parameters to a fixed value, which was determined by another experiment (e.g., a uniaxial experiment).
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinPlanar model (green line). The resulting parameters are: $C10=100000 Pa$ (fixed);  $C01=70979 Pa$.
+---
+References:
+- M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+- M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.MooneyRivlinUniaxial" xml:space="preserve">
+    <value>##### MooneyRivlinUniaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the two material parameters $C10$ and $C01$  according to the following  equation:
+
+$$
+\sigma = 2 (C01 + C10  \lambda) \frac{\lambda^3 - 1 }{\lambda^3}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C01$ : first order coefficient of the second invariant $J_2$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinUniaxial model (green line). The resulting parameters are: $C10=285388 Pa$;  $C01=0 Pa$ (constrained by $C01&gt;0$).
+---
+References:
+- M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
+
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+- M. C. Boyce and E. M. Arruda, “Constitutive Models of Rubber Elasticity: A Review,” Rubber Chemistry and Technology, vol. 73, no. 3, pp. 504–523, Jul. 2000, doi: 10.5254/1.3547602.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.NeoHookeanBiaxial" xml:space="preserve">
+    <value>##### NeoHookeanBiaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameter $C10$ according to the following  equation:
+
+$$
+\sigma = 4 C10 \left (\lambda - \frac{1}{\lambda^5} \right)
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: $G=117621 Pa$.
+---
+References:
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.NeoHookeanPlanar" xml:space="preserve">
+    <value>##### NeoHookeanPlanar model
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length)  of an elastomeric material using the material parameter $C10$ according to the following  equation:
+
+$$
+\sigma = 2 C10 \left(\lambda - \frac{1}{\lambda^3}\right)
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanPlanar model (green line). The resulting parameter is: $G=170979 Pa$.
+---
+References:
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.NeoHookeanUniaxial" xml:space="preserve">
+    <value>##### NeoHookeanUniaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the material parameter $C10$ according to the following  equation:
+
+$$
+\sigma = 2 C10 \left(\lambda - \frac{1}{\lambda^2}\right)
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $C10$ : first order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanUniaxial model (green line). The resulting parameter is: $G=285388 Pa$.
+---
+References:
+- R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.OdgenBiaxial" xml:space="preserve">
+    <value>##### OdgenBiaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameters $\mu_k$ and $\alpha_k$  according to the following  equation:
+
+$$
+\sigma = \sum_{k=1}^{N} \mu_k \left(\lambda^{\alpha_k-1} - \frac{1}{\lambda^{1+2\alpha_k}} \right )
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $\mu_k$ : prefactor of term $k$
+- $\alpha_k$ : exponent of term $k$
+
+The number of terms $N$ can be configured by double-clicking on the fit function. Default value is $N=1$.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with $N=1$. The resulting parameters are: $\mu_1 = 291160 Pa$ and $\alpha_1 = 2.3755$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 2: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with $N=2$. The resulting parameters are: $\mu_1 = 1258.6 Pa$, $\alpha_1 = 5.516$, $\mu_2 = 478454 Pa$ and $\alpha_2 = 1.6976$.
+
+---
+References:
+- R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
+  <data name="RubberElasticity.OdgenPlanar" xml:space="preserve">
+    <value>##### OdgenPlanar model
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the material parameters $\mu_k$ and $\alpha_k$  according to the following  equation:
+
+$$
+\sigma = \sum_{k=1}^{N} \mu_k \left(\lambda^{\alpha_k-1} - \frac{1}{\lambda^{1+\alpha_k}} \right )
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $\mu_k$ : prefactor of term $k$
+- $\alpha_k$ : exponent of term $k$
+
+The number of terms $N$ can be configured by double-clicking on the fit function. Default value is $N=1$.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenPlanar.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's pure shear data (black circles) fitted with the OdgenPlanar model (green line) with $N=1$. The resulting parameters are: $\mu_1 = 316628 Pa$ and $\alpha_1 = 2.0552$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 2: Treloar's pure shear data (black circles) fitted with the OdgenPlanar model (green line) with $N=2$. The resulting parameters are: $\mu_1 = 2080.2 Pa$, $\alpha_1 = 4.622$, $\mu_2 = 517508 Pa$ and $\alpha_2 = 1.479$.
+
+---
+References:
+- R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
+  <data name="RubberElasticity.OdgenUniaxial" xml:space="preserve">
+    <value>##### OdgenUniaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the material parameters $\mu_k$ and $\alpha_k$  according to the following  equation:
+
+$$
+\sigma = \sum_{k=1}^{N} \mu_k \left(\lambda^{\alpha_k-1} - \frac{1}{\lambda^{1+\alpha_k/2}} \right )
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $\mu_k$ : prefactor of term $k$
+- $\alpha_k$ : exponent of term $k$
+
+The number of terms $N$ can be configured by double-clicking on the fit function. Default value is $N=1$.
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenUniaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's uniaxial data (black circles) fitted with the OdgenUniaxial model (green line) with $N=1$. The resulting parameters are: $\mu_1 = 15467.7 Pa$ and $\alpha_1 = 3.901$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 2: Treloar's uniaxial data (black circles) fitted with the OdgenUniaxial model (green line) with $N=2$. The resulting parameters are: $\mu_1 = 0.06128 Pa$, $\alpha_1 = 9.790137$, $\mu_2 = 251778 Pa$ and $\alpha_2 = 2.1772$.
+
+---
+References:
+- R. W. Ogden, “Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, vol. 326, no. 1567, pp. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
+  <data name="RubberElasticity.YeohBiaxial" xml:space="preserve">
+    <value>##### YeohBiaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the three material parameters $C10$, $C20$ and $C30$  according to the following  equation:
+
+$$
+\sigma = \frac{4 \left(\lambda ^6-1\right) \left(\lambda ^8
+   \left(C10+4 C20 \lambda ^2-6
+   C20 \right)+2 C20 \lambda ^4+3
+   C30 \left(\lambda ^2-1\right)^4 \left(2
+   \lambda ^2+1\right)^2\right)}{\lambda ^{13}}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C20$ : second order coefficient of the first invariant $J_1$
+- $C30$ : third order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: $C10 =  102692 Pa$, $C20 = -394.225 Pa$ and $C30 = 15.61 Pa$.
+
+---
+References:
+- O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
+  <data name="RubberElasticity.YeohPlanar" xml:space="preserve">
+    <value>##### YeohPlanar model
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the three material parameters $C10$, $C20$ and $C30$  according to the following  equation:
+
+$$
+\sigma = \frac{2 \left(\lambda ^4-1\right) \left(C10
+   \lambda ^4+2 C20 \left(\lambda
+   ^2-1\right)^2 \lambda ^2+3 C30
+   \left(\lambda ^2-1\right)^4\right)}{\lambda ^7}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C20$ : second order coefficient of the first invariant $J_1$
+- $C30$ : third order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's pure shear data (black circles) fitted with the YeohPlanar model (green line). The resulting parameters are: $C10 =  182040 Pa$, $C20 = -1836.57 Pa$ and $C30 = 54.199 Pa$.
+
+---
+References:
+- O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
+  <data name="RubberElasticity.YeohUniaxial" xml:space="preserve">
+    <value>##### YeohUniaxial model
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the three material parameters $C10$, $C20$ and $C30$  according to the following  equation:
+
+$$
+\sigma = \frac{2 \left(\lambda ^3-1\right) \left(\lambda 
+   \left(C10 \lambda +2 C20
+   \left(\lambda ^3-3 \lambda +2\right)\right)+3
+   C30 (\lambda +2)^2 (\lambda
+   -1)^4\right)}{\lambda ^4}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+
+- $C10$ : first order coefficient of the first invariant $J_1$
+- $C20$ : second order coefficient of the first invariant $J_1$
+- $C30$ : third order coefficient of the first invariant $J_1$
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's uniaxial data (black circles) fitted with the YeohUniaxial model (green line). The resulting parameters are: $C10 =  176282 Pa$, $C20 = -1854.7 Pa$ and $C30 = 46.41 Pa$.
+
+---
+References:
+- O. H. Yeoh, “Some Forms of the Strain Energy Function for Rubber,” Rubber Chemistry and Technology, vol. 66, no. 5, pp. 754–771, Nov. 1993, doi: 10.5254/1.3538343.
+
+- L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
+</value>
+  </data>
   <data name="Transitions.ErrorFunctionFromTo" xml:space="preserve">
     <value>##### ErrorFunctionFromTo
 

@@ -102,6 +102,91 @@ References:<lineBreak/>
 </content>
 </section>
 
+<section address="44C7A2A377785FEC274DA516C1C2E7A1">
+<title>MassBasedFloryDistributionOfMPeak
+</title>
+<content>
+
+<para>
+The molecular weight <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A00EC0372E1B6AE6CF8379C911A28AD"><img src="../media/6A00EC0372E1B6AE6CF8379C911A28AD.png" width="15" height="13" align="middle"></img></a></markup> of a polymer which is synthesized in a reactor is often distributed according to a Flory distribution. The only parameter of this distribution (besides the area <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E83BF59370A7B04F7CE74CBCFB5A20A3"><img src="../media/E83BF59370A7B04F7CE74CBCFB5A20A3.png" width="11" height="13" align="middle"></img></a></markup>) is the ratio <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> of the probabilities of the termination step with respect to the chain prolongation step.
+</para>
+
+<para>
+This function evaluates a sum of mass based Flory distribution terms, plus a baseline polynomial with one or multiple terms, according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#87B690E76443B448BBB7C163907BB784"><img src="../media/87B690E76443B448BBB7C163907BB784.png" width="783" height="42"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D05CC72BC4E7039582446334A9036973"><img src="../media/D05CC72BC4E7039582446334A9036973.png" width="61" height="15" align="bottom"></img></a></markup> are the areas of the Flory terms (ATTENTION: only if integrated over the <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CCD261897F3BB822E8444DBB298C931D"><img src="../media/CCD261897F3BB822E8444DBB298C931D.png" width="44" height="14" align="middle"></img></a></markup> x-axis!)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+ are the molecular weights at the maximum value of the distributions.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D26F5A3155D87FADEED8D68CBE00F4E1"><img src="../media/D26F5A3155D87FADEED8D68CBE00F4E1.png" width="41" height="13" align="middle"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is the number of Flory distribution terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ED9E39BE2006438C5AD4B96492F22030"><img src="../media/ED9E39BE2006438C5AD4B96492F22030.png" width="37" height="13" align="middle"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#737C1281376372E015EA4F3235EE4C23"><img src="../media/737C1281376372E015EA4F3235EE4C23.png" width="52" height="12" align="middle"></img></a></markup> to disable the baseline polynomial)
+</para>
+</listItem>
+</list>
+
+<para>
+The the number of Flory distribution terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#737C1281376372E015EA4F3235EE4C23"><img src="../media/737C1281376372E015EA4F3235EE4C23.png" width="52" height="12" align="middle"></img></a></markup>, corresponding to 1 term and no baseline.
+</para>
+
+<para>
+There is an additional property named <codeInline>IndependentVariableIsDecadicLogarithm</codeInline>. If this property is set to true, it is assumed that the x-axis is not the molecular weight, but the decadic logarithm of the molecular weight <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#145000D2F1E8368127ED89CF801785F0"><img src="../media/145000D2F1E8368127ED89CF801785F0.png" width="56" height="16" align="bottom"></img></a></markup>, which is often used in chemistry.
+</para>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2ED3A2D707DAC684149D8C50C0D188C4"><img src="../media/2ED3A2D707DAC684149D8C50C0D188C4.png" width="77" height="13" align="middle"></img></a></markup> (<codeInline>IndependentVariableIsDecadicLogarithm == false</codeInline>) or <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9D5BB7AC5D9E74E2D2A74A7449D08658"><img src="../media/9D5BB7AC5D9E74E2D2A74A7449D08658.png" width="138" height="16" align="bottom"></img></a></markup> (<codeInline>IndependentVariableIsDecadicLogarithm == true</codeInline>).
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE465B9E1CF39AF447A811426C8D9F18"><img src="../media/EE465B9E1CF39AF447A811426C8D9F18.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: MassBasedFloryDistributionOfMPeak (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#737C1281376372E015EA4F3235EE4C23"><img src="../media/737C1281376372E015EA4F3235EE4C23.png" width="52" height="12" align="middle"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#94FB06980283802787613AE1A2EAB88E"><img src="../media/94FB06980283802787613AE1A2EAB88E.png" width="44" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#45C3E5BDA9BFBCDF2B90CC9700FEB6BD"><img src="../media/45C3E5BDA9BFBCDF2B90CC9700FEB6BD.png" width="86" height="18" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:<lineBreak/>
+[1] <externalLink><linkText>Flory-Schulz distribution in Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Flory%E2%80%93Schulz_distribution</linkUri></externalLink><lineBreak/>
+[2] João B. P. Soares, 'Polyolefin microstructural deconvolution methods: The good, the bad, and the ugly', <externalLink><linkText> https://doi.org/10.1002/cjce.24833</linkText><linkUri>https://doi.org/10.1002/cjce.24833</linkUri></externalLink>
+</para>
+</content>
+</section>
+
 <section address="F9A46A7781527B0EDFFB81EBF54726EA">
 <title>MassBasedFloryDistributionWithFixedGaussianBroadening
 </title>

@@ -229,6 +229,8 @@
 </Topic>
 <Topic id="E771D4FEB3C4838C0A284850BEEFBF46" visible="True" title="Retardation fit functions">
 </Topic>
+<Topic id="E65CEF7346695ADB9A5BDCD95B085772" visible="True" title="Hyperelastic fit functions for the stress-strain relationship of elastomers">
+</Topic>
 <Topic id="CC0F38133338898C0E8F0A706D55FDAA" visible="True" title="Fit functions for transitions">
 </Topic>
 <Topic id="5E135DDC61482072F84C6E0D352875BA" visible="True" title="Fit functions for the viscosity versus the shear rate">
