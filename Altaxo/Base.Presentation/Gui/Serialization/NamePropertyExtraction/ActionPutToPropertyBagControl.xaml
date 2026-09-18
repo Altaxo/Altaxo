@@ -25,8 +25,8 @@
             <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Property Name:" />
-        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding PropertyName, Mode=TwoWay}" />
+        <Label Grid.Row="0" Grid.Column="0" Content="Property name:" />
+        <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding PropertyNames.Items}" SelectedItem="{Binding PropertyNames.SelectedItem, Mode=TwoWay}" />
         
         <Label Grid.Row="2" Grid.Column="0" Content="Level:" />
         <axogc:Int32UpDown Grid.Row="2" 

@@ -61,7 +61,9 @@
                 <RowDefinition Height="4" />
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="File name patterns included:" />
+            <Label Grid.Row="0" Grid.Column="0" >
+                <TextBlock Text="File name patterns included:" FontWeight="Bold"/>
+            </Label>
 
             <TextBox Grid.Row="2"
                  Grid.Column="0" 
@@ -72,7 +74,9 @@
 
             <Button Grid.Row="2" Grid.Column="2" Content="Add files ..." Command="{Binding CmdAddFiles}"/>
 
-            <Label Grid.Row="4" Grid.Column="0" Content="File name patterns excluded:" />
+            <Label Grid.Row="4" Grid.Column="0" >
+                <TextBlock Text="File name patterns excluded:" FontWeight="Bold"/>
+            </Label>
 
             <TextBox Grid.Row="6"
                  Grid.Column="0" 
@@ -84,7 +88,9 @@
             <Button Grid.Row="6" Grid.Column="2" Content="Rescan file system" Command="{Binding CmdRescanFileSystem}"/>
 
 
-            <Label Grid.Row="8" Grid.Column="0" Content="Property extraction:" />
+            <Label Grid.Row="8" Grid.Column="0" >
+                <TextBlock Text="Property extraction:" FontWeight="Bold"/>
+            </Label>
 
             <ContentControl Grid.Row="10" Grid.Column="0" MinHeight="80" Content="{Binding TreeController.ViewObject}" />
 
@@ -94,7 +100,9 @@
           IsReadOnly="True" />
             </Expander>
 
-            <Label Grid.Row="14" Grid.Column="0" Content="Target table name template (use property names in curly braces {}, like {SampleName} :" />
+            <Label Grid.Row="14" Grid.Column="0" >
+                <TextBlock Text="Target table name template (use property names in curly braces {}, like {SampleName} :" FontWeight="Bold"/>
+            </Label>
 
 
             <TextBox Grid.Row="16"
@@ -109,27 +117,44 @@
                           AutoGenerateColumns="True"
                           IsReadOnly="True" />
             </Expander>
-            
-            <Label Grid.Row="20" Grid.Column="0" Content="Project folder or table name used as template if target table is missing:" />
+
+            <Label Grid.Row="20" Grid.Column="0" >
+                <TextBlock Text="Project folder or table name used as template if target table is missing:" FontWeight="Bold"/>
+            </Label>
+
             <TextBox Grid.Row="22"
                      Grid.Column="0"
                      Text="{Binding FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing, UpdateSourceTrigger=PropertyChanged}"
                      ToolTip="Enter the project folder name (with trailing backslash) or table name to be used as a template if the target table is missing."
                      />
 
-            <GroupBox Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="7" Header="If project items already exist in the target folder, then:">
-                <axogc:SingleChoiceRadioStackPanel Orientation="Horizontal" ItemsSource="{Binding OverwriteProjectItems.Items}" SelectedItem="{Binding OverwriteProjectItems.SelectedItem, Mode=TwoWay}" />
+            <StackPanel Grid.Row="22" Grid.Column="2" Orientation="Vertical">
+                <Button Content="Select table ..." Command="{Binding CmdSelectTableAsTemplate}" />
+                <Button Content="Select folder ..." Command="{Binding CmdSelectFolderAsTemplate}" />
+            </StackPanel> 
+
+            <GroupBox Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="7" >
+                <GroupBox.Header>
+                    <TextBlock Text="If project items already exist in the target folder, then:" FontWeight="Bold"/>
+                </GroupBox.Header>
+                <axogc:SingleChoiceRadioStackPanel Orientation="Horizontal" ItemsSource="{Binding OverwriteProjectItems.Items}" SelectedItem="{Binding OverwriteProjectItems.SelectedItem, Mode=TwoWay}" Margin="0,4,0,0" />
             </GroupBox>
 
 
-            <Label Grid.Row="26" Grid.Column="0" Content="Actions to put properties into the property bag:" />
+            <Label Grid.Row="26" Grid.Column="0"  >
+                <TextBlock Text="Actions to put properties into the property bag:" FontWeight="Bold"/>
+            </Label>
 
             <ListView Grid.Row="28"
                   Grid.Column="0"
                   MinHeight="80"
                   ItemsSource="{Binding ActionsPutToPropertyBag.Items}"
-                      SelectedItem="{Binding ActionsPutToPropertyBag.SelectedItem}"
-                  >
+                  SelectedItem="{Binding ActionsPutToPropertyBag.SelectedItem}"
+                  axogb:DoubleClickTriggersCommand.IsHandled="True" axogb:DoubleClickTriggersCommand.Command="{Binding CmdEditAction}"
+             >
+                <ListView.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding CmdDeleteAction}" />
+                </ListView.InputBindings>
                 <ListView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add 'Put to Property Bag'" Command="{Binding Source={StaticResource gcontext}, Path=Data.CmdAddActionPutToPropertyBag}" />
@@ -147,6 +172,12 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            
+            <Button Grid.Row="28" Grid.Column="2" 
+                    Content="Guess"
+                    Command="{Binding CmdGuessActionsPutPropertiesIntoPropertyBag}" 
+                    ToolTip="Guess the property bag actions from the target table name."
+                    />
 
             <Expander Header="Property bag preview" Grid.Row="30">
                 <DataGrid ItemsSource="{Binding RowsOfPropertyBagPreview}"

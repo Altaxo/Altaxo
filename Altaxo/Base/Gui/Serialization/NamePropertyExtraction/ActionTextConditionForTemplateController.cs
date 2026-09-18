@@ -48,6 +48,8 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
   [UserControllerForObject(typeof(ActionTextConditionForTemplate))]
   public class ActionTextConditionForTemplateController : MVCANControllerEditImmutableDocBase<ActionTextConditionForTemplate, IActionTextConditionForTemplateView>
   {
+    private List<string> _propertyNames;
+
     /// <summary>
     /// Gets the subcontrollers used by this controller.
     /// </summary>
@@ -59,10 +61,11 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
     #region Bindings
 
+
     /// <summary>
-    /// Gets or sets the property name to evaluate.
+    /// Gets or sets the property names to choose from.
     /// </summary>
-    public string PropertyName
+    public ItemsController<string> PropertyNames
     {
       get => field;
       set
@@ -70,7 +73,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         if (!(field == value))
         {
           field = value;
-          OnPropertyChanged(nameof(PropertyName));
+          OnPropertyChanged(nameof(PropertyNames));
         }
       }
     }
@@ -160,6 +163,21 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
     #endregion Bindings
 
+    /// <inheritdoc />
+    public override bool InitializeDocument(params object[] args)
+    {
+      if (args.Length > 1 && args[1] is IEnumerable<string> propertyNames)
+      {
+        _propertyNames = propertyNames.ToList();
+      }
+      else
+      {
+        _propertyNames = new List<string>();
+      }
+
+      return base.InitializeDocument(args);
+    }
+
     /// <summary>
     /// Initializes the controller state from the document.
     /// </summary>
@@ -170,7 +188,18 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
 
       if (initData)
       {
-        PropertyName = _doc.PropertyName;
+        if (!_propertyNames.Contains(_doc.PropertyName))
+        {
+          _propertyNames.Add(_doc.PropertyName);
+        }
+        _propertyNames.Sort();
+
+        PropertyNames = new ItemsController<string>(
+          new SelectableListNodeList(_propertyNames.Select(name => new SelectableListNode(name, name, false))))
+        {
+          SelectedValue = _doc.PropertyName
+        };
+
         Condition = _doc.Condition;
 
         var conditionComparisonKindList = new SelectableListNodeList(_doc.ConditionComparisonKind);
@@ -203,7 +232,7 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
     {
       _doc = _doc with
       {
-        PropertyName = PropertyName,
+        PropertyName = PropertyNames.SelectedValue,
         Condition = Condition,
         ConditionComparisonKind = ConditionComparisonKind.SelectedValue,
         IsConditionCaseSensitive = IsConditionCaseSensitive,

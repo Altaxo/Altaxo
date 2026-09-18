@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -119,6 +120,21 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
     /// Gets the command to rescan the file system. This command is bound to the view and is triggered when the user initiates the action to rescan the file system. The command executes the EhCmdRescanFileSystem method, which handles the logic for rescanning the file system.
     /// </summary>
     public ICommand CmdRescanFileSystem => field ??= new RelayCommand(ResolveFileNames);
+
+    /// <summary>
+    /// Gets the command to select a table as a template for the import process.
+    /// </summary>
+    public ICommand CmdSelectTableAsTemplate => field ??= new RelayCommand(EhCmdSelectTableAsTemplate);
+
+    /// <summary>
+    /// Gets the command to select a folder as a template for the import process.
+    /// </summary>
+    public ICommand CmdSelectFolderAsTemplate => field ??= new RelayCommand(EhCmdSelectFolderAsTemplate);
+
+    /// <summary>
+    /// Gets the command to guess actions for putting properties into the property bag. This command is bound to the view and is triggered when the user initiates the action to guess actions. 
+    /// </summary>
+    public ICommand CmdGuessActionsPutPropertiesIntoPropertyBag => field ??= new RelayCommand(EhCmdGuessActionsPutPropertiesIntoPropertyBag);
 
     /// <summary>
     /// Gets or sets the target table name for the import process. Can contain placeholders for properties extracted from the file names. 
@@ -313,8 +329,10 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       var item = selectedNode.Tag as IActionOnProperty;
       if (item is not null)
       {
-        if (Current.Gui.ShowDialog(ref item, "Edit action", showApplyButton: false))
+        var controller = (IMVCAController)Current.Gui.GetController(new object[] { item, PropertyNames }, typeof(IMVCAController));
+        if (Current.Gui.ShowDialog(controller, "Edit action", showApplyButton: false))
         {
+          item = (IActionOnProperty)controller.ModelObject;
           selectedNode.Tag = item;
           selectedNode.Text = item.PropertyName;
         }
@@ -620,6 +638,12 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       if (cancellationToken.IsCancellationRequested)
         return;
 
+      HashSet<string>? tableNamesInTemplateFolder = null;
+      if (ProjectFolder.IsValidFolderName(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing))
+      {
+        tableNamesInTemplateFolder = Current.Project.Folders.GetItemsInFolder(FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing).OfType<Altaxo.Data.DataTable>().Select(t => t.ShortName).ToHashSet();
+      }
+
       foreach (var fileName in fileNames)
       {
         if (cancellationToken.IsCancellationRequested)
@@ -628,28 +652,31 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
         var row = table.NewRow();
 
         var tableName = fileNamesToTables.ContainsKey(fileName) ? fileNamesToTables[fileName] : string.Empty;
-        string diagnostics = "OK";
+        string? diagnostics = null;
 
         if (string.IsNullOrEmpty(tableName))
         {
-          diagnostics = "ERROR: No table name could be derived from the file name.";
+          diagnostics = AddDiagnostics(diagnostics, "ERROR: No table name could be derived from the file name.");
         }
-
-        if (tableName.EndsWith('\\'))
+        else if (tableName.EndsWith('\\'))
         {
-          diagnostics = "ERROR: The derived table name ends with a backslash, which is not allowed.";
+          diagnostics = AddDiagnostics(diagnostics, "ERROR: The derived table name ends with a backslash, which is not allowed.");
         }
-
-        if (tablesToFileNames[tableName].FileNames.Count > 1)
+        else
         {
-          diagnostics = "WARNING: Multiple files are mapped to the same table name.";
+          if (tableNamesInTemplateFolder is not null && !tableNamesInTemplateFolder.Contains(ProjectFolder.GetNamePart(tableName)))
+          {
+            diagnostics = AddDiagnostics(diagnostics, "WARNING: The derived table name is not present in the template folder.");
+          }
+          if (tablesToFileNames[tableName].FileNames.Count > 1)
+          {
+            diagnostics = AddDiagnostics(diagnostics, "WARNING: Multiple files are mapped to the same table name.");
+          }
         }
-
-
 
         row[FileNameProperty] = Path.GetFileName(fileName);
         row[TableNameProperty] = tableName;
-        row[DiagnosticsProperty] = diagnostics;
+        row[DiagnosticsProperty] = diagnostics ?? "OK";
         row[FilePathProperty] = fileName;
 
         table.Rows.Add(row);
@@ -662,6 +689,17 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
     }
 
     CancellationTokenSource? _ctsUpdatePropertyBagPreview;
+
+
+    static string AddDiagnostics(string? currentDiagnostics, string newDiagnostics)
+    {
+      if (string.IsNullOrEmpty(currentDiagnostics))
+        return newDiagnostics;
+      else if (string.IsNullOrEmpty(newDiagnostics))
+        return currentDiagnostics;
+      else
+        return currentDiagnostics + "; " + newDiagnostics;
+    }
 
     void UpdatePropertyBagPreview()
     {
@@ -734,9 +772,75 @@ namespace Altaxo.Gui.Serialization.NamePropertyExtraction
       UpdatePropertyBagPreview();
     }
 
+    private void EhCmdSelectTableAsTemplate()
+    {
+      var names = Current.Project.DataTableCollection.Names.ToList();
+      names.Sort();
+      var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose the table name:" };
+      if (!Current.Gui.ShowDialog(ref choices, "Table choice", false))
+        return;
+
+      FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = choices.Text;
+
+    }
+
+    private const string rootFolderDisplayName = "<<<root folder>>>";
+    private void EhCmdSelectFolderAsTemplate()
+    {
+      var names = Current.Project.Folders.GetSubfoldersAsDisplayFolderNameStringListSorted(ProjectFolder.RootFolderName, true);
+      names.Insert(0, rootFolderDisplayName);
+      var choices = new TextChoice(names.ToArray(), 0, true) { Description = "Choose or enter the folder to move the items into:" };
+      if (!Current.Gui.ShowDialog(ref choices, "Folder choice", false))
+        return;
+
+      FolderOrTableNameUsedAsTemplateIfTargetTableIsMissing = rootFolderDisplayName == choices.Text ? ProjectFolder.RootFolderName : ProjectFolder.ConvertDisplayFolderNameToFolderName(choices.Text);
+    }
 
 
+    private void EhCmdGuessActionsPutPropertiesIntoPropertyBag()
+    {
+      if (string.IsNullOrWhiteSpace(TableTargetName))
+      {
+        Current.Gui.ErrorMessageBox("Please specify a target table name first.", "Cannot guess actions");
+        return;
+      }
+      if (ProjectFolder.IsValidFolderName(TableTargetName))
+      {
+        Current.Gui.ErrorMessageBox("The target table name is invalid (it's a folder name, not a table name).", "Cannot guess actions");
+        return;
+      }
 
+      var tableTargetNameParts = TableTargetName.Split(new char[] { ProjectFolder.DirectorySeparatorChar }, StringSplitOptions.None);
+
+      var actions = new List<ActionPutToPropertyBag>();
+
+      foreach (var propertyName in PropertyNames)
+      {
+        for (int level = 0; level < tableTargetNameParts.Length; level++)
+        {
+          if (tableTargetNameParts[level].Contains($"{{{propertyName}"))
+          {
+            var action = new ActionPutToPropertyBag
+            {
+              PropertyName = propertyName,
+              Level = level + 1 - tableTargetNameParts.Length
+            };
+            actions.Add(action);
+            break;
+          }
+        }
+      }
+      actions.Sort((x, y) => Comparer<int>.Default.Compare(x.Level, y.Level));
+
+      foreach (var action in actions)
+      {
+        // first look if this action already exists in the list, if not, add it
+        if (!ActionsPutToPropertyBag.Items.Select(i => i.Tag).OfType<ActionPutToPropertyBag>().Any(i => i.PropertyName == action.PropertyName && i.Level == action.Level))
+        {
+          ActionsPutToPropertyBag.Items.Add(new SelectableListNode(action.PropertyName, action, false));
+        }
+      }
+    }
 
     /// <inheritdoc />
     public override bool Apply(bool disposeController)
