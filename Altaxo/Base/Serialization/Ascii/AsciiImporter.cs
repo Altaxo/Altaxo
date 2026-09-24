@@ -193,6 +193,8 @@ namespace Altaxo.Serialization.Ascii
           }
         }
 
+        var trailingLines = new List<(int rowIndexOfTable, string line)>();
+
         // now the data lines
         for (int i = 0; true; i++)
         {
@@ -203,6 +205,7 @@ namespace Altaxo.Serialization.Ascii
             continue;
 
           int maxcolumns = newcols.ColumnCount;
+          bool isLineCompatibleWithStructure = true;
 
           int k = -1;
           foreach (string token in importOptions.SeparationStrategy!.GetTokens(sLine))
@@ -218,11 +221,15 @@ namespace Altaxo.Serialization.Ascii
             {
               if (double.TryParse(token, System.Globalization.NumberStyles.Any, numberFormatInfo, out var val))
                 ((DoubleColumn)newcols[k])[i] = val;
+              else
+                isLineCompatibleWithStructure = false;
             }
             else if (newcols[k] is DateTimeColumn)
             {
               if (DateTime.TryParse(token, dateTimeFormat, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out var val))
                 ((DateTimeColumn)newcols[k])[i] = val;
+              else
+                isLineCompatibleWithStructure = false;
             }
             else if (newcols[k] is TextColumn)
             {
@@ -279,6 +286,18 @@ namespace Altaxo.Serialization.Ascii
                 }
               } // end outer if null==newcol
             }
+
+            if (isLineCompatibleWithStructure)
+            {
+              trailingLines.Clear();
+            }
+            else
+            {
+              if (importOptions.TrailingLinesDestination == TrailingLinesDestination.ImportToNotes)
+              {
+                trailingLines.Add((i, sLine));
+              }
+            }
           } // end of for all cols
         } // end of for all lines
 
@@ -307,7 +326,40 @@ namespace Altaxo.Serialization.Ascii
             ++j;
           }
 
+
+          // Now update the notes
+          if (importOptions.ClearNotes)
+          {
+            dataTable.Notes.Clear();
+          }
+
           dataTable.Notes.Write(notesHeader.ToString());
+
+          // now write also the trailing lines to the table notes if requested
+          if (trailingLines.Count > 0)
+          {
+            switch (importOptions.TrailingLinesDestination)
+            {
+              case TrailingLinesDestination.Ignore:
+                // we have to remove the trailing lines from the table, because they were already inserted into the table
+                for (int i = trailingLines.Count - 1; i >= 0; --i)
+                {
+                  int rowIndexOfTable = trailingLines[i].rowIndexOfTable;
+                  dataTable.DataColumns.RemoveRow(rowIndexOfTable);
+                }
+                break;
+              case TrailingLinesDestination.ImportToNotes:
+                foreach (var (rowIndexOfTable, line) in trailingLines)
+                {
+                  dataTable.Notes.WriteLine(line);
+                }
+                break;
+              case TrailingLinesDestination.TryParseAnyway:
+                break;
+              default:
+                throw new ArgumentOutOfRangeException("Unknown switch case: " + importOptions.TrailingLinesDestination.ToString());
+            }
+          }
 
           suspendToken.Dispose();
         }

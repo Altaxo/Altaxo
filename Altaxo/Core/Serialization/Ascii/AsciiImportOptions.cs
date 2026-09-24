@@ -226,7 +226,8 @@ namespace Altaxo.Serialization.Ascii
           RecognizedStructure = recognizedStructure,
           ImportMultipleStreamsVertically = importMultipleStreamsVertically,
           DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks,
-          CodePage = codePage
+          CodePage = codePage,
+          ClearNotes = false, // old behavior before V4
         };
 
       }
@@ -247,7 +248,7 @@ namespace Altaxo.Serialization.Ascii
     /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
     /// V3: 2026-04-17 Add ReuseColumnNames and ReuseGroupNumbers properties
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 3)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Serialization.Ascii.AsciiImportOptions", 3)]
     private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -307,6 +308,93 @@ namespace Altaxo.Serialization.Ascii
           CodePage = codePage,
           ReuseColumnNames = reuseColumnNames,
           ReuseGroupNumbers = reuseGroupNumbers,
+          ClearNotes = false, // old behavior before V4
+        };
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+
+    #endregion Version 3
+
+    #region Version 4
+
+    /// <summary>
+    /// 2025-09-25: add CodePage property and DetectEncodingFromByteOrderMarks
+    /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// V3: 2026-04-17 Add ReuseColumnNames and ReuseGroupNumbers properties
+    /// V4: 2026-09-24 Add TrailingLinesDestination property, add ClearNotes property
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 4)]
+    private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AsciiImportOptions)o;
+
+        info.AddValue("RenameWorksheet", s.RenameWorksheet);
+        info.AddValue("RenameColumns", s.RenameColumns);
+        info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
+        info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
+        info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
+        info.AddEnum("TrailingLinesDestination", s.TrailingLinesDestination);
+        info.AddValueOrNull("SeparationStrategy", s.SeparationStrategy);
+        info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture?.LCID ?? -1);
+        info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture?.LCID ?? -1);
+        info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
+        info.AddValue("ImportMultipleStreamsVertically", s.ImportMultipleStreamsVertically);
+        info.AddValue("DetectEncodingFromByteOrderMarks", s.DetectEncodingFromByteOrderMarks);
+        info.AddValue("CodePage", s.CodePage);
+        info.AddValue("ReuseColumnNames", s.ReuseColumnNames);
+        info.AddValue("ReuseGroupNumbers", s.ReuseGroupNumbers);
+        info.AddValue("ClearNotes", s.ClearNotes);
+      }
+
+      protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+
+        var renameWorksheet = info.GetBoolean("RenameWorksheet");
+        var renameColumns = info.GetBoolean("RenameColumns");
+        var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        var headerLinesDestination = info.GetEnum<AsciiHeaderLinesDestination>("HeaderLinesDestination");
+        var trailingLinesDestination = info.GetEnum<TrailingLinesDestination>("TrailingLinesDestination");
+        var separationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var numberLCID = info.GetInt32("NumberFormatCultureLCID");
+        var numberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
+        var dateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        var recognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
+        var importMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
+        var detectEncodingFromByteOrderMarks = info.GetBoolean("DetectEncodingFromByteOrderMarks");
+        var codePage = info.GetInt32("CodePage");
+        var reuseColumnNames = info.GetBoolean("ReuseColumnNames");
+        var reuseGroupNumbers = info.GetBoolean("ReuseGroupNumbers");
+        var clearNotes = info.GetBoolean("ClearNotes");
+
+        return (o as AsciiImportOptions ?? new AsciiImportOptions()) with
+        {
+          RenameWorksheet = renameWorksheet,
+          RenameColumns = renameColumns,
+          IndexOfCaptionLine = indexOfCaptionLine,
+          NumberOfMainHeaderLines = numberOfMainHeaderLines,
+          HeaderLinesDestination = headerLinesDestination,
+          TrailingLinesDestination = trailingLinesDestination,
+          SeparationStrategy = separationStrategy,
+          NumberFormatCulture = numberFormatCulture,
+          DateTimeFormatCulture = dateTimeFormatCulture,
+          RecognizedStructure = recognizedStructure,
+          ImportMultipleStreamsVertically = importMultipleStreamsVertically,
+          DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks,
+          CodePage = codePage,
+          ReuseColumnNames = reuseColumnNames,
+          ReuseGroupNumbers = reuseGroupNumbers,
+          ClearNotes = clearNotes,
         };
       }
 
@@ -339,6 +427,11 @@ namespace Altaxo.Serialization.Ascii
 
     /// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
     public AsciiHeaderLinesDestination HeaderLinesDestination { get; init; }
+
+    /// <summary>
+    /// Designates the destination of trailing lines. This option must be set programmatically or by user interaction.
+    /// </summary>
+    public TrailingLinesDestination TrailingLinesDestination { get; init; }
 
     /// <summary>Number of lines to skip (the main header).</summary>
     public int? NumberOfMainHeaderLines { get; init; }
@@ -374,6 +467,11 @@ namespace Altaxo.Serialization.Ascii
     ///   <c>true</c> if the group numbers will be reused; otherwise, <c>false</c>.
     /// </value>
     public bool ReuseGroupNumbers { get; init; } = true;
+
+    /// <summary>
+    /// If true, the Notes of the table are cleared before importing.
+    /// </summary>
+    public bool ClearNotes { get; init; } = true;
 
     #endregion Properties
 

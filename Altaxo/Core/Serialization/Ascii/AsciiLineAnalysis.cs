@@ -127,6 +127,54 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
+    /// Determines whether the specified line is compatible with the given structure.
+    /// </summary>
+    /// <param name="nLine">Number of the line (zero based) for debugging purposes.</param>
+    /// <param name="tokens">The content of the line, already separated into tokens.</param>
+    /// <param name="structure">The structure to compare against.</param>
+    /// <param name="numberFormat">The number culture to use.</param>
+    /// <param name="dateTimeFormat">The DateTime format culture to use.</param>
+    /// <returns>True if the line is compatible with the structure; otherwise, false.</returns>
+    public static bool IsLineCompatibleWithStructure(int nLine, IEnumerable<string> tokens, AsciiLineComposition structure, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
+    {
+      int i = 1;
+      foreach (string substring in tokens)
+      {
+        ++i;
+        if (i >= structure.Columns.Length)
+          return false; // too many tokens, thus not compatible with the structure
+
+        var expectedColumnType = structure.Columns[i].ColumnType;
+
+        switch (expectedColumnType)
+        {
+          case AsciiColumnType.DBNull:
+            if (!string.IsNullOrWhiteSpace(substring))
+              return false;
+            break;
+          case AsciiColumnType.Int64:
+            if (!IsIntegral(substring, numberFormat))
+              return false;
+            break;
+          case AsciiColumnType.Double:
+            if (!IsFloat(substring, numberFormat))
+              return false;
+            break;
+          case AsciiColumnType.DateTime:
+            if (!IsDateTime(substring, dateTimeFormat))
+              return false;
+            break;
+          case AsciiColumnType.Text:
+            // any string is valid for text
+            break;
+          default:
+            throw new InvalidOperationException($"Unexpected column type: {expectedColumnType}");
+        }
+      } // end for
+      return true;
+    }
+
+    /// <summary>
     /// Problem: the line: '23,2014 2,3' is not parsed as expected in the two numbers 23,2014 and 2,3 (German culture), but instead in the number 23, then into a DateTime (with year=2014 and month=2), and a number 3.
     /// In order to avoid that for instance "2014 2" is parsed to a valid DateTime, we have two possibilities (i) use DateTime.TryParseExact, or (ii) excluded certain patterns with a regular expression.
     /// While the first choice is generally slow (we must use TryParseExact with all possible formats for a given culture; it takes 17 seconds for 1 million calls), the second choice is faster. It is sufficient to

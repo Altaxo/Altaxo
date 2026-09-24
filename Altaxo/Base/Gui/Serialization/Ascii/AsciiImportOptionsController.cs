@@ -340,6 +340,22 @@ namespace Altaxo.Gui.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller for selecting destinations for trailing lines.
+    /// </summary>
+    public ItemsController<TrailingLinesDestination> TrailingLinesDestination
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(TrailingLinesDestination));
+        }
+      }
+    }
+
 
     /// <summary>
     /// Gets or sets the controller that manages the separation-strategy detail view.
@@ -468,6 +484,23 @@ namespace Altaxo.Gui.Serialization.Ascii
     }
 
 
+    /// <summary>
+    /// If true, the notes are cleared before importing.
+    /// </summary>
+    public bool ClearNotes
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(ClearNotes));
+        }
+      }
+    }
+
+
 
 
     #endregion
@@ -535,6 +568,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         DateTimeFormatCulture.SelectedValue = _doc.DateTimeFormatCulture;
 
         HeaderLinesDestination = new ItemsController<AsciiHeaderLinesDestination>(new SelectableListNodeList(_doc.HeaderLinesDestination));
+        TrailingLinesDestination = new ItemsController<TrailingLinesDestination>(new SelectableListNodeList(_doc.TrailingLinesDestination));
 
         IsTableStructureKnown = _doc.RecognizedStructure is not null;
         if (_doc.RecognizedStructure is not null)
@@ -556,13 +590,12 @@ namespace Altaxo.Gui.Serialization.Ascii
         RenameColumnsWithHeaderNames = _doc.RenameColumns;
         RenameWorksheetWithFileName = _doc.RenameWorksheet;
 
-
-        HeaderLinesDestination = new ItemsController<AsciiHeaderLinesDestination>(new SelectableListNodeList(_doc.HeaderLinesDestination));
-
         ImportMultipleAsciiVertically = _doc.ImportMultipleStreamsVertically;
 
         ReuseColumnNames = _doc.ReuseColumnNames;
         ReuseGroupNumbers = _doc.ReuseGroupNumbers;
+
+        ClearNotes = _doc.ClearNotes;
       }
     }
 
@@ -607,8 +640,10 @@ namespace Altaxo.Gui.Serialization.Ascii
         SeparationStrategy = newSeparationStrategy,
         RecognizedStructure = IsTableStructureKnown ? (recognizedStructure.Count == 0 ? null : recognizedStructure) : null,
         HeaderLinesDestination = HeaderLinesDestination.SelectedValue,
+        TrailingLinesDestination = TrailingLinesDestination.SelectedValue,
         ReuseColumnNames = ReuseColumnNames,
         ReuseGroupNumbers = ReuseGroupNumbers,
+        ClearNotes = ClearNotes,
       };
 
       return true;

@@ -45,4 +45,21 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Try to import the items in the header lines as property columns. Additionally, those lines are added to the notes of the table.</summary>
     ImportToPropertiesAndNotes
   }
+
+  /// <summary>
+  /// Designates what to do with the trailing lines of an ASCII file.
+  /// </summary>
+  public enum TrailingLinesDestination
+  {
+    /// <summary>Try to parse trailing lines into the given column structure of the table..</summary>
+    TryParseAnyway,
+
+    /// <summary>Ignore trailing lines.</summary>
+    Ignore,
+
+    /// <summary>Import trailing lines to notes.</summary>
+    ImportToNotes,
+
+
+  }
 }

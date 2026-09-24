@@ -156,6 +156,8 @@
           <RowDefinition />
           <RowDefinition />
           <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
         </Grid.RowDefinitions>
         <CheckBox IsChecked="{Binding ImportMultipleAsciiVertically, Mode=TwoWay}"
                   Content="Import multiple Ascii files vertically"
@@ -177,14 +179,25 @@
                                             SelectedItem="{Binding HeaderLinesDestination.SelectedItem, Mode=TwoWay}"
                                             Orientation="Horizontal" />
         </GroupBox>
-                <CheckBox Grid.Row="4"
+                <GroupBox Header="Trailing lines destination:"
+                  Grid.Row="4"
+                  Grid.ColumnSpan="2">
+                    <axogc:SingleChoiceRadioWrapPanel ItemsSource="{Binding TrailingLinesDestination.Items}"
+                                            SelectedItem="{Binding TrailingLinesDestination.SelectedItem, Mode=TwoWay}"
+                                            Orientation="Horizontal" />
+                </GroupBox>
+                <CheckBox Grid.Row="5"
                           Content="Reuse columnn names from destination table"
                           IsChecked="{Binding ReuseColumnNames, Mode=TwoWay}"
                           ToolTip="If checked, reuses the existing column names from the destination table." />
-                <CheckBox Grid.Row="5"
+                <CheckBox Grid.Row="6"
                           Content="Reuse column kinds and group numbers from destination table"
                           IsChecked="{Binding ReuseGroupNumbers, Mode=TwoWay}"
                           ToolTip="If checked, reuses the existing column kinds and group numbers from the destination table." />
+                <CheckBox Grid.Row="7"
+                          Content="Clear notes before import"
+                          IsChecked="{Binding ClearNotes, Mode=TwoWay}"
+                          ToolTip="If checked, the existing notes are deleted. This ensures that no old notes remain." />
             </Grid>
     </GroupBox>
   </StackPanel>
