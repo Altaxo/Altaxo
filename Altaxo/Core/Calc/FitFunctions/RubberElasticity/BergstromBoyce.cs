@@ -279,7 +279,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
           6 => "M",
           _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
         },
-        _ => i switch // PolyUMod
+        BergstromBoyceParametrization.PolyUMod => i switch // PolyUMod
         {
           0 => "Mu", // Shear modulus of network A
           1 => "LambdaL", // Limiting chain stretch, shared by network A and B
@@ -291,6 +291,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
           7 => "TauCut", // Cut-off stress for the flow rate of network B (flow resistance)
           _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
         },
+        _ => throw new ArgumentOutOfRangeException(nameof(Parametrization), $"Unknown parametrization: {Parametrization}"),
       };
     }
 
@@ -321,7 +322,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
           6 => 3, // M
           _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
         },
-        _ => i switch // PolyUMod
+        BergstromBoyceParametrization.PolyUMod => i switch // PolyUMod
         {
           0 => 1E6, // Mu
           1 => 3.58,  // LambdaL
@@ -333,6 +334,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
           7 => 0, // TauCut
           _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
         },
+        _ => throw new ArgumentOutOfRangeException(nameof(Parametrization), $"Unknown parametrization: {Parametrization}"),
       };
     }
 
@@ -673,9 +675,9 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       return y + (dt / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
     }
 
-    const double RelativeTolerance = 1e-6;
-    const double AbsoluteTolerance = 1e-12;
-    const int MaximumRecursionDepth = 10;
+    private const double RelativeTolerance = 1e-6;
+    private const double AbsoluteTolerance = 1e-12;
+    private const int MaximumRecursionDepth = 10;
 
     /// <summary>
     /// Advances the internal state <paramref name="y"/> over a time step <paramref name="dt"/> using an adaptive Runge-Kutta RK4 method with Richardson extrapolation.
@@ -798,13 +800,32 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
-      return (new double?[] { 0, 1 }, null);
+      switch (Parametrization)
+      {
+        case BergstromBoyceParametrization.Ansys:
+          return (
+            new double?[] { 0, 1, 0, 1, null, 0, 0 },
+            new double?[] { null, null, null, null, null, null, null }
+            );
+        case BergstromBoyceParametrization.Abaqus:
+          return (
+            new double?[] { 0, 1, 0, 0, null, 0, 0 },
+            new double?[] { null, null, null, null, null, null, null }
+            );
+        case BergstromBoyceParametrization.PolyUMod:
+          return (
+            new double?[] { 0, 1, 0, 0, null, 0, 0, 0 },
+            new double?[] { null, null, null, null, null, null, null, null }
+            );
+        default:
+          throw new NotSupportedException($"Unknown parametrization: {Parametrization}");
+      }
     }
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (new double?[] { 0, 1 }, null);
+      return GetParameterBoundariesHardLimit();
     }
   }
 }
