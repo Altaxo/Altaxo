@@ -655,17 +655,16 @@ namespace Altaxo.Gui.Serialization.Ascii
       if (!ApplyWithoutClosing())
         return false;
 
+      bool wasStreamForAnalysisProvided = false;
       if (!_doc.IsFullySpecified)
       {
-        ReadAnalysisOptionsAndAnalyze();
+        wasStreamForAnalysisProvided = ReadAnalysisOptionsAndAnalyze();
       }
 
-      if (!_doc.IsFullySpecified)
+      if (!_doc.IsFullySpecified && wasStreamForAnalysisProvided)
       {
         Current.Gui.InfoMessageBox("The analysis of the document was unable to determine some of the import options. You have to specify them manually.", "Attention");
-        return false;
       }
-
       return ApplyEnd(true, disposeController);
     }
 
@@ -710,10 +709,14 @@ namespace Altaxo.Gui.Serialization.Ascii
       ReadAnalysisOptionsAndAnalyze();
     }
 
-    private void ReadAnalysisOptionsAndAnalyze()
+    /// <summary>
+    /// Reads the analysis options from the <see cref="AsciiDocumentAnalysisOptionsController"/> and performs an analysis of the ASCII input stream.
+    /// </summary>
+    /// <returns>True if a stream was provided to execute the analysis.</returns>
+    private bool ReadAnalysisOptionsAndAnalyze()
     {
       if (!AsciiDocumentAnalysisOptionsController.Apply(false))
-        return;
+        return false;
 
       _analysisOptions = (AsciiDocumentAnalysisOptions)AsciiDocumentAnalysisOptionsController.ModelObject;
 
@@ -723,6 +726,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         _doc = AsciiDocumentAnalysis.Analyze(_doc, _asciiStreamData, _analysisOptions);
         _asciiStreamData.Seek(0, System.IO.SeekOrigin.Begin);
         Initialize(true); // getting Gui elements filled with the result of the analysis
+        return true;
       }
       else if (_asciiStreamDataProvider is not null)
       {
@@ -733,9 +737,11 @@ namespace Altaxo.Gui.Serialization.Ascii
             str.Seek(0, System.IO.SeekOrigin.Begin);
             _doc = AsciiDocumentAnalysis.Analyze(_doc, str, _analysisOptions);
             Initialize(true); // getting Gui elements filled with the result of the analysis
+            return true;
           }
         }
       }
+      return false;
     }
 
 
