@@ -149,7 +149,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <returns>The engineering stress predicted by the model.</returns>
     public static double Evaluate(double epsilon, double G, double LambdaM)
     {
-      return UniaxialStress(epsilon + 1, G, LambdaM);
+      return UniaxialEngineeringStress(epsilon + 1, G, LambdaM);
     }
 
 
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       for (int i = 0; i < independent.RowCount; i++)
       {
         var lambda = 1 + independent[i, 0];
-        var derivative = UniaxialStressGradient(lambda, parameters[0], parameters[1]);
+        var derivative = UniaxialEngineeringStressGradient(lambda, parameters[0], parameters[1]);
 
         var lambda2 = lambda * lambda;
         var lambda3 = lambda2 * lambda;

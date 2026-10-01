@@ -242,6 +242,40 @@ namespace Altaxo.Calc
     /// Searches for x in the array and returns the first index where x is found.
     /// If x is not found, but is inbetween two consecutive elements of the array, a fractional index is returned, which is calculated by linear interpolation between the two indices.
     /// </summary>
+    /// <param name="xArray">The x array. Must be sorted beforehand in ascending order. The sorting is not checked.</param>
+    /// <param name="x">The searched x value.</param>
+    /// <returns>The fractional index of x in the array. If x is outside the elements of the array, null is returned.</returns>
+    /// <remarks>
+    /// The array does not need to be sorted. The cost is O(n).
+    /// </remarks>
+    public static double? GetFirstFractionalIndexOfXInAscendingArray(ReadOnlySpan<double> xArray, double x)
+    {
+      var idx = xArray.BinarySearch(x);
+
+      if (idx >= 0)
+      {
+        return idx;
+      }
+      else
+      {
+        idx = ~idx;
+        if (idx == 0 || idx == xArray.Length)
+        {
+          return null;
+        }
+        else
+        {
+          var x0 = xArray[idx - 1];
+          var x1 = xArray[idx];
+          return idx - 1 + (x - x0) / (x1 - x0);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Searches for x in the array and returns the first index where x is found.
+    /// If x is not found, but is inbetween two consecutive elements of the array, a fractional index is returned, which is calculated by linear interpolation between the two indices.
+    /// </summary>
     /// <param name="xArray">The x array.</param>
     /// <param name="x">The searched x value.</param>
     /// <returns>The fractional index of x in the array. If x is outside the elements of the array, null is returned.</returns>

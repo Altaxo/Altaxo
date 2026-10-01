@@ -40,7 +40,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// Differentiating W with respect to the principal stretch for each
   /// deformation mode gives the nominal (engineering) stress:
   ///
-  ///     P = (mu / 3) * (lambdaM / lambdaChain) * InverseLangevin(lambdaChain / lambdaM) * dI1/dLambda
+  ///     P = (mu / 6) * (lambdaM / lambdaChain) * InverseLangevin(lambdaChain / lambdaM) * dI1/dLambda
   ///
   /// where dI1/dLambda depends on the loading mode (incompressibility assumed, J = 1).
   ///
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       double invLangevin = Hyperbolic.InverseLangevin(x);
 
-      return (mu / 3.0) * (lambdaM / lambdaChain) * invLangevin * dI1dLambda;
+      return (mu / 6) * (lambdaM / lambdaChain) * invLangevin * dI1dLambda;
     }
 
 
@@ -106,10 +106,10 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
             "Reduce lambda or increase lambdaM.");
 
       double invLangevin = Hyperbolic.InverseLangevin(x);
-      double dPdMu = (1.0 / 3.0) * (lambdaM / lambdaChain) * invLangevin * dI1dLambda;
+      double dPdMu = (1 / 6d) * (lambdaM / lambdaChain) * invLangevin * dI1dLambda;
 
       double bracket = invLangevin - x / Hyperbolic.LangevinFirstDerivative(invLangevin);
-      double dPdLambdaM = (mu / (3.0 * lambdaChain)) * dI1dLambda * bracket;
+      double dPdLambdaM = (mu / (6 * lambdaChain)) * dI1dLambda * bracket;
 
       return (dPdMu, dPdLambdaM);
     }
@@ -119,12 +119,15 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Deformation: lambda1 = lambda, lambda2 = lambda3 = 1/sqrt(lambda) (incompressible).
     /// I1 = lambda^2 + 2/lambda
     /// </summary>
-    public static double UniaxialStress(double lambda, double mu, double lambdaM)
+    public static double UniaxialEngineeringStress(double lambda, double mu, double lambdaM)
     {
-      if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
+      if (lambda <= 0.0)
+      {
+        throw new ArgumentOutOfRangeException(nameof(lambda));
+      }
 
-      double i1 = lambda * lambda + 2.0 / lambda;
-      double dI1dLambda = 2.0 * lambda - 2.0 / (lambda * lambda);
+      double i1 = lambda * lambda + 2 / lambda;
+      double dI1dLambda = 2 * lambda - 2 / (lambda * lambda);
 
       return NominalStress(mu, lambdaM, i1, dI1dLambda);
     }
@@ -133,13 +136,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Gradient (d(sigma)/d(mu), d(sigma)/d(lambdaM)) of the uniaxial nominal stress,
     /// for use as the Jacobian in a nonlinear least-squares fit.
     /// </summary>
-    public static (double dSigmaDMu, double dSigmaDLambdaM) UniaxialStressGradient(
+    public static (double dSigmaDMu, double dSigmaDLambdaM) UniaxialEngineeringStressGradient(
         double lambda, double mu, double lambdaM)
     {
       if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
 
-      double i1 = lambda * lambda + 2.0 / lambda;
-      double dI1dLambda = 2.0 * lambda - 2.0 / (lambda * lambda);
+      double i1 = lambda * lambda + 2 / lambda;
+      double dI1dLambda = 2 * lambda - 2 / (lambda * lambda);
 
       return NominalStressGradient(mu, lambdaM, i1, dI1dLambda);
     }
@@ -149,12 +152,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Deformation: lambda1 = lambda2 = lambda, lambda3 = 1/lambda^2 (incompressible).
     /// I1 = 2*lambda^2 + 1/lambda^4
     /// </summary>
-    public static double BiaxialStress(double lambda, double mu, double lambdaM)
+    public static double BiaxialEngineeringStress(double lambda, double mu, double lambdaM)
     {
       if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
 
-      double i1 = 2.0 * lambda * lambda + 1.0 / Math.Pow(lambda, 4);
-      double dI1dLambda = 4.0 * lambda - 4.0 / Math.Pow(lambda, 5);
+      double i1 = 2 * lambda * lambda + 1 / Math.Pow(lambda, 4);
+      double dI1dLambda = 2 * lambda - 2 / Math.Pow(lambda, 5);
 
       return NominalStress(mu, lambdaM, i1, dI1dLambda);
     }
@@ -163,13 +166,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Gradient (d(sigma)/d(mu), d(sigma)/d(lambdaM)) of the equibiaxial nominal stress,
     /// for use as the Jacobian in a nonlinear least-squares fit.
     /// </summary>
-    public static (double dSigmaDMu, double dSigmaDLambdaM) BiaxialStressGradient(
+    public static (double dSigmaDMu, double dSigmaDLambdaM) BiaxialEngineeringStressGradient(
         double lambda, double mu, double lambdaM)
     {
       if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
 
-      double i1 = 2.0 * lambda * lambda + 1.0 / Math.Pow(lambda, 4);
-      double dI1dLambda = 4.0 * lambda - 4.0 / Math.Pow(lambda, 5);
+      double i1 = 2 * lambda * lambda + 1 / Math.Pow(lambda, 4);
+      double dI1dLambda = 2 * lambda - 2 / Math.Pow(lambda, 5);
 
       return NominalStressGradient(mu, lambdaM, i1, dI1dLambda);
     }
@@ -180,12 +183,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Deformation: lambda1 = lambda, lambda2 = 1, lambda3 = 1/lambda (incompressible).
     /// I1 = lambda^2 + 1 + 1/lambda^2
     /// </summary>
-    public static double PureShearStress(double lambda, double mu, double lambdaM)
+    public static double PlanarEngineeringStress(double lambda, double mu, double lambdaM)
     {
       if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
 
-      double i1 = lambda * lambda + 1.0 + 1.0 / (lambda * lambda);
-      double dI1dLambda = 2.0 * lambda - 2.0 / Math.Pow(lambda, 3);
+      double i1 = lambda * lambda + 1 + 1 / (lambda * lambda);
+      double dI1dLambda = 2 * lambda - 2 / Math.Pow(lambda, 3);
 
       return NominalStress(mu, lambdaM, i1, dI1dLambda);
     }
@@ -194,13 +197,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Gradient (d(sigma)/d(mu), d(sigma)/d(lambdaM)) of the pure shear nominal stress,
     /// for use as the Jacobian in a nonlinear least-squares fit.
     /// </summary>
-    public static (double dSigmaDMu, double dSigmaDLambdaM) PureShearStressGradient(
+    public static (double dSigmaDMu, double dSigmaDLambdaM) PlanarEngineeringStressGradient(
         double lambda, double mu, double lambdaM)
     {
       if (lambda <= 0.0) throw new ArgumentOutOfRangeException(nameof(lambda));
 
-      double i1 = lambda * lambda + 1.0 + 1.0 / (lambda * lambda);
-      double dI1dLambda = 2.0 * lambda - 2.0 / Math.Pow(lambda, 3);
+      double i1 = lambda * lambda + 1 + 1 / (lambda * lambda);
+      double dI1dLambda = 2 * lambda - 2 / Math.Pow(lambda, 3);
 
       return NominalStressGradient(mu, lambdaM, i1, dI1dLambda);
     }

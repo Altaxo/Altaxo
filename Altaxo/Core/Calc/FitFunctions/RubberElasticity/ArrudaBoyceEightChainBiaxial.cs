@@ -149,7 +149,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <returns>The engineering stress predicted by the model.</returns>
     public static double Evaluate(double epsilon, double G, double LambdaM)
     {
-      return BiaxialStress(epsilon + 1, G, LambdaM);
+      return BiaxialEngineeringStress(epsilon + 1, G, LambdaM);
     }
 
 
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       for (int i = 0; i < independent.RowCount; i++)
       {
         var lambda = 1 + independent[i, 0];
-        var derivatives = BiaxialStressGradient(lambda, parameters[0], parameters[1]);
+        var derivatives = BiaxialEngineeringStressGradient(lambda, parameters[0], parameters[1]);
         DF[i, 0] = CrossSectionArea * derivatives.dSigmaDMu;
         DF[i, 1] = CrossSectionArea * derivatives.dSigmaDLambdaM;
       }

@@ -4051,7 +4051,7 @@ References:
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
 
 $$
-\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+\sigma = \frac{\mu_0}{6} \frac{\lambda_m}{\lambda_{chain}} \mathcal{L}^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
 $$
 
 with the stretch $\lambda = \epsilon +1$
@@ -4059,14 +4059,16 @@ with the stretch $\lambda = \epsilon +1$
 in which:
 - $\epsilon$ : engineering strain
 - $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
-- $G$ : shear modulus (parameter 1 of the fit function)
+- $\mu_0$ : rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 - $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
 - $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
-- $L^{-1}()$ is the inverse Langevin function
-- $I_1$ is the first stretch invariant, which is for the planar case $I_1 = 1 + \lambda^2 + 1/\lambda^2$
+- $\mathcal{L}^{-1}()$ is the inverse Langevin function
+- $I_1$ is the first stretch invariant, which is for the biaxial case $I_1 = 1 + \lambda^2 + 1/\lambda^2$
 
 
 In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+Note that, depending on $\lambda_m$, the shear modulus G is slightly higher than $\mu_0$, because of the following relationship: $G=\mu_0 \lambda_m \mathcal{L}^{-1}(1/\lambda_m)$. 
 
 The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
 
@@ -4090,7 +4092,7 @@ References:
 This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
 
 $$
-\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+\sigma = \frac{\mu_0}{6} \frac{\lambda_m}{\lambda_{chain}} \mathcal{L}^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
 $$
 
 with the stretch $\lambda = \epsilon +1$
@@ -4098,14 +4100,16 @@ with the stretch $\lambda = \epsilon +1$
 in which:
 - $\epsilon$ : engineering strain
 - $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
-- $G$ : shear modulus (parameter 1 of the fit function)
+- $\mu_0$ :  rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 - $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
 - $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
-- $L^{-1}()$ is the inverse Langevin function
+- $\mathcal{L}^{-1}()$ is the inverse Langevin function
 - $I_1$ is the first stretch invariant, which is for the planar case $I_1 = 2 \lambda^2 + 1/\lambda^4$
 
 
 In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+Note that, depending on $\lambda_m$, the shear modulus G is slightly higher than $\mu_0$, because of the following relationship: $G=\mu_0 \lambda_m \mathcal{L}^{-1}(1/\lambda_m)$. 
 
 The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
 
@@ -4129,7 +4133,7 @@ References:
 This model evaluates the engineering stress $\sigma$ as a function of engineering strain $\epsilon$ during the uniaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
 
 $$
-\sigma = \frac{G}{3} \frac{\lambda_m}{\lambda_{chain}} L^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
+\sigma = \frac{\mu_0}{6} \frac{\lambda_m}{\lambda_{chain}} \mathcal{L}^{-1}\left ( \frac{\lambda_{chain}}{\lambda_m} \right ) \frac{d I_1}{d \lambda} 
 $$
 
 with the stretch $\lambda = \epsilon +1$
@@ -4137,14 +4141,16 @@ with the stretch $\lambda = \epsilon +1$
 in which:
 - $\epsilon$ : engineering strain
 - $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
-- $G$ : shear modulus (parameter 1 of the fit function)
+- $\mu_0$ :  rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 - $\lambda_m$ : maximum value of the stretch (parameter 2 of the fit function 'LambdaM')
 - $\lambda_{chain} = \sqrt{I_1/3}$ is the stretch of each chain in the model
-- $L^{-1}()$ is the inverse Langevin function
+- $\mathcal{L}^{-1}()$ is the inverse Langevin function
 - $I_1$ is the first stretch invariant, which is for the uniaxial case $I_1 = \lambda^2 + 2/\lambda$
 
 
 In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+Note that, depending on $\lambda_m$, the shear modulus G is slightly higher than $\mu_0$, because of the following relationship: $G=\mu_0 \lambda_m \mathcal{L}^{-1}(1/\lambda_m)$. 
 
 The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
 
@@ -4158,6 +4164,162 @@ References:
 
 - L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, doi: 10.1039/tf9444000059.
 
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.BergstromBoyce" xml:space="preserve">
+    <value>##### Bergström-Boyce model (uniaxial, equi-biaxial and planar loading)
+
+This model evaluates the engineering stress $\sigma_{\mathrm{eng}}$ or the Cauchy stress $\sigma$ as a function of engineering strain $\epsilon$ during the stretching of an elastomeric material by assuming a hyperelastic spring (network A) in parallel with network B consisting of a hyperelastic spring and a dashpot.
+
+The principal stretches for the different loading cases are:
+$$
+\lambda_1 = 1 + \epsilon 
+\\
+\lambda_2,\lambda_3 =
+  \lambda_1^{-1/2}, \lambda_1^{-1/2}  (uniaxial) 
+\\
+\lambda_2,\lambda_3 = \lambda_1,\lambda_1^{-2}	(equibiaxial)
+\\
+\lambda_2,\lambda_3 = 1,\lambda_1^{-1} (planar)
+$$
+
+The strain stretch $\bar\lambda$ calculates to:
+
+$$
+\bar\lambda(\lambda_1,\lambda_2,\lambda_3) = \sqrt{\frac{\lambda_1^2+\lambda_2^2+\lambda_3^2}{3}}
+$$
+
+
+Network A and network B are each represented by their own 8-chain network and may have distinct limiting chain stretches $\lambda_{L,A}$ and $\lambda_{L,B}$.  
+
+For network A, the stress $\sigma_A$ is:
+
+$$
+\sigma_A = \frac{\mu}{\bar\lambda}\,
+\frac{\mathcal{L}^{-1}\!\left(\bar\lambda/\lambda_{L,A}\right)}
+     {\mathcal{L}^{-1}\!\left(1/\lambda_{L,A}\right)}
+\left(\lambda_1^2 - \lambda_3^2\right)
+$$
+
+with $\mathcal{L}^{-1}$ being the inverse Langevin function, $\mu$ being the shear modulus (parameter) and $\lambda_{L,A}$ being the locking stretch of network A.
+
+For network B, the total stretch $\lambda_i$ is the product of the elastic (partially) stretch $\lambda_i^e$ and the viscous stretch $\lambda_i^v$:
+
+$$
+\lambda_i = \lambda_i^e \lambda_i^v,  i = 1,2,3
+$$
+
+and the deviatoric stresses are:
+
+$$
+\sigma_B^i = \frac{s\,\mu}{\bar\lambda^e}\,
+\frac{\mathcal{L}^{-1}\!\left(\bar\lambda^e/\lambda_{L,B}\right)}
+     {\mathcal{L}^{-1}\!\left(1/\lambda_{L,B}\right)}
+\left[(\lambda_i^e)^2 - (\bar\lambda^e)^2\right], i = 1,2,3
+$$
+
+with $s$ being a parameter, $\lambda_{L,B}$ being the locking stretch of network B and $\bar\lambda^e$ being the effective partially elastic stretch of network B.
+
+The effective (driving) flow stress then is:
+
+$$
+\tau = \sqrt{\left(\sigma_B^1\right)^2 + \left(\sigma_B^2\right)^2 + \left(\sigma_B^3\right)^2}
+$$
+
+and the flow rate:
+
+$$
+\dot\gamma_B = \left(\bar\lambda^v - 1 + \xi\right)^{C}
+\left\langle \frac{\tau}{\hat\tau} - \tau_{\mathrm{cut}} \right\rangle^{m}
+$$
+
+with $\xi$, $C$, $\hat\tau$, $\tau_{\mathrm{cut}}$, $m$ being parameters.
+
+The evolution of $\lambda_1^v$ then results from:
+
+$$
+\frac{d}{dt} \ln(\lambda_1^v) = \frac{\dot\gamma_B  \sigma_B^1}{\tau}
+$$
+
+Note: $\bar\lambda^v$ is calculated in the same way as $\bar\lambda$, but with the triple $\lambda_1^v, \lambda_2^v,\lambda_3^v$, that results from $\lambda_1^v$ from the same formulas as $\lambda_1,\lambda_2, \lambda_3$ above for  the different loading modes (symmetry assumption of the flow).
+
+The stress of network B then calculates to:
+
+$$
+\sigma_B = \sigma_B^1 - \sigma_B^3
+$$
+
+and the total stress is:
+
+$$
+\sigma = \sigma_A + \sigma_B
+$$
+
+The engineering stress $\sigma_{\mathrm{eng}}$ that is provided by the models as dependent variable then calculates to:
+
+$$
+\sigma_{\mathrm{eng}} = \frac{\sigma}{\lambda_1}
+$$
+
+
+**Parametrizations**
+
+The model supports three different parametrizations, selected via the Parametrization property. They differ in how many raw fit parameters are exposed and how these map to the internal quantities $\mu, \lambda_{L,A}, \lambda_{L,B}, s, \xi, C, \hat\tau, m, \tau_{\mathrm{cut}}$ used in the equations above.
+
+***PolyUMod (8 parameters, shared limiting stretch $\lambda_{L,A}=\lambda_{L,B}=\lambda_L$):***
+
+Index | Name | Meaning
+- | - | - 
+0 | Mu | $\mu$ — shear modulus of network A
+1 | LambdaL | $\lambda_L$ — limiting chain stretch, shared by network A and B ($\lambda_{L,A} = \lambda_{L,B} =\lambda_L$)
+2 | S | $s$ — relative shear modulus of network B, i.e. $\mu_B = s\,\mu$
+3 | Xi | $\xi$ — regularization near $\lambda_B^v = 1$ in the flow law
+4| C | strain exponent in the flow law (typically negative)
+5 | TauBase |	$\hat\tau$ — flow resistance, in pascals
+6 |	M | $m$ — stress exponent in the flow law
+7 | TauCut | $\tau_{\mathrm{cut}}$ — normalized threshold stress for flow
+
+Converted internally as: $\lambda_{L,A}=\lambda_L$,  $\lambda_{L,B}=\lambda_L$.
+
+***Ansys (7 parameters, independent limiting stretches $\lambda_{L,A} \ne \lambda_{L,B}$ possible; no  $\xi$, no  $\tau_{\mathrm{cut}}$):***
+
+Index |	Name  |	Meaning
+- | - | - 
+0 |	MuA	| $\mu_A$ — shear modulus of network A
+1 |	LambdaLA |	$\lambda_{L,A}$ — limiting chain stretch of network A
+2 |	MuB |	$\mu_B$ — shear modulus of network B (given directly, not as a ratio)
+3 |	LambdaLB |	$\lambda_{L,B}$ — limiting chain stretch of network B
+4 |	C |	strain exponent in the flow law
+5 |	TauHat |	$\hat\tau$ — flow resistance
+6 |	M |	$m$ — stress exponent in the flow law
+
+Converted internally as: $\mu=\mu_A$, $s = \mu_B/\mu_A$, $\xi = 0$, $\tau_{\mathrm{cut}} = 0$.
+
+***Abaqus (7 parameters, shared limiting stretch $\lambda_{L,A}=\lambda_{L,B}=\lambda_L$; no $\tau_{\mathrm{cut}}$):***
+
+Index |	Name |	Meaning
+- | - | - 
+0 |	Mu |	$\mu$ — shear modulus of network A
+1 |	LambdaL |	$\lambda_L$ — limiting chain stretch, shared by network A and B ($\lambda_{L,A} = \lambda_{L,B} =\lambda_L$)
+2  |	S |	$s$ — relative shear modulus of network B
+3 |	E |	Abaqus regularization constant, plays the role of $\xi$
+4 |	C |	strain exponent in the flow law
+5 |	A |	raw Abaqus creep constant, units $(\mathrm{Pa})^{-m}\,\mathrm{s}^{-1}$
+6 |	M |	$m$ — stress exponent in the flow law
+
+Converted internally as: $\lambda_{L,A}=\lambda_L$, $\lambda_{L,B}=\lambda_L$, $\xi = E$, $\hat\tau = A^{-1/m}$, $\tau_{\mathrm{cut}} = 0$.
+
+You can also choose between engineering stress as dependent variable, or the Cauchy stress by setting the property `DependentVariableIsCauchyStress`. Note that when this variable is set to `true`, the property `CrossSectionArea` has to be set to `1`. On the other hand, if property `DependentVariableIsCauchyStress` is set to false, the dependent variable would be the engineering stress (if `CrossSectionArea` is set to `1`) or the force (if `CrossSectionArea` is set to the initial cross section of the sample.
+
+References:  
+- J. S. Bergström and M. C. Boyce, “Constitutive modeling of the large strain time-dependent behavior of elastomers,” Journal of the Mechanics and Physics of Solids, vol. 46, no. 5, pp. 931–954, May 1998, [doi: 10.1016/S0022-5096(97)00075-6](https://doi.org/10.1016/S0022-5096(97)00075-6).
+.  
+- E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, [doi: 10.1016/0022-5096(93)90013-6](https://doi.org/10.1016/0022-5096(93)90013-6).
+  
+- J. S. Bergström and M. C. Boyce, “Constitutive modeling of the time-dependent and cyclic loading of elastomers and application to soft biological tissues,” Mechanics of Materials, vol. 33, no. 9, pp. 523–530, Sep. 2001, [doi: 10.1016/S0167-6636(01)00070-9](https://doi.org/10.1016/S0167-6636(01)00070-9).
+.  
 
 
 </value>

@@ -378,7 +378,7 @@ namespace Altaxo.Calc
       }
       else
       {
-        throw new ArgumentOutOfRangeException(nameof(y), "Argument of the inverse Langevin function must lie in (-1, 1).");
+        return double.NaN;
       }
     }
 
@@ -390,8 +390,7 @@ namespace Altaxo.Calc
     {
       if (x <= -1.0 || x >= 1.0)
       {
-        throw new ArgumentOutOfRangeException(nameof(x),
-            "Argument of the inverse Langevin function must lie in (-1, 1).");
+        return double.NaN;
       }
 
       double x2 = x * x;
