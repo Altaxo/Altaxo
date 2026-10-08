@@ -109,35 +109,42 @@ namespace Altaxo.Serialization
         }
       }
 
-      // now find the longest common path
-      // build a dictionary in which the key is the PathRoot, and the value is a list of positive patterns that start with that PathRoot. Then we can find the longest common path by finding the PathRoot with the most positive patterns.
-      var dic = new Dictionary<string, List<string>>();
+
+
       foreach (var path in PositivePatterns)
       {
-        if (!dic.TryGetValue(Path.GetPathRoot(path), out var list))
+        var idxA = path.IndexOf('*');
+        var idxB = path.IndexOf('?');
+        var idxMax = Math.Max(idxA, idxB);
+        if (idxMax >= 0) // the pattern contains at least one wildcard
         {
-          list = new List<string>();
-          dic[Path.GetPathRoot(path)] = list;
-        }
-        list.Add(path);
-      }
-
-      // now for all positive patterns of each PathRoot, find the longest common path. Then we can use that as the base path to search for files.
-      var enumerationOptions = new EnumerationOptions() { RecurseSubdirectories = true, IgnoreInaccessible = true };
-      foreach (var (pathRoot, pathList) in dic)
-      {
-        cancellationToken.ThrowIfCancellationRequested();
-        var folder = GetLongestCommonFolder(pathList.ToArray());
-        var dirInfo = new DirectoryInfo(folder);
-        if (dirInfo.Exists)
-        {
-          foreach (var fileInfo in dirInfo.EnumerateFiles("*", enumerationOptions))
+          // is it a pattern with wildcards
+          var idxMin = Math.Min(idxA, idxB);
+          var idx1 = idxMin < 0 ? idxMax : idxMin; // idx1 now is the first occurence of a wildcard
+          var subPath = path.Substring(0, idx1);
+          var idx2 = Math.Max(subPath.LastIndexOf(Path.DirectorySeparatorChar), subPath.LastIndexOf(Path.AltDirectorySeparatorChar));
+          subPath = subPath.Substring(0, idx2); // subpath is the longest directory path before a wildcard occured
+          var dirInfo = new DirectoryInfo(subPath);
+          if (dirInfo.Exists)
           {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (IsMatch(fileInfo.FullName))
+            var enumerationOptions = new EnumerationOptions() { RecurseSubdirectories = true, IgnoreInaccessible = true };
+
+            foreach (var fileInfo in dirInfo.EnumerateFiles("*", enumerationOptions))
             {
-              result.Add(fileInfo.FullName);
+              cancellationToken.ThrowIfCancellationRequested();
+              if (IsMatch(fileInfo.FullName))
+              {
+                result.Add(fileInfo.FullName);
+              }
             }
+          }
+        }
+        else // it is a simple path, we can match it directly
+        {
+          var fileInfo = new FileInfo(path);
+          if (fileInfo.Exists && IsMatch(fileInfo.FullName))
+          {
+            result.Add(fileInfo.FullName);
           }
         }
       }
