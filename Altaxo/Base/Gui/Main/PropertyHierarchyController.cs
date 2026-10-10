@@ -25,8 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Main
 {
@@ -291,6 +289,7 @@ namespace Altaxo.Gui.Main
       var nodeTag = (Tuple<string, string, IPropertyBag>)node.Tag;
       var propertyKey = nodeTag.Item1;
       var propertyName = nodeTag.Item2;
+      var propertyK = PropertyKeyBase.GetPropertyKey(propertyKey);
 
       _doc.TryGetValue(propertyKey, out object value, out var bag, out var bagInfo);
 
@@ -323,18 +322,23 @@ namespace Altaxo.Gui.Main
 
       if (!_doc.TryGetValue(propertyKey.GuidString, out object propertyValue, out var bag, out var bagInfo))
       {
-        // Try to create a new value
-        try
+        var type = propertyKey.PropertyType;
+
+        if (!(type.IsInterface || type.IsAbstract))
         {
-          propertyValue = System.Activator.CreateInstance(propertyKey.PropertyType);
-        }
-        catch (Exception)
-        {
-          Current.Gui.ErrorMessageBox("Sorry! The property value could not be created because the constructor threw an exception.");
-          return;
+          // Try to create a new value
+          try
+          {
+            propertyValue = System.Activator.CreateInstance(propertyKey.PropertyType);
+          }
+          catch (Exception)
+          {
+            Current.Gui.ErrorMessageBox("Sorry! The property value could not be created because the constructor threw an exception.");
+            return;
+          }
+
         }
       }
-
       ShowPropertyValueDialog(propertyKey.GuidString, propertyKey.PropertyName, propertyValue);
     }
 
@@ -370,13 +374,24 @@ namespace Altaxo.Gui.Main
     {
       IMVCAController controller = null;
       var pk = PropertyKeyBase.GetPropertyKey(propertyKey);
-      if (pk is not null && pk.CanCreateEditingController)
+
+      var overrideType = pk?.PropertyType;
+
+      if (overrideType is not null && (propertyValue is null || overrideType.IsAbstract || overrideType.IsInterface))
+      {
+        // maybe this is an interface or a abstract type, lets see if we find a controller for it
+        controller = (IMVCAController)Current.Gui.GetController(new object[] { propertyValue }, overrideType, typeof(IMVCAController), UseDocument.Directly);
+      }
+
+      if (controller is null && pk is not null && pk.CanCreateEditingController)
       {
         controller = pk.CreateEditingController(propertyValue);
       }
 
       if (controller is null)
+      {
         controller = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { propertyValue }, typeof(IMVCAController), UseDocument.Copy);
+      }
 
       if (controller is null)
       {

@@ -113,6 +113,10 @@ namespace Altaxo.Gui
       {
         throw new InvalidProgramException(string.Format("Member {0} is null. Did you start the resource service?", nameof(_resourceService)));
       }
+      if (string.IsNullOrWhiteSpace(name))
+      {
+        throw new ArgumentException("Name must contain a value", nameof(name));
+      }
 
       lock (_bitmapCache)
       {
