@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PureHDF" Version="2.2.0" />
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">

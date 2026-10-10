@@ -74,6 +74,8 @@
                              class="Altaxo.Main.Services.RecentOpen" />
         <Service id="Altaxo.Main.Services.IShutdownService"
                              class="Altaxo.Gui.Workbench.ShutdownService" />
+        <Service id="Altaxo.Chat.IMcpServerHost"
+                             class="Altaxo.Chat.McpServerHost" />
         <Service id="Altaxo.Main.Services.IInstanceStorageService"
                              class="Altaxo.Main.Services.InstanceStorageService" />
         <Service id="Altaxo.Main.Services.IAutoUpdateInstallationService"
@@ -112,6 +114,20 @@
                              class="Altaxo.Gui.Autostart.StartTextureManager" />
         <Class id="StartUpdateDownloader"
                              class="Altaxo.Gui.Autostart.StartUpdateDownloader" />
+    </Path>
+
+    <Path name="/Altaxo/Chat/Tools">
+        <Class id="AltaxoCore"
+               class="Altaxo.Chat.AltaxoDataCoreToolProvider" />
+    </Path>
+
+    <Path name="/Altaxo/Chat/Configuration/PipeName">
+        <String id="Default" text="Altaxo.Chat" />
+    </Path>
+
+    <Path name="/Altaxo/Workbench/AutostartAfterWorkbenchInitialized">
+        <Class id="StartMcpServer"
+                             class="Altaxo.Gui.Chat.StartMcpServerCommand" />
     </Path>
 
     <Path name = "/Altaxo/Workbench/Pads">
@@ -159,6 +175,15 @@
                  precreated ="true"
                  defaultPosition = "Bottom"
                  class    = "Altaxo.Gui.Pads.Notes.NotesController" />
+
+        <Pad id       = "AltaxoChatWindow"
+             category = "Main"
+             title    = "Chat"
+             icon     = "Icons.16x16.Chat"
+             shortcut = "Control|Alt|M"
+             precreated = "true"
+             defaultPosition = "Right"
+             class    = "Altaxo.Gui.Chat.ChatController" />
 
         <Pad id       = "AltaxoLightingWindow"
              category = "Main"
