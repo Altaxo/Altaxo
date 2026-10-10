@@ -152,6 +152,58 @@ namespace Altaxo.Main.Properties
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBag"/> class.
+    /// </summary>
+    public PropertyBagLazyLoaded()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyBag"/> class by copying the properties from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
+    public PropertyBagLazyLoaded(PropertyBagLazyLoaded from)
+      : base(from)
+    {
+    }
+
+    /// <summary>
+    /// Clones this instance.
+    /// </summary>
+    /// <returns>Clone of this instance.</returns>
+    public override object Clone()
+    {
+      return new PropertyBagLazyLoaded(this);
+    }
+
+    /// <summary>
+    /// Merges the properties from another bag into this property bag. If the same property exists already in this bag, it will be overriden by the property in the other bag.
+    /// </summary>
+    /// <param name="from">The bag from which to take the property values that should be merged into.</param>
+    /// <param name="overrideExistingProperties">If <c>true</c>, a property that already exist in this bag will be overriden by the property in the other bag. Otherwise, the existing
+    /// property is left untouched.</param>
+    public override void MergePropertiesFrom(PropertyBag? from, bool overrideExistingProperties)
+    {
+      if (from is null)
+        return;
+      if (object.ReferenceEquals(from, this))
+        throw new ArgumentException($"The bag to copy from is the same instance as this bag ({this.Name}).", nameof(from));
+
+      if (from is PropertyBagLazyLoaded fromBagLL)
+      {
+        foreach (var entry in fromBagLL._propertiesLazyLoaded)
+        {
+          if (overrideExistingProperties | !_propertiesLazyLoaded.ContainsKey(entry.Key))
+          {
+            _propertiesLazyLoaded[entry.Key] = entry.Value;
+          }
+        }
+      }
+
+      base.MergePropertiesFrom(from, overrideExistingProperties);
+    }
+
     #region Conversion from Lazy
 
     /// <summary>
@@ -192,6 +244,15 @@ namespace Altaxo.Main.Properties
     #endregion Conversion from Lazy
 
     #region Overrides Count and Clear
+
+    /// <inheritdoc/>
+    public override IEnumerable<string> Keys
+    {
+      get
+      {
+        return base.Keys.Concat(_propertiesLazyLoaded.Keys);
+      }
+    }
 
     /// <inheritdoc/>
     public override void Clear()

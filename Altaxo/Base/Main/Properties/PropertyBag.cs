@@ -223,17 +223,11 @@ namespace Altaxo.Main.Properties
       }
     }
 
-    /// <inheritdoc/>
-    object ICloneable.Clone()
-    {
-      return new PropertyBag(this);
-    }
-
     /// <summary>
     /// Clones this instance.
     /// </summary>
     /// <returns>Clone of this instance.</returns>
-    public PropertyBag Clone()
+    public virtual object Clone()
     {
       return new PropertyBag(this);
     }
@@ -610,7 +604,7 @@ namespace Altaxo.Main.Properties
     /// <param name="from">The bag from which to take the property values that should be merged into.</param>
     /// <param name="overrideExistingProperties">If <c>true</c>, a property that already exist in this bag will be overriden by the property in the other bag. Otherwise, the existing
     /// property is left untouched.</param>
-    public void MergePropertiesFrom(PropertyBag? from, bool overrideExistingProperties)
+    public virtual void MergePropertiesFrom(PropertyBag? from, bool overrideExistingProperties)
     {
       if (from is null)
         return;
