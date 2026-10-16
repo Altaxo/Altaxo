@@ -40,18 +40,6 @@ namespace Altaxo.Chat
     public override string Id => "altaxo.data.core";
 
 
-    [Description("Returns basic Altaxo application and process version information."), ReadOnly(true)]
-    private string GetApplicationInfo()
-    {
-      var version = typeof(AltaxoDataCoreToolProvider).Assembly.GetName().Version?.ToString() ?? "unknown";
-      return JsonSerializer.Serialize(new
-      {
-        Application = "Altaxo",
-        Version = version,
-        ProcessId = Environment.ProcessId
-      });
-    }
-
     [Description("Creates a new empty data table in the current project and opens its worksheet."), ReadOnly(false)]
     private string CreateDataTable(
       [Description("Optional: name of the data table to create. Folder names are separated by backslashes, not by forward slashes.")] string? tableName = null
@@ -82,42 +70,6 @@ namespace Altaxo.Chat
         TableName = table.Name,
         Message = $"Created a new data table '{table.Name}' and opened its worksheet.{(nameAlreadyExisted ? " A table with the specified name already existed, so a new name was generated." : "")}"
       });
-    }
-
-    /// <summary>
-    /// Represents information about a project item (table, graph, or notes).
-    /// </summary>
-    /// <param name="Name">The name of the project item.</param>
-    /// <param name="Type">The type of the project item (table, graph, or notes).</param>
-    public record ItemInfo(string Name, string Type);
-
-    [Description("Lists the project items (tables, graphs, or notes) in the current project. Call this first to find the name of a project item before using it with other tools."), ReadOnly(true)]
-    private string ListProjectItems(
-      [Description("Optional filter: 'table', 'graph', 'note', or omit for all")] string? type = null)
-    {
-      var list = new List<ItemInfo>();
-
-      type = type?.Trim().ToLowerInvariant();
-
-      if (string.IsNullOrEmpty(type) || type == "table" || type == "all")
-      {
-        foreach (var table in Current.Project.DataTableCollection)
-          list.Add(new ItemInfo(table.Name, "table"));
-      }
-      if (string.IsNullOrEmpty(type) || type == "graph" || type == "all")
-      {
-        foreach (var item in Current.Project.GraphDocumentCollection)
-          list.Add(new ItemInfo(item.Name, "graph"));
-        foreach (var item in Current.Project.Graph3DDocumentCollection)
-          list.Add(new ItemInfo(item.Name, "graph"));
-      }
-      if (string.IsNullOrEmpty(type) || type == "note" || type == "all")
-      {
-        foreach (var item in Current.Project.TextDocumentCollection)
-          list.Add(new ItemInfo(item.Name, "note"));
-      }
-
-      return JsonSerializer.Serialize(list);
     }
 
     [Description("Lists all data columns of a data table."), ReadOnly(true)]
