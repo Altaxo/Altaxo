@@ -158,9 +158,9 @@ namespace Altaxo.Chat
         throw new ArgumentOutOfRangeException(nameof(MessageTimeout), "The message timeout must be finite and greater than zero.");
 
       if (UseStreaming)
-        return new ChatSessionStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) }, this, McpServerHost.ConfiguredPipeName);
+        return new ChatSessionStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) }, this, McpServerHost.GetPipeNameForProcess(Environment.ProcessId));
       else
-        return new ChatSessionNonStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) }, this, McpServerHost.ConfiguredPipeName);
+        return new ChatSessionNonStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) }, this, McpServerHost.GetPipeNameForProcess(Environment.ProcessId));
     }
   }
 }

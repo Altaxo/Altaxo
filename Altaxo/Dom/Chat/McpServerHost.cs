@@ -76,7 +76,9 @@ namespace Altaxo.Chat
     }
 
     /// <inheritdoc/>
-    public string PipeName => ConfiguredPipeName;
+    public string PipeName => GetPipeNameForProcess(Environment.ProcessId);
+
+    internal static string GetPipeNameForProcess(int processId) => $"{ConfiguredPipeName}.{processId}";
 
     /// <inheritdoc/>
     public void Start()

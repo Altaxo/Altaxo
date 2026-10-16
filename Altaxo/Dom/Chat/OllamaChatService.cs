@@ -198,9 +198,9 @@ namespace Altaxo.Chat
         throw new ArgumentOutOfRangeException(nameof(KeepAliveTime), "The keep-alive time must be finite.");
 
       if (UseStreaming)
-        return new ChatSessionStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(messageTimeoutSeconds) }, this, McpServerHost.ConfiguredPipeName);
+        return new ChatSessionStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(messageTimeoutSeconds) }, this, McpServerHost.GetPipeNameForProcess(Environment.ProcessId));
       else
-        return new ChatSessionNonStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(messageTimeoutSeconds) }, this, McpServerHost.ConfiguredPipeName);
+        return new ChatSessionNonStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(messageTimeoutSeconds) }, this, McpServerHost.GetPipeNameForProcess(Environment.ProcessId));
     }
   }
 }

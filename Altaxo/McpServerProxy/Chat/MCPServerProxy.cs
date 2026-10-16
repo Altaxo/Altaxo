@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
@@ -9,6 +11,7 @@ namespace Altaxo.Chat
   public class MCPServerProxy
   {
     public const string DefaultPipeName = "Altaxo.Chat";
+    private static readonly string[] AltaxoProcessNames = ["AltaxoStartup", "AltaxoStartup32", "AltaxoStartup64"];
 
     public string PipeName { get; init; } = DefaultPipeName;
 
@@ -19,11 +22,16 @@ namespace Altaxo.Chat
 
       try
       {
+        var processIds = GetAltaxoProcessIds();
+        if (processIds.Count == 0)
+          throw new InvalidOperationException("No running Altaxo instance was found.");
+
+        var targetPipeName = $"{PipeName}.{processIds[0]}";
         NamedPipeClientStream? pipe = null;
 
         for (int i = 0; i < 30; ++i)
         {
-          var candidate = new NamedPipeClientStream(".", PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+          var candidate = new NamedPipeClientStream(".", targetPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
           try
           {
             await candidate.ConnectAsync(1000);
@@ -33,13 +41,13 @@ namespace Altaxo.Chat
           catch (Exception ex)
           {
             candidate.Dispose();
-            logFileStream.WriteLine($"[{DateTime.Now}] Error connecting to named pipe '{PipeName}': {ex.Message}");
-            Console.Error.WriteLine($"Error connecting to named pipe '{PipeName}': {ex.Message}");
+            logFileStream.WriteLine($"[{DateTime.Now}] Error connecting to named pipe '{targetPipeName}': {ex.Message}");
+            Console.Error.WriteLine($"Error connecting to named pipe '{targetPipeName}': {ex.Message}");
           }
         }
 
         if (pipe is null)
-          throw new IOException($"Could not connect to named pipe '{PipeName}' after 30 attempts.");
+          throw new IOException($"Could not connect to named pipe '{targetPipeName}' after 30 attempts.");
 
         using var connectedPipe = pipe;
         using var pipeReader = new StreamReader(connectedPipe);
@@ -47,7 +55,7 @@ namespace Altaxo.Chat
         using var conreader = new StreamReader(Console.OpenStandardInput());
         using var conwriter = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
 
-        logFileStream.WriteLine($"[{DateTime.Now}] PROGRAM OPENED; connected to named pipe '{PipeName}'");
+        logFileStream.WriteLine($"[{DateTime.Now}] PROGRAM OPENED; connected to named pipe '{targetPipeName}'");
 
         var pipeToStdoutTask = Task.Run(async () =>
         {
@@ -97,6 +105,22 @@ namespace Altaxo.Chat
       {
         await logFileStream.FlushAsync();
       }
+    }
+
+    private static List<int> GetAltaxoProcessIds()
+    {
+      var processIds = new List<int>();
+      foreach (var processName in AltaxoProcessNames)
+      {
+        foreach (var process in Process.GetProcessesByName(processName))
+        {
+          using (process)
+            processIds.Add(process.Id);
+        }
+      }
+
+      processIds.Sort();
+      return processIds;
     }
   }
 }
