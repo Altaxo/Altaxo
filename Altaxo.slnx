@@ -41,6 +41,7 @@
   <Project Path="Altaxo/DomTest/AltaxoDomTest.csproj" />
   <Project Path="Altaxo/HelpViewer/AltaxoHelpViewer.csproj" />
   <Project Path="Altaxo/MarkdownEditing/AltaxoMarkdownEditing.csproj" />
+  <Project Path="Altaxo/McpServerProxy/MCPServerProxy.csproj" />
   <Project Path="Altaxo/Providers.MKL/Providers.MKL.csproj" />
   <Project Path="Altaxo/Startup/AltaxoStartup.csproj">
     <BuildDependency Project="Addins/D3D/D3DPresentation/D3DPresentation.csproj" />

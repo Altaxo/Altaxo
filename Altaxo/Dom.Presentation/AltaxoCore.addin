@@ -117,8 +117,9 @@
     </Path>
 
     <Path name="/Altaxo/Chat/Tools">
-        <Class id="AltaxoCore"
-               class="Altaxo.Chat.AltaxoDataCoreToolProvider" />
+        <Class id="AltaxoProjectCore" class="Altaxo.Chat.AltaxoProjectCoreToolProvider" />
+        <Class id="AltaxoDataCore" class="Altaxo.Chat.AltaxoDataCoreToolProvider" />
+        <Class id="AltaxoTextCore" class="Altaxo.Chat.AltaxoTextCoreToolProvider" />
     </Path>
 
     <Path name="/Altaxo/Chat/Configuration/PipeName">
