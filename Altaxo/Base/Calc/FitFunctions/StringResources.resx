@@ -4324,10 +4324,135 @@ References:
 
 </value>
   </data>
+  <data name="RubberElasticity.ExtendedTubeModelBiaxial" xml:space="preserve">
+    <value>##### Extended tube model (equibiaxial load)
+
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the four material parameters $G_c$, $\delta$, $G_e$ and $\beta$  according to the following  equation:
+
+$$
+\sigma(\lambda) = \frac{2 G_e \left(\lambda ^{3 \beta
+   }-1\right) \lambda ^{-\beta }}{\lambda \beta }+\frac{G_c
+   \left(\lambda ^6-1\right) \left(\delta ^4 \left(2 \lambda
+   ^6-3 \lambda ^4+1\right)-2 \delta ^2 \lambda ^4+\lambda
+   ^4\right)}{\lambda \left(\delta ^2 \left(-2 \lambda ^6+3 \lambda
+   ^4-1\right)+\lambda ^4\right)^2}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G_c$ : modulus parameter (cross-link contribution, in units of the dependent variable)
+- $\delta$ : material parameter (unitless, 0..1)
+- $G_e$ : modulus parameter (constraint contribution, in units of the dependent variable)
+- $\beta$ : material parameter (unitless)
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's equibiaxial data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): $G_c=186700 Pa$;  $\delta=0.09693$, $G_e = 216900 Pa$ and $\beta=0.2$.
+---
+References:
+- [1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, [doi: 10.5254/1.3538822](https://doi.org/10.5254/1.3538822).
+
+- [2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, [doi: 10.1039/tf9444000059](https://doi.org/10.1039/tf9444000059).
+
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.ExtendedTubeModelPlanar" xml:space="preserve">
+    <value>##### Extended tube model (planar load)
+
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the four material parameters $G_c$, $\delta$, $G_e$ and $\beta$  according to the following  equation:
+
+$$
+\sigma(\lambda) = \frac{2 G_e \left(\lambda ^{2 \beta }-1\right)
+   \lambda ^{-\beta }}{\lambda \beta }+\frac{G_c \left(\lambda
+   ^4-1\right) \left(\delta ^4 \left(\lambda ^2-1\right)^2-2
+   \delta ^2 \lambda ^2+\lambda ^2\right)}{\lambda \left(\lambda
+   ^2-\delta ^2 \left(\lambda
+   ^2-1\right)^2\right)^2}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G_c$ : modulus parameter (cross-link contribution, in units of the dependent variable)
+- $\delta$ : material parameter (unitless, 0..1)
+- $G_e$ : modulus parameter (constraint contribution, in units of the dependent variable)
+- $\beta$ : material parameter (unitless)
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelPlanar.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's pure shear data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): $G_c=186700 Pa$;  $\delta=0.09693$, $G_e = 216900 Pa$ and $\beta=0.2$.
+---
+References:
+- [1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, [doi: 10.5254/1.3538822](https://doi.org/10.5254/1.3538822).
+
+- [2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, [doi: 10.1039/tf9444000059](https://doi.org/10.1039/tf9444000059).
+
+
+</value>
+  </data>
+  <data name="RubberElasticity.ExtendedTubeModelUniaxial" xml:space="preserve">
+    <value>##### Extended tube model (uniaxial load)
+
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the four material parameters $G_c$, $\delta$, $G_e$ and $\beta$  according to the following  equation:
+
+$$
+\sigma(\lambda) = \frac{2 G_e \left(\lambda ^{3 \beta /2}-1\right)
+   \lambda ^{-\beta }}{\lambda \beta}+\frac{G_c \left(\lambda
+   ^3-1\right) \left(\delta ^4 \left(\lambda ^3-3 \lambda
+   +2\right)-2 \delta ^2 \lambda +\lambda
+   \right)}{\lambda \left(\lambda -\delta ^2 \left(\lambda ^3-3
+   \lambda +2\right)\right)^2}
+$$
+
+with $\lambda = \epsilon +1$
+
+in which:
+- $\epsilon$ : engineering strain
+- $\sigma$ : engineering stress (force divided by the cross section in the stress-free state)
+- $G_c$ : modulus parameter (cross-link contribution, in units of the dependent variable)
+- $\delta$ : material parameter (unitless, 0..1)
+- $G_e$ : modulus parameter (constraint contribution, in units of the dependent variable)
+- $\beta$ : material parameter (unitless)
+
+
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+
+The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelUniaxial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Treloar's uniaxial data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): $G_c=186700 Pa$;  $\delta=0.09693$, $G_e = 216900 Pa$ and $\beta=0.2$.
+---
+References:
+- [1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, [doi: 10.5254/1.3538822](https://doi.org/10.5254/1.3538822).
+
+- [2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, [doi: 10.1039/tf9444000059](https://doi.org/10.1039/tf9444000059).
+
+
+
+</value>
+  </data>
   <data name="RubberElasticity.GentBiaxial" xml:space="preserve">
     <value>##### GentBiaxial model
 
-This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
 
 $$
 \sigma = \frac{-2  G  Jm  (\lambda^6-1)}{\lambda - (Jm+3) \lambda^5 + 2 \lambda^7}
