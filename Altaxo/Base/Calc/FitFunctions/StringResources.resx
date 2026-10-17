@@ -4073,8 +4073,12 @@ Note that, depending on $\lambda_m$, the shear modulus G is slightly higher than
 The domain of the function is $-1 &lt; \epsilon &lt; (\lambda_m-1)$. Note that therefore the parameter $\lambda_m$ must be greater than 1 + the greatest strain value in your data.
 
 ^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ArrudaBoyceEightChainBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: $G=359615 Pa$;  $\lambda_m=5.388$.
+
+^^^
 ![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ArrudaBoyceEightChainBiaxial.Fig1.png){width=15cm}  
-^^^ Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: $G=89904 Pa$;  $\lambda_m=5.388$.
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Arruda-Boyce 8-chain models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is $\mu_0=391458 Pa$ and $\lambda_m = 6.6$ (fixed by lower boundary).
 
 ---
 References:
@@ -4354,8 +4358,13 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelBiaxial.Fig1.png){width=15cm}  
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelBiaxial.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Treloar's equibiaxial data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): $G_c=186700 Pa$;  $\delta=0.09693$, $G_e = 216900 Pa$ and $\beta=0.2$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.ExtendedTubeModelBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the extended tube models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameters are $G_c=193536.5 Pa$;  $\delta=0.095849$, $G_e = 197500 Pa$ and $\beta=0.170185$.
+
 ---
 References:
 - [1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, [doi: 10.5254/1.3538822](https://doi.org/10.5254/1.3538822).
@@ -4455,7 +4464,7 @@ References:
 This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the two material parameters $G$ and $Jm$  according to the following  equation:
 
 $$
-\sigma = \frac{-2  G  Jm  (\lambda^6-1)}{\lambda - (Jm+3) \lambda^5 + 2 \lambda^7}
+\sigma = \frac{-G  Jm  (\lambda^6-1)}{\lambda - (Jm+3) \lambda^5 + 2 \lambda^7}
 $$
 
 with $\lambda = \epsilon +1$
@@ -4471,8 +4480,13 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.GentBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: $G=362332 Pa$;  $Jm=114.05$.
+
+^^^
 ![](res:Altaxo.Calc.FitFunctions.RubberElasticity.GentBiaxial.Fig1.png){width=15cm}  
-^^^ Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: $G=181166 Pa$;  $Jm=4283.45$.
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Gent models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameters are $G=274074 Pa$ and $J_m=84.229$.
+
 ---
 References:
 - A. N. Gent, “A New Constitutive Relation for Rubber,” Rubber Chemistry and Technology, vol. 69, no. 1, pp. 59–61, Mar. 1996, doi: 10.5254/1.3538357.
@@ -4562,7 +4576,7 @@ References:
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters $C10$ and $C01$  according to the following  equation:
 
 $$
-\sigma = \frac{4 (C10 + C01 \lambda^2)(\lambda^6-1)}{\lambda^5}
+\sigma = \frac{2 (C10 + C01 \lambda^2)(\lambda^6-1)}{\lambda^5}
 $$
 
 with $\lambda = \epsilon +1$
@@ -4578,8 +4592,13 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: $G=171719.5 Pa$;  $Jm=4541.17 Pa$.
+
+^^^
 ![](res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial.Fig1.png){width=15cm}  
-^^^ Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: $G=85859.7 Pa$;  $Jm=2270.65 Pa$.
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Mooney-Rivlin models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is $C10=267600 Pa$ and $C01=-1883.04 Pa$.
+
 ---
 References:
 - M. Mooney, “A Theory of Large Elastic Deformation,” Journal of Applied Physics, vol. 11, no. 9, pp. 582–592, Sep. 1940, doi: 10.1063/1.1712836.
@@ -4675,10 +4694,10 @@ References:
   <data name="RubberElasticity.NeoHookeanBiaxial" xml:space="preserve">
     <value>##### NeoHookeanBiaxial model
 
-This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameter $C10$ according to the following  equation:
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the material parameter $C10$ according to the following  equation:
 
 $$
-\sigma = 4 C10 \left (\lambda - \frac{1}{\lambda^5} \right)
+\sigma = 2 C10 \left (\lambda - \frac{1}{\lambda^5} \right)
 $$
 
 with $\lambda = \epsilon +1$
@@ -4693,8 +4712,14 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's equibiaxial data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: $G=235242 Pa$.
+
+^^^
 ![](res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial.Fig1.png){width=15cm}  
-^^^ Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: $G=117621 Pa$.
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Neo-Hookean models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is $G=263801 Pa$.
+
+
 ---
 References:
 - R. S. Rivlin, “Large elastic deformations of isotropic materials IV. further developments of the general theory,” Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, vol. 241, no. 835, pp. 379–397, Oct. 1948, doi: 10.1098/rsta.1948.0024.
@@ -4795,12 +4820,16 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig2.png){width=15cm}  
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig3.png){width=15cm}  
 ^^^ Fig. 1: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with $N=1$. The resulting parameters are: $\mu_1 = 291160 Pa$ and $\alpha_1 = 2.3755$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig1.png){width=15cm}  
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig2.png){width=15cm}  
 ^^^ Fig. 2: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with $N=2$. The resulting parameters are: $\mu_1 = 1258.6 Pa$, $\alpha_1 = 5.516$, $\mu_2 = 478454 Pa$ and $\alpha_2 = 1.6976$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial.Fig1.png){width=15cm}  
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Odgen models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter are $\mu_1 = 0.0018115368 Pa$, $\alpha_1 = 11.5$, $\mu_2 = 354116.789 Pa$ and $\alpha_2 = 2.0485$.
 
 ---
 References:
@@ -4889,7 +4918,7 @@ References:
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the three material parameters $C10$, $C20$ and $C30$  according to the following  equation:
 
 $$
-\sigma = \frac{4 \left(\lambda ^6-1\right) \left(\lambda ^8
+\sigma = \frac{2 \left(\lambda ^6-1\right) \left(\lambda ^8
    \left(C10+4 C20 \lambda ^2-6
    C20 \right)+2 C20 \lambda ^4+3
    C30 \left(\lambda ^2-1\right)^4 \left(2
@@ -4911,8 +4940,12 @@ In the case that your dependent data is force instead of stress, you can enter t
 The domain of the function is $-1 &lt; \epsilon &lt; \infty$. 
 
 ^^^
+![](res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohBiaxial.Fig2.png){width=15cm}  
+^^^ Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: $C10 = 205385.58 Pa$, $C20 = -788.45 Pa$ and $C30 = 31.229 Pa$.
+
+^^^
 ![](res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohBiaxial.Fig1.png){width=15cm}  
-^^^ Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: $C10 =  102692 Pa$, $C20 = -394.225 Pa$ and $C30 = 15.61 Pa$.
+^^^ Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Yeoh models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is $C10=85366.6 Pa$, $C20=-133.2255 Pa$ and $C30=36.0783 Pa$.
 
 ---
 References:

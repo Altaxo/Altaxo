@@ -150,7 +150,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public static double Evaluate(double epsilon, double G, double Jm)
     {
       var lambda = 1 + epsilon;
-      return -2 * G * Jm * (RMath.Pow6(lambda) - 1) / (lambda - (3 + Jm) * RMath.Pow5(lambda) + 2 * RMath.Pow7(lambda));
+      return -G * Jm * (RMath.Pow6(lambda) - 1) / (lambda - (3 + Jm) * RMath.Pow5(lambda) + 2 * RMath.Pow7(lambda));
     }
 
 
@@ -181,8 +181,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
         var G = parameters[0];
         var Jm = parameters[1];
 
-        DF[i, 0] = CrossSectionArea * 2 * Jm * (1 - lambda6) / (lambda - (3 + Jm) * lambda4 * lambda + 2 * lambda6 * lambda);
-        DF[i, 1] = -CrossSectionArea * 2 * G * RMath.Pow3(lambda2 - 1) * (2 * lambda2 + 1) * (1 + lambda2 + lambda4) / (lambda * RMath.Pow2(1 - (3 + Jm) * lambda4 + 2 * lambda6));
+        DF[i, 0] = CrossSectionArea * Jm * (1 - lambda6) / (lambda - (3 + Jm) * lambda4 * lambda + 2 * lambda6 * lambda);
+        DF[i, 1] = -CrossSectionArea * G * RMath.Pow3(lambda2 - 1) * (2 * lambda2 + 1) * (1 + lambda2 + lambda4) / (lambda * RMath.Pow2(1 - (3 + Jm) * lambda4 + 2 * lambda6));
       }
     }
 

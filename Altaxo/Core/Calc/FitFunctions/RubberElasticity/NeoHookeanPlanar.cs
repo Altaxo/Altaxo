@@ -84,7 +84,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="NeoHookeanPlanar"/> instance.</returns>
-    [FitFunctionCreator("Neo-Hook (planar loading)", "RubberElasticity", 1, 1, 1)]
+    [FitFunctionCreator("Neo-Hookean (planar loading)", "RubberElasticity", 1, 1, 1)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanPlanar}")]
     public static IFitFunction Create()
     {

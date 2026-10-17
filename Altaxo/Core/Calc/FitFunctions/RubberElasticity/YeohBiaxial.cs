@@ -157,7 +157,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       var lambda6 = lambda4 * lambda2;
       var lambda8 = lambda4 * lambda4;
 
-      return (4 * (lambda6 - 1) * (2 * C20 * lambda4 + 3 * C30 * RMath.Pow4(lambda2 - 1) *
+      return (2 * (lambda6 - 1) * (2 * C20 * lambda4 + 3 * C30 * RMath.Pow4(lambda2 - 1) *
         RMath.Pow2(1 + 2 * lambda2) + lambda8 * (C10 - 6 * C20 + 4 * C20 * lambda2))) / (lambda8 * lambda4 * lambda);
     }
 
@@ -188,9 +188,9 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
         var lambda4 = lambda2 * lambda2;
         var lambda5 = lambda3 * lambda2;
         var lambda6 = lambda4 * lambda2;
-        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / lambda5);
-        DF[i, 1] = CrossSectionArea * 8 * RMath.Pow3(lambda2 - 1) * (1 + 2 * lambda2) * (1 + lambda2 + lambda4) / (lambda5 * lambda2 * lambda2);
-        DF[i, 2] = CrossSectionArea * 12 * RMath.Pow4(lambda2 - 1) * RMath.Pow2(1 + 2 * lambda2) * (lambda6 - 1) / (lambda6 * lambda6 * lambda);
+        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / lambda5);
+        DF[i, 1] = CrossSectionArea * 4 * RMath.Pow3(lambda2 - 1) * (1 + 2 * lambda2) * (1 + lambda2 + lambda4) / (lambda5 * lambda2 * lambda2);
+        DF[i, 2] = CrossSectionArea * 6 * RMath.Pow4(lambda2 - 1) * RMath.Pow2(1 + 2 * lambda2) * (lambda6 - 1) / (lambda6 * lambda6 * lambda);
       }
     }
 

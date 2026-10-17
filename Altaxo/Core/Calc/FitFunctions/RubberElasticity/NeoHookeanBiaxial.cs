@@ -84,7 +84,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="NeoHookeanBiaxial"/> instance.</returns>
-    [FitFunctionCreator("Neo-Hook (biaxial loading)", "RubberElasticity", 1, 1, 1)]
+    [FitFunctionCreator("Neo-Hookean (biaxial loading)", "RubberElasticity", 1, 1, 1)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial}")]
     public static IFitFunction Create()
     {
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public static double Evaluate(double epsilon, double C10)
     {
       var lambda = 1 + epsilon;
-      return 4 * C10 * (lambda - 1 / RMath.Pow5(lambda));
+      return 2 * C10 * (lambda - 1 / RMath.Pow5(lambda));
     }
 
 
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       {
         var lambda = 1 + independent[i, 0];
         var lambda2 = lambda * lambda;
-        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / RMath.Pow5(lambda));
+        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / RMath.Pow5(lambda));
       }
     }
 

@@ -154,7 +154,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       var lambda = 1 + epsilon;
       var lambda2 = lambda * lambda;
       var lambda4 = lambda2 * lambda2;
-      return 4 * (C10 + C01 * lambda2) * (lambda2 * lambda4 - 1) / (lambda * lambda4);
+      return 2 * (C10 + C01 * lambda2) * (lambda2 * lambda4 - 1) / (lambda * lambda4);
     }
 
 
@@ -182,8 +182,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
         var lambda = 1 + epsilon;
         var lambda2 = lambda * lambda;
         var lambda4 = lambda2 * lambda2;
-        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / (lambda4 * lambda));
-        DF[i, 1] = CrossSectionArea * 4 * (lambda4 * lambda2 - 1) / (lambda2 * lambda);
+        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / (lambda4 * lambda));
+        DF[i, 1] = CrossSectionArea * 2 * (lambda4 * lambda2 - 1) / (lambda2 * lambda);
       }
     }
 

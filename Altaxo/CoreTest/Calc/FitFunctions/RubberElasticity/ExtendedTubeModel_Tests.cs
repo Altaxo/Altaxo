@@ -47,7 +47,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelBiaxial();
-      var y = ExtendedTubeModelBiaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelBiaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelBiaxial();
-      var y = ExtendedTubeModelBiaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelBiaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     [Fact]
-    public void TestBiaxial_Lamda1ShouldResultinZeroStress()
+    public void TestBiaxial_Lambda1ShouldResultinZeroStress()
     {
 
       var lambda = 1d;
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelBiaxial();
-      var y = ExtendedTubeModelBiaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelBiaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 0);
 
 
@@ -154,7 +154,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelPlanar();
-      var y = ExtendedTubeModelPlanar.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelPlanar.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelPlanar();
-      var y = ExtendedTubeModelPlanar.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelPlanar.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -229,7 +229,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelPlanar();
-      var y = ExtendedTubeModelPlanar.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelPlanar.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 0);
 
 
@@ -262,7 +262,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelUniaxial();
-      var y = ExtendedTubeModelUniaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelUniaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelUniaxial();
-      var y = ExtendedTubeModelUniaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelUniaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 1e-14);
 
 
@@ -324,7 +324,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     [Fact]
-    public void TestUniaxial_Lamda1ShouldResultinZeroStress()
+    public void TestUniaxial_Lambda1ShouldResultinZeroStress()
     {
 
       var lambda = 1d;
@@ -336,7 +336,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
       // test function value y of one term
       var v = new ExtendedTubeModelUniaxial();
-      var y = ExtendedTubeModelUniaxial.EvaluateOneTerm(lambda - 1, Gc, delta, Ge, beta);
+      var y = ExtendedTubeModelUniaxial.Evaluate(lambda - 1, Gc, delta, Ge, beta);
       AssertEx.AreEqual(expectedFunctionValue, y, 0, 0);
 
 

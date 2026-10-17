@@ -152,7 +152,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <param name="Ge">The coefficient of the second term.</param>
     /// <param name="β">The exponent of the second term.</param>
     /// <returns>The engineering stress predicted by the model.</returns>
-    public static double EvaluateOneTerm(double epsilon, double Gc, double δ, double Ge, double β)
+    public static double Evaluate(double epsilon, double Gc, double δ, double Ge, double β)
     {
       var lambda = 1 + epsilon;
       var lambda3 = lambda * lambda * lambda;
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
     {
-      dependent[0] = CrossSectionArea * EvaluateOneTerm(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+      dependent[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
     /// <inheritdoc/>
@@ -180,7 +180,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        dependent[i] = CrossSectionArea * EvaluateOneTerm(independent[i, 0], parameters[0], parameters[1], parameters[2], parameters[3]);
+        dependent[i] = CrossSectionArea * Evaluate(independent[i, 0], parameters[0], parameters[1], parameters[2], parameters[3]);
       }
     }
 
