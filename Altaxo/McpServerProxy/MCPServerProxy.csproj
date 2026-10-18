@@ -4,6 +4,8 @@
     <RootNamespace>Altaxo</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\rtNet\bin</OutputPath>
   </PropertyGroup>
 
 </Project>
