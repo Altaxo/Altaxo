@@ -58,6 +58,9 @@ rmdir /S /Q .\Altaxo\HelpViewer\bin
 rmdir /S /Q .\Altaxo\MarkdownEditing\obj
 rmdir /S /Q .\Altaxo\MarkdownEditing\bin
 
+rmdir /S /Q .\Altaxo\McpProxy\obj
+rmdir /S /Q .\Altaxo\McpProxy\bin
+
 rmdir /S /Q .\Altaxo\Providers.MKL\obj
 rmdir /S /Q .\Altaxo\Providers.MKL\bin
 

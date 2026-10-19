@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Altaxo.Chat
@@ -17,15 +16,14 @@ namespace Altaxo.Chat
 
     public string TimeTag => $"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}";
 
-    public bool Debug { get; init; }
+    public string LogfileName { get; init; }
 
     public async Task RunAsync()
     {
       StreamWriter? logFileStream = null;
-      if (Debug)
+      if (LogfileName is not null)
       {
-        var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        logFileStream = new StreamWriter(Path.Combine(dir, $"MCPServerProxy_{TimeTag}.log"), true, System.Text.Encoding.UTF8) { AutoFlush = true };
+        logFileStream = new StreamWriter(LogfileName, true, System.Text.Encoding.UTF8) { AutoFlush = true };
         logFileStream.WriteLine($"{TimeTag}\tMCP proxy started.");
       }
 
@@ -34,14 +32,12 @@ namespace Altaxo.Chat
         var processIds = GetAltaxoProcessIds();
         if (processIds.Count == 0)
         {
-          if (Debug)
-            logFileStream?.WriteLine($"{TimeTag}\tNo running Altaxo instance was found!");
+          logFileStream?.WriteLine($"{TimeTag}\tNo running Altaxo instance was found!");
           throw new InvalidOperationException("No running Altaxo instance was found.");
         }
         else
         {
-          if (Debug)
-            logFileStream?.WriteLine($"{TimeTag}\t{processIds.Count} running Altaxo instance(s) found!");
+          logFileStream?.WriteLine($"{TimeTag}\t{processIds.Count} running Altaxo instance(s) found!");
         }
 
         var targetPipeName = $"{PipeName}.{processIds[0]}";
@@ -52,8 +48,7 @@ namespace Altaxo.Chat
           var candidate = new NamedPipeClientStream(".", targetPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
           try
           {
-            if (Debug)
-              logFileStream?.WriteLine($"{TimeTag}\tTry to connect to pipe {targetPipeName}!");
+            logFileStream?.WriteLine($"{TimeTag}\tTry to connect to pipe {targetPipeName}!");
             await candidate.ConnectAsync(1000);
             pipe = candidate;
             break;
@@ -61,16 +56,14 @@ namespace Altaxo.Chat
           catch (Exception ex)
           {
             candidate.Dispose();
-            if (Debug)
-              logFileStream?.WriteLine($"{TimeTag}\tError connecting to named pipe '{targetPipeName}': {ex.Message}");
+            logFileStream?.WriteLine($"{TimeTag}\tError connecting to named pipe '{targetPipeName}': {ex.Message}");
             Console.Error.WriteLine($"Error connecting to named pipe '{targetPipeName}': {ex.Message}");
           }
         }
 
         if (pipe is null)
         {
-          if (Debug)
-            logFileStream?.WriteLine($"{TimeTag}]\tCould not connect to named pipe '{targetPipeName}' after 30 attempts.");
+          logFileStream?.WriteLine($"{TimeTag}\tCould not connect to named pipe '{targetPipeName}' after 30 attempts.");
           throw new IOException($"Could not connect to named pipe '{targetPipeName}' after 30 attempts.");
         }
 
@@ -80,8 +73,7 @@ namespace Altaxo.Chat
         using var conreader = new StreamReader(Console.OpenStandardInput());
         using var conwriter = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
 
-        if (Debug)
-          logFileStream?.WriteLine($"{TimeTag}\tPROGRAM OPENED; connected to named pipe '{targetPipeName}'");
+        logFileStream?.WriteLine($"{TimeTag}\tPROGRAM OPENED; connected to named pipe '{targetPipeName}'");
 
         var pipeToStdoutTask = Task.Run(async () =>
         {
@@ -89,16 +81,14 @@ namespace Altaxo.Chat
           {
             while (await pipeReader.ReadLineAsync() is { } line)
             {
-              if (Debug)
-                logFileStream?.WriteLine($"{TimeTag}\tPIPE-CON: {line}");
+              logFileStream?.WriteLine($"{TimeTag}\tPIPE-CON: {line}");
               conwriter.WriteLine(line);
               conwriter.Flush();
             }
           }
           catch (Exception ex)
           {
-            if (Debug)
-              logFileStream?.WriteLine($"{TimeTag}\tPIPE-CON: exception {ex}");
+            logFileStream?.WriteLine($"{TimeTag}\tPIPE-CON: exception {ex}");
             Console.Error.WriteLine($"Error reading from named pipe: {ex.Message}");
           }
         });
@@ -109,23 +99,20 @@ namespace Altaxo.Chat
           {
             while (await conreader.ReadLineAsync() is { } line)
             {
-              if (Debug)
-                logFileStream?.WriteLine($"[{DateTime.Now}] CON-PIPE: {line}");
+              logFileStream?.WriteLine($"{TimeTag}\tCON-PIPE: {line}");
               pipeWriter.WriteLine(line);
               pipeWriter.Flush();
             }
           }
           catch (Exception ex)
           {
-            if (Debug)
-              logFileStream?.WriteLine($"{TimeTag}\tCON-PIPE: exception {ex}");
+            logFileStream?.WriteLine($"{TimeTag}\tCON-PIPE: exception {ex}");
             Console.Error.WriteLine($"Error reading from stdin: {ex.Message}");
           }
         });
 
         await Task.WhenAny(pipeToStdoutTask, stdinToPipeTask);
-        if (Debug)
-          logFileStream?.WriteLine($"{TimeTag}\tPROGRAM CLOSED");
+        logFileStream?.WriteLine($"{TimeTag}\tPROGRAM CLOSED");
       }
       catch (Exception ex)
       {
