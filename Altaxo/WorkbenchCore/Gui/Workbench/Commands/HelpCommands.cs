@@ -31,7 +31,18 @@ namespace Altaxo.Gui.Workbench.Commands
     /// <inheritdoc/>
     public override void Execute(object? parameter)
     {
-      Run6();
+      Run7();
+    }
+
+    /// <summary>
+    /// Executes the current development test routine.
+    /// </summary>
+    public void Run7()
+    {
+      if (Current.Project.TextDocumentCollection.TryGetValue("Notes", out var doc))
+      {
+        doc.SourceText = "# Caption 1  \r\nHello World!";
+      }
     }
 
     /// <summary>

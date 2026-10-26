@@ -474,6 +474,7 @@ namespace Altaxo.Text
         if (!(_styleName == value))
         {
           _styleName = value;
+          _lastChangeTime = DateTime.UtcNow;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -496,9 +497,20 @@ namespace Altaxo.Text
         if (!(_sourceText == value))
         {
           _sourceText = value;
+          SourceTextRevision++;
+          _lastChangeTime = DateTime.UtcNow;
           EhSelfChanged(EventArgs.Empty);
         }
       }
+    }
+
+    /// <summary>
+    /// Integer value that is incremented every time the source text is changed.
+    /// This value is not persisted to disk, but is used to detect changes in the source text during runtime.
+    /// </summary>
+    public int SourceTextRevision
+    {
+      get; private set;
     }
 
     /// <summary>
@@ -515,6 +527,7 @@ namespace Altaxo.Text
         if (!(_isHyphenationEnabled == value))
         {
           _isHyphenationEnabled = value;
+          _lastChangeTime = DateTime.UtcNow;
           EhSelfChanged(EventArgs.Empty);
         }
       }
@@ -548,7 +561,10 @@ namespace Altaxo.Text
         throw new ArgumentNullException(nameof(image));
 
       if (!_images.ContainsKey(image.ContentHash))
+      {
         _images.Add(image.ContentHash, image);
+        _lastChangeTime = DateTime.UtcNow;
+      }
 
       return image.ContentHash;
     }

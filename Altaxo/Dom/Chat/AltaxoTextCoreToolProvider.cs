@@ -76,7 +76,8 @@ namespace Altaxo.Chat
       {
         return JsonSerializer.Serialize(new
         {
-          MarkdownContent = document.SourceText
+          MarkdownContent = document.SourceText,
+          RevisionNumber = document.SourceTextRevision,
         });
       }
       else

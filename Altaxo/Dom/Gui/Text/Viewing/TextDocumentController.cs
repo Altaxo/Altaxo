@@ -52,11 +52,21 @@ namespace Altaxo.Gui.Text.Viewing
     /// Weak event handler for tunneled document events.
     /// </summary>
     protected WeakActionHandler<object, object, TunnelingEventArgs> _weakEventHandlerForDoc_TunneledEvent;
+    /// <summary>
+    /// Weak event hander for Changed events from the document.
+    /// </summary>
+    protected WeakEventHandler _weakEventHandlerForDoc_Changed;
+
 
     /// <summary>
     /// Gets the text document managed by this controller.
     /// </summary>
     public TextDocument TextDocument { get { return _options?.Document; } }
+
+    /// <summary>
+    /// Caches the source text revision this controller has set the source text to.
+    /// </summary>
+    private int _sourceTextRevisionAtLastApply;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextDocumentController"/> class.
@@ -138,7 +148,10 @@ namespace Altaxo.Gui.Text.Viewing
       {
         // Attention: use LOCAL variables here in order to avoid references to the controller!
         _weakEventHandlerForDoc_TunneledEvent?.Remove();
-        textDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, textDocument, nameof(textDocument.TunneledEvent));
+        textDocument.TunneledEvent += (_weakEventHandlerForDoc_TunneledEvent = new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, textDocument, nameof(textDocument.TunneledEvent)));
+
+        _weakEventHandlerForDoc_Changed?.Remove();
+        textDocument.Changed += (_weakEventHandlerForDoc_Changed = new WeakEventHandler(EhDocumentChanged, textDocument, nameof(textDocument.Changed)));
       }
     }
 
@@ -210,6 +223,10 @@ namespace Altaxo.Gui.Text.Viewing
 
     private void EhDocumentChanged(object sender, EventArgs e)
     {
+      if (_view is not null && _sourceTextRevisionAtLastApply != TextDocument.SourceTextRevision)
+      {
+        _view.SourceText = TextDocument.SourceText;
+      }
     }
 
     private void EhSourceTextChanged(object sender, EventArgs e)
@@ -217,6 +234,7 @@ namespace Altaxo.Gui.Text.Viewing
       if (_view is not null)
       {
         TextDocument.SourceText = _view.SourceText;
+        _sourceTextRevisionAtLastApply = TextDocument.SourceTextRevision;
       }
     }
 
@@ -478,6 +496,7 @@ namespace Altaxo.Gui.Text.Viewing
     {
       ViewObject = null;
       _weakEventHandlerForDoc_TunneledEvent?.Remove();
+      _weakEventHandlerForDoc_Changed?.Remove();
       _options = null;
 
       base.Dispose();
