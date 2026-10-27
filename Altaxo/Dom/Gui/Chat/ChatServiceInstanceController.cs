@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Altaxo.Chat;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
@@ -55,6 +56,36 @@ namespace Altaxo.Gui.Chat
     }
 
     #region Bindings
+
+    /// <summary>
+    /// Gets or sets the controller for recently used chat services.
+    /// </summary>
+    public ItemsController<IChatService> RecentlyUsed
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(RecentlyUsed));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Command executed when the user wants to apply one of the recently used chat services.
+    /// </summary>
+    public ICommand CmdApplySelectedRecentlyUsedChat => field ??= new RelayCommand(EhCmdApplySelectedRecentlyUsed);
+
+    /// <summary>
+    /// Command to clear the list of recently used chats.
+    /// </summary>
+    public ICommand CmdClearRecentlyUsedList => field ??= new RelayCommand(EhCmdClearRecentlyUsedList);
+
+
+
 
     /// <summary>
     /// Gets or sets the controller for the currently selected service instance.
@@ -116,6 +147,19 @@ namespace Altaxo.Gui.Chat
 
       if (initData)
       {
+        var list = new SelectableListNodeList();
+        var recentlyUsed = Current.PropertyService.GetValueOrNull<RecentlyUsedChatServices>(RecentlyUsedChatServices.PropertyKeyRecentlyUsedChatServices, RuntimePropertyKind.UserAndApplicationAndBuiltin);
+
+        if (recentlyUsed is not null)
+        {
+          foreach (var service in recentlyUsed.InnerList)
+          {
+            list.Add(new SelectableListNode(service.ToString(), service, false));
+          }
+        }
+        RecentlyUsed = new ItemsController<IChatService>(list);
+
+
         var types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IChatService));
 
         ServiceTypes = new ItemsController<Type>(new SelectableListNodeList(types.Select(t => new SelectableListNode(t.Name, t, false))), EhServiceTypeChanged);
@@ -145,9 +189,31 @@ namespace Altaxo.Gui.Chat
         Current.Gui.FindAndAttachControlTo(controller);
         InstanceController = controller;
       }
-
-
     }
+
+    private void EhCmdApplySelectedRecentlyUsed()
+    {
+      var selected = RecentlyUsed.SelectedValue;
+
+      if (selected is not null)
+      {
+        _doc = selected;
+        _generatedInstances.Add(_doc.GetType(), _doc);
+        var controller = (IMVCANController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCANController));
+        if (controller.GetType() != this.GetType())
+        {
+          Current.Gui.FindAndAttachControlTo(controller);
+          InstanceController = controller;
+        }
+      }
+    }
+
+    private void EhCmdClearRecentlyUsedList()
+    {
+      Current.PropertyService.SetValue(RecentlyUsedChatServices.PropertyKeyRecentlyUsedChatServices, new RecentlyUsedChatServices());
+      RecentlyUsed.Items.Clear();
+    }
+
     /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {

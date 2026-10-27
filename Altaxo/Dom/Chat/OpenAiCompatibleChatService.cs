@@ -162,5 +162,11 @@ namespace Altaxo.Chat
       else
         return new ChatSessionNonStreaming(new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutInSeconds) }, this, McpServerHost.GetPipeNameForProcess(Environment.ProcessId));
     }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+      return $"{Model}, {BaseUri}";
+    }
   }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Chat;assembly=AltaxoDom"
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors;assembly=AltaxoBase.Presentation"
              d:DataContext="{d:DesignInstance Type=local:ChatServiceInstanceController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -17,12 +18,39 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="Service type:"/>
-        <ComboBox Grid.Row="2" ItemsSource="{Binding ServiceTypes.Items}" SelectedItem="{Binding ServiceTypes.SelectedItem, Mode=TwoWay}"/>
+        <Expander Grid.Row="0"
+                  Header="Recently used:"
+                  >
+            <StackPanel Orientation="Vertical" Margin="0,4,0,0">
+                <ListBox ItemsSource="{Binding RecentlyUsed.Items}"
+                         SelectedItem="{Binding RecentlyUsed.SelectedItem, Mode=TwoWay}"
+                         axogb:DoubleClickTriggersCommand.IsHandled="True"
+                         axogb:DoubleClickTriggersCommand.Command="{Binding CmdApplySelectedRecentlyUsedChat}"
+                         >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Text}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <DockPanel Margin="0,4,0,4">
+                <Button DockPanel.Dock="Right" Content="Use selected item" Command="{Binding CmdApplySelectedRecentlyUsedChat}"/>
+                    <Button DockPanel.Dock="Left"
+                            Content="Clear list"
+                            Command="{Binding CmdClearRecentlyUsedList}" />
+                    <Rectangle DockPanel.Dock="Left" />
+                </DockPanel>
+            </StackPanel>
+        </Expander>
 
-        <Label Grid.Row="4" Content="Service details:"/>
-        <ContentControl Grid.Row="6" Content="{Binding InstanceController.ViewObject}"/>
+        <Label Grid.Row="2" Content="Service type:"/>
+        <ComboBox Grid.Row="4" ItemsSource="{Binding ServiceTypes.Items}" SelectedItem="{Binding ServiceTypes.SelectedItem, Mode=TwoWay}"/>
+
+        <Label Grid.Row="6" Content="Service details:"/>
+        <ContentControl Grid.Row="8" Content="{Binding InstanceController.ViewObject}"/>
     </Grid>
 </UserControl>
