@@ -16,11 +16,10 @@ namespace Altaxo
         if (larg == "--attachdebugger")
         {
           System.Diagnostics.Debugger.Launch();
-          break;
         }
         else if (larg == "--logfile")
         {
-          if (i + 1 < args.Length)
+          if ((i + 1) < args.Length)
           {
             logfileName = args[i + 1];
             i++;
@@ -39,7 +38,6 @@ namespace Altaxo
 
       var server = new MCPServerProxy
       {
-        PipeName = args.Length > 0 ? args[0] : MCPServerProxy.DefaultPipeName,
         LogfileName = logfileName
       };
       await server.RunAsync();
