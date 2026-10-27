@@ -58,7 +58,7 @@ namespace Altaxo.Chat
     /// <param name="Type">The type of the project item (table, graph, or notes).</param>
     public record ItemInfo(string Name, string Type);
 
-    [Description("Lists the project items (tables, graphs, or textdocuments) in the current project. Call this first to find the name of a project item before using it with other tools."), ReadOnly(true)]
+    [Description("Lists the project items in the current project. For each item, the name and corresponding type (table, graph, textdocument) is reported. The name can contain folder parts, which are separated by backslashes. Call this method first to find the full names of project items before using them with other tools."), ReadOnly(true)]
     private string ListProjectItems(
       [Description("Optional filter: 'table', 'graph', 'textdocument', or omit for all")] string? type = null)
     {

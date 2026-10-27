@@ -303,15 +303,24 @@ namespace Altaxo.Gui.Chat
 
         var assistantMessage = new McpChatMessageViewModel(_chatServiceConfiguration.Model, string.Empty);
         if (!_disposed)
+        {
           Messages.Add(assistantMessage);
+        }
+
+        bool hasError = false;
         await foreach (var text in _session.StreamAsync(prompt, cancellationTokenSource.Token, imageData, imageMediaType))
         {
           if (!_disposed)
           {
             assistantMessage.AppendText(text);
+            hasError = text.ToLowerInvariant().Contains("error") || text.ToLowerInvariant().Contains("exception");
           }
         }
         StatusText = "Ready";
+        if (!hasError)
+        {
+          RecentlyUsedChatServices.AddToRecentlyUsedChatServices(chatServiceConfiguration);
+        }
       }
       catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
       {

@@ -35,7 +35,7 @@ namespace Altaxo.Chat
     /// <summary>
     /// Gets the property key for the current chat endpoint.
     /// </summary>
-    public static readonly PropertyKey<IChatService> PropertyKeyChatService = new PropertyKey<IChatService>(
+    public static readonly PropertyKey<IChatService> PropertyKeyChatService = new(
       "4283AA49-A426-47F5-9990-67F2B0141751",
       "Chat\\ChatService",
       PropertyLevel.Application);
@@ -58,8 +58,5 @@ namespace Altaxo.Chat
     {
       return chatService.CreateSession();
     }
-
-
-
   }
 }
