@@ -234,55 +234,154 @@ namespace Altaxo.Chat
       }
     }
 
-    [Description("Sets the contents of a cell in a data table."), ReadOnly(true)]
-    private string SetContentsOfCellInTable(
-     [Description("Name of the data table.")] string tableName,
-     [Description("Name of the column.")] string columnName,
-     [Description("Zero-based row index.")] int rowIndex,
-     [Description("New value for the cell in invariant culture.")] string newValue
-    )
+
+    [Description("Reads the contents of a column of a data table. Returns the values as strings in invariant culture (decimal point '.', ISO 8601 for dates). Empty cells are returned as empty strings."),
+ ReadOnly(true)]
+    private string GetColumnValues(
+  [Description("Name of the data table.")] string tableName,
+  [Description("Name of the column.")] string columnName,
+  [Description("Zero-based start row index. Use 0 to read from the beginning.")] int startRowIndex = 0,
+  [Description("Maximum number of values to return. Use -1 to read up to the end of the column.")] int count = -1)
     {
-      if (Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
+      const int MaxCount = 10000; // guard against huge responses
+
+      if (startRowIndex < 0)
+        return Error($"Start row index {startRowIndex} is less than zero for data table '{tableName}'.");
+      if (count < -1)
+        return Error($"Count {count} is invalid; use -1 to read to the end.");
+
+      if (!Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
+        return Error($"Data table '{tableName}' not found in the current project.");
+
+      var column = table.DataColumns.TryGetColumn(columnName);
+      if (column is null)
+        return Error($"Column '{columnName}' not found in data table '{tableName}'.");
+
+      int rowCount = column.Count;
+      int available = Math.Max(0, rowCount - startRowIndex);
+      int n = count < 0 ? available : Math.Min(count, available);
+
+      bool truncated = false;
+      if (n > MaxCount)
       {
-        var list = new List<NameValue>();
+        n = MaxCount;
+        truncated = true;
+      }
 
-        if (rowIndex < 0)
-          return Error($"Row index {rowIndex} is less than zero for data table '{tableName}'.");
+      var values = new string[n];
 
-        var column = table.DataColumns.TryGetColumn(columnName);
-        if (column is null)
-          return Error($"Column '{columnName}' not found in data table '{tableName}'.");
-
-        var oldContent = FormattableString.Invariant($"{column[rowIndex]}");
-
-        if (column is DoubleColumn dc)
+      if (column is DoubleColumn dc)
+      {
+        for (int i = 0; i < n; i++)
         {
-          var value = double.TryParse(newValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var d) ? d : double.NaN;
-          column[rowIndex] = value;
+          double d = dc[startRowIndex + i];
+          values[i] = double.IsNaN(d) ? string.Empty : d.ToString("R", CultureInfo.InvariantCulture);
         }
-        else if (column is DateTimeColumn dtc)
+      }
+      else if (column is DateTimeColumn dtc)
+      {
+        for (int i = 0; i < n; i++)
         {
-          var value = DateTime.TryParse(newValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt) ? dt : DateTime.MinValue;
-          column[rowIndex] = value;
+          DateTime dt = dtc[startRowIndex + i];
+          values[i] = dt == DateTime.MinValue ? string.Empty : dt.ToString("o", CultureInfo.InvariantCulture);
         }
-        else
-        {
-          column[rowIndex] = newValue;
-        }
-
-        var newContent = FormattableString.Invariant($"{column[rowIndex]}");
-
-        return JsonSerializer.Serialize(new
-        {
-          OldContentOfCell = oldContent,
-          NewContentOfCell = newContent,
-          Message = $"Set content of column[\"{columnName}\"][{rowIndex}] in data table '{tableName}' to {newContent}."
-        });
+      }
+      else if (column is TextColumn tc)
+      {
+        for (int i = 0; i < n; i++)
+          values[i] = tc[startRowIndex + i] ?? string.Empty;
       }
       else
       {
-        return Error($"Data table '{tableName}' not found in the current project.");
+        return Error($"Column '{columnName}' has unsupported type {column.GetType().Name}.");
       }
+
+      return JsonSerializer.Serialize(new
+      {
+        TableName = tableName,
+        ColumnName = columnName,
+        ColumnType = column.GetType().Name,
+        StartRowIndex = startRowIndex,
+        ReturnedCount = n,
+        ColumnLength = rowCount,
+        Truncated = truncated,
+        Values = values
+      });
+    }
+
+    [Description("Sets the contents of a column in a data table, starting at the given row. Rows beyond the current end are appended. Empty strings clear a cell."), ReadOnly(false)]
+    private string SetColumnValues(
+      [Description("Name of the data table.")] string tableName,
+      [Description("Name of the column.")] string columnName,
+      [Description("Zero-based start row index.")] int startRowIndex,
+      [Description("New values for the cells in invariant culture (decimal point '.', ISO 8601 for dates).")] string[] newValues)
+    {
+      if (newValues is null)
+        return Error("No values were provided.");
+      if (startRowIndex < 0)
+        return Error($"Start row index {startRowIndex} is less than zero for data table '{tableName}'.");
+
+      if (!Current.Project.DataTableCollection.TryGetValue(tableName, out var table))
+        return Error($"Data table '{tableName}' not found in the current project.");
+
+      var column = table.DataColumns.TryGetColumn(columnName);
+      if (column is null)
+        return Error($"Column '{columnName}' not found in data table '{tableName}'.");
+
+      if (column is DoubleColumn dc)
+      {
+        var values = new double[newValues.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+          var s = newValues[i];
+          if (string.IsNullOrWhiteSpace(s))
+            values[i] = double.NaN;
+          else if (!double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out values[i]))
+            return Error($"Value '{s}' at index {i} is not a valid number.");
+        }
+
+        using (var token = table.SuspendGetToken())
+        {
+          for (int i = 0; i < values.Length; i++)
+            dc[startRowIndex + i] = values[i];
+        }
+      }
+      else if (column is DateTimeColumn dtc)
+      {
+        var values = new DateTime[newValues.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+          var s = newValues[i];
+          if (string.IsNullOrWhiteSpace(s))
+            values[i] = DateTime.MinValue;
+          else if (!DateTime.TryParse(s, CultureInfo.InvariantCulture,
+                     DateTimeStyles.RoundtripKind | DateTimeStyles.AllowWhiteSpaces, out values[i]))
+            return Error($"Value '{s}' at index {i} is not a valid date/time.");
+        }
+
+        using (var token = table.SuspendGetToken())
+        {
+          for (int i = 0; i < values.Length; i++)
+            dtc[startRowIndex + i] = values[i];
+        }
+      }
+      else if (column is TextColumn tc)
+      {
+        using (var token = table.SuspendGetToken())
+        {
+          for (int i = 0; i < newValues.Length; i++)
+            tc[startRowIndex + i] = newValues[i];
+        }
+      }
+      else
+      {
+        return Error($"Column '{columnName}' has unsupported type {column.GetType().Name}.");
+      }
+
+      return JsonSerializer.Serialize(new
+      {
+        Message = $"Set {newValues.Length} values in column[\"{columnName}\"] of data table '{tableName}', rows {startRowIndex} to {startRowIndex + newValues.Length - 1}."
+      });
     }
   }
 }

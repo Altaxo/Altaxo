@@ -31,6 +31,7 @@ namespace Altaxo.Chat
   /// <summary>
   /// Provides the basic tools from the Altaxo data namespace, like creating tables, creating data columns and reading and writing data.
   /// </summary>
+  /// <remarks>Each tool provider must be loaded via the .addin file of Altaxo.</remarks>
   public sealed class AltaxoTextCoreToolProvider : AltaxoToolProviderBase
   {
     /// <inheritdoc/>
