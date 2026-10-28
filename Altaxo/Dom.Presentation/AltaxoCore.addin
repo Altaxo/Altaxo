@@ -120,6 +120,7 @@
         <Class id="AltaxoProjectCore" class="Altaxo.Chat.AltaxoProjectCoreToolProvider" />
         <Class id="AltaxoDataCore" class="Altaxo.Chat.AltaxoDataCoreToolProvider" />
         <Class id="AltaxoTextCore" class="Altaxo.Chat.AltaxoTextCoreToolProvider" />
+        <Class id="AltaxoScriptingCore" class="Altaxo.Chat.AltaxoScriptingToolProvider" />
     </Path>
 
     <Path name="/Altaxo/Chat/Configuration/PipeName">
