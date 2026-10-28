@@ -743,7 +743,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     /// <summary>
-    /// Computes the true uniaxial stress response for a prescribed strain history <c>lambda(t)</c> evaluated at the time points in <paramref name="time"/>.
+    /// Computes the true uniaxial stress response for a prescribed strain history <c>lambda(t)</c> evaluated at the <c>time</c> points in <paramref name="timeLambda"/>.
     /// </summary>
     /// <param name="timeLambda">Enumeration of (time, lambda) points. The time must be strictly increasing.</param>
     /// <param name="p">The material parameters.</param>
