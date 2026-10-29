@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System.ComponentModel;
+using System.Text.Json;
 
 namespace Altaxo.Chat
 {
@@ -30,7 +31,7 @@ namespace Altaxo.Chat
   /// Provides the basic tools from the Altaxo data namespace, like creating tables, creating data columns and reading and writing data.
   /// </summary>
   /// <remarks>Each tool provider must be loaded via the .addin file of Altaxo.</remarks>
-  public sealed partial class AltaxoScriptingToolProvider : AltaxoToolProviderBase
+  public partial class AltaxoScriptingToolProvider : AltaxoToolProviderBase
   {
     /// <inheritdoc/>
     public override string Id => "altaxo.scripting.core";
@@ -62,6 +63,33 @@ namespace Altaxo.Chat
       try
       {
         return ApiDiscovery.DescribeType(typeName, memberFilter, includeInherited, includeNonPublic, maxMembers);
+      }
+      catch (DiscoveryException ex)
+      {
+        return Error(ex.Message);
+      }
+    }
+
+    [Description("Gets non-abstract subclasses of a type in the Altaxo API."), ReadOnly(true)]
+    private string GetNonabstractSubclassesOfType(
+     [Description("Full name of the type.")] string typeName)
+    {
+      try
+      {
+        var type = System.Type.GetType(typeName, throwOnError: true);
+        var subclasses = Altaxo.Main.Services.ReflectionService.GetSubclassesOf(type);
+
+        if (subclasses is null || subclasses.Length == 0)
+        {
+          return Error($"No non-abstract subclasses of type '{typeName}' found.");
+        }
+
+        return JsonSerializer.Serialize(new
+        {
+          NonabstractSubClasses = subclasses,
+          Message = $"Found {subclasses.Length} non-abstract subclasses of type '{typeName}'."
+        });
+
       }
       catch (DiscoveryException ex)
       {

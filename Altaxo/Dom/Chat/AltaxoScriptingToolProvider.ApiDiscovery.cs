@@ -36,8 +36,9 @@ using System.Xml.Linq;
 
 namespace Altaxo.Chat
 {
-public sealed partial class AltaxoScriptingToolProvider
+  public partial class AltaxoScriptingToolProvider
   {
+
     /// <summary>
     /// Reflection- and XML-documentation-based discovery of an API.
     /// Finds types by name or summary text, and describes a type with its members and their documentation.
@@ -79,6 +80,7 @@ public sealed partial class AltaxoScriptingToolProvider
       /// <param name="query">One or more terms separated by spaces; all must match (case-insensitive).</param>
       /// <param name="maxResults">Maximum number of types returned.</param>
       /// <param name="assemblyPrefix">Only assemblies whose name starts with this prefix are searched. Empty = all loaded assemblies.</param>
+      /// <returns>A formatted list of matching public types, or a message when no types match.</returns>
       public static string FindTypes(string query, int maxResults = 50, string? assemblyPrefix = "Altaxo")
       {
         if (string.IsNullOrWhiteSpace(query))
@@ -163,6 +165,7 @@ public sealed partial class AltaxoScriptingToolProvider
       /// <param name="includeInherited">Include members inherited from base types.</param>
       /// <param name="includeNonPublic">Include private and internal members.</param>
       /// <param name="maxMembers">Maximum number of members listed.</param>
+      /// <returns>A formatted description of the resolved type and selected members.</returns>
       public static string DescribeType(string typeName, string? memberFilter = null, bool includeInherited = false, bool includeNonPublic = false, int maxMembers = 150)
       {
         var type = ResolveType(typeName);
@@ -263,7 +266,10 @@ public sealed partial class AltaxoScriptingToolProvider
 
       #region Type lookup
 
-      /// <summary>Resolves a type by full name or, failing that, by simple name.</summary>
+      /// <summary>Resolves a public type by full name or, failing that, by simple name.</summary>
+      /// <param name="typeName">The full, simple, or partial type name to resolve.</param>
+      /// <returns>The unique matching public type.</returns>
+      /// <exception cref="DiscoveryException">The name is empty, no type matches, or multiple types match.</exception>
       public static Type ResolveType(string typeName)
       {
         if (string.IsNullOrWhiteSpace(typeName))
@@ -318,6 +324,8 @@ public sealed partial class AltaxoScriptingToolProvider
       /// Loads all managed assemblies from the application directory whose file name starts with the prefix,
       /// so that types in not-yet-loaded assemblies can be found.
       /// </summary>
+      /// <summary>Loads assemblies from the application directory whose file names start with the specified prefix.</summary>
+      /// <param name="prefix">The assembly name prefix to load; an empty prefix disables loading.</param>
       private static void EnsureLoaded(string prefix)
       {
         if (prefix.Length == 0)
@@ -349,6 +357,9 @@ public sealed partial class AltaxoScriptingToolProvider
         }
       }
 
+      /// <summary>Gets loaded, non-dynamic assemblies matching an assembly name prefix.</summary>
+      /// <param name="prefix">The prefix to match, or an empty string to include all loaded assemblies.</param>
+      /// <returns>The matching assemblies after attempting to load matching application assemblies.</returns>
       private static IEnumerable<Assembly> GetAssemblies(string prefix)
       {
         EnsureLoaded(prefix);
@@ -357,6 +368,9 @@ public sealed partial class AltaxoScriptingToolProvider
           (prefix.Length == 0 || (a.GetName().Name ?? string.Empty).StartsWith(prefix, StringComparison.OrdinalIgnoreCase)));
       }
 
+      /// <summary>Gets the types available from an assembly while tolerating type-loading failures.</summary>
+      /// <param name="asm">The assembly whose types are requested.</param>
+      /// <returns>All loadable types from the assembly, or an empty sequence if none can be retrieved.</returns>
       private static IEnumerable<Type> SafeTypes(Assembly asm)
       {
         try { return asm.GetTypes(); }
@@ -368,8 +382,14 @@ public sealed partial class AltaxoScriptingToolProvider
 
       #region XML documentation
 
+      /// <summary>Gets the cached XML documentation entries for an assembly, loading them on first access.</summary>
+      /// <param name="asm">The assembly whose documentation is requested.</param>
+      /// <returns>A map from compiler-generated member IDs to XML documentation elements.</returns>
       private static Dictionary<string, XElement> GetDocs(Assembly asm) => _docCache.GetOrAdd(asm, LoadDocs);
 
+      /// <summary>Loads an assembly's XML documentation file into a member-ID map.</summary>
+      /// <param name="asm">The assembly whose adjacent or application-directory documentation file is loaded.</param>
+      /// <returns>The parsed member documentation entries, or an empty map if the file is absent or invalid.</returns>
       private static Dictionary<string, XElement> LoadDocs(Assembly asm)
       {
         var result = new Dictionary<string, XElement>(StringComparer.Ordinal);
@@ -405,6 +425,9 @@ public sealed partial class AltaxoScriptingToolProvider
         return result;
       }
 
+      /// <summary>Looks up the XML documentation entry corresponding to a reflected member.</summary>
+      /// <param name="mi">The type or member whose documentation is requested.</param>
+      /// <returns>The matching documentation element, or <see langword="null"/> when no entry exists.</returns>
       private static XElement? Lookup(MemberInfo mi)
       {
         var id = DocId(mi);
@@ -417,6 +440,9 @@ public sealed partial class AltaxoScriptingToolProvider
       }
 
       /// <summary>Finds the documentation element of a member, following explicit and implicit inheritdoc.</summary>
+      /// <param name="mi">The reflected type or member whose documentation is searched.</param>
+      /// <param name="depth">The current inheritance traversal depth.</param>
+      /// <returns>The documentation element found, or <see langword="null"/> if none is available.</returns>
       private static XElement? FindDoc(MemberInfo mi, int depth = 0)
       {
         mi = Normalize(mi);
@@ -434,8 +460,14 @@ public sealed partial class AltaxoScriptingToolProvider
         return el;
       }
 
+      /// <summary>Gets the rendered summary text for a reflected member.</summary>
+      /// <param name="mi">The member whose summary is requested.</param>
+      /// <returns>The summary text, or an empty string when no summary is documented.</returns>
       private static string Summary(MemberInfo mi) => Render(FindDoc(mi)?.Element("summary"));
 
+      /// <summary>Normalizes members declared on constructed generic types to their generic definitions.</summary>
+      /// <param name="mi">The reflected type or member to normalize.</param>
+      /// <returns>The generic definition equivalent when available; otherwise, the original member.</returns>
       private static MemberInfo Normalize(MemberInfo mi)
       {
         if (mi is Type tt)
@@ -453,6 +485,9 @@ public sealed partial class AltaxoScriptingToolProvider
         return mi;
       }
 
+      /// <summary>Enumerates corresponding base-type or interface members for documentation inheritance.</summary>
+      /// <param name="mi">The type or member whose base declarations are searched.</param>
+      /// <returns>Matching base types, interfaces, or members.</returns>
       private static IEnumerable<MemberInfo> BaseMembers(MemberInfo mi)
       {
         if (mi is Type type)
@@ -485,6 +520,10 @@ public sealed partial class AltaxoScriptingToolProvider
         }
       }
 
+      /// <summary>Determines whether two reflected members have compatible parameter signatures.</summary>
+      /// <param name="a">The first member to compare.</param>
+      /// <param name="b">The second member to compare.</param>
+      /// <returns><see langword="true"/> when the members have compatible parameter types; otherwise, <see langword="false"/>.</returns>
       private static bool SameSignature(MemberInfo a, MemberInfo b)
       {
         var pa = ParamTypes(a);
@@ -497,6 +536,9 @@ public sealed partial class AltaxoScriptingToolProvider
         return true;
       }
 
+      /// <summary>Gets normalized parameter type names for a method or indexed property.</summary>
+      /// <param name="m">The reflected member whose parameter types are requested.</param>
+      /// <returns>The normalized parameter type names, or an empty array for other member kinds.</returns>
       private static string[] ParamTypes(MemberInfo m) => m switch
       {
         MethodBase mb => mb.GetParameters().Select(p => Loose(p.ParameterType)).ToArray(),
@@ -504,6 +546,9 @@ public sealed partial class AltaxoScriptingToolProvider
         _ => Array.Empty<string>(),
       };
 
+      /// <summary>Gets a simplified type name for loose parameter-signature matching.</summary>
+      /// <param name="t">The type to represent.</param>
+      /// <returns>A type name that omits constructed generic arguments.</returns>
       private static string Loose(Type t)
       {
         if (t.IsByRef) return Loose(t.GetElementType()!) + "&";
@@ -515,6 +560,9 @@ public sealed partial class AltaxoScriptingToolProvider
 
       // ---- documentation comment IDs (as written by the C# compiler) ----
 
+      /// <summary>Creates the XML documentation ID used by the C# compiler for a reflected member.</summary>
+      /// <param name="mi">The type or member whose documentation ID is created.</param>
+      /// <returns>The compiler-style ID, or <see langword="null"/> for unsupported member kinds.</returns>
       private static string? DocId(MemberInfo mi)
       {
         switch (mi)
@@ -543,11 +591,20 @@ public sealed partial class AltaxoScriptingToolProvider
         }
       }
 
+      /// <summary>Gets the fully qualified type name using periods for nested-type separators.</summary>
+      /// <param name="t">The type to name.</param>
+      /// <returns>The fully qualified name suitable for a documentation ID.</returns>
       private static string TypeFull(Type t) => (t.FullName ?? t.Name).Replace('+', '.');
 
+      /// <summary>Formats parameter types in the syntax used in compiler-generated documentation IDs.</summary>
+      /// <param name="ps">The parameters to format.</param>
+      /// <returns>An empty string for no parameters, or a parenthesized comma-separated type list.</returns>
       private static string ParamList(ParameterInfo[] ps) =>
         ps.Length == 0 ? string.Empty : "(" + string.Join(",", ps.Select(p => ParamTypeId(p.ParameterType))) + ")";
 
+      /// <summary>Formats a type according to the parameter-type syntax used in documentation IDs.</summary>
+      /// <param name="t">The type to format.</param>
+      /// <returns>The compiler-style type identifier.</returns>
       private static string ParamTypeId(Type t)
       {
         if (t.IsByRef) return ParamTypeId(t.GetElementType()!) + "@";
@@ -570,6 +627,9 @@ public sealed partial class AltaxoScriptingToolProvider
 
       // ---- rendering of documentation text ----
 
+      /// <summary>Renders an XML documentation element as normalized plain text.</summary>
+      /// <param name="el">The documentation element to render, if present.</param>
+      /// <returns>The normalized text content, or an empty string when the element is <see langword="null"/>.</returns>
       private static string Render(XElement? el)
       {
         if (el is null)
@@ -580,6 +640,9 @@ public sealed partial class AltaxoScriptingToolProvider
         return Regex.Replace(sb.ToString(), @"\s+", " ").Trim();
       }
 
+      /// <summary>Appends the readable text represented by an XML documentation node.</summary>
+      /// <param name="sb">The destination for rendered text.</param>
+      /// <param name="node">The XML node to render.</param>
       private static void AppendNode(StringBuilder sb, XNode node)
       {
         switch (node)
@@ -620,6 +683,9 @@ public sealed partial class AltaxoScriptingToolProvider
         }
       }
 
+      /// <summary>Reduces a documentation reference to its short display name.</summary>
+      /// <param name="cref">The compiler-style reference to simplify.</param>
+      /// <returns>A shortened type or member name suitable for plain-text output.</returns>
       private static string ShortCref(string cref)
       {
         var kind = cref.Length > 1 && cref[1] == ':' ? cref[0] : '\0';
@@ -633,6 +699,10 @@ public sealed partial class AltaxoScriptingToolProvider
         return string.Join(".", parts.Skip(Math.Max(0, parts.Length - keep)));
       }
 
+      /// <summary>Shortens text to a maximum length and adds an ellipsis when needed.</summary>
+      /// <param name="s">The text to shorten.</param>
+      /// <param name="max">The maximum output length.</param>
+      /// <returns>The original text when within the limit, or a truncated version ending in an ellipsis.</returns>
       private static string Truncate(string s, int max) =>
         s.Length <= max ? s : s.Substring(0, max - 3).TrimEnd() + "...";
 
@@ -640,6 +710,10 @@ public sealed partial class AltaxoScriptingToolProvider
 
       #region Formatting
 
+      /// <summary>Appends the type signature, assembly, and available type documentation.</summary>
+      /// <param name="sb">The destination for the type description.</param>
+      /// <param name="type">The type being described.</param>
+      /// <param name="detail">Whether to use the longer limit for remarks.</param>
       private static void AppendTypeHeader(StringBuilder sb, Type type, bool detail)
       {
         var el = FindDoc(type);
@@ -675,6 +749,11 @@ public sealed partial class AltaxoScriptingToolProvider
           sb.AppendLine("Signature: " + Signature(invoke).Replace("virtual ", string.Empty));
       }
 
+      /// <summary>Appends a member signature and, when requested, its available XML documentation.</summary>
+      /// <param name="sb">The destination for the member description.</param>
+      /// <param name="mi">The member to render.</param>
+      /// <param name="described">The type whose description is being generated.</param>
+      /// <param name="detail">Whether to include full documentation rather than a summary.</param>
       private static void AppendMember(StringBuilder sb, MemberInfo mi, Type described, bool detail)
       {
         var sig = Signature(mi);
@@ -719,6 +798,9 @@ public sealed partial class AltaxoScriptingToolProvider
           sb.AppendLine("      throws: " + string.Join(", ", ex));
       }
 
+      /// <summary>Formats a reflected member as a compact C#-style signature.</summary>
+      /// <param name="mi">The member to format.</param>
+      /// <returns>The formatted signature.</returns>
       private static string Signature(MemberInfo mi)
       {
         switch (mi)
@@ -786,6 +868,10 @@ public sealed partial class AltaxoScriptingToolProvider
         }
       }
 
+      /// <summary>Formats an accessor name with its reflected accessibility.</summary>
+      /// <param name="m">The accessor method whose accessibility is represented.</param>
+      /// <param name="name">The accessor keyword, such as <c>get</c> or <c>set</c>.</param>
+      /// <returns>The accessor keyword and accessibility terminator.</returns>
       private static string Accessor(MethodInfo m, string name)
       {
         if (m.IsPublic) return name + ";";
@@ -795,6 +881,10 @@ public sealed partial class AltaxoScriptingToolProvider
         return "private " + name + ";";
       }
 
+      /// <summary>Formats method parameters as a comma-separated C#-style parameter list.</summary>
+      /// <param name="ps">The parameters to format.</param>
+      /// <param name="firstIsThis">Whether to mark the first parameter as an extension receiver.</param>
+      /// <returns>The formatted parameters without enclosing parentheses.</returns>
       private static string Params(ParameterInfo[] ps, bool firstIsThis)
       {
         var parts = new List<string>(ps.Length);
@@ -825,6 +915,10 @@ public sealed partial class AltaxoScriptingToolProvider
         return string.Join(", ", parts);
       }
 
+      /// <summary>Formats a reflected default value as a C#-style literal.</summary>
+      /// <param name="v">The default value to format.</param>
+      /// <param name="t">The declared parameter or field type.</param>
+      /// <returns>The formatted literal, including a suitable representation for null or default values.</returns>
       private static string DefaultText(object? v, Type t)
       {
         if (v is null || v == DBNull.Value || v == Type.Missing)
@@ -836,6 +930,9 @@ public sealed partial class AltaxoScriptingToolProvider
         return Convert.ToString(v, CultureInfo.InvariantCulture) ?? "default";
       }
 
+      /// <summary>Gets the display kind for a reflected type.</summary>
+      /// <param name="t">The type whose kind is classified.</param>
+      /// <returns>A label such as <c>class</c>, <c>struct</c>, <c>enum</c>, or <c>delegate</c>.</returns>
       private static string Kind(Type t)
       {
         if (t.IsEnum) return "enum";
@@ -849,6 +946,8 @@ public sealed partial class AltaxoScriptingToolProvider
       }
 
       /// <summary>Short C# type name (no namespaces).</summary>
+      /// <param name="t">The type to format.</param>
+      /// <returns>A C#-style type name without its namespace.</returns>
       private static string Fmt(Type t)
       {
         if (Keywords.TryGetValue(t, out var k)) return k;
@@ -874,6 +973,8 @@ public sealed partial class AltaxoScriptingToolProvider
       }
 
       /// <summary>C# type name including the namespace.</summary>
+      /// <param name="t">The type to format.</param>
+      /// <returns>A C#-style type name including its namespace where applicable.</returns>
       private static string FmtFull(Type t)
       {
         if (Keywords.ContainsKey(t) || t.IsGenericParameter || t.IsArray || t.IsByRef || t.IsPointer)
@@ -883,11 +984,21 @@ public sealed partial class AltaxoScriptingToolProvider
         return (string.IsNullOrEmpty(t.Namespace) ? string.Empty : t.Namespace + ".") + Fmt(t);
       }
 
+      /// <summary>Removes generic arity markers from a type name.</summary>
+      /// <param name="name">The type name to normalize.</param>
+      /// <returns>The type name without backtick arity suffixes.</returns>
       private static string StripArity(string name) => Regex.Replace(name, @"`\d+(?=$|\+|\.)", string.Empty);
 
+      /// <summary>Determines whether a reflected member is compiler-generated or has a generated name.</summary>
+      /// <param name="m">The member to inspect.</param>
+      /// <returns><see langword="true"/> if the member is compiler-generated; otherwise, <see langword="false"/>.</returns>
       private static bool IsCompilerGenerated(MemberInfo m) =>
         m.Name.Contains('<') || m.IsDefined(typeof(CompilerGeneratedAttribute), false);
 
+      /// <summary>Determines whether a reflected member is visible under the requested visibility policy.</summary>
+      /// <param name="mi">The member to inspect.</param>
+      /// <param name="includeNonPublic">Whether non-public members should be considered visible.</param>
+      /// <returns><see langword="true"/> when the member is visible; otherwise, <see langword="false"/>.</returns>
       private static bool IsVisible(MemberInfo mi, bool includeNonPublic)
       {
         if (includeNonPublic)
@@ -912,3 +1023,4 @@ public sealed partial class AltaxoScriptingToolProvider
     }
   }
 }
+

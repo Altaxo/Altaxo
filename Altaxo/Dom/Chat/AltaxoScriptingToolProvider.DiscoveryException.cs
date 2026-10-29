@@ -26,14 +26,14 @@ using System;
 
 namespace Altaxo.Chat
 {
-public sealed partial class AltaxoScriptingToolProvider
+  public partial class AltaxoScriptingToolProvider
   {
     /// <summary>Thrown for errors that should be reported to the caller (type not found, ambiguous name, ...).</summary>
     /// <remarks>
     /// Creates a new DiscoveryException with the given message.
     /// </remarks>
     /// <param name="message"></param>
-    public sealed class DiscoveryException(string message) : Exception(message)
+    public class DiscoveryException(string message) : Exception(message)
     {
     }
   }
