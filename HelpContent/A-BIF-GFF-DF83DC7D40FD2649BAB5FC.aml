@@ -64,7 +64,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27E6FD785D42121044759C464BE92B5D"><img src="../media/27E6FD785D42121044759C464BE92B5D.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#61CE90822C167B37A153384FEB4F523D"><img src="../media/61CE90822C167B37A153384FEB4F523D.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -134,7 +134,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2D01B8085E3BC1AA1A8E2E954B938F1"><img src="../media/A2D01B8085E3BC1AA1A8E2E954B938F1.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#761C2E0C8F5737EA7D580A03585C2B45"><img src="../media/761C2E0C8F5737EA7D580A03585C2B45.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -197,11 +197,74 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76BE6A479CAC28190233AF18DA5C6508"><img src="../media/76BE6A479CAC28190233AF18DA5C6508.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5E394059914BD7845825382DC0C8F5F"><img src="../media/B5E394059914BD7845825382DC0C8F5F.png" width="567"></img></a></markup>
 </para>
 
 <para>
 Fig. 1: Exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#609050852D0B0F4C1AC27EFBAFDE548C"><img src="../media/609050852D0B0F4C1AC27EFBAFDE548C.png" width="55" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0EC8F8FD79EAAF34E030EEBFAA89A3D8"><img src="../media/0EC8F8FD79EAAF34E030EEBFAA89A3D8.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4583AD8D4DE04EABA2A3434A37ABA278"><img src="../media/4583AD8D4DE04EABA2A3434A37ABA278.png" width="40" height="13" align="middle"></img></a></markup>.
+</para>
+</content>
+</section>
+
+<section address="C27D5A876EF4F3EBB127E9F0975A92D6">
+<title>Exponential growth (prefactor <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup> version)
+</title>
+<content>
+
+<para>
+This function evaluates an exponential growth with one or multiple terms according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EAD8032527573EE5F7437947BBAD2B18"><img src="../media/EAD8032527573EE5F7437947BBAD2B18.png" width="306" height="16"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#59726F5FEEFB8E9B14AC5939079A9199"><img src="../media/59726F5FEEFB8E9B14AC5939079A9199.png" width="13" height="10" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7FE3DB0DEEDD8496349AA0B36285D2F"><img src="../media/E7FE3DB0DEEDD8496349AA0B36285D2F.png" width="59" height="11" align="middle"></img></a></markup> )
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A199C7B0F5A1A30E4B0D402B8197255"><img src="../media/3A199C7B0F5A1A30E4B0D402B8197255.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBD9C645851C4744A81445098D6E5B7A"><img src="../media/FBD9C645851C4744A81445098D6E5B7A.png" width="28" height="11" align="bottom"></img></a></markup> are the prefactors of the exponential terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD34EAE4EF0A7E19211B728436699640"><img src="../media/CD34EAE4EF0A7E19211B728436699640.png" width="15" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82DDB6356A8DC2B0ECF8D2505F5DB5A1"><img src="../media/82DDB6356A8DC2B0ECF8D2505F5DB5A1.png" width="30" height="11" align="bottom"></img></a></markup> are the characteristic prefactors
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is the number of exponential terms
+</para>
+</listItem>
+</list>
+
+<para>
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA38211E200090CBB5E0BA5466BF152F"><img src="../media/AA38211E200090CBB5E0BA5466BF152F.png" width="90" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5E394059914BD7845825382DC0C8F5F"><img src="../media/B5E394059914BD7845825382DC0C8F5F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#609050852D0B0F4C1AC27EFBAFDE548C"><img src="../media/609050852D0B0F4C1AC27EFBAFDE548C.png" width="55" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0EC8F8FD79EAAF34E030EEBFAA89A3D8"><img src="../media/0EC8F8FD79EAAF34E030EEBFAA89A3D8.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#00495B8561058CAB10074236E64AA6E8"><img src="../media/00495B8561058CAB10074236E64AA6E8.png" width="62" height="13" align="middle"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -260,7 +323,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6E66EE0AE77D38366B3D90C1079C96D4"><img src="../media/6E66EE0AE77D38366B3D90C1079C96D4.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9D3029A9C093ACC55D35CBA53F82A5C9"><img src="../media/9D3029A9C093ACC55D35CBA53F82A5C9.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -331,7 +394,7 @@ Even if you set the exponents fixed to integer values, the domain of the functio
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E41F97B0C6B6AD3951F0C641F84642E6"><img src="../media/E41F97B0C6B6AD3951F0C641F84642E6.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE0CD03EB688AC321FDA3A1D33EB1E41"><img src="../media/DE0CD03EB688AC321FDA3A1D33EB1E41.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -339,7 +402,7 @@ Fig. 1: Power law with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#61E0C2BB45EB14DF1D3884587E380F55"><img src="../media/61E0C2BB45EB14DF1D3884587E380F55.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#34641791F94EF2CC3DD761DB75621FB3"><img src="../media/34641791F94EF2CC3DD761DB75621FB3.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -402,7 +465,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AEB1A5707E58415D544005E1B493065"><img src="../media/4AEB1A5707E58415D544005E1B493065.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AE3C096A4CAC5EB68CB00FDFFA6014D3"><img src="../media/AE3C096A4CAC5EB68CB00FDFFA6014D3.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -410,7 +473,7 @@ Fig. 1: Power law (ratio) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACA
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8750D20B5B12748835C37BFD22C1D754"><img src="../media/8750D20B5B12748835C37BFD22C1D754.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E22636A8DA10C01B463345867CE90A19"><img src="../media/E22636A8DA10C01B463345867CE90A19.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -477,7 +540,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9875FBA01FC985CE32A032AC8308FD3C"><img src="../media/9875FBA01FC985CE32A032AC8308FD3C.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D5B1C672C2F85196313697B36B60261C"><img src="../media/D5B1C672C2F85196313697B36B60261C.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -544,7 +607,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D3A6C1B4C03B48C57D9BDB2EA91404A"><img src="../media/7D3A6C1B4C03B48C57D9BDB2EA91404A.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27D44ECE8F8E13DDA7E3C760877EDDBF"><img src="../media/27D44ECE8F8E13DDA7E3C760877EDDBF.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -625,7 +688,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#553BB676E496A0C28084570E48947AAE"><img src="../media/553BB676E496A0C28084570E48947AAE.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DCF4D3A07368DE5CACC69F1BEB5945D2"><img src="../media/DCF4D3A07368DE5CACC69F1BEB5945D2.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -702,7 +765,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#133BCDE586CC557AE7E1060F8664BE10"><img src="../media/133BCDE586CC557AE7E1060F8664BE10.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#52F681CF1ECC95DC6B438720EADD1045"><img src="../media/52F681CF1ECC95DC6B438720EADD1045.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -779,7 +842,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED44DC6474FBC13D1B1CC4B32D945E9"><img src="../media/EED44DC6474FBC13D1B1CC4B32D945E9.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3B0146C518C922778FF414AFC6BC06D2"><img src="../media/3B0146C518C922778FF414AFC6BC06D2.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -856,7 +919,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4349081B1E0BD10A1D72F5477A735D00"><img src="../media/4349081B1E0BD10A1D72F5477A735D00.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B0950D5416375AD018C6957882A12B31"><img src="../media/B0950D5416375AD018C6957882A12B31.png" width="567"></img></a></markup>
 </para>
 
 <para>

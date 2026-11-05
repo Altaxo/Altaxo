@@ -18,7 +18,7 @@ Previous section: <link xlink:href="E771D4FEB3C4838C0A284850BEEFBF46">Retardatio
 <para>
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EFE158BE46897C009D3262F40A2815A9"><img src="../media/EFE158BE46897C009D3262F40A2815A9.png" width="187" height="37"></img></a></markup>
 
 <para>
 with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -47,7 +47,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup> : rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 </para>
 </listItem>
 
@@ -68,14 +68,14 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#636712DB8B0AD3D429CC99C270C64D69"><img src="../media/636712DB8B0AD3D429CC99C270C64D69.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB8859F25D28AD6A1184B90A9F67FA6D"><img src="../media/FB8859F25D28AD6A1184B90A9F67FA6D.png" width="12" height="13" align="middle"></img></a></markup> is the first stretch invariant, which is for the planar case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1804D4DA50B5F676D56C2BBA0C0BE9A1"><img src="../media/1804D4DA50B5F676D56C2BBA0C0BE9A1.png" width="120" height="17" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB8859F25D28AD6A1184B90A9F67FA6D"><img src="../media/FB8859F25D28AD6A1184B90A9F67FA6D.png" width="12" height="13" align="middle"></img></a></markup> is the first stretch invariant, which is for the biaxial case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1804D4DA50B5F676D56C2BBA0C0BE9A1"><img src="../media/1804D4DA50B5F676D56C2BBA0C0BE9A1.png" width="120" height="17" align="bottom"></img></a></markup>
 </para>
 </listItem>
 </list>
@@ -85,15 +85,27 @@ In the case that your dependent data is force instead of stress, you can enter t
 </para>
 
 <para>
+Note that, depending on <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup>, the shear modulus G is slightly higher than <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup>, because of the following relationship: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9240B022B8E8532D29A05DABDB85CB3B"><img src="../media/9240B022B8E8532D29A05DABDB85CB3B.png" width="134" height="17" align="bottom"></img></a></markup>.
+</para>
+
+<para>
 The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FEB34D9FDB598EEB558C0AD48F528846"><img src="../media/FEB34D9FDB598EEB558C0AD48F528846.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D1C392C192F42E994E7D7B95B0AC9F"><img src="../media/06D1C392C192F42E994E7D7B95B0AC9F.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7A9E4BEC76057D0D3AC101A2B71DA9F"><img src="../media/E7A9E4BEC76057D0D3AC101A2B71DA9F.png" width="87" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC49C9CFA84258F7E3690F71AD9596BD"><img src="../media/FC49C9CFA84258F7E3690F71AD9596BD.png" width="73" height="13" align="middle"></img></a></markup>.
+Fig. 1: Treloar's biaxial data (black circles) fitted with the Arruda-Boyce 8-chain model for the biaxial case (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#25AA2615F4D2CE14DD2962D15B823DF2"><img src="../media/25AA2615F4D2CE14DD2962D15B823DF2.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC49C9CFA84258F7E3690F71AD9596BD"><img src="../media/FC49C9CFA84258F7E3690F71AD9596BD.png" width="73" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA76A5D167CA8529ECF7BC6B326B49C4"><img src="../media/BA76A5D167CA8529ECF7BC6B326B49C4.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Arruda-Boyce 8-chain models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F98AD1E7510C0CD734C608C1674FFD1"><img src="../media/4F98AD1E7510C0CD734C608C1674FFD1.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA91E16012DCEBF738EB37282513085D"><img src="../media/EA91E16012DCEBF738EB37282513085D.png" width="58" height="13" align="middle"></img></a></markup> (fixed by lower boundary).
 </para>
 <markup><hr/></markup>
 
@@ -128,7 +140,7 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 <para>
 This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EFE158BE46897C009D3262F40A2815A9"><img src="../media/EFE158BE46897C009D3262F40A2815A9.png" width="187" height="37"></img></a></markup>
 
 <para>
 with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -157,7 +169,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup> :  rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 </para>
 </listItem>
 
@@ -178,7 +190,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#636712DB8B0AD3D429CC99C270C64D69"><img src="../media/636712DB8B0AD3D429CC99C270C64D69.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
 </para>
 </listItem>
 
@@ -195,11 +207,15 @@ In the case that your dependent data is force instead of stress, you can enter t
 </para>
 
 <para>
+Note that, depending on <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup>, the shear modulus G is slightly higher than <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup>, because of the following relationship: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9240B022B8E8532D29A05DABDB85CB3B"><img src="../media/9240B022B8E8532D29A05DABDB85CB3B.png" width="134" height="17" align="bottom"></img></a></markup>.
+</para>
+
+<para>
 The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F535396D0BDB900E30DF869878393C7"><img src="../media/4F535396D0BDB900E30DF869878393C7.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63509DF5D1B7E6FC785153C87CB73A05"><img src="../media/63509DF5D1B7E6FC785153C87CB73A05.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -238,7 +254,7 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 <para>
 This model evaluates the engineering stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> as a function of engineering strain <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> during the uniaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F28A2BF66991A641E0C48D4B15EEC6"><img src="../media/A0F28A2BF66991A641E0C48D4B15EEC6.png" width="184" height="37"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EFE158BE46897C009D3262F40A2815A9"><img src="../media/EFE158BE46897C009D3262F40A2815A9.png" width="187" height="37"></img></a></markup>
 
 <para>
 with the stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -267,7 +283,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> : shear modulus (parameter 1 of the fit function)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup> :  rubber-elastic (entropic) shear modulus of the equivalent Gaussian network μ = n·k·Θ, with n: number of chains per unit volume (chain density), k: Boltzmann constant and Θ: absolute temperature in K
 </para>
 </listItem>
 
@@ -288,7 +304,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3278CB64E056FDC2A579C199D405C155"><img src="../media/3278CB64E056FDC2A579C199D405C155.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#636712DB8B0AD3D429CC99C270C64D69"><img src="../media/636712DB8B0AD3D429CC99C270C64D69.png" width="36" height="17" align="bottom"></img></a></markup> is the inverse Langevin function
 </para>
 </listItem>
 
@@ -305,11 +321,15 @@ In the case that your dependent data is force instead of stress, you can enter t
 </para>
 
 <para>
+Note that, depending on <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup>, the shear modulus G is slightly higher than <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A2F7B36142BEBEAE113155CF791349B"><img src="../media/9A2F7B36142BEBEAE113155CF791349B.png" width="15" height="10" align="bottom"></img></a></markup>, because of the following relationship: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9240B022B8E8532D29A05DABDB85CB3B"><img src="../media/9240B022B8E8532D29A05DABDB85CB3B.png" width="134" height="17" align="bottom"></img></a></markup>.
+</para>
+
+<para>
 The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88CF5B28A422173AAF5D88EED8376A62"><img src="../media/88CF5B28A422173AAF5D88EED8376A62.png" width="121" height="16" align="bottom"></img></a></markup>. Note that therefore the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3216279B3E268DACB480975462160871"><img src="../media/3216279B3E268DACB480975462160871.png" width="18" height="13" align="middle"></img></a></markup> must be greater than 1 + the greatest strain value in your data.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A7213E9BB1D6056E49C71C37B3504CC7"><img src="../media/A7213E9BB1D6056E49C71C37B3504CC7.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27A975877E91915BEA01CFEE4E507A50"><img src="../media/27A975877E91915BEA01CFEE4E507A50.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -340,15 +360,877 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 </content>
 </section>
 
+<section address="8BC466FC8D2ECBB0ED1EABF77E3C11C7">
+<title>Bergström-Boyce model (uniaxial, equi-biaxial and planar loading)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09DC6ABA83CADFABA3278C50E176EBDF"><img src="../media/09DC6ABA83CADFABA3278C50E176EBDF.png" width="25" height="17" align="middle"></img></a></markup> or the Cauchy stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> as a function of engineering strain <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> during the stretching of an elastomeric material by assuming a hyperelastic spring (network A) in parallel with network B consisting of a hyperelastic spring and a dashpot.
+</para>
+
+<para>
+The principal stretches for the different loading cases are:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A485FFE74D2699C4A69E6E0683831DF4"><img src="../media/A485FFE74D2699C4A69E6E0683831DF4.png" width="202" height="88"></img></a></markup>
+
+<para>
+The strain stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33CE90416B8FFAB700B768AAE51B687C"><img src="../media/33CE90416B8FFAB700B768AAE51B687C.png" width="9" height="16" align="texttop"></img></a></markup> calculates to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0201772A29D5A22C26995DF444735319"><img src="../media/0201772A29D5A22C26995DF444735319.png" width="192" height="45"></img></a></markup>
+
+<para>
+Network A and network B are each represented by their own 8-chain network and may have distinct limiting chain stretches <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03570878309DB2383B5DEA333A446B85"><img src="../media/03570878309DB2383B5DEA333A446B85.png" width="27" height="17" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBE1E3BDB066800ED6507360EBF3872F"><img src="../media/FBE1E3BDB066800ED6507360EBF3872F.png" width="27" height="17" align="middle"></img></a></markup>.
+</para>
+
+<para>
+For network A, the stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9142DAC33BE9DC53ACF81B3BE10E850E"><img src="../media/9142DAC33BE9DC53ACF81B3BE10E850E.png" width="17" height="11" align="bottom"></img></a></markup> is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F337ECEFCD3CB8CE4AEA940DB6127F47"><img src="../media/F337ECEFCD3CB8CE4AEA940DB6127F47.png" width="193" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1C5C40FBA6C4BB854433D16707127693"><img src="../media/1C5C40FBA6C4BB854433D16707127693.png" width="24" height="16" align="texttop"></img></a></markup> being the inverse Langevin function, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE08375A8870F8D3299AC5649339033B"><img src="../media/EE08375A8870F8D3299AC5649339033B.png" width="9" height="10" align="bottom"></img></a></markup> being the shear modulus (parameter) and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03570878309DB2383B5DEA333A446B85"><img src="../media/03570878309DB2383B5DEA333A446B85.png" width="27" height="17" align="middle"></img></a></markup> being the locking stretch of network A.
+</para>
+
+<para>
+For network B, the total stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8B9284C3023EBA66F35D6D35477DEA6A"><img src="../media/8B9284C3023EBA66F35D6D35477DEA6A.png" width="13" height="13" align="middle"></img></a></markup> is the product of the elastic (partially) stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9BC26E7D75975123FA2F64683C653A6"><img src="../media/B9BC26E7D75975123FA2F64683C653A6.png" width="14" height="15" align="bottom"></img></a></markup> and the viscous stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC948DA6D200777322125B0B703B91DE"><img src="../media/FC948DA6D200777322125B0B703B91DE.png" width="14" height="15" align="bottom"></img></a></markup>:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F75A96A3DA22A5BBF88A3F1D9FF92E97"><img src="../media/F75A96A3DA22A5BBF88A3F1D9FF92E97.png" width="129" height="15"></img></a></markup>
+
+<para>
+and the deviatoric stresses are:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#057AE5E85B9A66B246A286530EB10C5B"><img src="../media/057AE5E85B9A66B246A286530EB10C5B.png" width="308" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6DD17BD892E7CB9754C8FAFEEA4960A2"><img src="../media/6DD17BD892E7CB9754C8FAFEEA4960A2.png" width="7" height="8" align="middle"></img></a></markup> being a parameter, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBE1E3BDB066800ED6507360EBF3872F"><img src="../media/FBE1E3BDB066800ED6507360EBF3872F.png" width="27" height="17" align="middle"></img></a></markup> being the locking stretch of network B and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A5AFEAE7586996A1543D88C324A6F90"><img src="../media/6A5AFEAE7586996A1543D88C324A6F90.png" width="14" height="16" align="texttop"></img></a></markup> being the effective partially elastic stretch of network B.
+</para>
+
+<para>
+The effective (driving) flow stress then is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B798DFFE9F24EB432577EE5563E62AB"><img src="../media/4B798DFFE9F24EB432577EE5563E62AB.png" width="187" height="34"></img></a></markup>
+
+<para>
+and the flow rate:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#957ACF582255FB70500D87B97B4EC413"><img src="../media/957ACF582255FB70500D87B97B4EC413.png" width="198" height="29"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75064C27E3D052F8F27E8C520763AE64"><img src="../media/75064C27E3D052F8F27E8C520763AE64.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82E0FD027FF2CD5212AE87D76007C685"><img src="../media/82E0FD027FF2CD5212AE87D76007C685.png" width="8" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1011903A76A9C4D8440B87783040B11E"><img src="../media/1011903A76A9C4D8440B87783040B11E.png" width="22" height="11" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> being parameters.
+</para>
+
+<para>
+The evolution of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#438AABCB5E388E2385CE14D23876CFE7"><img src="../media/438AABCB5E388E2385CE14D23876CFE7.png" width="14" height="15" align="bottom"></img></a></markup> then results from:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B34FA0DEFC5698925965F3DA2968054"><img src="../media/9B34FA0DEFC5698925965F3DA2968054.png" width="107" height="38"></img></a></markup>
+
+<para>
+Note: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6ECE3DBB5E9C8AA1D707F3FD5AB85DF9"><img src="../media/6ECE3DBB5E9C8AA1D707F3FD5AB85DF9.png" width="14" height="16" align="texttop"></img></a></markup> is calculated in the same way as <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33CE90416B8FFAB700B768AAE51B687C"><img src="../media/33CE90416B8FFAB700B768AAE51B687C.png" width="9" height="16" align="texttop"></img></a></markup>, but with the triple <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DF4CCA4161DF478FAF8D2326FB85A99B"><img src="../media/DF4CCA4161DF478FAF8D2326FB85A99B.png" width="56" height="15" align="bottom"></img></a></markup>, that results from <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#438AABCB5E388E2385CE14D23876CFE7"><img src="../media/438AABCB5E388E2385CE14D23876CFE7.png" width="14" height="15" align="bottom"></img></a></markup> from the same formulas as <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6FE88CD61A35AED4E6FB1A7C740EE423"><img src="../media/6FE88CD61A35AED4E6FB1A7C740EE423.png" width="56" height="14" align="middle"></img></a></markup> above for  the different loading modes (symmetry assumption of the flow).
+</para>
+
+<para>
+The stress of network B then calculates to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A945BC4020340A9BE1E1CBE5DD6D4C7F"><img src="../media/A945BC4020340A9BE1E1CBE5DD6D4C7F.png" width="89" height="17"></img></a></markup>
+
+<para>
+and the total stress is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#15325117F2F7795C0241DD17DFE87470"><img src="../media/15325117F2F7795C0241DD17DFE87470.png" width="81" height="13"></img></a></markup>
+
+<para>
+The engineering stress <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09DC6ABA83CADFABA3278C50E176EBDF"><img src="../media/09DC6ABA83CADFABA3278C50E176EBDF.png" width="25" height="17" align="middle"></img></a></markup> that is provided by the models as dependent variable then calculates to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BB35A0C4D0D877686F408992F7DC1BE"><img src="../media/8BB35A0C4D0D877686F408992F7DC1BE.png" width="59" height="34"></img></a></markup>
+
+<para>
+<legacyBold>Parametrizations</legacyBold>
+</para>
+
+<para>
+The model supports three different parametrizations, selected via the Parametrization property. They differ in how many raw fit parameters are exposed and how these map to the internal quantities <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B87D21C13D9F353F19EEB5752D1C7C2F"><img src="../media/B87D21C13D9F353F19EEB5752D1C7C2F.png" width="183" height="17" align="middle"></img></a></markup> used in the equations above.
+</para>
+
+<para>
+<legacyItalic><legacyBold>PolyUMod (8 parameters, shared limiting stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A1624075207977EFC0236E13BA97F5A"><img src="../media/4A1624075207977EFC0236E13BA97F5A.png" width="110" height="17" align="middle"></img></a></markup>):</legacyBold></legacyItalic>
+</para>
+
+<table>
+
+<tableHeader>
+
+<row>
+<entry>
+<para>
+Index
+</para>
+</entry><entry>
+<para>
+Name
+</para>
+</entry><entry>
+<para>
+Meaning
+</para>
+</entry></row>
+</tableHeader>
+
+<row>
+<entry>
+<para>
+0
+</para>
+</entry><entry>
+<para>
+Mu
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE08375A8870F8D3299AC5649339033B"><img src="../media/EE08375A8870F8D3299AC5649339033B.png" width="9" height="10" align="bottom"></img></a></markup> — shear modulus of network A
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+1
+</para>
+</entry><entry>
+<para>
+LambdaL
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A810913FDEA8B020901F8D15D59FCCD8"><img src="../media/A810913FDEA8B020901F8D15D59FCCD8.png" width="16" height="13" align="middle"></img></a></markup> — limiting chain stretch, shared by network A and B (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A1624075207977EFC0236E13BA97F5A"><img src="../media/4A1624075207977EFC0236E13BA97F5A.png" width="110" height="17" align="middle"></img></a></markup>)
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+2
+</para>
+</entry><entry>
+<para>
+S
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6DD17BD892E7CB9754C8FAFEEA4960A2"><img src="../media/6DD17BD892E7CB9754C8FAFEEA4960A2.png" width="7" height="8" align="middle"></img></a></markup> — relative shear modulus of network B, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE8584523E790D6234825A8FBC3CEFBE"><img src="../media/FE8584523E790D6234825A8FBC3CEFBE.png" width="56" height="10" align="bottom"></img></a></markup>
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+3
+</para>
+</entry><entry>
+<para>
+Xi
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75064C27E3D052F8F27E8C520763AE64"><img src="../media/75064C27E3D052F8F27E8C520763AE64.png" width="7" height="14" align="middle"></img></a></markup> — regularization near <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E89240AB2AD0AC489CE4475280452245"><img src="../media/E89240AB2AD0AC489CE4475280452245.png" width="45" height="15" align="bottom"></img></a></markup> in the flow law
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+4
+</para>
+</entry><entry>
+<para>
+C
+</para>
+</entry><entry>
+<para>
+strain exponent in the flow law (typically negative)
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+5
+</para>
+</entry><entry>
+<para>
+TauBase
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82E0FD027FF2CD5212AE87D76007C685"><img src="../media/82E0FD027FF2CD5212AE87D76007C685.png" width="8" height="13" align="middle"></img></a></markup> — flow resistance, in pascals
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+6
+</para>
+</entry><entry>
+<para>
+M
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> — stress exponent in the flow law
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+7
+</para>
+</entry><entry>
+<para>
+TauCut
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1011903A76A9C4D8440B87783040B11E"><img src="../media/1011903A76A9C4D8440B87783040B11E.png" width="22" height="11" align="bottom"></img></a></markup> — normalized threshold stress for flow
+</para>
+</entry></row>
+</table>
+
+<para>
+Converted internally as: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2CF458DF5B198281043B0DDCCB7D20D7"><img src="../media/2CF458DF5B198281043B0DDCCB7D20D7.png" width="63" height="17" align="middle"></img></a></markup>,  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#68A15A6F1396630C9586639210BCD88A"><img src="../media/68A15A6F1396630C9586639210BCD88A.png" width="63" height="17" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<legacyItalic><legacyBold>Ansys (7 parameters, independent limiting stretches <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4C8E0EB7660C3DB5B98A89BB404D0EC7"><img src="../media/4C8E0EB7660C3DB5B98A89BB404D0EC7.png" width="74" height="17" align="middle"></img></a></markup> possible; no  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75064C27E3D052F8F27E8C520763AE64"><img src="../media/75064C27E3D052F8F27E8C520763AE64.png" width="7" height="14" align="middle"></img></a></markup>, no  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1011903A76A9C4D8440B87783040B11E"><img src="../media/1011903A76A9C4D8440B87783040B11E.png" width="22" height="11" align="bottom"></img></a></markup>):</legacyBold></legacyItalic>
+</para>
+
+<table>
+
+<tableHeader>
+
+<row>
+<entry>
+<para>
+Index
+</para>
+</entry><entry>
+<para>
+Name
+</para>
+</entry><entry>
+<para>
+Meaning
+</para>
+</entry></row>
+</tableHeader>
+
+<row>
+<entry>
+<para>
+0
+</para>
+</entry><entry>
+<para>
+MuA
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#60A36AC05200FA01C4B4163465E678C3"><img src="../media/60A36AC05200FA01C4B4163465E678C3.png" width="17" height="10" align="bottom"></img></a></markup> — shear modulus of network A
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+1
+</para>
+</entry><entry>
+<para>
+LambdaLA
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03570878309DB2383B5DEA333A446B85"><img src="../media/03570878309DB2383B5DEA333A446B85.png" width="27" height="17" align="middle"></img></a></markup> — limiting chain stretch of network A
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+2
+</para>
+</entry><entry>
+<para>
+MuB
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D34171FF7100E5D939012610F6D139ED"><img src="../media/D34171FF7100E5D939012610F6D139ED.png" width="17" height="10" align="bottom"></img></a></markup> — shear modulus of network B (given directly, not as a ratio)
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+3
+</para>
+</entry><entry>
+<para>
+LambdaLB
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBE1E3BDB066800ED6507360EBF3872F"><img src="../media/FBE1E3BDB066800ED6507360EBF3872F.png" width="27" height="17" align="middle"></img></a></markup> — limiting chain stretch of network B
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+4
+</para>
+</entry><entry>
+<para>
+C
+</para>
+</entry><entry>
+<para>
+strain exponent in the flow law
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+5
+</para>
+</entry><entry>
+<para>
+TauHat
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82E0FD027FF2CD5212AE87D76007C685"><img src="../media/82E0FD027FF2CD5212AE87D76007C685.png" width="8" height="13" align="middle"></img></a></markup> — flow resistance
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+6
+</para>
+</entry><entry>
+<para>
+M
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> — stress exponent in the flow law
+</para>
+</entry></row>
+</table>
+
+<para>
+Converted internally as: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2C5056550B90F4CC453EE561D5AC4DF"><img src="../media/A2C5056550B90F4CC453EE561D5AC4DF.png" width="46" height="10" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6F0C1353077251607F6091C5B99157E8"><img src="../media/6F0C1353077251607F6091C5B99157E8.png" width="69" height="16" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2ACC05C873BB49EA3BE06036A7CC7883"><img src="../media/2ACC05C873BB49EA3BE06036A7CC7883.png" width="34" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B40D5833D4CEBD09B7BE95DF99CC3974"><img src="../media/B40D5833D4CEBD09B7BE95DF99CC3974.png" width="49" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<legacyItalic><legacyBold>Abaqus (7 parameters, shared limiting stretch <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A1624075207977EFC0236E13BA97F5A"><img src="../media/4A1624075207977EFC0236E13BA97F5A.png" width="110" height="17" align="middle"></img></a></markup>; no <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1011903A76A9C4D8440B87783040B11E"><img src="../media/1011903A76A9C4D8440B87783040B11E.png" width="22" height="11" align="bottom"></img></a></markup>):</legacyBold></legacyItalic>
+</para>
+
+<table>
+
+<tableHeader>
+
+<row>
+<entry>
+<para>
+Index
+</para>
+</entry><entry>
+<para>
+Name
+</para>
+</entry><entry>
+<para>
+Meaning
+</para>
+</entry></row>
+</tableHeader>
+
+<row>
+<entry>
+<para>
+0
+</para>
+</entry><entry>
+<para>
+Mu
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE08375A8870F8D3299AC5649339033B"><img src="../media/EE08375A8870F8D3299AC5649339033B.png" width="9" height="10" align="bottom"></img></a></markup> — shear modulus of network A
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+1
+</para>
+</entry><entry>
+<para>
+LambdaL
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A810913FDEA8B020901F8D15D59FCCD8"><img src="../media/A810913FDEA8B020901F8D15D59FCCD8.png" width="16" height="13" align="middle"></img></a></markup> — limiting chain stretch, shared by network A and B (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A1624075207977EFC0236E13BA97F5A"><img src="../media/4A1624075207977EFC0236E13BA97F5A.png" width="110" height="17" align="middle"></img></a></markup>)
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+2
+</para>
+</entry><entry>
+<para>
+S
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6DD17BD892E7CB9754C8FAFEEA4960A2"><img src="../media/6DD17BD892E7CB9754C8FAFEEA4960A2.png" width="7" height="8" align="middle"></img></a></markup> — relative shear modulus of network B
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+3
+</para>
+</entry><entry>
+<para>
+E
+</para>
+</entry><entry>
+<para>
+Abaqus regularization constant, plays the role of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75064C27E3D052F8F27E8C520763AE64"><img src="../media/75064C27E3D052F8F27E8C520763AE64.png" width="7" height="14" align="middle"></img></a></markup>
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+4
+</para>
+</entry><entry>
+<para>
+C
+</para>
+</entry><entry>
+<para>
+strain exponent in the flow law
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+5
+</para>
+</entry><entry>
+<para>
+A
+</para>
+</entry><entry>
+<para>
+raw Abaqus creep constant, units <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A32C1D50F2988B982C65C5F6D3CC356"><img src="../media/6A32C1D50F2988B982C65C5F6D3CC356.png" width="69" height="17" align="bottom"></img></a></markup>
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+6
+</para>
+</entry><entry>
+<para>
+M
+</para>
+</entry><entry>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> — stress exponent in the flow law
+</para>
+</entry></row>
+</table>
+
+<para>
+Converted internally as: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2CF458DF5B198281043B0DDCCB7D20D7"><img src="../media/2CF458DF5B198281043B0DDCCB7D20D7.png" width="63" height="17" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#68A15A6F1396630C9586639210BCD88A"><img src="../media/68A15A6F1396630C9586639210BCD88A.png" width="63" height="17" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9003B0BD8FCC1910D116087AECC018E"><img src="../media/B9003B0BD8FCC1910D116087AECC018E.png" width="38" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0A9BD6B9B61E2F39447B09BBD9CC7A9B"><img src="../media/0A9BD6B9B61E2F39447B09BBD9CC7A9B.png" width="67" height="17" align="texttop"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B40D5833D4CEBD09B7BE95DF99CC3974"><img src="../media/B40D5833D4CEBD09B7BE95DF99CC3974.png" width="49" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+You can also choose between engineering stress as dependent variable, or the Cauchy stress by setting the property <codeInline>DependentVariableIsCauchyStress</codeInline>. Note that when this variable is set to <codeInline>true</codeInline>, the property <codeInline>CrossSectionArea</codeInline> has to be set to <codeInline>1</codeInline>. On the other hand, if property <codeInline>DependentVariableIsCauchyStress</codeInline> is set to false, the dependent variable would be the engineering stress (if <codeInline>CrossSectionArea</codeInline> is set to <codeInline>1</codeInline>) or the force (if <codeInline>CrossSectionArea</codeInline> is set to the initial cross section of the sample.
+</para>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+J. S. Bergström and M. C. Boyce, “Constitutive modeling of the large strain time-dependent behavior of elastomers,” Journal of the Mechanics and Physics of Solids, vol. 46, no. 5, pp. 931–954, May 1998, <externalLink><linkText>doi: 10.1016/S0022-5096(97)00075-6</linkText><linkUri>https://doi.org/10.1016/S0022-5096(97)00075-6</linkUri></externalLink>.
+.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+E. M. Arruda and M. C. Boyce, “A three-dimensional constitutive model for the large stretch behavior of rubber elastic materials,” Journal of the Mechanics and Physics of Solids, vol. 41, no. 2, pp. 389–412, Feb. 1993, <externalLink><linkText>doi: 10.1016/0022-5096(93)90013-6</linkText><linkUri>https://doi.org/10.1016/0022-5096(93)90013-6</linkUri></externalLink>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+J. S. Bergström and M. C. Boyce, “Constitutive modeling of the time-dependent and cyclic loading of elastomers and application to soft biological tissues,” Mechanics of Materials, vol. 33, no. 9, pp. 523–530, Sep. 2001, <externalLink><linkText>doi: 10.1016/S0167-6636(01)00070-9</linkText><linkUri>https://doi.org/10.1016/S0167-6636(01)00070-9</linkUri></externalLink>.
+.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="2E5BB36E101190340701AF9BE2B3F1DD">
+<title>Extended tube model (equibiaxial load)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the four material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F21A57186012D3B284DDC9DE6D857037"><img src="../media/F21A57186012D3B284DDC9DE6D857037.png" width="460" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (cross-link contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup> : material parameter (unitless, 0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (constraint contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : material parameter (unitless)
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0B2B2985FFEB853AD72A4110B4838A6A"><img src="../media/0B2B2985FFEB853AD72A4110B4838A6A.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's equibiaxial data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F0DEF7ECAE72DAAE078D65774B41AFB8"><img src="../media/F0DEF7ECAE72DAAE078D65774B41AFB8.png" width="99" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A899274B05BA68D31173DC51E010D4E"><img src="../media/4A899274B05BA68D31173DC51E010D4E.png" width="76" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1AA9695FEF67D64E94BF26ADD376E5C8"><img src="../media/1AA9695FEF67D64E94BF26ADD376E5C8.png" width="100" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B51E99B6741F7C343340DC5358C3A2E9"><img src="../media/B51E99B6741F7C343340DC5358C3A2E9.png" width="48" height="14" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A01E1EAA0A9F81BCD9046CF36F76B93"><img src="../media/2A01E1EAA0A9F81BCD9046CF36F76B93.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the extended tube models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D4C9698D8AB226395EC31F37997ACC8"><img src="../media/3D4C9698D8AB226395EC31F37997ACC8.png" width="111" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#029039F43819CAD90D6C025B9839A81A"><img src="../media/029039F43819CAD90D6C025B9839A81A.png" width="83" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1F7DA36F039160AF4EA1582B00C94209"><img src="../media/1F7DA36F039160AF4EA1582B00C94209.png" width="100" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#007620FC22966A3E09F0EF941C925484"><img src="../media/007620FC22966A3E09F0EF941C925484.png" width="85" height="14" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+[1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, <externalLink><linkText>doi: 10.5254/1.3538822</linkText><linkUri>https://doi.org/10.5254/1.3538822</linkUri></externalLink>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+[2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, <externalLink><linkText>doi: 10.1039/tf9444000059</linkText><linkUri>https://doi.org/10.1039/tf9444000059</linkUri></externalLink>.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="E42EE411CA6354A5D99B5F26B0397901">
+<title>Extended tube model (planar load)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the planar stretching (width&gt;&gt;length) of an elastomeric material using the four material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9999E921A19A50253B774913B139B58B"><img src="../media/9999E921A19A50253B774913B139B58B.png" width="418" height="41"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (cross-link contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup> : material parameter (unitless, 0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (constraint contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : material parameter (unitless)
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1F3A65ED5655A7A54A594E278F1E66BB"><img src="../media/1F3A65ED5655A7A54A594E278F1E66BB.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's pure shear data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F0DEF7ECAE72DAAE078D65774B41AFB8"><img src="../media/F0DEF7ECAE72DAAE078D65774B41AFB8.png" width="99" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A899274B05BA68D31173DC51E010D4E"><img src="../media/4A899274B05BA68D31173DC51E010D4E.png" width="76" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1AA9695FEF67D64E94BF26ADD376E5C8"><img src="../media/1AA9695FEF67D64E94BF26ADD376E5C8.png" width="100" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B51E99B6741F7C343340DC5358C3A2E9"><img src="../media/B51E99B6741F7C343340DC5358C3A2E9.png" width="48" height="14" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+[1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, <externalLink><linkText>doi: 10.5254/1.3538822</linkText><linkUri>https://doi.org/10.5254/1.3538822</linkUri></externalLink>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+[2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, <externalLink><linkText>doi: 10.1039/tf9444000059</linkText><linkUri>https://doi.org/10.1039/tf9444000059</linkUri></externalLink>.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="F35D1E5B0C375AFFA3F115D900486442">
+<title>Extended tube model (uniaxial load)
+</title>
+<content>
+
+<para>
+This model evaluates the engineering stress as a function of engineering strain during the uniaxial stretching of an elastomeric material using the four material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup>  according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#61446E71DE77184DC7035B15CA5F4E1B"><img src="../media/61446E71DE77184DC7035B15CA5F4E1B.png" width="446" height="42"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56FE4FC5B2B733E4B01083EB93F11632"><img src="../media/56FE4FC5B2B733E4B01083EB93F11632.png" width="6" height="8" align="middle"></img></a></markup> : engineering strain
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : engineering stress (force divided by the cross section in the stress-free state)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFB3482303E3462BD3D846553A69CDAF"><img src="../media/FFB3482303E3462BD3D846553A69CDAF.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (cross-link contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0A2C470358E481F088A0FBF8D843BEE"><img src="../media/A0A2C470358E481F088A0FBF8D843BEE.png" width="7" height="13" align="middle"></img></a></markup> : material parameter (unitless, 0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AFDC6EFF12D958252DCAFC5250E09413"><img src="../media/AFDC6EFF12D958252DCAFC5250E09413.png" width="17" height="13" align="middle"></img></a></markup> : modulus parameter (constraint contribution, in units of the dependent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : material parameter (unitless)
+</para>
+</listItem>
+</list>
+
+<para>
+In the case that your dependent data is force instead of stress, you can enter the initial cross section area by double-clicking on the fit function.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12ECE0B92E15B9351BC719D87B3CF774"><img src="../media/12ECE0B92E15B9351BC719D87B3CF774.png" width="80" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#041E325E6BA7E031A0A2CDDCC7F63DB5"><img src="../media/041E325E6BA7E031A0A2CDDCC7F63DB5.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Treloar's uniaxial data ([2], black circles), and the extended tube model (green line) with the parameters ([1], Table 1, No 1): <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F0DEF7ECAE72DAAE078D65774B41AFB8"><img src="../media/F0DEF7ECAE72DAAE078D65774B41AFB8.png" width="99" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A899274B05BA68D31173DC51E010D4E"><img src="../media/4A899274B05BA68D31173DC51E010D4E.png" width="76" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1AA9695FEF67D64E94BF26ADD376E5C8"><img src="../media/1AA9695FEF67D64E94BF26ADD376E5C8.png" width="100" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B51E99B6741F7C343340DC5358C3A2E9"><img src="../media/B51E99B6741F7C343340DC5358C3A2E9.png" width="48" height="14" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+[1] M. Kaliske and G. Heinrich, “An Extended Tube-Model for Rubber Elasticity: Statistical-Mechanical Theory and Finite Element Implementation,” Rubber Chemistry and Technology, vol. 72, no. 4, pp. 602–632, Sep. 1999, <externalLink><linkText>doi: 10.5254/1.3538822</linkText><linkUri>https://doi.org/10.5254/1.3538822</linkUri></externalLink>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+[2] L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various types of deformation,” Trans. Faraday Soc., vol. 40, p. 59, 1944, <externalLink><linkText>doi: 10.1039/tf9444000059</linkText><linkUri>https://doi.org/10.1039/tf9444000059</linkUri></externalLink>.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
 <section address="BE8D3F67113FF52C85FD8F789AB0035A">
 <title>GentBiaxial model
 </title>
 <content>
 
 <para>
-This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4CE90C12D81643A2D3164C5F6410B621"><img src="../media/4CE90C12D81643A2D3164C5F6410B621.png" width="12" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#001934C0B284A08FDEBB5E5707E9B91D"><img src="../media/001934C0B284A08FDEBB5E5707E9B91D.png" width="21" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F7D97D51BD4C0750F68AC172FF9CDAC5"><img src="../media/F7D97D51BD4C0750F68AC172FF9CDAC5.png" width="169" height="38"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9AD27F1C3A166CC3BD902A0B08AACC48"><img src="../media/9AD27F1C3A166CC3BD902A0B08AACC48.png" width="169" height="38"></img></a></markup>
 
 <para>
 with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -398,11 +1280,19 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#22B765739257DAC49BB9A2430D89B51F"><img src="../media/22B765739257DAC49BB9A2430D89B51F.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1881E15CE2BB90E92F1B0A5739141D98"><img src="../media/1881E15CE2BB90E92F1B0A5739141D98.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#576D9A3C80DF0242A8A9B5964839BA1C"><img src="../media/576D9A3C80DF0242A8A9B5964839BA1C.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DA133703E394CDF0548EB145FCA481B"><img src="../media/1DA133703E394CDF0548EB145FCA481B.png" width="91" height="13" align="middle"></img></a></markup>.
+Fig. 1: Treloar's data (black circles) fitted with the GentBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA74F6B1F9C89E1E2080D53D44601E31"><img src="../media/AA74F6B1F9C89E1E2080D53D44601E31.png" width="94" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E83B5D4CF5A1D7F4D6DC603B8C7CCEAA"><img src="../media/E83B5D4CF5A1D7F4D6DC603B8C7CCEAA.png" width="83" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E2DAF7C87756C314B5E3AF284FE5E87"><img src="../media/3E2DAF7C87756C314B5E3AF284FE5E87.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Gent models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4FE331A3ACDA021811AE25CA3CB25B8"><img src="../media/A4FE331A3ACDA021811AE25CA3CB25B8.png" width="94" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A6DA9A66242D234CE7204544E25EED2"><img src="../media/8A6DA9A66242D234CE7204544E25EED2.png" width="80" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -487,7 +1377,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C11E2B8342BEA676904F8F8DBA68962"><img src="../media/2C11E2B8342BEA676904F8F8DBA68962.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79574A1E4DF703E97E47892B1982929F"><img src="../media/79574A1E4DF703E97E47892B1982929F.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -576,7 +1466,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D6CCF4BB4E835483A09EA20DC6F7711F"><img src="../media/D6CCF4BB4E835483A09EA20DC6F7711F.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD135AE8C43ACD590F9117D752775F5"><img src="../media/9FD135AE8C43ACD590F9117D752775F5.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -615,7 +1505,7 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 <para>
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the two material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A9753B56475E02384627EAF5B716367"><img src="../media/7A9753B56475E02384627EAF5B716367.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99329D89E412088D7020D03A0C57FB88"><img src="../media/99329D89E412088D7020D03A0C57FB88.png" width="184" height="37"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD71E9D6D60F78AF277498F57B64EA5F"><img src="../media/BD71E9D6D60F78AF277498F57B64EA5F.png" width="184" height="37"></img></a></markup>
 
 <para>
 with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -665,11 +1555,19 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D9C1EBC07487DD5AB0E86ADAB102CFE"><img src="../media/8D9C1EBC07487DD5AB0E86ADAB102CFE.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFC9A56CCD5C5B153F17270794BBD50A"><img src="../media/BFC9A56CCD5C5B153F17270794BBD50A.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F2C91285D6CC5468B6206944392AD88"><img src="../media/4F2C91285D6CC5468B6206944392AD88.png" width="99" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96DD4E75005C7C9CCDCE8B7D50CD81CE"><img src="../media/96DD4E75005C7C9CCDCE8B7D50CD81CE.png" width="108" height="13" align="middle"></img></a></markup>.
+Fig. 1: Treloar's data (black circles) fitted with the MooneyRivlinBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1940587662D5BB4D05845A2A9BD15DE3"><img src="../media/1940587662D5BB4D05845A2A9BD15DE3.png" width="106" height="13" align="middle"></img></a></markup>;  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#32602822CC7BE8457AA7CFAF7ABD2A45"><img src="../media/32602822CC7BE8457AA7CFAF7ABD2A45.png" width="108" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66046CA935A4E1F0B4CA971B3533887C"><img src="../media/66046CA935A4E1F0B4CA971B3533887C.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Mooney-Rivlin models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA1B471FE868BF1C64A6C9819C3E3865"><img src="../media/AA1B471FE868BF1C64A6C9819C3E3865.png" width="108" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8245BF40DE162B28641239981BA3A5"><img src="../media/CC8245BF40DE162B28641239981BA3A5.png" width="124" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -772,7 +1670,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3CA16CD287CF94FA079A7D84105A959"><img src="../media/A3CA16CD287CF94FA079A7D84105A959.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9BCAD53B9F5550FF5D27192242DBA22C"><img src="../media/9BCAD53B9F5550FF5D27192242DBA22C.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -875,7 +1773,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A3F36F5FB4EBB7E4D9A1EC7F47589D8"><img src="../media/7A3F36F5FB4EBB7E4D9A1EC7F47589D8.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C560017FB8925F3E3E192EC41D4EB92"><img src="../media/9C560017FB8925F3E3E192EC41D4EB92.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -926,9 +1824,9 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 <content>
 
 <para>
-This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the material parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> according to the following  equation:
+This model evaluates the engineering stress as a function of engineering strain during the equibiaxial stretching of an elastomeric material using the material parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup> according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2656F9AAD9B512771F2588321D79D7DB"><img src="../media/2656F9AAD9B512771F2588321D79D7DB.png" width="125" height="37"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A60AD3EAEECBFB8892142A67394BCD3E"><img src="../media/A60AD3EAEECBFB8892142A67394BCD3E.png" width="125" height="37"></img></a></markup>
 
 <para>
 with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -971,11 +1869,19 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B3317C915EDC7A4E605A799EE5795D83"><img src="../media/B3317C915EDC7A4E605A799EE5795D83.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3CD15178DE06C9E50DF10C8868EFB585"><img src="../media/3CD15178DE06C9E50DF10C8868EFB585.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Treloar's data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33D0F70456AD7B5EA658814BE4F25AB4"><img src="../media/33D0F70456AD7B5EA658814BE4F25AB4.png" width="94" height="13" align="middle"></img></a></markup>.
+Fig. 1: Treloar's equibiaxial data (black circles) fitted with the NeoHookeanBiaxial model (green line). The resulting parameter is: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3F2F2EAD01EAC7C681FE547C4EBD8D38"><img src="../media/3F2F2EAD01EAC7C681FE547C4EBD8D38.png" width="94" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#833DB7904A192EF5EEAED2C7C308FC49"><img src="../media/833DB7904A192EF5EEAED2C7C308FC49.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Neo-Hookean models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E187FB8C3EF8EBF2F2CA7C338E5FA75"><img src="../media/8E187FB8C3EF8EBF2F2CA7C338E5FA75.png" width="94" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -1053,7 +1959,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3CA16CD287CF94FA079A7D84105A959"><img src="../media/A3CA16CD287CF94FA079A7D84105A959.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9BCAD53B9F5550FF5D27192242DBA22C"><img src="../media/9BCAD53B9F5550FF5D27192242DBA22C.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1135,7 +2041,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#623DC85468B8FAE9C3E0CA7883284CFE"><img src="../media/623DC85468B8FAE9C3E0CA7883284CFE.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9DFC6AD8DF982286BBD91866914652D"><img src="../media/D9DFC6AD8DF982286BBD91866914652D.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1225,7 +2131,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#15336414F50EAEA250BEDD238460D1DF"><img src="../media/15336414F50EAEA250BEDD238460D1DF.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A47477241D9E6E6A20951B8B95E134A"><img src="../media/7A47477241D9E6E6A20951B8B95E134A.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1233,11 +2139,19 @@ Fig. 1: Treloar's data (black circles) fitted with the OdgenBiaxial model (green
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CB1BA4D8D358250A2F564B4893DD95B"><img src="../media/7CB1BA4D8D358250A2F564B4893DD95B.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#26A378D566522393E0CDDFB9643E160F"><img src="../media/26A378D566522393E0CDDFB9643E160F.png" width="567"></img></a></markup>
 </para>
 
 <para>
 Fig. 2: Treloar's data (black circles) fitted with the OdgenBiaxial model (green line) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B10881C2C6EC9181BCEEB41E8243EF89"><img src="../media/B10881C2C6EC9181BCEEB41E8243EF89.png" width="40" height="13" align="middle"></img></a></markup>. The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C0E864AA95BA84CCD346CA658E0D2CFA"><img src="../media/C0E864AA95BA84CCD346CA658E0D2CFA.png" width="94" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#31A6FA4E23C380286371672263C4674A"><img src="../media/31A6FA4E23C380286371672263C4674A.png" width="69" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73885912D8F099BA7E1D3F6DE58ECC9D"><img src="../media/73885912D8F099BA7E1D3F6DE58ECC9D.png" width="97" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#32375CE105275D97BAD1F1F880EF5F6A"><img src="../media/32375CE105275D97BAD1F1F880EF5F6A.png" width="77" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B3A2AB1A15151881E09415C4A71C9A8"><img src="../media/4B3A2AB1A15151881E09415C4A71C9A8.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Odgen models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#11A3171D086919640576FC6DA02BFE4F"><img src="../media/11A3171D086919640576FC6DA02BFE4F.png" width="139" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#65D2077A8A35A95A6A7C6759BEC0D7BB"><img src="../media/65D2077A8A35A95A6A7C6759BEC0D7BB.png" width="62" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D73456D5D3BC84DCB6A40857C7E77B1C"><img src="../media/D73456D5D3BC84DCB6A40857C7E77B1C.png" width="124" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E9F72079B8B5DAC5DAB7C737E2EA89B5"><img src="../media/E9F72079B8B5DAC5DAB7C737E2EA89B5.png" width="77" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -1323,7 +2237,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A35CCBA8EE97306CF871B4D7BFEAD4C"><img src="../media/9A35CCBA8EE97306CF871B4D7BFEAD4C.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#235665EB33AEBCD499784D1189A8C9A3"><img src="../media/235665EB33AEBCD499784D1189A8C9A3.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1331,7 +2245,7 @@ Fig. 1: Treloar's pure shear data (black circles) fitted with the OdgenPlanar mo
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E770EDE83154A3105760E7D9F594335"><img src="../media/3E770EDE83154A3105760E7D9F594335.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#675D8ED2D5568A9193AAC8EDB564CFBA"><img src="../media/675D8ED2D5568A9193AAC8EDB564CFBA.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1421,7 +2335,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B38B69493F1B6D03A499641D90AB8A83"><img src="../media/B38B69493F1B6D03A499641D90AB8A83.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4402002FCC95FBE354A9BC382238FDF8"><img src="../media/4402002FCC95FBE354A9BC382238FDF8.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1429,7 +2343,7 @@ Fig. 1: Treloar's uniaxial data (black circles) fitted with the OdgenUniaxial mo
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13BC929402EA2DA61C29E9A7DCDD49E8"><img src="../media/13BC929402EA2DA61C29E9A7DCDD49E8.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD4F740CFA51996EED8015CA0DDBD772"><img src="../media/AD4F740CFA51996EED8015CA0DDBD772.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1468,7 +2382,7 @@ L. R. G. Treloar, “Stress-strain data for vulcanised rubber under various type
 <para>
 This model evaluates the engineering stress as a function of engineering strain during the biaxial stretching of an elastomeric material using the three material parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA168AB8F2D0120F2FFC26E0D2C43279"><img src="../media/BA168AB8F2D0120F2FFC26E0D2C43279.png" width="26" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5970E60954011FD14053C45047F49F58"><img src="../media/5970E60954011FD14053C45047F49F58.png" width="26" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BCCB31F5A7A2FC20E48F82BFD3FC087"><img src="../media/0BCCB31F5A7A2FC20E48F82BFD3FC087.png" width="26" height="13" align="middle"></img></a></markup>  according to the following  equation:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#723083983FE9D4E588F2C70EAAC69C1B"><img src="../media/723083983FE9D4E588F2C70EAAC69C1B.png" width="519" height="40"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AE357E5E53D334DCBBF642FFA0FDBBCD"><img src="../media/AE357E5E53D334DCBBF642FFA0FDBBCD.png" width="519" height="40"></img></a></markup>
 
 <para>
 with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79DBD2D673A9E5702BE79AA239C84A85"><img src="../media/79DBD2D673A9E5702BE79AA239C84A85.png" width="61" height="13" align="middle"></img></a></markup>
@@ -1525,11 +2439,19 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B73E75F327F25F7A9DF36CF43929C69A"><img src="../media/B73E75F327F25F7A9DF36CF43929C69A.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D455A3A2EB6C732EC85FDB6874F4075F"><img src="../media/D455A3A2EB6C732EC85FDB6874F4075F.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B137BCB50794AA8916BE475B5EC2E350"><img src="../media/B137BCB50794AA8916BE475B5EC2E350.png" width="108" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33C8B6E62DE8A3568E4CCE658FDDC478"><img src="../media/33C8B6E62DE8A3568E4CCE658FDDC478.png" width="124" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0FBDA57BD645D677F89E52EE5B04E7C4"><img src="../media/0FBDA57BD645D677F89E52EE5B04E7C4.png" width="97" height="13" align="middle"></img></a></markup>.
+Fig. 1: Treloar's data (black circles) fitted with the YeohBiaxial model (green line). The resulting parameters are: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3FC0677096A36080B0BC70B503D15DF2"><img src="../media/3FC0677096A36080B0BC70B503D15DF2.png" width="127" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E8D6E5C338190B9D5018BDCC79DDBC67"><img src="../media/E8D6E5C338190B9D5018BDCC79DDBC67.png" width="117" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C9798844A8373A306B41C56F47F42C1"><img src="../media/3C9798844A8373A306B41C56F47F42C1.png" width="105" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3AD4419E08C938771C5642B407DA3893"><img src="../media/3AD4419E08C938771C5642B407DA3893.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Treloar's equibiaxial, planar and uniaxial data [2], and a fit with the Yeoh models for equibiaxial, planar and uniaxial load simultaneously to all three data sets using the same parameters. The resulting fit parameter is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7BDE501596156EC155525A2DAECF1492"><img src="../media/7BDE501596156EC155525A2DAECF1492.png" width="112" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#401289526E42ABA83E6D97F390E99406"><img src="../media/401289526E42ABA83E6D97F390E99406.png" width="132" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A62E262920D1B37021D10A11A578A0C5"><img src="../media/A62E262920D1B37021D10A11A578A0C5.png" width="112" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -1621,7 +2543,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1838D0AADD3FD835360D94A1AEE7AC7F"><img src="../media/1838D0AADD3FD835360D94A1AEE7AC7F.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ED66723465B79A4347517DF67B9CAE73"><img src="../media/ED66723465B79A4347517DF67B9CAE73.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -1717,7 +2639,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA91E5E85FE63E321E49096F418B865C"><img src="../media/AA91E5E85FE63E321E49096F418B865C.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#013888CC616C8EE97F03714393E3B57C"><img src="../media/013888CC616C8EE97F03714393E3B57C.png" width="567"></img></a></markup>
 </para>
 
 <para>
