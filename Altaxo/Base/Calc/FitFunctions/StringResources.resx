@@ -831,6 +831,31 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 ^^^ Fig. 1: Exponential growth with $y_0=100$, $a_0=3$ and $\tau_0=4$.
 </value>
   </data>
+  <data name="General.ExponentialGrowthAlpha" xml:space="preserve">
+    <value>##### Exponential growth (prefactor $\alpha$ version)
+
+This function evaluates an exponential growth with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 \exp(\alpha_0 x) + ... + a_{n-1} \exp(\alpha_{n-1} x)
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x \rightarrow {-\infty}$ )
+- $a_0$ .. $a_{n-1}$ are the prefactors of the exponential terms
+- $\alpha_0$ ... $\alpha_{n-1}$ are the characteristic prefactors
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialGrowthAlpha.Fig1.png){width=15cm}  
+^^^ Fig. 1: Exponential growth with $y_0=100$, $a_0=3$ and $\alpha_0=0.25$.
+</value>
+  </data>
   <data name="General.ExponentialOfPolynomial" xml:space="preserve">
     <value>##### Exponential of a polynomial
 

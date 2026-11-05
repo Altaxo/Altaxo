@@ -81,6 +81,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new ExponentialDecay(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(-0.25/5)+7*Math.Exp(-0.25/11)),
         (() => new ExponentialEquilibration(2), 0.5, new double[]{0.125,1,3,5,7,11}, 1+3*(1-Math.Exp(-(0.5-0.125)/5))+7*(1-Math.Exp(-(0.5-0.125)/11)) ),
         (() => new ExponentialGrowth(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(0.25/5)+7*Math.Exp(0.25/11)),
+        (() => new ExponentialGrowthAlpha(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(0.25*5)+7*Math.Exp(0.25*11)),
         (() => new General.ExponentialOfPolynomial(3,2), 17/19d, new double[]{3,1,1/3d,-1/5d,1/7d,-1/11d,1/13d}, 6.4381869725572211314),
         (() => new General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
         (() => new General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),

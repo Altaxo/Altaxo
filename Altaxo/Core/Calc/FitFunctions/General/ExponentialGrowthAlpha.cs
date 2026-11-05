@@ -1,0 +1,275 @@
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+#nullable enable
+using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
+
+namespace Altaxo.Calc.FitFunctions.General
+{
+  /// <summary>
+  /// Represents an exponential growth with offset (multiple exponential terms possible).
+  /// </summary>
+  /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
+  [FitFunctionClass]
+  public record ExponentialGrowthAlpha : IFitFunctionWithDerivative, IImmutable
+  {
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2026-11-05 
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialGrowthAlpha), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public virtual void Serialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ExponentialGrowthAlpha)o;
+        info.AddValue("NumberOfTerms", s.NumberOfTerms);
+      }
+
+      /// <inheritdoc/>
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var numberOfTerms = info.GetInt32("NumberOfTerms");
+        return new ExponentialGrowthAlpha(numberOfTerms);
+      }
+    }
+
+    #endregion Serialization
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExponentialGrowthAlpha"/> class with a single term.
+    /// </summary>
+    public ExponentialGrowthAlpha()
+    {
+      NumberOfTerms = 1;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExponentialGrowthAlpha"/> class with the specified number of terms.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of exponential terms. Must be greater than or equal to 1.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfTerms"/> is less than 1.</exception>
+    public ExponentialGrowthAlpha(int numberOfTerms)
+    {
+      if (!(numberOfTerms >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+
+      NumberOfTerms = numberOfTerms;
+    }
+
+
+
+    /// <summary>
+    /// Creates an exponential growth fit function with one exponential term (3 parameters).
+    /// </summary>
+    /// <returns>A new <see cref="ExponentialGrowthAlpha"/> instance.</returns>
+    [FitFunctionCreator("ExponentialGrowthAlpha", "General", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialGrowthAlpha}")]
+    public static IFitFunction CreateExponentialDecrease()
+    {
+      return new ExponentialGrowthAlpha();
+    }
+
+    /// <summary>
+    /// Gets the number of exponential terms. Must be greater than or equal to 1.
+    /// </summary>
+    /// <value>The number of terms.</value>
+    public int NumberOfTerms { get; }
+
+    /// <summary>
+    /// Creates a new instance with the provided number of terms.
+    /// </summary>
+    /// <param name="value">The number of exponential terms. Must be greater than or equal to 1.</param>
+    /// <returns>A new instance configured with the provided number of terms, or the same instance if unchanged.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is less than 1.</exception>
+    public ExponentialGrowthAlpha WithNumberOfTerms(int value)
+    {
+      if (!(value >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+
+      if (!(NumberOfTerms == value))
+      {
+        return new ExponentialGrowthAlpha(value);
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    #region IFitFunction Members
+
+    /// <inheritdoc/>
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    /// <inheritdoc/>
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    /// <inheritdoc/>
+    public int NumberOfParameters
+    {
+      get
+      {
+        return NumberOfTerms * 2 + 1;
+      }
+    }
+
+    /// <inheritdoc/>
+    public string IndependentVariableName(int i)
+    {
+      return "x";
+    }
+
+    /// <inheritdoc/>
+    public string DependentVariableName(int i)
+    {
+      return "y";
+    }
+
+    /// <inheritdoc/>
+    public string ParameterName(int i)
+    {
+      if (i == 0)
+        return "y0";
+      else if (i - 1 < NumberOfTerms * 2)
+      {
+        return ((i - 1) % 2) switch
+        {
+          0 => FormattableString.Invariant($"a{(i - 1) / 2}"),
+          1 => FormattableString.Invariant($"α{(i - 1) / 2}"),
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException($"{nameof(i)} must be less than {NumberOfParameters}");
+      }
+    }
+
+    /// <inheritdoc/>
+    public double DefaultParameterValue(int i)
+    {
+      if (i == 0)
+        return 0;
+      else if (i - 1 < NumberOfTerms * 2)
+      {
+        return ((i - 1) % 2) switch
+        {
+          0 => 0,
+          1 => RMath.Pow(10, (i - 1) / 2),
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException($"{nameof(i)} must be less than {NumberOfParameters}");
+      }
+    }
+
+    /// <inheritdoc/>
+    public IVarianceScaling? DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
+    /// <inheritdoc/>
+    public void Evaluate(ReadOnlySpan<double> independent, ReadOnlySpan<double> parameters, Span<double> dependent)
+    {
+      double sum = parameters[0];
+      for (int i = 1; i < parameters.Length; i += 2)
+      {
+        sum += parameters[i] * Math.Exp(independent[0] * parameters[i + 1]);
+      }
+      dependent[0] = sum;
+    }
+
+    /// <inheritdoc/>
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> dependent, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        double sum = parameters[0];
+        for (int i = 1; i < parameters.Count; i += 2)
+        {
+          sum += parameters[i] * Math.Exp(x * parameters[i + 1]);
+        }
+        dependent[r] = sum;
+      }
+    }
+
+
+    #endregion IFitFunction Members
+
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        DF[r, 0] = 1;
+        for (int i = 1; i < parameters.Count; i += 2)
+        {
+          DF[r, i] = Math.Exp(x * parameters[i + 1]);
+          DF[r, i + 1] = parameters[i] * Math.Exp(x * parameters[i + 1]) * x;
+        }
+      }
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
+  }
+}
