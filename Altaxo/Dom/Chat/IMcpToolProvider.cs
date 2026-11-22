@@ -45,8 +45,10 @@ namespace Altaxo.Chat
     /// <returns>The tools explicitly contributed by this provider.</returns>
     /// <remarks>
     /// Tool handlers are invoked asynchronously away from the WPF dispatcher. A handler that accesses
-    /// dispatcher-affine state must marshal that access to the dispatcher itself. Tool names should be
-    /// stable and include the provider identifier to avoid collisions with other add-ins.
+    /// dispatcher-affine state must marshal that access to the dispatcher itself. Tool names must be stable and
+    /// must start with the provider identifier followed by an underscore, so that they cannot collide with the
+    /// names contributed by other add-ins. They may contain ASCII letters, digits, underscores and hyphens only
+    /// (see <see cref="McpToolNames"/>), because most Mcp clients reject any other character.
     /// </remarks>
     public IReadOnlyList<McpServerTool> CreateTools(IServiceProvider services);
   }

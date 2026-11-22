@@ -34,6 +34,13 @@ namespace Altaxo.Chat
   /// <summary>
   /// Base class for Altaxo tool providers that implement the IMcpToolProvider interface.
   /// </summary>
+  /// <remarks>
+  /// Every method declared by the derived class that is decorated with a <see cref="DescriptionAttribute"/>
+  /// becomes an Mcp tool. The name of such a tool is the provider identifier and the snake case name of the
+  /// method, joined by an underscore. Characters that are not allowed in Mcp tool names are replaced by
+  /// underscores, so a provider identifier like <c>altaxo.data.core</c> contributes a tool named
+  /// <c>altaxo_data_core_add_column_to_table</c>.
+  /// </remarks>
   public abstract class AltaxoToolProviderBase : IMcpToolProvider
   {
     /// <inheritdoc/>
@@ -54,7 +61,7 @@ namespace Altaxo.Chat
 
         var options = new McpServerToolCreateOptions
         {
-          Name = $"{Id}.{JsonNamingPolicy.SnakeCaseLower.ConvertName(method.Name)}",
+          Name = McpToolNames.Combine(Id, JsonNamingPolicy.SnakeCaseLower.ConvertName(method.Name)),
           Description = description.Description,
           Services = services
         };

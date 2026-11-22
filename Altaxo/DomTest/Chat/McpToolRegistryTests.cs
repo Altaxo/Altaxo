@@ -45,11 +45,11 @@ namespace Altaxo.Chat
     [Fact]
     public void RegistryAcceptsNamespacedTools()
     {
-      var provider = new TestToolProvider("tests", "tests.echo");
+      var provider = new TestToolProvider("tests", "tests_echo");
       var registry = new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance);
 
       var tool = Assert.Single(registry.Tools);
-      Assert.Equal("tests.echo", tool.ProtocolTool.Name);
+      Assert.Equal("tests_echo", tool.ProtocolTool.Name);
     }
 
     [Fact]
@@ -57,8 +57,8 @@ namespace Altaxo.Chat
     {
       var providers = new[]
       {
-        new TestToolProvider("tests", "tests.one"),
-        new TestToolProvider("tests", "tests.two")
+        new TestToolProvider("tests", "tests_one"),
+        new TestToolProvider("tests", "tests_two")
       };
 
       Assert.Throws<ArgumentException>(() => new McpToolRegistry(providers, EmptyServiceProvider.Instance));
@@ -67,7 +67,7 @@ namespace Altaxo.Chat
     [Fact]
     public void RegistryRejectsDuplicateToolNames()
     {
-      var provider = new TestToolProvider("tests", "tests.echo", "tests.echo");
+      var provider = new TestToolProvider("tests", "tests_echo", "tests_echo");
 
       Assert.Throws<ArgumentException>(() => new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance));
     }
@@ -75,9 +75,68 @@ namespace Altaxo.Chat
     [Fact]
     public void RegistryRequiresProviderNamespacedToolNames()
     {
-      var provider = new TestToolProvider("tests", "other.echo");
+      var provider = new TestToolProvider("tests", "other_echo");
 
       Assert.Throws<ArgumentException>(() => new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance));
+    }
+
+    [Fact]
+    public void RegistryRejectsToolNamesWithInvalidCharacters()
+    {
+      var provider = new TestToolProvider("tests", "tests.echo");
+
+      Assert.Throws<ArgumentException>(() => new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance));
+    }
+
+    [Fact]
+    public void RegistryRejectsTooLongToolNames()
+    {
+      var provider = new TestToolProvider("tests", "tests_" + new string('x', McpToolNames.MaxNameLength));
+
+      Assert.Throws<ArgumentException>(() => new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance));
+    }
+
+    [Theory]
+    [InlineData("tests_echo", true)]
+    [InlineData("Tests-Echo-1", true)]
+    [InlineData("tests.echo", false)]
+    [InlineData("tests echo", false)]
+    [InlineData("tests-\u00e4cho", false)]
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    public void ToolNameValidity(string? name, bool expected)
+    {
+      Assert.Equal(expected, McpToolNames.IsValidName(name));
+      Assert.False(McpToolNames.IsValidName(new string('a', McpToolNames.MaxNameLength + 1)));
+    }
+
+    [Fact]
+    public void ToolNamesAreJoinedWithUnderscoreAndSanitized()
+    {
+      Assert.Equal("altaxo_data_core_add_column_to_table", McpToolNames.Combine("altaxo.data.core", "add_column_to_table"));
+      Assert.Equal("altaxo_data_core_", McpToolNames.GetPrefix("altaxo.data.core"));
+      Assert.Equal("a_b__c", McpToolNames.Sanitize("a.b  c"));
+      Assert.Throws<ArgumentException>(() => McpToolNames.Combine("altaxo.data.core", new string('x', McpToolNames.MaxNameLength)));
+    }
+
+    [Fact]
+    public void BuiltInToolProvidersContributeClientCompatibleToolNames()
+    {
+      var providers = new IMcpToolProvider[]
+      {
+        new AltaxoProjectCoreToolProvider(),
+        new AltaxoDataCoreToolProvider(),
+        new AltaxoGraphCoreToolProvider(),
+        new AltaxoTextCoreToolProvider(),
+        new AltaxoScriptingToolProvider()
+      };
+
+      var registry = new McpToolRegistry(providers, EmptyServiceProvider.Instance);
+
+      Assert.NotEmpty(registry.Tools);
+      Assert.Contains(registry.Tools, tool => tool.ProtocolTool.Name == "altaxo_data_core_add_column_to_table");
+      foreach (var tool in registry.Tools)
+        Assert.True(McpToolNames.IsValidName(tool.ProtocolTool.Name), $"Tool name '{tool.ProtocolTool.Name}' is not accepted by Mcp clients.");
     }
 
     [Fact]
@@ -98,7 +157,7 @@ namespace Altaxo.Chat
     {
       var clientToServer = new Pipe();
       var serverToClient = new Pipe();
-      var provider = new TestToolProvider("tests", "tests.echo");
+      var provider = new TestToolProvider("tests", "tests_echo");
       var registry = new McpToolRegistry(new[] { provider }, EmptyServiceProvider.Instance);
       var serverOptions = new McpServerOptions
       {
@@ -125,10 +184,10 @@ namespace Altaxo.Chat
       {
         await using var client = await McpClient.CreateAsync(clientTransport, null, NullLoggerFactory.Instance, cancellation.Token);
         var tools = await client.ListToolsAsync(cancellationToken: cancellation.Token);
-        Assert.Contains(tools, tool => tool.Name == "tests.echo");
+        Assert.Contains(tools, tool => tool.Name == "tests_echo");
 
         var result = await client.CallToolAsync(
-          "tests.echo",
+          "tests_echo",
           new Dictionary<string, object?> { ["text"] = "hello from Mcp" },
           cancellationToken: cancellation.Token);
 

@@ -73,8 +73,10 @@ namespace Altaxo.Chat
           var name = tool.ProtocolTool.Name;
           if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException($"Tool provider '{provider.Id}' returned a tool with no name.", nameof(providers));
-          if (!name.StartsWith(provider.Id + ".", StringComparison.Ordinal))
-            throw new ArgumentException($"Tool name '{name}' must start with provider identifier '{provider.Id}'.", nameof(providers));
+          if (!McpToolNames.IsValidName(name))
+            throw new ArgumentException($"Mcp tool name '{name}' must consist of ASCII letters, digits, underscores and hyphens only, and must not be longer than {McpToolNames.MaxNameLength} characters.", nameof(providers));
+          if (!name.StartsWith(McpToolNames.GetPrefix(provider.Id), StringComparison.Ordinal))
+            throw new ArgumentException($"Tool name '{name}' must start with provider identifier '{provider.Id}' followed by '{McpToolNames.Separator}'.", nameof(providers));
 
           if (!names.Add(name))
             throw new ArgumentException($"Mcp tool name '{name}' is contributed more than once.", nameof(providers));
