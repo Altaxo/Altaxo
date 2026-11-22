@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -164,18 +164,10 @@ namespace Altaxo.Text
     /// </summary>
     /// <param name="pipeline">The pipeline.</param>
     /// <returns>The modified pipeline.</returns>
+    /// <remarks>This method forwards to <see cref="MarkdownUtilities.UseSupportedExtensions"/> so that the set of supported extensions is the same for the import of markdown documents as for every other place where markdown is parsed.</remarks>
     public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
     {
-      if (pipeline is null)
-        throw new ArgumentNullException(nameof(pipeline));
-      return pipeline
-          .UseEmphasisExtras()
-          .UseGridTables()
-          .UsePipeTables()
-          .UseTaskLists()
-          .UseAutoLinks()
-          .UseMathematics()
-          .UseGenericAttributes();
+      return MarkdownUtilities.UseSupportedExtensions(pipeline);
     }
 
     #region Helpers for Markdig

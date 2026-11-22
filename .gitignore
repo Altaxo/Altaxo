@@ -21,3 +21,6 @@ TestResults/
 d3dcompiler_*.dll
 *.log
 /Altaxo/CoreTest/Serialization/Origin/TestFiles/AdditionalFoldersWithOpjFiles.txt
+
+# Session state written by AI coding assistants working in this repository
+session-state/
