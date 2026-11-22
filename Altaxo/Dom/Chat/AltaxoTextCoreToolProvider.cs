@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.Json;
 
@@ -109,17 +108,132 @@ namespace Altaxo.Chat
     [Description("Gets the supported markdown extensions and their examples for text documents."), ReadOnly(true)]
     private string GetSupportedMarkdownExtensions()
     {
-      var features = new List<(string Feature, string Example)>
+      // Anonymous objects are used on purpose here: System.Text.Json serializes the fields of a
+      // ValueTuple without their names, which would result in empty json objects.
+      var features = new[]
       {
-        ("Code blocks and inline code", "`inline code` and ```\ncode block\n```"),
-        ("Tables", "| Header 1 | Header 2 |\n|----------|----------|\n| Cell 1   | Cell 2   |"),
-        ("Inline formulas (LaTeX support)", "$E=mc^2$"),
-        ("Paragraph formulas (LaTeX support)", "$$\nE=mc^2\n$$"),
-        ("Embedded graphs (relative to this text document's folder)", "![](graph:MyGraphName)"),
-        ("Embedded graphs (absolute path)", "![](graph//:/path/to/MyGraphName)"),
-        ("Horizontal rules", "---"),
-        ("Task lists", "- [ ] Task 1\n- [x] Task 2"),
+        new
+        {
+          Feature = "Code blocks and inline code",
+          Example = "`inline code`\n\n```\ncode block\n```",
+          Remarks = "The opening and the closing fence of a code block must contain the same number of backticks (or tildes).",
+        },
+        new
+        {
+          Feature = "Bold, italic and additional emphasis",
+          Example = "**bold**, *italic*, x^superscript^, H~subscript~, ~~strikethrough~~, ++inserted++, ==highlighted==",
+          Remarks = "Superscript, subscript, strikethrough, inserted and highlighted text are enabled in addition to standard markdown emphasis.",
+        },
+        new
+        {
+          Feature = "Piped tables",
+          Example = "| Tables        | Are           | Cool  |\n| ------------- |:-------------:| -----:|\n| col 3 is      | right-aligned |  1600 |\n| col 2 is      | centered      |    12 |",
+          Remarks = "The alignment of a column is chosen in the separator row: - aligns left, -: aligns right and :-: centers the column.",
+        },
+        new
+        {
+          Feature = "Grid tables",
+          Example = "+-----------------+------------+\n| Tables          | Are        |\n+===============+============+\n| Cell 1          | Cell 2     |\n+-----------------+------------+",
+          Remarks = "Grid tables support multi-line cells and cells spanning several columns or rows.",
+        },
+        new
+        {
+          Feature = "Task lists",
+          Example = "- [ ] Task 1\n- [x] Task 2",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Horizontal rules",
+          Example = "---",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Inline formulas (LaTeX support)",
+          Example = "$E=mc^2$",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Paragraph formulas (LaTeX support)",
+          Example = "$$\nE=mc^2\n$$",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Embedded Altaxo graphs (path relative to this text document)",
+          Example = "![](graph:MyGraphName)",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Embedded Altaxo graphs (absolute path within the project)",
+          Example = "![](graph://Foo\\MyGraphName)",
+          Remarks = "The folder parts of a graph name are separated by backslashes. Forward slashes are accepted as well.",
+        },
+        new
+        {
+          Feature = "Local images stored inside the text document",
+          Example = "![](local:0CD2A31381F6A7E74CCF217F84ABAF25)",
+          Remarks = "Images inserted from the file system or from the clipboard are stored within the document and are referenced by their MD5 hash sum.",
+        },
+        new
+        {
+          Feature = "Images from the Altaxo resources (e.g. icons)",
+          Example = "![](res:Icons.16x16.ArrangeBottom)",
+          Remarks = string.Empty,
+        },
+        new
+        {
+          Feature = "Escaping of image and graph names",
+          Example = "![](graph://Weather%20Reports%2F2024%2FMyGraphName)",
+          Remarks = "Spaces must be written as %20 because a markdown link target may not contain spaces. Folder separators may be written as %2F.",
+        },
+        new
+        {
+          Feature = "Size of images and graphs",
+          Example = "![](graph://Foo\\MyGraphName){width=5cm}\n![](graph://Foo\\MyGraphName){width=5cm height=4cm}",
+          Remarks = "The supported units are mm, cm, in, pt and px. There must be no spaces around the '='. If width and height are given together, the aspect ratio is not preserved.",
+        },
+        new
+        {
+          Feature = "Anchors and links within the document",
+          Example = "### A heading {#MyAnchor}\n\nAs described in [my anchor](#MyAnchor).",
+          Remarks = "Anchors are attached to most block and inline elements by writing {#AnchorName} behind the element.",
+        },
+        new
+        {
+          Feature = "Figure and table blocks with caption",
+          Example = "^^^\n![](graph://Foo\\MyGraphName){width=5cm} {#An_important_graph}\n^^^ Figure 1: This is a graph",
+          Remarks = "The caption may be written in the first ^^^ line (which is common for tables) or in the line below the block. Only one of these two lines may contain caption text.",
+        },
+        new
+        {
+          Feature = "Figure renumeration and references to figures",
+          Example = "As can be seen in [Fig. 3](#Another_graph) ...",
+          Remarks = "The command \"Text → Renumerate figures\" renumbers all figure captions of a category and updates the numbers in the link texts that point into figure blocks. It is also available as a preprocessor option when exporting a document.",
+        },
+        new
+        {
+          Feature = "Inclusion of child markdown documents",
+          Example = "```{Altaxo child=\"Chapter1\\Text\"}\nChapter1 - Title\n```",
+          Remarks = "The text inside the block is optional and only shows the user what is included. Child documents are expanded e.g. when exporting to Maml, to HTML or to an external markdown document.",
+        },
+        new
+        {
+          Feature = "Auto links",
+          Example = "<https://www.altaxo.com>",
+          Remarks = "Web addresses and e-mail addresses enclosed in angle brackets are turned into links.",
+        },
+        new
+        {
+          Feature = "Special characters",
+          Example = "10 &pound;, 20&nbsp;&deg;C, or directly typed characters like Ω and °",
+          Remarks = "HTML entities and literal unicode characters can be used.",
+        },
       };
+
       return JsonSerializer.Serialize(new
       {
         SupportedMarkdownFeatures = features

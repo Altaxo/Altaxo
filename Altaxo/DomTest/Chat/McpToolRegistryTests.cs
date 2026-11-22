@@ -140,6 +140,30 @@ namespace Altaxo.Chat
     }
 
     [Fact]
+    public void SupportedMarkdownExtensionsToolDescribesEveryFeature()
+    {
+      var method = typeof(AltaxoTextCoreToolProvider).GetMethod("GetSupportedMarkdownExtensions", BindingFlags.Instance | BindingFlags.NonPublic);
+      Assert.NotNull(method);
+
+      var json = method!.Invoke(new AltaxoTextCoreToolProvider(), null) as string;
+      Assert.False(string.IsNullOrWhiteSpace(json));
+
+      using var parsed = JsonDocument.Parse(json);
+      var features = parsed.RootElement.GetProperty("SupportedMarkdownFeatures");
+
+      // ValueTuple's are serialized by System.Text.Json without their element names, which yields empty objects.
+      Assert.True(features.GetArrayLength() >= 10, "The list of supported markdown features is unexpectedly short.");
+      foreach (var feature in features.EnumerateArray())
+      {
+        Assert.True(feature.TryGetProperty("Feature", out var name) && !string.IsNullOrWhiteSpace(name.GetString()), $"Feature entry '{feature}' has no feature name.");
+        Assert.True(feature.TryGetProperty("Example", out var example) && !string.IsNullOrWhiteSpace(example.GetString()), $"Feature entry '{feature}' has no example.");
+        Assert.DoesNotContain("graph//:", example.GetString());
+      }
+
+      Assert.Contains(features.EnumerateArray(), feature => feature.GetProperty("Example").GetString()!.Contains("graph://"));
+    }
+
+    [Fact]
     public void AddinManifestDefinesMcpPipeName()
     {
       var solutionDirectory = FindSolutionDirectory();
